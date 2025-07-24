@@ -1,20 +1,21 @@
 
-import {useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import useLoading from '@/stores/useLoading';
+import Navbar from './Navbar';
 
 interface AdminLayoutProps {
-  children: ReactNode; 
+    children: ReactNode;
 }
 
 const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const [sidebarOpen,setSidebarOpen] = useState(false);
-  const getPageTitle = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const getPageTitle = () => {
         const path = location.pathname;
         if (path === "/dashboard") return "Dashboard";
         if (path.startsWith("/campaigns")) return "Campaigns";
-        
+
         return "Dashboard";
     };
     const { isLoading } = useLoading();
@@ -27,9 +28,9 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             document.body.style.paddingRight = "0px";
         }
     }, [isLoading]);
-  return (
-    <>
-   {isLoading && (
+    return (
+        <>
+            {isLoading && (
                 <div className="fixed inset-0 z-[9999999] opacity-[0.8] h-screen  bg-[#36454F]  flex items-center justify-center ">
                     <span className="loader "></span>
                 </div>
@@ -58,13 +59,15 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
                 {/* Main content */}
                 <div className="flex flex-col flex-1 overflow-hidden">
-                   
-                        {children}
-                   
+                    <Navbar />
+                    <hr className="w-full bg-[#E7E7E7]" />
+
+                    {children}
+
                 </div>
             </div>
-    </>
-  );
+        </>
+    );
 };
 
 export default AdminRootLayout;

@@ -17,7 +17,7 @@ interface SideCategoryProps {
   children?: SideCategoryProps[];
 }
 
-const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string }> = ({ item, activePath }) => {
+const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string; child?: boolean }> = ({ item, activePath,child }) => {
   const hasChildren = item.children && item.children.length > 0;
   // Auto expand if current route is active or in one of children routes
   const isActive = activePath === item.to || activePath.startsWith(item.to + '/');
@@ -30,8 +30,8 @@ const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string }> = 
 
   return (
     <>
-      <div className="flex items-center p-4 gap-2.5">
-        {!hasChildren?(<Link to={item.to} className={cn('flex items-center gap-5 w-full h-[54px]', isActive ? 'font-bold' : 'font-medium')}>
+      <div className="flex items-center p-4 gap-2.5 select-none">
+        {!hasChildren?(<Link to={item.to} className={cn(`flex items-center gap-5 w-full h-[54px] `, isActive ? 'font-bold' : 'font-medium',child && '1xl:pl-8')}>
           {item.icon}
           <span className="font-['Akatab'] text-black h-[22px]">{item.label}</span>
         </Link>):(
@@ -43,7 +43,7 @@ const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string }> = 
             aria-label={`${isOpen ? 'Collapse' : 'Expand'} submenu for ${item.label}`}
             className="p-1 focus:outline-none flex items-center gap-2.5"
           >
-          <span className="font-['Akatab'] text-black h-[22px]">{item.label}</span>
+          <span className={`font-['Akatab'] text-black 1xl:h-[22px]`}>{item.label}</span>
           <ChevronDown className={cn('w-4 h-4 text-black transition-transform duration-600 p-[3px]', isOpen && 'rotate-180')} />
           </button>
           </>
@@ -52,15 +52,15 @@ const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string }> = 
       </div>
       {isOpen && hasChildren && (
         <>
-        <div className="border border-[#F1F1F1] transition-transform duration-600" />
-        <span className="text-[#F1F1F1]">Submenu
+        <hr className="bg-[#F1F1F1] transition-transform duration-600" />
+        <div className="text-[#F1F1F1]">
           {item.children!.map((child) => (
-            <SideCategory key={child.to} item={child} activePath={activePath} />
+            <SideCategory key={child.to} item={child} activePath={activePath} child={true} />
           ))}
-        </span>
+        </div>
         </>
       )}
-      {!isOpen &&<div className="border border-[#F1F1F1]" />}
+      {!isOpen &&<hr className="bg-[#F1F1F1]" />}
     </>
   );
 };
@@ -134,7 +134,7 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
         {
           to: '/payments',
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
-          label: 'payments',
+          label: 'Payments',
         },
         {
           to: '/payments/refund',

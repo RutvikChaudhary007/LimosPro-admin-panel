@@ -10,6 +10,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+*{
+  font-family: 'Akatab', 'Nunito variable', sans-serif;
+}
 
 :root {
   font-synthesis: none;
