@@ -4,6 +4,7 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import useLoading from '@/stores/useLoading';
 import Navbar from './Navbar';
+import Footer from './Footer';
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -63,7 +64,9 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <hr className="w-full bg-[#E7E7E7]" />
 
                     {children}
-
+                    
+                    {/* Footer */}
+                    <Footer />
                 </div>
             </div>
         </>
