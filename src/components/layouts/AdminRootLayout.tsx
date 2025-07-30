@@ -38,7 +38,7 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             )}
             <div className="flex min-h-screen">
                 {/* Sidebar for desktop */}
-                <div className="1xl:min-w-[300px] hidden md:block bg-[#FAFAFA] flex-col gap-6">
+                <div className="w-[300px] hidden md:block bg-[#FAFAFA] flex-col gap-6 fixed top-0 left-0 bottom-0">
                     <Sidebar />
                 </div>
 
@@ -59,7 +59,7 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 )}
 
                 {/* Main content */}
-                <div className="flex flex-col flex-1 overflow-hidden">
+                <div className="flex flex-col overflow-hidden w-[calc(100vw-300px)] translate-x-[300px]">
                     <Navbar />
                     <hr className="w-full bg-[#E7E7E7]" />
 

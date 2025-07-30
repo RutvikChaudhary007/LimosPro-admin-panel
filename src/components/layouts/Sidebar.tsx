@@ -70,7 +70,7 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
 
   const navigationItems: SideCategoryProps[] = [
     {
-      to: '/dashboard',
+      to: '/admin/dashboard',
       icon: <Icons path="/sidebarIcons/home.svg" alt="home icon" />,
       label: 'Dashboard',
     },
@@ -85,7 +85,7 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
           label: 'Regions',
         },
         {
-          to: '/region_management/admins',
+          to: '/region_management/region/admins',
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'Admins',
         },
@@ -215,7 +215,7 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
   if (isMobile && !isOpen) return null;
 
   return (
-    <nav aria-label="Sidebar Navigation" className="h-screen overflow-y-auto">
+    <nav aria-label="Sidebar Navigation" className="h-screen overflow-y-auto ">
       <div className="flex items-center justify-center w-full h-[88px] shadow-inner shadow-[#E7E7E7]">
         <div className="flex gap-1.5 1xl:w-[170px] 1xl:h-10">
           <img src="/LoginLogo.jpg" alt="logo" className="1xl:w-[42px] 1xl:h-[40px]" />

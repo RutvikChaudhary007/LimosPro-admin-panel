@@ -121,7 +121,7 @@ function AdminLoginPage() {
                         onCheckedChange={field.onChange}
                         ref={field.ref}
                         id="remember"
-                        className="data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:w-2.5 [&_[data-state=checked]>svg]:h-2.5 [&_[data-state=checked]>svg]:text-black"
+                        className="data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:w-2.5 [&_[data-state=checked]>svg]:h-2.5 [&_[data-state=checked]>svg]:text-[#5A5A5A]"
                       />
                     </FormControl>
                     <FormLabel htmlFor="remember" className="text-sm font-['Akatab'] text-[#5A5A5A] cursor-pointer">

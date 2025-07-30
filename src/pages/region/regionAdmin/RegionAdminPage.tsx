@@ -1,17 +1,18 @@
-import AdminRootLayout from "@/components/layouts/AdminRootLayout"
-import Header from "@/components/layouts/Header"
-import { getRegionColumns, type TRegion } from "@/components/regionAdminTable/column"
-import { DataTable } from "@/components/regionAdminTable/data-table"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import usePagination from "@/hooks/use-pagination"
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu"
-import { ChevronDown, Plus, Trash2 } from "lucide-react"
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { Link } from "react-router-dom"
+import AdminRootLayout from '@/components/layouts/AdminRootLayout';
+import Header from '@/components/layouts/Header';
+import { getRegionAdminColumns, type TRegionAdmin } from '@/components/regionAdminTable/column';
+import { DataTable } from '@/components/regionAdminTable/data-table';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import usePagination from '@/hooks/use-pagination';
+import { ChevronDown, Edit, Plus, Trash2 } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom';
+
 
 
 const showOptions = [
@@ -21,81 +22,43 @@ const showOptions = [
 ];
 
 
-const tableData: TRegion[] = [
-  { id: "1", regionName: "Region 1", admin: "Chris Johnson", },
-  { id: "2", regionName: "Region 1", admin: "Ovi Smith", },
-  { id: "3", regionName: "Region 1", admin: "June Parker", },
-  { id: "4", regionName: "Region 1", admin: "Casey Walker", },
-  { id: "5", regionName: "Region 1", admin: "Jordon Lee", },
-  { id: "6", regionName: "Region 1", admin: "Taylor Morgan", },
-  { id: "7", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "8", regionName: "Region 1", admin: "Chris Johnson", },
-  { id: "9", regionName: "Region 1", admin: "Ovi Smith" },
-  { id: "10", regionName: "Region 1", admin: "June Parker", },
-  { id: "11", regionName: "Region 1", admin: "Casey Walker", },
-  { id: "12", regionName: "Region 1", admin: "Jordon Lee", },
-  { id: "13", regionName: "Region 1", admin: "Taylor Morgan", },
-  { id: "14", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "15", regionName: "Region 1", admin: "Chris Johnson", },
-  { id: "16", regionName: "Region 1", admin: "Ovi Smith", },
-  { id: "17", regionName: "Region 1", admin: "June Parker", },
-  { id: "18", regionName: "Region 1", admin: "Casey Walker", },
-  { id: "19", regionName: "Region 1", admin: "Jordon Lee", },
-  { id: "20", regionName: "Region 1", admin: "Taylor Morgan", },
-  { id: "21", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "22", regionName: "Region 1", admin: "Chris Johnson", },
-  { id: "23", regionName: "Region 1", admin: "Ovi Smith" },
-  { id: "24", regionName: "Region 1", admin: "June Parker", },
-  { id: "25", regionName: "Region 1", admin: "Casey Walker", },
-  { id: "26", regionName: "Region 1", admin: "Jordon Lee", },
-  { id: "27", regionName: "Region 1", admin: "Taylor Morgan", },
-  { id: "28", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "29", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "30", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "31", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "32", regionName: "Region 1", admin: "Chris Johnson", },
-  { id: "33", regionName: "Region 1", admin: "Ovi Smith" },
-  { id: "34", regionName: "Region 1", admin: "June Parker", },
-  { id: "35", regionName: "Region 1", admin: "Casey Walker", },
-  { id: "36", regionName: "Region 1", admin: "Jordon Lee", },
-  { id: "37", regionName: "Region 1", admin: "Taylor Morgan", },
-  { id: "38", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "39", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "40", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "41", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "42", regionName: "Region 1", admin: "Chris Johnson", },
-  { id: "43", regionName: "Region 1", admin: "Ovi Smith" },
-  { id: "44", regionName: "Region 1", admin: "June Parker", },
-  { id: "45", regionName: "Region 1", admin: "Casey Walker", },
-  { id: "46", regionName: "Region 1", admin: "Jordon Lee", },
-  { id: "47", regionName: "Region 1", admin: "Taylor Morgan", },
-  { id: "48", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "49", regionName: "Region 1", admin: "Sam Patel", },
-  { id: "50", regionName: "Region 1", admin: "Sam Patel", },
+const tableData: TRegionAdmin[] = [
+  { id: "1", regionName: "Region 1", email: "name@email.com" },
+  { id: "2", regionName: "Region 2", email: "name@email.com" },
+  { id: "3", regionName: "Region 3", email: "name@email.com" },
+  { id: "4", regionName: "Region 4", email: "name@email.com" },
+  { id: "5", regionName: "Region 5", email: "name@email.com" },
+  { id: "6", regionName: "Region 6", email: "name@email.com" },
+  { id: "7", regionName: "Region 7", email: "name@email.com" },
+  { id: "8", regionName: "Region 8", email: "name@email.com" },
+  { id: "9", regionName: "Region 9", email: "name@email.com" },
+  { id: "10", regionName: "Region 10", email: "name@email.com" },
+  { id: "11", regionName: "Region 11", email: "name@email.com" },
+  { id: "12", regionName: "Region 12", email: "name@email.com" },
+  { id: "13", regionName: "Region 13", email: "name@email.com" },
+  { id: "14", regionName: "Region 14", email: "name@email.com" },
 ];
 
-
-
-function RegionDashboardPage() {
+function RegionAdminPage() {
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
-  const [data, setData] = useState<TRegion[]>(tableData);
-
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRegion>(data, 1, perPage);
+  const [data, setData] = useState<TRegionAdmin[]>(tableData);
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(data, 1, perPage);
 
   useEffect(() => {
     setPerPage(selected.value);
   }, [selected])
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
-  const handleDelete = useCallback((id: string) => {
-    setData((prev) =>
-      prev.filter((row) => row.id !== id))
-  }, []);
-  const handleAccess = useCallback((id: string) => { console.log("manage access:", id) }, []);
-  const columns = useMemo(() => getRegionColumns(handleEdit, handleDelete, handleAccess), [handleAccess, handleDelete, handleEdit])
 
+  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
+    const handleDelete = useCallback((id: string) => {
+      setData((prev) =>
+        prev.filter((row) => row.id !== id))
+    }, []);
+    const handleAccess = useCallback((id: string) => { console.log("manage access:", id) }, []);
+  const columns = useMemo(() => getRegionAdminColumns(handleEdit, handleDelete, handleAccess),[handleEdit, handleDelete, handleAccess])
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
+
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
@@ -178,11 +141,11 @@ function RegionDashboardPage() {
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Region Management</h2>
-              <h4><span className="text-[#959595] w-14 h-4">LIMOSPRO</span> <span className="text-[#959595] w-[116px] h-4">/ Region Management</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Regions</span></h4>
+              <h4> <span className="text-[#959595] w-[116px] h-4">Region Management</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Region Admins</span></h4>
             </div>
-            <Link to="/region_management/region/add-region">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to="/region_management/admin/create-region-admin">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
-              <span className="text-[#515151] font-medium text-sm">Add Regions</span>
+              <span className="text-[#515151] font-medium text-sm">Add Regional Admin</span>
             </Button>
             </Link>
           </div>
@@ -211,7 +174,7 @@ function RegionDashboardPage() {
           </DropdownMenu>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-              disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 setData((prev) =>
                   prev.filter((row) => !rowSelection[row.id])
@@ -224,16 +187,45 @@ function RegionDashboardPage() {
               <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
               <Trash2 size={14} className="text-[#959595] cursor-pointer" />
             </Button>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)} /></div>
+            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
+            value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            /></div>
           </div>
         </div>
         <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
+        {/* <div className="mt-5 py-4 border border-[#F1F1F1] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+          <Table className=" bg-[#FDFDFD] ">
+            <TableHeader className="w-full h-[31px] bg-[#F5F5F5]">
+              <TableRow className="w-full h-full ">
+                <TableHead className="w-[100px] px-4">#</TableHead>
+                <TableHead>Regions</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead className="text-center">Access</TableHead>
+                <TableHead className="text-right px-4">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="p-4">
+              {currentItems && currentItems.map((row, i) => (
+                <TableRow key={i}>
+                  <TableCell className="font-medium px-4"><Checkbox className="data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] " /></TableCell>
+                  <TableCell>{row?.regionName}</TableCell>
+                  <TableCell>{row?.email}</TableCell>
+                  <TableCell className="text-center"><Button variant={"outline"} className='cursor-pointer w-[108px] h-[33px] text-sm'>Manage Access</Button></TableCell>
+                  <TableCell className="text-right flex gap-2 justify-end px-4">
+                    <Button variant={"outline"} className='cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]'><Edit className='text-[#5A5A5A]' /></Button>
+                    <Button variant={"outline"} className='cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]'><Trash2 className='text-[#5A5A5A]' /></Button>
+                  </TableCell>
+                </TableRow>
+              ))}
 
+            </TableBody>
+          </Table>
+
+        </div> */}
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
@@ -263,4 +255,4 @@ function RegionDashboardPage() {
   )
 }
 
-export default RegionDashboardPage
+export default RegionAdminPage
