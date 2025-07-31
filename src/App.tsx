@@ -8,6 +8,11 @@ import AddRegionPage from "./pages/region/AddRegionPage";
 import RegionAdminPage from "./pages/region/regionAdmin/RegionAdminPage";
 import AddRegionAdmin from "./pages/region/regionAdmin/AddRegionAdmin";
 import AffiliatePage from "./pages/affiliate/AffiliatePage";
+import ChauffeurPage from "./pages/chauffeur/ChauffeurPage";
+import BookingPage from "./pages/booking/BookingPage";
+import UsersPage from "./pages/users/UsersPage";
+import FleetPage from "./pages/fleet/FleetPage";
+import TripsPage from "./pages/trips/TripsPage";
 
 function App() {
 
@@ -22,6 +27,11 @@ function App() {
           <Route path={'/region_management/region/admins'} element={<RegionAdminPage />} />
           <Route path={'/region_management/admin/create-region-admin'} element={<AddRegionAdmin />} />
           <Route path={'/affiliate'} element={<AffiliatePage />} />
+          <Route path={'/chauffeur'} element={<ChauffeurPage />} />
+          <Route path={'/bookings'} element={<BookingPage />} />
+          <Route path={'/users'} element={<UsersPage />} />
+          <Route path={'/fleets'} element={<FleetPage />} />
+          <Route path={'/trips'} element={<TripsPage />} />
       </Routes>
       </BrowserRouter>
     </TooltipProvider>

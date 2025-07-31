@@ -41,7 +41,7 @@ const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string; chil
             onClick={toggleOpen}
             aria-expanded={isOpen}
             aria-label={`${isOpen ? 'Collapse' : 'Expand'} submenu for ${item.label}`}
-            className="p-1 focus:outline-none flex items-center gap-2.5"
+            className="p-1 focus:outline-none flex items-center gap-2.5 cursor-pointer"
           >
           <span className={`font-['Akatab'] text-black 1xl:h-[22px]`}>{item.label}</span>
           <ChevronDown className={cn('w-4 h-4 text-black transition-transform duration-600 p-[3px]', isOpen && 'rotate-180')} />
@@ -217,9 +217,9 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
   return (
     <nav aria-label="Sidebar Navigation" className="h-screen overflow-y-auto ">
       <div className="flex items-center justify-center w-full h-[88px] shadow-inner shadow-[#E7E7E7]">
-        <div className="flex gap-1.5 1xl:w-[170px] 1xl:h-10">
-          <img src="/LoginLogo.jpg" alt="logo" className="1xl:w-[42px] 1xl:h-[40px]" />
-          <img src="/Frame.jpg" alt="logo" className="1xl:w-[120px] 1xl:h-[40px]" />
+        <div className="flex gap-1.5 w-[170px] h-10">
+          <img src="/LoginLogo.jpg" alt="logo" className="w-[42px] 1xl:h-[40px]" />
+          <img src="/Frame.jpg" alt="logo" className="w-[120px] 1xl:h-[40px]" />
         </div>
       </div>
       <div >

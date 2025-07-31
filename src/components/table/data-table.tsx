@@ -36,7 +36,8 @@ export function DataTable<TData, TValue>({
      const [internalSelection, setInternalSelection] = useState({});
 
   const [internalFilter, setInternalFilter] = useState("");
-  console.log("globalFilter:",globalFilter)
+  // console.log("globalFilter:",globalFilter)
+  // console.log("internalFilter:",internalFilter)
   const table = useReactTable({
     data,
     columns,

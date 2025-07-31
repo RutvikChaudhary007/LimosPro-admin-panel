@@ -1,61 +1,95 @@
-import AdminRootLayout from '@/components/layouts/AdminRootLayout';
+import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
-import { getRegionAdminColumns, type TRegionAdmin } from '@/components/table/column';
+import { getStatusColor, getUsers, type TUsers } from '@/components/table/column';
 import { DataTable } from '@/components/table/data-table';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import usePagination from '@/hooks/use-pagination';
-import { ChevronDown, Edit, Plus, Trash2 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChevronDown, Plus, Trash2 } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const showStatus = [
+  { label: 'Active', value: 'active' },
+  { label: 'Pending', value: 'pending' },
+  { label: 'Inactive', value: 'inactive' },
+  { label: 'Banned', value: 'banned' },
+]
+
+const showTime = [
+  { label: 'All Time', value: '' },
+  { label: 'Weekly', value: 'weekly' },
+  { label: 'Monthly', value: 'monthly' },
+  { label: 'Yearly', value: 'yearly' },
+]
+
+const tableData: TUsers[] = [
+    {
+            id: "a4067b19-271d-4352-90dc-458f5fa97da3",
+            firstName: "NoahAnderson",
+            lastName: "",
+            email: "testuser@qalbit.com",
+            phoneNumber: "+1-424-231-3438",
+            dateOfBirth: "",
+            gender: "male",
+            status: "active",
+            paymentMethod: "creditCard",
+            profilePicture: "",
+            social: "",
+            createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+            updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+            deletedAt: ""
+        },
+    {
+            id: "b4067b19-271d-4352-90dc-458f5fa97da3",
+            firstName: "Charlotte_Brown",
+            lastName: "",
+            email: "testuser2@qalbit.com",
+            phoneNumber: "+1-424-133-7698",
+            dateOfBirth: "",
+            gender: "male",
+            status: "banned",
+            paymentMethod: "creditCard",
+            profilePicture: "",
+            social: "",
+            createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+            updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+            deletedAt: ""
+        },
+    {
+            id: "c4067b19-271d-4352-90dc-458f5fa97da4",
+            firstName: "Liam_Wilson99",
+            lastName: "",
+            email: "testuser3@qalbit.com",
+            phoneNumber: "+1-424-041-6798",
+            dateOfBirth: "",
+            gender: "male",
+            status: "inactive",
+            paymentMethod: "creditCard",
+            profilePicture: "",
+            social: "",
+            createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+            updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+            deletedAt: ""
+        },
+]
+function UsersPage() {
+    const perPage = 10;
+  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
+  const [selectedTime, setSelectedTime] = useState(showTime[0]);
+  const [data, setData] = useState<TUsers[]>(tableData);
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data, 1, perPage);
 
 
-const showOptions = [
-  { value: 10, label: "Show 10" },
-  { value: 20, label: "Show 20" },
-  { value: 30, label: "Show 30" },
-];
-
-
-const tableData: TRegionAdmin[] = [
-  { id: "1", regionName: "Region 1", email: "name@email.com" },
-  { id: "2", regionName: "Region 2", email: "name@email.com" },
-  { id: "3", regionName: "Region 3", email: "name@email.com" },
-  { id: "4", regionName: "Region 4", email: "name@email.com" },
-  { id: "5", regionName: "Region 5", email: "name@email.com" },
-  { id: "6", regionName: "Region 6", email: "name@email.com" },
-  { id: "7", regionName: "Region 7", email: "name@email.com" },
-  { id: "8", regionName: "Region 8", email: "name@email.com" },
-  { id: "9", regionName: "Region 9", email: "name@email.com" },
-  { id: "10", regionName: "Region 10", email: "name@email.com" },
-  { id: "11", regionName: "Region 11", email: "name@email.com" },
-  { id: "12", regionName: "Region 12", email: "name@email.com" },
-  { id: "13", regionName: "Region 13", email: "name@email.com" },
-  { id: "14", regionName: "Region 14", email: "name@email.com" },
-];
-
-function RegionAdminPage() {
-  const [perPage, setPerPage] = useState(10);
-  const [selected, setSelected] = useState(showOptions[0]);
-  const [data, setData] = useState<TRegionAdmin[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(data, 1, perPage);
-
-  useEffect(() => {
-    setPerPage(selected.value);
-  }, [selected])
-
+  const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
   const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
     const handleDelete = useCallback((id: string) => {
       setData((prev) =>
-        prev.filter((row) => row.id != id))
+        prev.filter((row) => row.id !== id))
     }, []);
-    const handleAccess = useCallback((id: string) => { console.log("manage access:", id) }, []);
-  const columns = useMemo(() => getRegionAdminColumns(handleEdit, handleDelete, handleAccess),[handleEdit, handleDelete, handleAccess])
+  const columns = useMemo(() => getUsers(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
@@ -140,31 +174,32 @@ function RegionAdminPage() {
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
           <div className="w-full h-full flex items-center justify-between">
             <div>
-              <h2 className="font-medium text-xl text-black">Region Management</h2>
-              <h4> <span className="text-[#959595] w-[116px] h-4">Region Management</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Region Admins</span></h4>
+              <h2 className="font-medium text-xl text-black">User</h2>
+              <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ User</span></h4>
             </div>
-            <Link to="/region_management/admin/create-region-admin">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to="/region_management/admin/create-user">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
-              <span className="text-[#515151] font-medium text-sm">Add Regional Admin</span>
+              <span className="text-[#515151] font-medium text-sm">Add User</span>
             </Button>
             </Link>
           </div>
         </Header>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-2.5">
+          <div className="flex items-center gap-3">
           <DropdownMenu >
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="w-56 h-10 flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] bg-[#FDFDFD] cursor-pointer">
-                {selected.label} <ChevronDown className="ml-2" />
+              <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}>
+                {selectedStatus.label} <ChevronDown className="ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer" align="start">
               <DropdownMenuGroup>
-                {showOptions.map(option => (
+                {showStatus.map(option => (
                   <DropdownMenuItem
                     key={option.value}
-                    className="flex items-center justify-between hover:bg-[#F1F1F1]"
-                    onClick={() => setSelected(option)}
+                    className={`flex items-center rounded cursor-pointer justify-between focus:bg-gray-300 focus:text-black ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
+                    onClick={() => setSelectedStatus(option)}
                   >
                     {option.label} <ChevronDown className="ml-2" />
                   </DropdownMenuItem>
@@ -172,16 +207,34 @@ function RegionAdminPage() {
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+          <DropdownMenu >
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] `}>
+                {selectedTime.label} <ChevronDown className="ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer" align="start">
+              <DropdownMenuGroup>
+                {showTime.map(option => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF]`}
+                    onClick={() => setSelectedTime(option)}
+                  >
+                    {option.label} <ChevronDown className="ml-2" />
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
             <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
-                setData((prev) =>
-                  prev.filter((row,i) => !rowSelection[i])
+                setData((prev) =>prev.filter((row,i) => !rowSelection[i])
                 );
-                console.log("data:", data);
-                console.log("rowSelection:", rowSelection);
                 setRowSelection({});
               }}
             >
@@ -199,35 +252,7 @@ function RegionAdminPage() {
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
-        {/* <div className="mt-5 py-4 border border-[#F1F1F1] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-          <Table className=" bg-[#FDFDFD] ">
-            <TableHeader className="w-full h-[31px] bg-[#F5F5F5]">
-              <TableRow className="w-full h-full ">
-                <TableHead className="w-[100px] px-4">#</TableHead>
-                <TableHead>Regions</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead className="text-center">Access</TableHead>
-                <TableHead className="text-right px-4">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="p-4">
-              {currentItems && currentItems.map((row, i) => (
-                <TableRow key={i}>
-                  <TableCell className="font-medium px-4"><Checkbox className="data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] " /></TableCell>
-                  <TableCell>{row?.regionName}</TableCell>
-                  <TableCell>{row?.email}</TableCell>
-                  <TableCell className="text-center"><Button variant={"outline"} className='cursor-pointer w-[108px] h-[33px] text-sm'>Manage Access</Button></TableCell>
-                  <TableCell className="text-right flex gap-2 justify-end px-4">
-                    <Button variant={"outline"} className='cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]'><Edit className='text-[#5A5A5A]' /></Button>
-                    <Button variant={"outline"} className='cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]'><Trash2 className='text-[#5A5A5A]' /></Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-
-            </TableBody>
-          </Table>
-
-        </div> */}
+        
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
@@ -257,4 +282,4 @@ function RegionAdminPage() {
   )
 }
 
-export default RegionAdminPage
+export default UsersPage

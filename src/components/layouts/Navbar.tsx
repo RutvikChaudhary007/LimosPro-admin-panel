@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <nav className="1xl:px-10 1xl:py-5 1xl:h-[88px select-none">
+    <nav className="1xl:px-10 1xl:py-5 1xl:h-[88px] select-none">
       <div className="w-full h-full flex justify-between">
         <div className="flex 1xl:w-[443px] 1xl:h-[43px] items-center gap-6">
           <img src="/navbar/bars.svg" alt="bar icon" className="cursor-pointer"/>
@@ -15,7 +15,7 @@ const Navbar = () => {
             <img src="/navbar/globe.svg" alt="globe icon" />
             <div className="font-['Akatab'] 1xl:w-[50px] 1xl:h-[22px]">English</div>
           </div>
-          <div className="1xl:w-[295px] h-full 1xl:px-1.5 1xl:py-3 flex items-center bg-[#F8F8F8] shadow-inner shadow-[#F3F3F3] rounded-[6px]">
+          <div className="1xl:w-[295px] h-full px-1.5 1xl:py-3 flex items-center bg-[#F8F8F8] shadow-inner shadow-[#F3F3F3] rounded-[6px]">
             <img className="cursor-pointer w-3 h-3" src="/navbar/magnifying-glass.svg" alt="mag. glass icon" />
             <Input className="font-['Akatab'] text-sm bg-transparent shadow-none focus:border-0 focus-visible:ring-0 focus:shadow-none focus:outline-0 border-0 outline-0 placeholder:text-[#D4D4D4]" placeholder="Search for booking, fleets, Chauffeurs"/>
           </div>

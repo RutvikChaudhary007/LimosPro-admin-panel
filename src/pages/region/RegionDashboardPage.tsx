@@ -1,7 +1,7 @@
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
-import { getRegionColumns, type TRegion } from "@/components/regionAdminTable/column"
-import { DataTable } from "@/components/regionAdminTable/data-table"
+import { getRegionColumns, type TRegion } from "@/components/table/column"
+import { DataTable } from "@/components/table/data-table"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -210,11 +210,12 @@ function RegionDashboardPage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+            <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
               disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 setData((prev) =>
-                  prev.filter((row) => !rowSelection[row.id])
+                  prev.filter((row,i) => !rowSelection[i])
                 );
                 console.log("data:", data);
                 console.log("rowSelection:", rowSelection);
@@ -224,6 +225,7 @@ function RegionDashboardPage() {
               <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
               <Trash2 size={14} className="text-[#959595] cursor-pointer" />
             </Button>
+            </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)} /></div>

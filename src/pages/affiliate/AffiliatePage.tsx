@@ -1,7 +1,7 @@
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
-import { getAffiliate, getStatusColor, type TAffiliate } from '@/components/regionAdminTable/column';
-import { DataTable } from '@/components/regionAdminTable/data-table';
+import { getAffiliate, getStatusColor, type TAffiliate } from '@/components/table/column';
+import { DataTable } from '@/components/table/data-table';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
@@ -414,9 +414,9 @@ function AffiliatePage() {
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Affiliate</h2>
-              <h4> <span className="text-[#959595] w-[116px] h-4">LIMOSPRO</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Affiliate</span></h4>
+              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Affiliate</span></h4>
             </div>
-            <Link to="/region_management/admin/create-region-admin">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to="/region_management/admin/create-affiliate">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add Affiliate</span>
             </Button>
@@ -448,7 +448,7 @@ function AffiliatePage() {
           </DropdownMenu>
           <DropdownMenu >
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] `}>
+              <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] ${"cursor-pointer"} bg-[#FFFFFF] `}>
                 {selectedTime.label} <ChevronDown className="ml-2" />
               </Button>
             </DropdownMenuTrigger>
@@ -468,20 +468,19 @@ function AffiliatePage() {
           </DropdownMenu>
           </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
-            <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+            <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
+            <Button variant={"outline"} className={`p-2.5 w-[137px] h-full rounded flex items-center justify-evenly   bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0`}
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
-                setData((prev) =>
-                  prev.filter((row) => !rowSelection[row.id])
+                setData((prev) => prev.filter((row,i) => !rowSelection[i])
                 );
-                console.log("data:", data);
-                console.log("rowSelection:", rowSelection);
                 setRowSelection({});
               }}
             >
               <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
               <Trash2 size={14} className="text-[#959595] cursor-pointer" />
             </Button>
+            </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
             value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
