@@ -1,0 +1,581 @@
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { useForm } from "react-hook-form"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Input } from "../ui/input"
+import isFieldDisabled from "@/utils/disableFormField"
+import { useRef, useState, type FC } from "react"
+import type { IChauffeurFormProps } from "@/types/chauffeur"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { Button } from "../ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import AddressInput from "../AddressInput"
+import { Switch } from "../ui/switch"
+// import { geoDecoding } from "@/utils/googleMaps"
+// import { useLoadScript } from "@react-google-maps/api";
+import type { TChauffeur } from "../table/column"
+
+
+const affiliate = [
+    {
+        id: "ac28bba6-7823-4a84-8f57-89d1a7d160e0",
+        affiliateName: "Zenith Holdings",
+        userId: "1694b4a2-c5dd-4e1c-9fa4-ebe70687b18f",
+        isChauffer: true,
+        companyName: "bhoraniya enterpricebb",
+        taxId: "tax-husainsdfd",
+        entityType: "safe",
+        businessEmail: "akbar.bhoraniyddfa2@qalbit.com",
+        businessContactNumber: "1234567890",
+        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+        businessLocation: {
+            latitude: 18.530802513337985,
+            longitude: 73.85830250715696
+        },
+        commissionRate: "23.00",
+        documents: [
+            {
+                size: 120009,
+                status: "pending",
+                fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045264-resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf",
+                mimetype: "application/pdf",
+                originalName: "resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf"
+            },
+            {
+                size: 157039,
+                status: "pending",
+                fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045264-Screenshot%20%288%29.png",
+                mimetype: "image/png",
+                "originalName": "Screenshot (8).png"
+            },
+            {
+                size: 254971,
+                status: "pending",
+                fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045269-Screenshot%20%287%29.png",
+                mimetype: "image/png",
+                "originalName": "Screenshot (7).png"
+            }
+        ],
+        stripeAccountId: "acct_1RtRSU3C8pRaWHyZ",
+        stripeAccountStatus: "inPogress",
+        status: "pending",
+        createdAt: "2025-08-07T10:54:10.651Z",
+        updatedAt: "2025-08-07T10:54:10.651Z",
+        chauffeurs: []
+    }
+]
+const maxSize = 10 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = ["application/pdf", "image/jpeg", "image/png"];
+
+const formSchema = z.object({
+    firstName: z.string().refine(value => value.trim() !== "", {
+        message: "First name cannot be empty or just whitespace.",
+    }).min(3, { message: "First name must be at least 3 characters" }),
+    lastName: z.string().refine(value => value.trim() !== "", {
+        message: "Last name cannot be empty or just whitespace.",
+    }).min(3, { message: "Last name must be at least 3 characters" }),
+    location: z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+    }),
+    businessAddress: z.string().refine(value => value.trim() !== "", {
+        message: "Business Address cannot be empty or just whitespace.",
+    }).min(3, { message: "Business Address must be at least 3 characters" }),
+    email: z.email(),
+    // businessContactNumber: z
+    //     .string()
+    //     .min(1, { message: "Phone is required" })
+    //     .regex(/^\d+$/, { message: "Must be number" })
+    //     .transform((v) => Number(v))
+    //     .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    affiliateId: z.string().refine(value => value.trim() !== "", {
+        message: "Affiliate Id cannot be empty or just whitespace.",
+    }),
+    panNumber: z.string().refine(value => value.trim() !== "", {
+        message: "Pan Number cannot be empty or just whitespace.",
+    }),
+    licenseNumber: z.string().refine(value => value.trim() !== "", {
+        message: "License Number cannot be empty or just whitespace.",
+    }),
+    vehicleId: z.string().refine(value => value.trim() !== "", {
+        message: "Vehicle Id cannot be empty or just whitespace.",
+    }),
+    availability: z.boolean(),
+    password: z.string().refine(value => value.trim() !== "", {
+        message: "Password cannot be empty or just whitespace.",
+    }).min(8).max(32),
+    gratuity: z.string().refine(value => value.trim() !== "", {
+        message: "Gratuity cannot be empty or just whitespace.",
+    }),
+    documents: z.custom<FileList>().check((ctx) => {
+        const list = ctx.value;
+        if (list.length < 1) {
+            ctx.issues.push({ code: "custom", message: "Select at least 1 file", input: list });
+        }
+        //   console.log("list:")
+        if (list.length > 4) {
+            ctx.issues.push({ code: "custom", message: "You can upload up to 4 files", input: list });
+        }
+    })
+        .transform(list => Array.from(list)).refine(files => files.every(f => f.size <= maxSize), {
+            message: `Max size ${maxSize / (1024 * 1024)}MB`,
+        })
+        .refine(files => files.every(f => ALLOWED_MIME_TYPES.includes(f.type)), {
+            message: "Invalid file types detected",
+        }),
+    status: z.string().optional(), 
+});
+
+interface IAddressObj {
+    zip: string;
+    city: string;
+    address: string;
+    state: string;
+    country: string;
+    location: {
+        latitude: number | null;
+        longitude: number | null;
+    }
+}
+export type TChauffeurForm = z.infer<typeof formSchema>;
+const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disabledFields, type }) => {
+
+    const [newAddress, setNewAddress] = useState("11 Greenwich Street, New York, NY, 10124, US");
+    const [addressObj, setAddressObj] = useState<IAddressObj>();
+    const [isAddressValid, setIsAddressValid] = useState(false);
+
+    const transformInitialData = async (data?: TChauffeur): TChauffeurForm | undefined => {
+        if (!data) return undefined;
+        // console.log("edit chauffeur formdata:>",data)
+        return {
+            firstName: data?.user?.firstName,
+            lastName: data?.user?.lastName,
+            email: data?.user?.email,
+            password: data?.password,
+            businessAddress: data?.businessAddress,
+            location: data?.location,
+            documents: data?.documents,
+            status: data?.status,
+            affiliateId: data?.affiliateId,
+            panNumber: data?.panNumber,
+            licenseNumber: data?.licenseNumber,
+            vehicleId: data?.vehicleId,
+            availability: data?.availability,
+            gratuity: data?.gratuity
+        }; 
+    };
+
+    const fileRef = useRef<HTMLInputElement | null>(null);
+    const form = useForm<TChauffeurForm>({
+        resolver: zodResolver(formSchema),
+        defaultValues: transformInitialData(initialData) || {
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            businessAddress: "",
+            location: {
+                latitude: 0,
+                longitude: 0,
+            },
+            documents: [],
+            status: "",
+        }
+    });
+
+    const documents = form.watch("documents");
+    const fileCount = documents?.length || 0;
+
+    const handleFormSubmit = async (data: unknown) => {
+        try {
+            // console.log("data:>>",data)
+            if (addressObj && data) {
+                data.location = addressObj.location;
+            }
+            await onSubmit(data);
+        } catch (error) {
+            console.error("Error:", error)
+        }
+    }
+    const [statusValue, setStatusValue] = useState<{ status: string, affiliate: string }>({
+        status: "",
+        affiliate: ""
+    });
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+                {/* Chauffeur Details */}
+                <Card className="overflow-y-auto rounded">
+                    <CardHeader>
+                        <CardTitle>{type}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-6 gap-5">
+                        <FormField
+                            control={form.control}
+                            name="firstName"
+                            render={({ field }) => (
+                                <FormItem className="col-span-3 col-start-1">
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                                        <Input
+                                            placeholder="e.g., Jhon"
+                                            disabled={isFieldDisabled(disabledFields, "firstName")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.firstName ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.firstName?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="lastName"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
+                                    <FormLabel>Last Name</FormLabel>
+                                    <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
+                                        <Input
+                                            placeholder="e.g., Doe"
+                                            disabled={isFieldDisabled(disabledFields, "lastName")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.lastName ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.lastName?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="affiliateId"
+                            render={({ field }) => (
+                                <FormItem className="w-full col-span-4 col-start-1">
+                                    <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Affiliate</FormLabel>
+                                    <Select value={statusValue.affiliate} onValueChange={(v) => {
+                                        field.onChange(v);
+                                        setStatusValue({ ...statusValue, affiliate: v })
+                                    }} defaultValue={field.value}>
+                                        <FormControl className="w-full min-w-full rounded">
+                                            <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
+                                                <SelectValue className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="">
+                                            {affiliate.map(option => (
+                                                <SelectItem className="cursor-pointer" key={option.id} value={option.id}>{option.affiliateName}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+
+                                    </Select>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.affiliateId ? 'visible text-red-600' : 'invisible'
+                                            } `}
+                                    >
+                                        {form.formState.errors.affiliateId?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                                <FormItem className="w-full col-span-2 col-start-5">
+                                    <FormLabel>Select Status</FormLabel>
+                                    <Select value={statusValue.status} onValueChange={(v) => {
+                                        field.onChange(v);
+                                        setStatusValue({ ...statusValue, status: v })
+                                    }} defaultValue={field.value}>
+                                        <FormControl className="w-full min-w-full rounded">
+                                            <SelectTrigger className="cursor-pointer w-full">
+                                                <SelectValue className="" placeholder="select status" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="">
+                                            {affiliate.map(option => (
+                                                <SelectItem className="cursor-pointer" key={option.id} value={option.status}>{option.status}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+
+                                    </Select>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.status ? 'visible text-red-600' : 'invisible'
+                                            } `}
+                                    >
+                                        {form.formState.errors.status?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2 col-start-1">
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl className="">
+                                        <Input
+                                            className="rounded placeholder:text-[#E6E6E6] font-medium"
+                                            placeholder="name@email.com"
+                                            disabled={isFieldDisabled(disabledFields, "email")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.email ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.email?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2 col-start-3 ">
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl className="">
+                                        <Input
+                                            type="password"
+                                            className="rounded placeholder:text-[#E6E6E6] font-medium"
+                                            placeholder="name@email.com"
+                                            disabled={isFieldDisabled(disabledFields, "password")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.password ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.password?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="businessAddress"
+                            render={({ field }) => (
+                                <FormItem className="px-3 py-4 rounded col-span-2 col-start-5 placeholder:text-[#E6E6E6] font-medium">
+                                    <FormLabel>Location</FormLabel>
+                                     <FormControl>
+                                        <AddressInput
+                                            value={newAddress}
+                                            field={field}
+                                            onChange={(value) => {
+                                                setNewAddress(value);
+                                                if (form.formState.errors.businessAddress) {
+                                                    form.clearErrors("businessAddress");
+                                                }
+                                                field.onChange(value);
+                                            }}
+                                            onUpdate={setAddressObj}
+                                            onValidityChange={setIsAddressValid}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`inline-block h-7 text-left align-middle mt-1 invisible ${form.formState.errors.businessAddress ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.businessAddress?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="panNumber"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormLabel>PAN Number</FormLabel>
+                                    <FormControl className="">
+                                        <Input
+                                            className="rounded placeholder:text-[#E6E6E6] font-medium"
+                                            placeholder="ABCDE1234F"
+                                            disabled={isFieldDisabled(disabledFields, "panNumber")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.password ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.password?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="licenseNumber"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2 ">
+                                    <FormLabel>License  Number</FormLabel>
+                                    <FormControl className="">
+                                        <Input
+                                            className="rounded placeholder:text-[#E6E6E6] font-medium"
+                                            placeholder="A1234567"
+                                            disabled={isFieldDisabled(disabledFields, "licenseNumber")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.licenseNumber ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.licenseNumber?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="vehicleId"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormLabel>Vehicle ID</FormLabel>
+                                    <FormControl className="">
+                                        <Input
+                                            className="rounded placeholder:text-[#E6E6E6] font-medium"
+                                            placeholder="FL-12345"
+                                            disabled={isFieldDisabled(disabledFields, "vehicleId")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.vehicleId ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.vehicleId?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="availability"
+                            render={({ field }) => (
+                                <FormItem className="col-span-2">
+                                    <FormLabel>Availability</FormLabel>
+                                    <FormControl className="">
+                                        <Switch
+                    className="cursor-pointer"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.availability ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.availability?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="gratuity"
+                            render={({ field }) => (
+                                <FormItem className="col-span-4">
+                                    <FormLabel>Gratuity</FormLabel>
+                                    <FormControl className="">
+                                        <Input
+                                            className="rounded placeholder:text-[#E6E6E6] font-medium"
+                                            placeholder="0"
+                                            disabled={isFieldDisabled(disabledFields, "vehicleId")}
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.gratuity ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.gratuity?.message}
+                                    </FormMessage>
+                                </FormItem>)}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="documents"
+                            defaultValue={[]}
+                            render={({ field }) => (
+                                <FormItem className="col-span-6 rounded ">
+                                    <FormLabel>Upload Documents: {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
+                                        <span
+                                            key={idx}
+                                            className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
+                                        >
+                                            {text}{" "}
+                                        </span>
+                                    ))}</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="rounded cursor-pointer placeholder-[#E6E6E6]"
+                                            type="file"
+                                            ref={fileRef}
+                                            multiple
+                                            accept="image/jpeg,image/png,application/pdf"
+                                            value={undefined}
+                                            onChange={e => {
+                                                const files = e.target.files;
+                                                if (files) field.onChange(Array.from(files));
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </CardContent>
+                    <div className="flex items-center justify-start rounded px-6 space-x-2.5">
+                        <Button className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50" variant={"secondary"} type="button" onClick={() => {
+                            form.reset({
+                                firstName: "",
+                                lastName: "",
+                                email: "",
+                                password: "",
+                                businessAddress: "",
+                                location: { latitude: 0, longitude: 0 },
+                                affiliateId: "",
+                                panNumber: "",
+                                licenseNumber: "",
+                                vehicleId: "",
+                                documents: [],
+                                status: ""
+                            });
+                            setStatusValue({ status: "", affiliate: "" });
+                            if (fileRef.current) fileRef.current.value = "";
+                            setNewAddress("");
+                            setAddressObj(undefined);
+                            setIsAddressValid(false);
+                            // form.reset();
+                            // form.setValue("status", "")
+                            // form.resetField('documents');
+                            // setStatusValue({
+                            //     status: "",
+                            //     entityType: ""
+                            // });
+                            // if (fileRef.current) fileRef.current.value = '';
+                            // setNewAddress("");
+                        }} >
+                            Clear Alls
+                        </Button>
+                        <Button className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50" variant={"secondary"} type="submit" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+                        </Button>
+                    </div>
+                </Card>
+            </form>
+        </Form>
+    )
+}
+
+export default ChauffeurForm

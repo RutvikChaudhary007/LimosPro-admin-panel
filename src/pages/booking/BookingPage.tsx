@@ -102,7 +102,7 @@ function BookingPage() {
     });
 
     const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
-    const columns = useMemo(() => getBooking(handleView), [handleView])
+    const columns = getBooking(handleView);
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState({});
 

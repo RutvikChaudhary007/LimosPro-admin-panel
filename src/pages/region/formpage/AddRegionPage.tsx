@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { constant } from '@/lib/constant'
 
 const formSchema = z.object({
   regionName: z.string().min(2, {
@@ -25,12 +26,12 @@ function AddRegionPage() {
     });
     async function onSubmit(values: z.infer<typeof formSchema>) {
     await new Promise(res => setTimeout(res, 1200)); // artificial delay to notice isSubmitting
-  console.log("data:", values);
+  // console.log("data:", values);
   }
   return (
     <AdminRootLayout>
         <div className='px-10 py-6 h-[calc(100vh-146px)]'>
-            <Link to="/region_management/regions">
+            <Link to={constant.ROUTING_URLS.REGION}>
       <Button variant="outline" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft/> Back</Button>
             </Link>
       <Header className='p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5'>

@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { constant } from "@/lib/constant";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -42,7 +43,7 @@ function AdminLoginPage() {
       console.log(data);
       res("ok");
       form.reset();
-      navigate("/admin/dashboard")
+      navigate(constant.ROUTING_URLS.DASHBOARD)
     }, 2000));
   };
 
@@ -94,12 +95,12 @@ function AdminLoginPage() {
                 name="password"
                 render={({ field, fieldState }) => (
                   <FormItem className="relative mb-5">
-                    <FormLabel htmlFor="password" className="font-['Akatab']">Password</FormLabel>
+                    <FormLabel htmlFor="password" className="">Password</FormLabel>
                     <FormControl>
                       <Input {...field} id="password" type={showPassword ? "text" : "password"} className="h-[54px] rounded font-['Akatab']" />
                     </FormControl>
                     <img
-                      className="absolute right-[21px] top-[53.5px] w-4 h-4 min-h-4 min-w-4 cursor-pointer"
+                      className="absolute right-[21px] top-[44px] w-4 h-4 min-h-4 min-w-4 cursor-pointer"
                       src={showPassword ? '/eye.svg' : '/eye-off.svg'}
                       alt="Toggle password visibility"
                       onClick={() => setShowPassword(!showPassword)}
@@ -114,7 +115,7 @@ function AdminLoginPage() {
                 control={form.control}
                 name="remember"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-2.5 mt-8 h-[19px]">
+                  <FormItem className="flex items-center gap-2.5 mt-8 h-[19px] cursor-pointer">
                     <FormControl>
                       <Checkbox
                         checked={field.value}

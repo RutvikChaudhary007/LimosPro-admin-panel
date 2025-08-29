@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
+import { constant } from '@/lib/constant';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -76,15 +77,19 @@ const tableData: TUsers[] = [
         },
 ]
 function UsersPage() {
-    const perPage = 10;
+  const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
   const [data, setData] = useState<TUsers[]>(tableData);
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data, 1, perPage);
 
 
-  const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
+  const handleView = useCallback((id: string) => { console.log("view:", id)
+    window.location.href = `${constant.ROUTING_URLS.VIEW_USERS.replace(":id",id)}`;
+   }, []);
+  const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
+    window.location.href = `${constant.ROUTING_URLS.EDIT_USERS.replace(":id",id)}`;
+   }, []);
     const handleDelete = useCallback((id: string) => {
       setData((prev) =>
         prev.filter((row) => row.id !== id))
@@ -177,7 +182,7 @@ function UsersPage() {
               <h2 className="font-medium text-xl text-black">User</h2>
               <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ User</span></h4>
             </div>
-            <Link to="/region_management/admin/create-user">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to={constant.ROUTING_URLS.CREATE_USERS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add User</span>
             </Button>

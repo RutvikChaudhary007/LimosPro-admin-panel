@@ -1,13 +1,11 @@
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
-import Navbar from "@/components/layouts/Navbar";
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card";
-import { ArrowDown, ChevronDown, Dot, TrendingDown, TrendingUp } from "lucide-react";
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
+import {  ChevronDown, Dot, TrendingUp } from "lucide-react";
+import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
 import doticon from "../../../public/graph/dot.svg";
-import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import TableAndPieChart from "@/components/dashboard/TableAndPieChart";
+import React from "react";
 interface Point { month: string; earnings: number; }
 
 const data = [
@@ -163,8 +161,8 @@ function DashboardPage() {
                    <table className="w-full table-fixed">
                           <tbody className="">
                             {tableData.map((data,i)=>(
-                              <>
-                            <tr className="h-[35px]" key={i}>
+                              <React.Fragment key={i}>
+                            <tr className="h-[35px]" >
                               <td className="w-full h-full text-left ">
                                 <p className="w-full text-[#3A3A3A] text-sm">{data?.userName}</p>
                                 <p className="w-full text-[#939393] text-xs">{data?.commute}</p>
@@ -174,7 +172,7 @@ function DashboardPage() {
                               <td className="w-full h-full text-right"><Button className={btnStatus(data?.status)}>{data?.status}</Button></td>
                             </tr>
                             <hr className="bg-[#EEEEEE] w-full mt-2 mb-3"/>
-                            </>
+                            </React.Fragment>
                             ))}
                           </tbody>
                     </table>

@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState, type JSX } from "react"
 import { Link } from "react-router-dom";
@@ -56,8 +57,12 @@ function TripsPage():JSX.Element {
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data, 1, perPage);
 
 
-  const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
-  const handleMap = useCallback((id: string) => { console.log("Edit:", id) }, []);
+  const handleView = useCallback((id: string) => { console.log("view:", id)
+    window.location.href = `${constant.ROUTING_URLS.VIEW_TRIPS.replace(":id",id)}`;
+   }, []);
+  const handleMap = useCallback((id: string) => { console.log("Edit:", id);
+    
+   }, []);
 
   const columns = useMemo(() => getTrips(handleView,handleMap),[handleView,handleMap])
   const [searchValue, setSearchValue] = useState("");
@@ -147,11 +152,7 @@ function TripsPage():JSX.Element {
               <h2 className="font-medium text-xl text-black">Trips</h2>
               <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ Trips</span></h4>
             </div>
-            <Link to="/region_management/admin/create-chauffeur">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
-              <Plus className="text-[#515151]" />
-              <span className="text-[#515151] font-medium text-sm">Add Trips</span>
-            </Button>
-            </Link>
+            
           </div>
         </Header>
 

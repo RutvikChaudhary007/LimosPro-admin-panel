@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import usePagination from '@/hooks/use-pagination';
+import { constant } from '@/lib/constant';
 import { ChevronDown, Edit, Plus, Trash2 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -40,6 +41,7 @@ const tableData: TRegionAdmin[] = [
 ];
 
 function RegionAdminPage() {
+  const navigate = useNavigate();
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
   const [data, setData] = useState<TRegionAdmin[]>(tableData);
@@ -49,7 +51,9 @@ function RegionAdminPage() {
     setPerPage(selected.value);
   }, [selected])
 
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
+  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) 
+    navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN)
+  }, []);
     const handleDelete = useCallback((id: string) => {
       setData((prev) =>
         prev.filter((row) => row.id != id))
@@ -143,7 +147,7 @@ function RegionAdminPage() {
               <h2 className="font-medium text-xl text-black">Region Management</h2>
               <h4> <span className="text-[#959595] w-[116px] h-4">Region Management</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Region Admins</span></h4>
             </div>
-            <Link to="/region_management/admin/create-region-admin">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to={constant.ROUTING_URLS.CREATE_REGION_ADMIN}>  <Button variant={"secondary"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add Regional Admin</span>
             </Button>

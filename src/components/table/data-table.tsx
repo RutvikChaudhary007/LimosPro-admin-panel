@@ -56,7 +56,7 @@ export function DataTable<TData, TValue>({
     <div className="mt-5 rounded-[6px] border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
       <Table className="min-w-full w-full">
         <TableHeader className="bg-[#F5F5F5] ">
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table?.getHeaderGroups()?.map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (

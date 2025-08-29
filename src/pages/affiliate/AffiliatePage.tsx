@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
+import { constant } from '@/lib/constant';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom';
@@ -321,15 +322,20 @@ function AffiliatePage() {
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
 
 
-  const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
-    const handleDelete = useCallback((id: string) => {
+  const handleView = (id: string) => { console.log("view:", id) 
+    window.location.href = `${constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id",id)}`;
+
+  };
+  const handleEdit = (id: string) => { console.log("Edit:", id)
+    window.location.href = `${constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id",id)}`;
+   };
+  const handleDelete = (id: string) => {
       setData((prev) =>
         prev.filter((row) => row.id !== id))
-    }, []);
-  const columns = useMemo(() => getAffiliate(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
+    };
+  const columns = getAffiliate(handleView,handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<Record<string, any>>({});
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -416,7 +422,7 @@ function AffiliatePage() {
               <h2 className="font-medium text-xl text-black">Affiliate</h2>
               <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Affiliate</span></h4>
             </div>
-            <Link to="/region_management/admin/create-affiliate">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add Affiliate</span>
             </Button>

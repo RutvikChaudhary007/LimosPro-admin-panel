@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -28,7 +29,7 @@ const tableData: TFleet[] = [
         "year": 2025,
         "color": "black",
         "vehicleType": "Executive Sedan Fit for 3 Passengers",
-        "capacity": 4,
+        "capacity": 3,
         "documents": [],
         "vehicleImages": [],
         "createdAt": "2025-07-15T12:43:58.461Z",
@@ -36,14 +37,14 @@ const tableData: TFleet[] = [
         "deletedAt": null
     },
     {
-        "id": "3959bb6d-8782-41db-9365-ff7876e88131",
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
         "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
         "plateNumber": "BB-123-CDa",
         "brand": "Mercedes-S-classa",
         "model": "2023",
         "year": 2025,
         "color": "black",
-        "vehicleType": "Executive Sedan Fit for 3 Passengers",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
         "capacity": 4,
         "documents": [],
         "vehicleImages": [],
@@ -60,12 +61,15 @@ function FleetPage() {
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
 
 
-  const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
+  const handleView = useCallback((id: string) => { console.log("view:", id)
+    window.location.href = `${constant.ROUTING_URLS.VIEW_FLEET.replace(":id",id)}`;
+   }, []);
+  const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
+    window.location.href = `${constant.ROUTING_URLS.EDIT_FLEET.replace(":id",id)}`;
+   }, []);
     const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
-    }, []);
+      setData((prev) => prev.filter((row) => row.id !== id));
+      }, []);
   const columns = useMemo(() => getFleets(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -154,7 +158,7 @@ function FleetPage() {
               <h2 className="font-medium text-xl text-black">Fleet</h2>
               <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ Fleet</span></h4>
             </div>
-            <Link to="/region_management/admin/create-Fleet">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to={constant.ROUTING_URLS.CREATE_FLEET}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add Fleet</span>
             </Button>

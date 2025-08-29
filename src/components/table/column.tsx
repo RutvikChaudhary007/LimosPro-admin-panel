@@ -2,10 +2,11 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "./DataTableColumnHeader";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye, Mail, Phone, Star, Trash2 } from "lucide-react";
+import { Edit, Eye, Mail, Phone, Reply, Star, Trash2 } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { format } from 'date-fns';
 import Icons from "../common/Icons";
+import { cn } from "@/lib/utils";
 
 export type TDashboardBooking = {
   id: string;
@@ -63,7 +64,7 @@ export function getRegionColumns(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
       cell: ({ row }) => (
         <Button
-          variant="outline"
+          variant="secondary"
           onClick={() => onAccess(row.original.id)}
           className="cursor-pointer w-[108px] h-[33px] text-sm"
         >
@@ -79,14 +80,14 @@ export function getRegionColumns(
         <div className="text-right flex gap-2 items-center">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outline"
+            variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
           <Button
             onClick={() => onDelete(row.original.id)}
-            variant="outline"
+            variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
@@ -301,6 +302,7 @@ export type TChauffeur = {
           userId: string,
           affiliateId: string,
           status: string,
+          password: string,
           panNumber: string,
           licenseNumber: string,
           vehicleId: string,
@@ -317,13 +319,19 @@ export type TChauffeur = {
                   mimetype: string,
                   originalName: string
               }
-          ],
+          ] | string[],
           rating: string,
           availability: boolean,
           location: {
               latitude: number,
               longitude: number
           },
+          businessAddress: string,
+          user: {
+            firstName: string;
+            lastName: string;
+            email: string;
+          }
           gratuity: string,
           createdAt: string,
           updatedAt: string,
@@ -382,7 +390,7 @@ export function getChauffeur(
       return (<Badge variant={"default"} className="text-sm text-black bg-[#D9D9D9] px-1 py-0.5 rounded"><Star className="fill-[#3A3A3A]"/> <span className="text-[#3A3A3A] text-sm">{row.original.rating}</span></Badge>)},enableSorting: false, },
     { accessorKey: "status", header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({row})=> (
-      <Badge variant={"default"}  className={`capitalize rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)}`}>{row.original.status}</Badge> 
+      <Badge variant={"default"}  className={`capitalize rounded w-[70px] h-5 inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)}`}>{row.original.status}</Badge> 
     )
     ,enableSorting: false, },
     {
@@ -780,6 +788,835 @@ export function getTrips(
       enableSorting: false,
     },
   ];
+}
+
+const getDate = (date:string)=>{
+  return `${new Date(date?.split('T')[0]).toLocaleDateString('en-US', {
+  month: '2-digit',
+  day: '2-digit',
+  year: 'numeric',
+}).replaceAll('/','-')}`
+}
+export type TNotification = {
+  id: string;
+  notification: string;
+  description: string;
+  created_at: string;
+}
+export function getNotification(): ColumnDef<TNotification>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "notification", header: ({ column }) => <DataTableColumnHeader column={column} title="Notification" />, enableSorting: false, },
+    { accessorKey: "description", header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,enableSorting: false, },
+    { accessorKey: "created_at", header: ({ column }) => <DataTableColumnHeader column={column} title="Created On" />, enableSorting: false,
+    cell: ({row})=> getDate(row.original.created_at) ,
+   },
+  ]
+}
+
+export type TPayments = {
+  id: string;
+  PassengerName: string;
+  BookingId: string;
+  PaymentId: string;
+  Amount: string;
+  Status: string;
+}
+export function getPayments(
+  onView : (id: string) => void,
+  onMap : (id: string) => void,
+): ColumnDef<TPayments>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
+    { accessorKey: "BookingId", header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Id" />,enableSorting: false, },
+    { accessorKey: "PaymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
+  },
+  { accessorKey: "Amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
+  {
+      id: "action",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outline"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Eye className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onMap(row.original.id)}
+            variant="outline"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px] p-0"
+            // disabled={true}
+          >
+            <Icons path="/card.svg" alt="card icon" className="text-[#5A5A5A]" />
+            {/* <Icons path="/mapPin.svg" alt="map icon" className="text-[#5A5A5A] w-4 h-4" /> */}
+          </Button>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TRefund = {
+  id: string;
+  PassengerName: string;
+  RefundId: string;
+  PaymentId: string;
+  Amount: string;
+  Status: string;
+}
+export function getRefund(
+  onView : (id: string) => void,
+  
+): ColumnDef<TPayments>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
+    { accessorKey: "RefundId", header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,enableSorting: false, },
+    { accessorKey: "PaymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
+  },
+  { accessorKey: "Amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
+  {
+      id: "action",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outline"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Eye className="text-[#5A5A5A]" />
+          </Button>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TRefundRequest  = {
+  id: string;
+  PassengerName: string;
+  RefundId: string;
+  PaymentId: string;
+  Amount: string;
+  Status: string;
+}
+
+export function getRefundRequest(
+  onView : (id: string) => void,
+): ColumnDef<TRefundRequest>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
+    { accessorKey: "RefundId", header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,enableSorting: false, },
+    { accessorKey: "PaymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
+  },
+  { accessorKey: "Amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
+  {
+      id: "action",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Eye className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  {
+      id: "status",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Status" />,
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center ">
+          <Button
+            variant="secondary"
+            className={cn("bg-[#F1F1F1] rounded w-[103px] h-[33px]",
+              getStatusColor(row.original.Status)
+            )}
+          >
+            {row.original.Status}
+          </Button>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TCrewMember = {
+  id: string,
+  name: string,
+  designation: string,
+  email: string,
+  phone: string,
+}
+export function getCrewMember(
+  onEdit : (id: string) => void,
+  onDelete : (id: string) => void,
+):ColumnDef<TCrewMember>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />, enableSorting: false, },
+    { accessorKey: "designation", header: ({ column }) => <DataTableColumnHeader column={column} title="Designation" />,enableSorting: false, },
+    { accessorKey: "email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />, enableSorting: false,
+  },
+  { accessorKey: "phone", header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,enableSorting: false, },
+  {
+      id: "action",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ] 
+}
+
+export type TStaffMember = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  role: string,
+}
+
+export function getStaffMember(
+  onEdit: (id:string)=>void,
+  onAccess: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TStaffMember>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+  cell: ({ row }) => (
+        <>
+          {row.original.firstName} {row.original.lastName}
+        </>
+        
+      ), enableSorting: false, },
+    { accessorKey: "email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />, enableSorting: false,
+  },
+  {
+      id: "access",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
+      cell: ({ row }) => (
+        <Button
+          variant="secondary"
+          onClick={() => onAccess(row.original.id)}
+          className="cursor-pointer w-[108px] h-[33px] text-sm"
+        >
+          Manage Access
+        </Button>
+      ),
+      enableSorting: false,
+    },
+  {
+      id: "action",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TContactRequest = {
+  id: string,
+  email: string,
+  phone: string,
+  message: string,
+}
+
+export function getContactRequest(
+  onView: (id:string)=>void,
+  onEmail: (id:string)=>void,
+): ColumnDef<TContactRequest>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />, enableSorting: false,
+  },
+  { accessorKey: "phone", header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />, enableSorting: false,
+  },
+  { accessorKey: "message", header: ({ column }) => <DataTableColumnHeader column={column} title="Message" />, enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Eye className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onEmail(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Reply className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TTestimonial = {
+  id: string,
+  name: string,
+  photo: string,
+  message: string,
+}
+
+export function getTestimonial(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TTestimonial>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />, enableSorting: false,
+  },
+  { accessorKey: "message", header: ({ column }) => <DataTableColumnHeader column={column} title="Message" />, 
+  cell: ({row})=> (<div className="w-[501px] text-wrap">
+  {row.original.message}
+  </div>),
+  enableSorting: false,
+  },
+  { accessorKey: "photo", header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />, 
+  cell: ({row})=> (<img src={row.original.photo} className="w-[70px] h-[70px]" />),
+  enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TOurPartner = {
+  id: string,
+  companyName: string,
+  photo: string,
+  url: string,
+}
+
+export function getOurPartner(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TOurPartner>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "companyName", header: ({ column }) => <DataTableColumnHeader column={column} title="Company Name" />, enableSorting: false,
+  },
+  { accessorKey: "url", header: ({ column }) => <DataTableColumnHeader column={column} title="URL" />, 
+  cell: ({row})=> (<div className="w-[501px] text-wrap">
+  {row.original.url}
+  </div>),
+  enableSorting: false,
+  },
+  { accessorKey: "photo", header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />, 
+  cell: ({row})=> (<img src={row.original.photo} className="w-[70px] h-[70px]" alt="photoUrl" />),
+  enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TNews = {
+  id: string,
+  news: string,
+}
+
+export function getNews(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TNews>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "news", header: ({ column }) => <DataTableColumnHeader column={column} title="News" />, enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TSetting = {
+  id: string,
+  paymentId: string;
+  email: string;
+  location: string;
+  // phone: string | null;
+  // whatsapp: string | null;
+  // skype?: string;
+  paymentSecretKey: string;
+  phone: number | null;
+  whatsapp: number | null;
+  skype?: string ;
+
+}
+
+export function getSettings(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TSetting>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "news", header: ({ column }) => <DataTableColumnHeader column={column} title="News" />, enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TIpWhiteList = {
+  id: string,
+  name: string,
+  ip: string,
+}
+
+export function getIpWhiteList(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TIpWhiteList>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "ip", header: ({ column }) => <DataTableColumnHeader column={column} title="IP" />, enableSorting: false,
+  },
+  { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />, enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
 }
 
 // import { type ColumnDef } from "@tanstack/react-table"

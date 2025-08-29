@@ -1,8 +1,9 @@
-import { useState, useCallback, use } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import Icons from '../common/Icons';
 import { ChevronDown } from 'lucide-react';
+import { constant } from '@/lib/constant';
 
 interface DashboardSidebarProps {
   isMobile?: boolean;
@@ -24,13 +25,13 @@ const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string; chil
   // Control submenu open state (start open if active)
   const [isOpen, setIsOpen] = useState(isActive);
 
-  const toggleOpen = useCallback(() => {
+  const toggleOpen = () => {
     setIsOpen((open) => !open);
-  }, []);
+  };
 
   return (
     <>
-      <div className="flex items-center p-4 gap-2.5 select-none">
+      <div className="flex items-center p-4 gap-2.5 select-none h-[46px]">
         {!hasChildren?(<Link to={item.to} className={cn(`flex items-center gap-5 w-full h-[54px] `, isActive ? 'font-bold' : 'font-medium',child && '1xl:pl-8')}>
           {item.icon}
           <span className="font-['Akatab'] text-black h-[22px]">{item.label}</span>
@@ -60,7 +61,8 @@ const SideCategory: React.FC<{ item: SideCategoryProps; activePath: string; chil
         </div>
         </>
       )}
-      {!isOpen &&<hr className="bg-[#F1F1F1]" />}
+      {isActive && <hr className="bg-[#F1F1F1]" />}
+      {!isOpen && <hr className="bg-[#F1F1F1]" />}
     </>
   );
 };
@@ -70,143 +72,143 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
 
   const navigationItems: SideCategoryProps[] = [
     {
-      to: '/admin/dashboard',
+      to: constant.ROUTING_URLS.DASHBOARD,
       icon: <Icons path="/sidebarIcons/home.svg" alt="home icon" />,
       label: 'Dashboard',
     },
     {
-      to: '/region_management',
+      to: '#',
       icon: <Icons path="/sidebarIcons/regional_admin.svg" alt="Regions" />,
       label: 'Region Management',
       children: [
         {
-          to: '/region_management/regions',
+          to: constant.ROUTING_URLS.REGION,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'Regions',
         },
         {
-          to: '/region_management/region/admins',
+          to: constant.ROUTING_URLS.REGION_ADMIN,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'Admins',
         },
       ],
     },
     {
-      to: '/affiliate',
+      to: constant.ROUTING_URLS.AFFILIATE,
       icon: <Icons path="/sidebarIcons/Affiliate.svg" alt="affiliate icon" />,
       label: 'Affiliate',
     },
     {
-      to: '/chauffeur',
+      to: constant.ROUTING_URLS.CHAUFFEUR,
       icon: <Icons path="/sidebarIcons/driver.svg" alt="chauffeur icon" />,
       label: 'Chauffeur',
     },
     {
-      to: '/bookings',
+      to: constant.ROUTING_URLS.BOOKING,
       icon: <Icons path="/sidebarIcons/online-booking.svg" alt="Bookings icon" />,
       label: 'Bookings',
     },
     {
-      to: '/users',
+      to: constant.ROUTING_URLS.USERS,
       icon: <Icons path="/sidebarIcons/user-group.svg" alt="Users icon" />,
       label: 'Users',
     },
     {
-      to: '/fleets',
+      to: constant.ROUTING_URLS.FLEETS,
       icon: <Icons path="/sidebarIcons/car.svg" alt="Fleets icon" />,
       label: 'Fleets',
     },
     {
-      to: '/trips',
+      to: constant.ROUTING_URLS.TRIPS,
       icon: <Icons path="/sidebarIcons/trip.svg" alt="Trips icon" />,
       label: 'Trips',
     },
     {
-      to: '/notifications',
+      to: constant.ROUTING_URLS.NOTIFICATION,
       icon: <Icons path="/sidebarIcons/bell.svg" alt="Notifications icon" />,
       label: 'Notifications',
     },
     {
-      to: '/payments',
+      to: constant.ROUTING_URLS.PAYMENTS,
       icon: <Icons path="/sidebarIcons/payment.svg" alt="Payments icon" />,
       label: 'Payments',
       children: [
         {
-          to: '/payments',
+          to: constant.ROUTING_URLS.PAYMENTS,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'Payments',
         },
         {
-          to: '/payments/refund',
+          to: constant.ROUTING_URLS.REFUND,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'Refund',
         },
         {
-          to: '/payments/refund_request',
+          to: constant.ROUTING_URLS.REFUND_REQUEST,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'Refund Request',
         },
       ],
     },
     {
-      to: '/reports',
+      to: constant.ROUTING_URLS.REPORTS,
       icon: <Icons path="/sidebarIcons/Vector.svg" alt="Reports icon" />,
       label: 'Reports',
     },
     {
-      to: '/content_management',
+      to: '',
       icon: <Icons path="/sidebarIcons/content.svg" alt="Content Management icon" />,
       label: 'Content Management',
       children: [
         {
-          to: '/content_management/pages',
+          to: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'All Pages',
         },
       ],
     },
     {
-      to: '/crew_members',
+      to: constant.ROUTING_URLS.CREW_MEMBERS,
       icon: <Icons path="/sidebarIcons/group.svg" alt="Crew Members icon" />,
       label: 'Crew Members',
     },
     {
-      to: '/staff_members',
+      to: constant.ROUTING_URLS.STAFF_MEMBERS,
       icon: <Icons path="/sidebarIcons/group-chat.svg" alt="Staff Members icon" />,
       label: 'Staff Members',
     },
     {
-      to: '/contact_requests',
+      to: constant.ROUTING_URLS.CONTACT_REQUESTS,
       icon: <Icons path="/sidebarIcons/question.svg" alt="Contact Requests icon" />,
       label: 'Contact Requests',
     },
     {
-      to: '/testimonials',
+      to: constant.ROUTING_URLS.TESTIMONIALS,
       icon: <Icons path="/sidebarIcons/feedback.svg" alt="testimonials icon" />,
       label: 'Testimonials',
     },
     {
-      to: '/news',
+      to: constant.ROUTING_URLS.NEWS,
       icon: <Icons path="/sidebarIcons/newspaper-folded.svg" alt="News icon" />,
       label: 'News',
     },
     {
-      to: '/faq',
+      to: constant.ROUTING_URLS.FAQ,
       icon: <Icons path="/sidebarIcons/faq.svg" alt="Faq icon" />,
       label: 'Faq',
     },
     {
-      to: '/ip_white_list',
+      to: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: <Icons path="/sidebarIcons/ip.svg" alt="IP_White_List icon" />,
       label: 'IP White List',
     },
     {
-      to: '/our_partners',
+      to: constant.ROUTING_URLS.OUR_PARTNERS,
       icon: <Icons path="/sidebarIcons/global-partners.svg" alt="our_partners icon" />,
       label: 'Our Partners',
     },
     {
-      to: '/settings',
+      to: constant.ROUTING_URLS.SETTINGS,
       icon: <Icons path="/sidebarIcons/cog.svg" alt="Settings icon" />,
       label: 'Settings',
     },
@@ -223,7 +225,7 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
         </div>
       </div>
       <div >
-        {navigationItems.map((item) => (
+        {navigationItems.map((item) =>  (
           <SideCategory key={item.to} item={item} activePath={location.pathname} />
         ))}
       </div>

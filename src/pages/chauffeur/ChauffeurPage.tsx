@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -27,7 +28,7 @@ const showTime = [
 
 const tableData: TChauffeur[] = [
         {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db18",
+            "id": "801c9f7e-7dfa-4f97-9664-912fe821db19",
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "Active",
@@ -75,7 +76,7 @@ const tableData: TChauffeur[] = [
             }
         },
         {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db18",
+            "id": "801c9f7e-7dfa-4f97-9664-912fe821db17",
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "pending",
@@ -123,7 +124,7 @@ const tableData: TChauffeur[] = [
             }
         },
         {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db18",
+            "id": "801c9f7e-7dfa-4f97-9664-912fe821db16",
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "inactive",
@@ -171,7 +172,7 @@ const tableData: TChauffeur[] = [
             }
         },
         {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db18",
+            "id": "801c9f7e-7dfa-4f97-9664-912fe821db15",
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "suspended",
@@ -227,9 +228,14 @@ function ChauffeurPage() {
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data, 1, perPage);
 
 
-  const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
+  const handleView = useCallback((id: string) => { console.log("view:", id) 
+    window.location.href = `${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id",id)}`;
+  }, []);
+  const handleEdit = useCallback((id: string) => { console.log("Edit:", id) 
+    window.location.href = `${constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id",id)}`;
+  }, []);
     const handleDelete = useCallback((id: string) => {
+      console.log("id",id)
       setData((prev) =>
         prev.filter((row) => row.id !== id))
     }, []);
@@ -314,14 +320,14 @@ function ChauffeurPage() {
   };
   return (
     <AdminRootLayout>
-      <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+      <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Chauffeur</h2>
               <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ Chauffeur</span></h4>
             </div>
-            <Link to="/region_management/admin/create-chauffeur">  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add Chauffeur</span>
             </Button>

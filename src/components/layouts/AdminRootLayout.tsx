@@ -1,6 +1,6 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
-import Header from './Header';
+import { Toaster } from '@/components/ui/sonner';
 import Sidebar from './Sidebar';
 import useLoading from '@/stores/useLoading';
 import Navbar from './Navbar';
@@ -36,15 +36,15 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <span className="loader "></span>
                 </div>
             )}
-            <div className="flex min-h-screen">
+            <div className="flex min-w-screen min-h-screen">
                 {/* Sidebar for desktop */}
-                <div className="w-[300px] hidden md:block bg-[#FAFAFA] flex-col gap-6 fixed top-0 left-0 bottom-0">
+                <div className="hidden md:w-[300px] md:block bg-[#FAFAFA] flex-col gap-6 fixed top-0 left-0 bottom-0">
                     <Sidebar />
                 </div>
 
                 {/* Mobile sidebar */}
                 {sidebarOpen && (
-                    <div className="fixed inset-0 z-40 md:hidden">
+                    <div className="fixed inset-0 z-40 ">
                         <div
                             className="fixed inset-0 bg-black/20"
                             aria-hidden="true"
@@ -59,12 +59,12 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 )}
 
                 {/* Main content */}
-                <div className="flex flex-col overflow-hidden w-[calc(100vw-300px)] translate-x-[300px]">
+                <div className="flex flex-col overflow-hidden md:w-[calc(100vw-300px)] md:translate-x-[300px]">
                     <Navbar />
                     <hr className="w-full bg-[#E7E7E7]" />
 
                     {children}
-                    
+                    <Toaster/>    
                     {/* Footer */}
                     <Footer />
                 </div>
