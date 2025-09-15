@@ -6,6 +6,8 @@ import doticon from "../../../public/graph/dot.svg";
 import { Button } from "@/components/ui/button";
 import TableAndPieChart from "@/components/dashboard/TableAndPieChart";
 import React from "react";
+import { getDashboardColumns } from "@/components/table/column";
+import { DataTable } from "@/components/table/data-table";
 interface Point { month: string; earnings: number; }
 
 const data = [
@@ -48,15 +50,16 @@ const CustomDot = ({cx, cy})=>{
 
 function DashboardPage() {
   const tableData = [
-    {userName: "Michael Reynolds",bookingId:"AA57329144",price: 1879, status: "Canceled", commute: "One-way"},
-    {userName: "David Harrison",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "Two-way"},
-    {userName: "James Thornton",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Round Trip"},
-    {userName: "William Foster",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "One-way"},
-    {userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-    {userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-    {userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-    {userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+    {id: "1", userName: "Michael Reynolds",bookingId:"AA57329144",price: 1879, status: "Canceled", commute: "One-way"},
+    {id: "2", userName: "David Harrison",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "Two-way"},
+    {id: "3", userName: "James Thornton",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Round Trip"},
+    {id: "4", userName: "William Foster",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "One-way"},
+    {id: "5", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+    {id: "6", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+    {id: "7", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+    {id: "8", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
   ];
+  const columns = getDashboardColumns()
   return (
     <AdminRootLayout >
       <div className="py-6 px-10 h-full">
@@ -136,47 +139,20 @@ function DashboardPage() {
                 </ResponsiveContainer>
               </div>
               <div className="w-[520px] h-[355px] p-4 rounded-[6px] flex flex-col gap-1.5" >
-                <div className="w-full h-[62px] flex flex-col gap-2.5 relative">
+                <div className="w-full h-full flex flex-col gap-2.5 relative">
                   <div className="w-full h-6 flex justify-between">
                     <div className="py-[1px] w-[105px]">Total Bookings</div>
-                    <div className="w-[71px] rounded-lg bg-[#F5F5F5] shadow-inner shadow-[#EEEEEE] py-2 px-1 flex items-center justify-between">
+                    <div className="w-[71px] rounded bg-[#F5F5F5] shadow-inner shadow-[#EEEEEE] py-2 px-1 flex items-center justify-between">
                       <div className="w-full h-full text-xs text-[#959595] flex items-center">Daily</div>
                       <ChevronDown className="text-[#959595]"/>
                     </div>
                   </div>
-                  <div className="min-w-[520px] h-7 bg-[#F5F5F5] relative px-4 py-1.5 -left-4">
-                   <table className="w-full table-fixed">
-                          <thead >
-                            <tr className="">
-                              <th className="w-full h-full text-[#3A3A3A] text-xs text-left">USERS</th>
-                              <th className="w-full h-full text-[#3A3A3A] text-xs text-center">Booking ID</th>
-                              <th className="w-full h-full text-[#3A3A3A] text-xs text-center">Price $</th>
-                              <th className="w-full h-full text-[#3A3A3A] text-xs text-right">STATUS</th> 
-                              </tr>
-                          </thead>
-                    </table>
-                  </div>
+                <div className="w-full h-full overflow-y-auto">
+                  <DataTable columns={columns} data={tableData} />
+                  
+                </div>  
                 </div>
-                <div className="w-full h-[255px] overflow-y-auto">
-                   <table className="w-full table-fixed">
-                          <tbody className="">
-                            {tableData.map((data,i)=>(
-                              <React.Fragment key={i}>
-                            <tr className="h-[35px]" >
-                              <td className="w-full h-full text-left ">
-                                <p className="w-full text-[#3A3A3A] text-sm">{data?.userName}</p>
-                                <p className="w-full text-[#939393] text-xs">{data?.commute}</p>
-                              </td>
-                              <td className="w-full h-full text-center">{data?.bookingId}</td>
-                              <td className="w-full h-full text-center">{data?.price}</td>
-                              <td className="w-full h-full text-right"><Button className={btnStatus(data?.status)}>{data?.status}</Button></td>
-                            </tr>
-                            <hr className="bg-[#EEEEEE] w-full mt-2 mb-3"/>
-                            </React.Fragment>
-                            ))}
-                          </tbody>
-                    </table>
-                </div>
+                
               </div>
             </div>
             {/* Table and Pie Chart */}

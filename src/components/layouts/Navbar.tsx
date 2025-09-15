@@ -3,8 +3,10 @@ import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="1xl:px-10 1xl:py-5 1xl:h-[88px] select-none">
@@ -44,13 +46,13 @@ const Navbar = () => {
           <DropdownMenuContent align="end">
               {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
               <DropdownMenuItem onClick={() => {
-                return window.location.href = '/settings'
+                navigate('/settings');
               }}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => {
-                return window.location.href = '/settings'
+                navigate('/settings');
               }}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>

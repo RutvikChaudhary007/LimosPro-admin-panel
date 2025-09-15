@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
+import { constant } from '@/lib/constant';
 import { exportToCsv } from '@/utils/export';
 import { ChevronDown, Download, Plus } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const showStatus = [
@@ -89,6 +91,7 @@ function countByStatus(bookings: TBooking[]) {
 }
 function BookingPage() {
     const perPage = 10;
+    const navigate = useNavigate();
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [data, setData] = useState<TBooking[]>(tableData);
 
@@ -101,7 +104,9 @@ function BookingPage() {
         to: undefined,
     });
 
-    const handleView = useCallback((id: string) => { console.log("view:", id) }, []);
+    const handleView = (id: string) => { console.log("view:", id)
+        navigate(constant.ROUTING_URLS.VIEW_BOOKING);
+     };
     const columns = getBooking(handleView);
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState({});

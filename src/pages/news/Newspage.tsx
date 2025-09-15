@@ -147,7 +147,7 @@ const navigate = useNavigate();
                 <h2 className="font-medium text-xl text-black">News</h2>
                 <h4><span className="text-[#959595] w-14 h-4">LIMOSPRO</span> <span className="text-[#959595] w-[116px] h-4">/ News</span></h4>
               </div>
-              <Link to={constant.ROUTING_URLS.CREATE_NEWS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Link to={constant.ROUTING_URLS.CREATE_NEWS}>  <Button variant="secondary" className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
                 <Plus className="text-[#515151]" />
                 <span className="text-[#515151] font-medium text-sm">Add News</span>
               </Button>

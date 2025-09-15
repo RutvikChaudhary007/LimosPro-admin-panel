@@ -7,18 +7,37 @@ import { Badge } from "../ui/badge";
 import { format } from 'date-fns';
 import Icons from "../common/Icons";
 import { cn } from "@/lib/utils";
+import { Label } from "../ui/label";
 
 export type TDashboardBooking = {
   id: string;
   userName: string;
   bookingId: string;
-  price: string;
+  price: number;
   commute: string;
+  status: string;
 }
 
 export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[]=>{
   return [
-    
+  { accessorKey: "userName", header: ({ column }) => <DataTableColumnHeader column={column} title="USERS" />,
+  // cell: ({row})=>(<>
+  // {row.original.firstName} {row.original.lastName}
+  // </>),
+   enableSorting: false,
+  },
+  { accessorKey: "bookingId", header: ({ column }) => <DataTableColumnHeader column={column} title="Booking ID" />, enableSorting: false,
+},
+{ accessorKey: "price", header: ({ column }) => <DataTableColumnHeader column={column} title="Price $" />,
+enableSorting: false,
+},
+{ accessorKey: "status", header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+cell: ({row})=>(<Label className={cn("flex items-center rounded bg-[#D9D9D9] px-2 w-20 text-sm",
+  [getStatusColor(row.original.status), row.original.status.toLocaleLowerCase() ==="active"&& "text-white"]
+)}>
+{row.original.status}
+</Label>), enableSorting: false,
+},
   ]
 }
 
@@ -1618,6 +1637,135 @@ export function getIpWhiteList(
     },
   ]
 }
+
+export type TFaqs = {
+  id: string,
+  question: string,
+  answer: string,
+}
+
+export function getFaqs(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TFaqs>[]{
+  return [{
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  { accessorKey: "question", header: ({ column }) => <DataTableColumnHeader column={column} title="Question" />, enableSorting: false,
+  },
+  { accessorKey: "answer", header: ({ column }) => <DataTableColumnHeader column={column} title="Answer" />, enableSorting: false,
+  },
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TChauffeurAvailablility = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  licenseNumber: string,
+  ratings: string,
+  status: string,
+}
+
+export function getChauffeurAvailablility(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TChauffeurAvailablility>[]{
+  return [
+  { accessorKey: "firstName", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+  cell: ({row})=>(<>
+  {row.original.firstName} {row.original.lastName}
+  </>), enableSorting: false,
+  },
+  { accessorKey: "licenseNumber", header: ({ column }) => <DataTableColumnHeader column={column} title="License Number" />, enableSorting: false,
+},
+{ accessorKey: "ratings", header: ({ column }) => <DataTableColumnHeader column={column} title="Ratings" />,
+cell: ({row})=>(<Label className="flex items-center rounded bg-[#D9D9D9] px-2 w-14">
+<Star className="fill-black text-sm max-h-4 max-w-4"/> <span className="text-xl">{row.original.ratings}</span>
+</Label>), enableSorting: false,
+},
+{ accessorKey: "status", header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+cell: ({row})=>(<Label className={cn("flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
+  [getStatusColor(row.original.status), row.original.status.toLocaleLowerCase() ==="active"&& "text-white"]
+)}>
+{row.original.status}
+</Label>), enableSorting: false,
+},
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+
 
 // import { type ColumnDef } from "@tanstack/react-table"
 // import { DataTableColumnHeader } from "./DataTableColumnHeader";

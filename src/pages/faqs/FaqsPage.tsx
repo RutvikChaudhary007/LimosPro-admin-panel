@@ -1,13 +1,14 @@
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
-import { getIpWhiteList, type TIpWhiteList } from "@/components/table/column";
+import { getFaqs, type TFaqs } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,282 +20,38 @@ const showOptions = [
 ];
 
 
-const tableData: TIpWhiteList[] = [
+const tableData: TFaqs[] = [
     {
         id: "1",
-        ip: "127.0.0.1",
-        name: "Localhost"
+        question: "127.0.0.1",
+        answer: "Localhost"
     },
     {
         id: "2",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "3",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "4",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "5",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "6",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "7",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "8",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "9",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "10",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "11",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "12",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "13",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "14",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "15",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "16",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "17",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "18",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "19",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "20",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "19",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "21",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "22",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "23",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "24",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "25",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "26",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "27",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "28",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "29",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "30",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "31",
-        ip: "127.0.0.1",
-        name: "Localhost"
-    },
-    {
-        id: "32",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "33",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "34",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "35",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "36",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "37",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "38",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "39",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "40",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "41",
-        ip: "127.0.0.1",
-        name: "Localhost"
-    },
-    {
-        id: "42",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "43",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "44",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "45",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "46",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "47",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "48",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "49",
-        ip: "127.0.0.2",
-        name: "Localhost2"
-    },
-    {
-        id: "50",
-        ip: "127.0.0.2",
-        name: "Localhost2"
+        question: "127.0.0.2",
+        answer: "Localhost2"
     },
 ];
-const IpWhiteListPage = () => {
+
+const FaqsPage = () => {
  const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TIpWhiteList[]>(tableData);
+    const [data, setData] = useState<TFaqs[]>(tableData);
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TIpWhiteList>(data, 1, perPage);
-  // console.log("tableData:",tableData.length)
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFaqs>(data, 1, perPage);
+  
     useEffect(() => {
       setPerPage(selected.value);
     }, [selected])
     const handleEdit = (id: string) => { console.log("Edit:", id)
-        navigate(constant.ROUTING_URLS.EDIT_IP_WHITE_LIST.replace(":id",id))
+        navigate(constant.ROUTING_URLS.EDIT_FAQ.replace(":id",id))
      };
     const handleDelete = (id: string) => {
       setData((prev) =>
         prev.filter((row) => row.id !== id))
     };
-    const columns =  getIpWhiteList(handleEdit, handleDelete);
+    const columns =  getFaqs(handleEdit, handleDelete);
   
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState({});
@@ -303,7 +60,6 @@ const IpWhiteListPage = () => {
   
     // Handle page change
     const handlePageChange = (newPage: number) => {
-      console.log("newPage:",newPage)
       setPage(newPage);
       window.scrollTo(0, 0);
     };
@@ -354,8 +110,6 @@ const IpWhiteListPage = () => {
         items.push(
           <PaginationItem key="ellipsis-2">
             <PaginationEllipsis />
-            {currentPage}
-            {totalPages-2}
           </PaginationItem>
         );
       }
@@ -382,12 +136,12 @@ const IpWhiteListPage = () => {
           <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="w-full h-full flex items-center justify-between">
               <div>
-                <h2 className="font-medium text-xl text-black">IP White List</h2>
-                <h4><span className="text-[#959595] w-14 h-4">LIMOSPRO</span> <span className="text-[#959595] w-[116px] h-4">/ IP White List</span></h4>
+                <h2 className="font-medium text-xl text-black">Frequently Asked Question</h2>
+                <h4><span className="text-[#959595] w-14 h-4">LIMOSPRO</span> <span className="text-[#959595] w-[116px] h-4">/ Faq</span></h4>
               </div>
-              <Link to={constant.ROUTING_URLS.CREATE_IP_WHITE_LIST}>  <Button variant={"secondary"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Link to={constant.ROUTING_URLS.CREATE_FAQ}>  <Button variant="secondary" className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add IP</span>
+                <span className="text-[#515151] font-medium text-sm">Add Faq</span>
               </Button>
               </Link>
             </div>
@@ -447,7 +201,7 @@ const IpWhiteListPage = () => {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    // href={"?page="+currentPage}
+                    href={"?page="+currentPage}
                     onClick={prevPage}
                     className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                   />
@@ -457,6 +211,7 @@ const IpWhiteListPage = () => {
   
                 <PaginationItem>
                   <PaginationNext
+                    href={"?page="+currentPage}
                     onClick={nextPage}
                     className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                   />
@@ -469,4 +224,4 @@ const IpWhiteListPage = () => {
     )
 }
 
-export default IpWhiteListPage
+export default FaqsPage

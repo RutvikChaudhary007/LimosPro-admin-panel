@@ -10,6 +10,7 @@ import usePagination from '@/hooks/use-pagination';
 import { constant } from '@/lib/constant';
 import { ChevronDown, Download } from 'lucide-react';
 import React, { useCallback, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const showStatus = [
   { label: 'Select Status', value: '' },
@@ -48,6 +49,7 @@ const tableData: TPayments[] = [
         
     ]
 const PaymentsPage = () => {
+  const navigate = useNavigate();
   const perPage = 10;
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
@@ -57,10 +59,10 @@ const PaymentsPage = () => {
 
   
 const handleView = useCallback((id: string) => { console.log("view:", id)
-    window.location.href = `${constant.ROUTING_URLS.VIEW_PAYMENTS.replace(":id",id)}`;
+    navigate(constant.ROUTING_URLS.VIEW_PAYMENTS.replace(":id",id));
    }, []);
   const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
-    window.location.href = `${constant.ROUTING_URLS.EDIT_USERS.replace(":id",id)}`;
+    navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id",id));
    }, []);
   const columns = useMemo(() => getPayments(handleView,handleEdit),[handleView,handleEdit])
   const [searchValue, setSearchValue] = useState("");

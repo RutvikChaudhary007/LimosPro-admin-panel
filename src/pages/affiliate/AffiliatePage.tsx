@@ -10,7 +10,7 @@ import usePagination from '@/hooks/use-pagination';
 import { constant } from '@/lib/constant';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -315,6 +315,7 @@ const tableData: TAffiliate[] = [
     },
 ]
 function AffiliatePage() {
+  const navigate = useNavigate();
     const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
@@ -323,11 +324,11 @@ function AffiliatePage() {
 
 
   const handleView = (id: string) => { console.log("view:", id) 
-    window.location.href = `${constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id",id)}`;
+    navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id",id));
 
   };
   const handleEdit = (id: string) => { console.log("Edit:", id)
-    window.location.href = `${constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id",id)}`;
+    navigate(constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id",id));
    };
   const handleDelete = (id: string) => {
       setData((prev) =>

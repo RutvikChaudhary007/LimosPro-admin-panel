@@ -5,8 +5,8 @@ import AdminLoginPage from "./pages/admin/AdminLoginPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import RegionDashboardPage from "./pages/region/RegionDashboardPage";
 import AddRegionPage from "./pages/region/formpage/AddRegionPage";
-import RegionAdminPage from "./pages/region/regionAdmin/RegionAdminPage";
-import AddRegionAdmin from "./pages/region/regionAdmin/AddRegionAdmin";
+import RegionAdminPage from "./pages/regionAdmin/RegionAdminPage";
+import AddRegionAdmin from "./pages/regionAdmin/formpage/AddRegionAdmin";
 import AffiliatePage from "./pages/affiliate/AffiliatePage";
 import ChauffeurPage from "./pages/chauffeur/ChauffeurPage";
 import BookingPage from "./pages/booking/BookingPage";
@@ -51,6 +51,14 @@ import SettingsPage from "./pages/settings/SettingsPage";
 import CreateIpWhiteListPage from "./pages/ipWhiteList/formpage/CreateIpWhiteListPage";
 import IpWhiteListPage from "./pages/ipWhiteList/IpWhiteListPage";
 import EditIpWhiteListPage from "./pages/ipWhiteList/formpage/EditIpWhiteListPage";
+import FaqsPage from "./pages/faqs/FaqsPage";
+import CreateFaqPage from "./pages/faqs/formpage/CreateFaqPage";
+import EditFaqPage from "./pages/faqs/formpage/EditFaqPage";
+import EditRegionPage from "./pages/region/formpage/EditRegionPage";
+import EditRegionAdmin from "./pages/regionAdmin/formpage/EditRegionAdmin";
+import ReportPage from "./pages/report/ReportPage";
+import TripMapPage from "./pages/trips/TripMapPage";
+import ViewBookingPage from "./pages/booking/ViewBookingPage";
 
 function App() {
 
@@ -62,7 +70,9 @@ function App() {
           <Route index path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
           <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />
+          <Route path={constant.ROUTING_URLS.EDIT_REGION} element={<EditRegionPage />} />
           <Route path={constant.ROUTING_URLS.REGION_ADMIN} element={<RegionAdminPage />} />
+          <Route path={constant.ROUTING_URLS.EDIT_REGION_ADMIN} element={<EditRegionAdmin />} />
           <Route path={constant.ROUTING_URLS.CREATE_REGION_ADMIN} element={<AddRegionAdmin />} />
           <Route path={constant.ROUTING_URLS.AFFILIATE} element={<AffiliatePage />} />
           <Route path={constant.ROUTING_URLS.CREATE_AFFILIATE} element={<CreateAffiliatePage />} />
@@ -73,6 +83,7 @@ function App() {
           <Route path={constant.ROUTING_URLS.EDIT_CHAUFFEUR} element={<EditChauffeurPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_CHAUFFEUR} element={<ViewChauffeurPage />} />
           <Route path={constant.ROUTING_URLS.BOOKING} element={<BookingPage />} />
+          <Route path={constant.ROUTING_URLS.VIEW_BOOKING} element={<ViewBookingPage />} />
           <Route path={constant.ROUTING_URLS.USERS} element={<UsersPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_USERS} element={<CreateUserPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_USERS} element={<EditUserPage />} />
@@ -83,6 +94,7 @@ function App() {
           <Route path={constant.ROUTING_URLS.VIEW_FLEET} element={<ViewFleetPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
           <Route path={constant.ROUTING_URLS.TRIPS} element={<TripsPage />} />
+          <Route path={constant.ROUTING_URLS.TRIPS_MAP} element={<TripMapPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_TRIPS} element={<ViewTripsPage />} />
           <Route path={constant.ROUTING_URLS.NOTIFICATION} element={<NotificationPage />} />
           <Route path={constant.ROUTING_URLS.PAYMENTS} element={<PaymentsPage />} />
@@ -108,6 +120,10 @@ function App() {
           <Route path={constant.ROUTING_URLS.IP_WHITE_LIST} element={<IpWhiteListPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_IP_WHITE_LIST} element={<CreateIpWhiteListPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_IP_WHITE_LIST} element={<EditIpWhiteListPage />} />
+          <Route path={constant.ROUTING_URLS.FAQ} element={<FaqsPage />} />
+          <Route path={constant.ROUTING_URLS.CREATE_FAQ} element={<CreateFaqPage />} />
+          <Route path={constant.ROUTING_URLS.EDIT_FAQ} element={<EditFaqPage />} />
+          <Route path={constant.ROUTING_URLS.REPORTS} element={<ReportPage />} />
       </Routes>
       </BrowserRouter>
     </TooltipProvider>

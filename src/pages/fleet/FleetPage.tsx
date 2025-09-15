@@ -10,7 +10,7 @@ import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const showTime = [
   { label: 'All Time', value: '' },
@@ -54,6 +54,7 @@ const tableData: TFleet[] = [
     },
 ];
 function FleetPage() {
+  const navigate = useNavigate();
     const perPage = 10;
 
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
@@ -62,10 +63,10 @@ function FleetPage() {
 
 
   const handleView = useCallback((id: string) => { console.log("view:", id)
-    window.location.href = `${constant.ROUTING_URLS.VIEW_FLEET.replace(":id",id)}`;
+    navigate(constant.ROUTING_URLS.VIEW_FLEET.replace(":id",id));
    }, []);
   const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
-    window.location.href = `${constant.ROUTING_URLS.EDIT_FLEET.replace(":id",id)}`;
+    navigate(constant.ROUTING_URLS.EDIT_FLEET.replace(":id",id));
    }, []);
     const handleDelete = useCallback((id: string) => {
       setData((prev) => prev.filter((row) => row.id !== id));

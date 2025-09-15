@@ -26,6 +26,8 @@ export const constant = {
         CREATE_NEWS: '/news/create',
         EDIT_NEWS: '/news/edit/:id',
         FAQ: '/faq',
+        CREATE_FAQ: '/faq/create',
+        EDIT_FAQ: '/faq/edit/:id',
         IP_WHITE_LIST: '/ip_white_list',
         CREATE_IP_WHITE_LIST: '/ip_white_list/create',
         EDIT_IP_WHITE_LIST: '/ip_white_list/edit/:id',
@@ -35,7 +37,7 @@ export const constant = {
         SETTINGS: '/settings',
         // Region Management URLS
         REGION: "/region_management/regions",
-        CREATE_REGION: "/region_management/region/add-region",
+        CREATE_REGION: "/region_management/region/add",
         EDIT_REGION: "/region_management/region/edit/:id",
         // Region Admin Management URLS
         REGION_ADMIN: "/region_management/regions/admins",
@@ -63,6 +65,7 @@ export const constant = {
         VIEW_FLEET: "/fleet/:id",
         // Trips URLS
         TRIPS: "/trips",
+        TRIPS_MAP: "/trips/map/:id",
         VIEW_TRIPS: "/trips/:id",
         // NOTIFICATION URLS
         NOTIFICATION: "/notifications",

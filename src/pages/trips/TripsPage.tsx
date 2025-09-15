@@ -10,7 +10,7 @@ import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState, type JSX } from "react"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -51,20 +51,21 @@ const tableData: TTrips[] = [
 ];
 
 function TripsPage():JSX.Element {
+  const navigate = useNavigate();
     const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [data, setData] = useState<TTrips[]>(tableData);
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data, 1, perPage);
 
 
-  const handleView = useCallback((id: string) => { console.log("view:", id)
-    window.location.href = `${constant.ROUTING_URLS.VIEW_TRIPS.replace(":id",id)}`;
-   }, []);
-  const handleMap = useCallback((id: string) => { console.log("Edit:", id);
-    
-   }, []);
+  const handleView = (id: string) => { console.log("view:", id)
+    navigate(constant.ROUTING_URLS.VIEW_TRIPS.replace(":id",id));
+   };
+  const handleMap = (id: string) => { console.log("Edit:", id);
+    navigate(constant.ROUTING_URLS.TRIPS_MAP.replace(":id",id))
+   };
 
-  const columns = useMemo(() => getTrips(handleView,handleMap),[handleView,handleMap])
+  const columns = getTrips(handleView,handleMap);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 

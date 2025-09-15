@@ -106,48 +106,48 @@ const ViewTripsPage = () => {
                         <div className="w-full h-full space-y-4">
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
                             <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">Name:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Name:</Label>
                                 <span className="text-[#3A3A3A] font-medium">{data?.user.firstName} {data?.user.lastName}</span>
                             </div>
                                                         <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">Email:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Email:</Label>
                                 <span className="text-[#3A3A3A] font-medium">name@email.com</span>
                             </div>
                                                         <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">phone:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">phone:</Label>
                                 <span className="text-[#3A3A3A] font-medium">+1-424-231-6798</span>
                             </div>
                         <hr className="w-full h-[1px] bg-[#EEEEEE]" />
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
                                 
                             <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">Car Name::</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Car Name::</Label>
                                 <span className="text-[#3A3A3A] font-medium">Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or Similar.</span>
                             </div>
                             <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
                                 <span className="text-[#3A3A3A] font-medium">David Thompson</span>
                             </div>
                         <hr className="w-full h-[1px] bg-[#EEEEEE]" />
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Trip</h6>
                             <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">Price:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Price:</Label>
                                 <span className="text-[#3A3A3A] font-medium">$1879</span>
                             </div>
                             <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">Status:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Status:</Label>
                                 <span className={`text-[#3A3A3A] font-medium ${getNewStatusColor("paymentDone")?.css} px-2 py-0.5 rounded`}>Payment Done</span>
                             </div>
                             <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">type:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">type:</Label>
                                 <span className="text-[#3A3A3A] font-medium">Airport Transfer</span>
                             </div>
                         <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">From:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">From:</Label>
                                 <span className="text-[#3A3A3A] font-medium">Houston Airport Marriott at George Bush Intercontinental, John F Kennedy Boulevard, Houston, TX, USA</span>
                             </div>
                         <div className="flex items-center gap-6">
-                                <Label className="w-[153px] text-sm font-semibold capitalize">To:</Label>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">To:</Label>
                                 <span className="text-[#3A3A3A] font-medium">Royal Caribbean International-Cruise Terminal 2, Harborside Drive, Galveston, TX, USA</span>
                             </div>
 
