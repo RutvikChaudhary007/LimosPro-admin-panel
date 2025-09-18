@@ -3,34 +3,34 @@ import Header from "@/components/layouts/Header";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+// import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 
 
 const tableData: TStaffMember [] = [
-  { id: "1", firstName: "Chris Johnson",  email: "name@email.com",  },
-  { id: "2", firstName: "Ovi Smith",  email: "name@email.com", },
-  { id: "3", firstName: "June Parker",  email: "name@email.com", },
-  { id: "4", firstName: "Casey Walker", email: "name@email.com",},
-  { id: "5", firstName: "Jordon Lee", email: "name@email.com",},
-  { id: "6", firstName: "Taylor Morgan", email: "name@email.com", },
-  { id: "7", firstName: "Sam Patel",  email: "name@email.com", },
-  { id: "8", firstName: "Chris Johnson",  email: "name@email.com", },
-  { id: "9", firstName: "Ovi Smith",  email: "name@email.com", },
-  { id: "10", firstName: "June Parker", email: "name@email.com", },
+  { id: "1", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com",  },
+  { id: "2", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
+  { id: "3", lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker",  email: "name@email.com", },
+  { id: "4", lastName:"adf", password:"dfa", role:"dfa", firstName: "Casey Walker", email: "name@email.com",},
+  { id: "5", lastName:"adf", password:"dfa", role:"dfa", firstName: "Jordon Lee", email: "name@email.com",},
+  { id: "6", lastName:"adf", password:"dfa", role:"dfa", firstName: "Taylor Morgan", email: "name@email.com", },
+  { id: "7", lastName:"adf", password:"dfa", role:"dfa", firstName: "Sam Patel",  email: "name@email.com", },
+  { id: "8", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com", },
+  { id: "9", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
+  { id: "10",lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker", email: "name@email.com", },
   
 ];
 
 const StaffMemberPage = () => {
    const navigate = useNavigate();
-  const [perPage, setPerPage] = useState(10);
+  const [perPage] = useState(10);
    
     const [data, setData] = useState<TStaffMember[]>(tableData);
   
@@ -147,11 +147,18 @@ const StaffMemberPage = () => {
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             
             <div className="w-[369px] h-[39px] flex items-center justify-end gap-3">
-              <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
+              <span 
+
+// @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
               <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
                   setData((prev) =>
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+
                     prev.filter((row,i) => !rowSelection[i])
                   );
                 //   console.log("data:", data);

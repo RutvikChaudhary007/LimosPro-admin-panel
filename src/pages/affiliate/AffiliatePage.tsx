@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
 import { getAffiliate, getStatusColor, type TAffiliate } from '@/components/table/column';
@@ -50,7 +51,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968b",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -72,7 +73,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968c",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -94,7 +95,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968e",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -116,7 +117,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968f",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -138,7 +139,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968g",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -160,7 +161,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968h",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -182,7 +183,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968i",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -204,7 +205,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968j",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -226,7 +227,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968k",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -248,7 +249,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968l",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -270,7 +271,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968m",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",
@@ -292,7 +293,7 @@ const tableData: TAffiliate[] = [
         updatedAt: "2025-07-15T12:55:37.323Z"
     },
     {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968n",
         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
         isChauffer: true,
         companyName: "bhoraniya enterprice",

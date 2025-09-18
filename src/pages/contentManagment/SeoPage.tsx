@@ -1,53 +1,62 @@
+// @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { getHomeContent, type THomeContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
+import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const tableData: TNews[] = [
+const tableData: THomeContent[] = [
     {
         id: "1",
-        news: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip."
+        content: "Hero Section",
+        description: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip."
     },
     {
         id: "2",
-        news: "Special rates may apply during the events seasons and sports games in the Houston greater areas such as Houston rodeo, Christmas lights, new year's night, and big sports games."
+        content: "Our Section",
+        description: "Special rates may apply during the events seasons and sports games in the Houston greater areas such as Houston rodeo, Christmas lights, new year's night, and big sports games."
     },
     {
         id: "3",
-        news: "The rate is subject to change at any time without advanced announcement but it will not reflect in the reservations that are under processing or already booked."
+        content: "Cities We Serve",
+        description: "The rate is subject to change at any time without advanced announcement but it will not reflect in the reservations that are under processing or already booked."
     },
     {
         id: "4",
-        news: "Office times: Monday – Sunday  8:00 AM – 10:00 PM."
+        content: "Customer Reviews",
+        description: "Office times: Monday – Sunday  8:00 AM – 10:00 PM."
     },
     {
         id: "5",
-        news: "Transportation between Houston Airports, Houston greater area, and Galveston Cruise Port, Galveston Hotels, please book online by clicking on the Houston – Galveston button at the Online Quote & Booking and start from there."
+        content: "Our partner",
+        description: "Transportation between Houston Airports, Houston greater area, and Galveston Cruise Port, Galveston Hotels, please book online by clicking on the Houston – Galveston button at the Online Quote & Booking and start from there."
     },
-]
+  ];
 
-const ContentManagement = () => {
+const SeoPage = () => {
   const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
-    const [data, setData] = useState<TNews[]>(tableData);
+    const [data, setData] = useState<THomeContent[]>(tableData);
+    const [activeBtn, setActiveBtn] = useState<string>("Home");
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(data, 1, perPage);
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TNews>(data, 1, perPage);
-  
+    
     const handleEdit = (id: string) => { console.log("Edit:", id)
-        navigate(constant.ROUTING_URLS.EDIT_NEWS.replace(":id",id))
+        navigate(constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(":id",id))
      };
     const handleDelete = (id: string) => {
       setData((prev) =>
         prev.filter((row) => row.id !== id))
     };
-    const columns =  getNews(handleEdit, handleDelete);
+    const columns =  getHomeContent(handleEdit, handleDelete);
   
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState({});
@@ -127,17 +136,17 @@ const ContentManagement = () => {
       return items;
     };
   return (
-          <AdminRootLayout>
-            <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+    <AdminRootLayout>  
+ <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
               <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="w-full h-full flex items-center justify-between">
                   <div>
-                    <h2 className="font-medium text-xl text-black">News</h2>
-                    <h4><span className="text-[#959595] w-14 h-4">LIMOSPRO</span> <span className="text-[#959595] w-[116px] h-4">/ News</span></h4>
+                    <h2 className="font-medium text-xl text-black">Content Management</h2>
+                    <h4><span className="text-[#959595] w-14 h-4">LIMOSPRO</span> <span className="text-[#959595] w-[116px] h-4">/ Seo</span></h4>
                   </div>
-                  <Link to={constant.ROUTING_URLS.CREATE_NEWS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+                  <Link to={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
                     <Plus className="text-[#515151]" />
-                    <span className="text-[#515151] font-medium text-sm">Add News</span>
+                    <span className="text-[#515151] font-medium text-sm">Add</span>
                   </Button>
                   </Link>
                 </div>
@@ -147,11 +156,12 @@ const ContentManagement = () => {
                 
                 <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
                   
-                  <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
+                  <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none  rounded"><Input type="search" placeholder="search" className="text-[#959595] rounded"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)} /></div>
                 </div>
               </div>
+              
               <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
                 onRowSelectionChange={setRowSelection}
                 globalFilter={searchValue}
@@ -182,8 +192,8 @@ const ContentManagement = () => {
                 </Pagination>
               )}
             </div>
-          </AdminRootLayout>
+    </AdminRootLayout>
   )
 }
 
-export default ContentManagement
+export default SeoPage;

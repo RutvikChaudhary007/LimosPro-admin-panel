@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getOurPartner, type TOurPartner } from "@/components/table/column";

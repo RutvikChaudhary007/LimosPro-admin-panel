@@ -25,7 +25,7 @@ function AddRegionPage() {
   
     });
     async function onSubmit(values: z.infer<typeof formSchema>) {
-    await new Promise(res => setTimeout(res, 1200)); // artificial delay to notice isSubmitting
+    await new Promise(res => setTimeout(()=>res(values), 1200)); // artificial delay to notice isSubmitting
   // console.log("data:", values);
   }
   return (

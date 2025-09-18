@@ -9,8 +9,8 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from '@/hooks/use-pagination';
 import { constant } from '@/lib/constant';
 import { exportToCsv } from '@/utils/export';
-import { ChevronDown, Download, Plus } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { ChevronDown, Download } from 'lucide-react';
+import {  useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -93,7 +93,7 @@ function BookingPage() {
     const perPage = 10;
     const navigate = useNavigate();
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-    const [data, setData] = useState<TBooking[]>(tableData);
+    const [data, ] = useState<TBooking[]>(tableData);
 
     const [dateRange, setDateRange] = useState<{
 
@@ -272,7 +272,7 @@ function BookingPage() {
                             <h2 className="font-medium text-xl text-black">Bookings</h2>
                             <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ Bookings</span></h4>
                         </div>
-                        <div className='w-[612px] h-[47px] flex gap-[50px]'>
+                        <div className='w-[612px] h-[47px] flex gap-[50px]  items-center justify-between'>
                             <div className='flex flex-col gap-1'>
                                 <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{tableData.length}</div>
                                 <div className='text-center text-black h-4 text-xs w-[79px]'>Total Bookings</div>

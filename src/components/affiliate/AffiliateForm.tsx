@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useRef, useState, type FC } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"

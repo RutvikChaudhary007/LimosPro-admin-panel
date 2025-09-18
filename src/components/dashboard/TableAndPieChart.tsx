@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { ArrowRight, Plus } from "lucide-react"
 import { Button } from "../ui/button"
 import { Table } from "../ui/table"

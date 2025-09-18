@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { constant } from "@/lib/constant";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -45,20 +46,22 @@ const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
               {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
-              <DropdownMenuItem onClick={() => {
+              {/* <DropdownMenuItem onClick={() => {
                 navigate('/settings');
               }}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem onClick={() => {
-                navigate('/settings');
+                navigate(constant.ROUTING_URLS.SETTINGS);
               }}>
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>{}}>
+              <DropdownMenuItem onClick={()=>{localStorage.clear()
+                navigate(constant.ROUTING_URLS.ADMIN_LOGIN)
+              }}>
                 <LogOut className="mr-2 h-4 w-4"/>
                 <span>Log out</span>
               </DropdownMenuItem>

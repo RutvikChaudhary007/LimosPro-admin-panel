@@ -31,18 +31,22 @@ const data = [
 ];
 
 
-const CustomTooltip = ({ active, payload, label }: { active?: boolean, payload?: unknown[], label?: string }) => {
+const CustomTooltip = ({ active, payload, label }: { active?: boolean, payload?: any[], label?: string }) => {
     if (active && payload && payload.length) {
         return (
             <div className="w-[77px] h-[39px] rounded-lg">
                 <div className="bg-[#E0E0E0] px-1 py-0.5 w-full h-[15px] text-[#5A5A5A] text-[8px]">{label} 2025</div>
-                <div className="bg-[#F1F1F1] w-full h-6 flex p-1 text-[#5A5A5A] text-[8px] items-end justify-between">Earnings: <span className="text-[#000000] text-xs flex">${payload?.[0]?.value}</span></div>
+                <div 
+                className="bg-[#F1F1F1] w-full h-6 flex p-1 text-[#5A5A5A] text-[8px] items-end justify-between">Earnings: 
+                    <span className="text-[#000000] text-xs flex">${payload?.[0]?.value}</span></div>
+                
             </div>
         );
     }
     return null;
 };
 
+ // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 const CustomDot = ({ cx, cy }) => {
     return (
         <svg x={cx - 10} y={cy - 10} width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">

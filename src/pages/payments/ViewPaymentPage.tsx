@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { constant } from '@/lib/constant';
 import { cn } from '@/lib/utils';
 import { ArrowLeft } from 'lucide-react';
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom';
 
 const data = {

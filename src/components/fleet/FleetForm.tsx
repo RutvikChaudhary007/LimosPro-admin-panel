@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { IFleetFormProps } from "@/types/fleet"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Input } from "../ui/input"

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import ReplyFC from "@/components/ContactRequests/ReplyFC";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";

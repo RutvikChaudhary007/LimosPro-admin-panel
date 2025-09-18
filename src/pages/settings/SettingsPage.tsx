@@ -4,7 +4,6 @@ import SettingForm, { type TSettingForm } from '@/components/settings/SettingFor
 import { Button } from '@/components/ui/button';
 import { constant } from '@/lib/constant';
 import { ArrowLeft } from 'lucide-react';
-import React from 'react'
 import { Link } from 'react-router-dom';
 
 const SettingsPage = () => {

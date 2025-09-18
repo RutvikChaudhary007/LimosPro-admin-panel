@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { type ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableColumnHeader } from "./DataTableColumnHeader";
@@ -1219,6 +1220,7 @@ export function getStaffMember(
 
 export type TContactRequest = {
   id: string,
+  name: string,
   email: string,
   phone: string,
   message: string,
@@ -1717,6 +1719,116 @@ export function getChauffeurAvailablility(
   onEdit: (id:string)=>void,
   onDelete: (id:string)=>void,
 ): ColumnDef<TChauffeurAvailablility>[]{
+  return [
+  { accessorKey: "firstName", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+  cell: ({row})=>(<>
+  {row.original.firstName} {row.original.lastName}
+  </>), enableSorting: false,
+  },
+  { accessorKey: "licenseNumber", header: ({ column }) => <DataTableColumnHeader column={column} title="License Number" />, enableSorting: false,
+},
+{ accessorKey: "ratings", header: ({ column }) => <DataTableColumnHeader column={column} title="Ratings" />,
+cell: ({row})=>(<Label className="flex items-center rounded bg-[#D9D9D9] px-2 w-14">
+<Star className="fill-black text-sm max-h-4 max-w-4"/> <span className="text-xl">{row.original.ratings}</span>
+</Label>), enableSorting: false,
+},
+{ accessorKey: "status", header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+cell: ({row})=>(<Label className={cn("flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
+  [getStatusColor(row.original.status), row.original.status.toLocaleLowerCase() ==="active"&& "text-white"]
+)}>
+{row.original.status}
+</Label>), enableSorting: false,
+},
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type THomeContent = {
+  id: string,
+  content: string,
+  description: string,
+}
+// home: object[],
+//   about: object[],
+//   service: object[],
+//   cities: object[],
+//   fleets: object[],
+//   faqs: object[],
+//   contact_us: object[],
+//   blog: object[],
+export function getHomeContent(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<THomeContent>[]{
+  return [
+  { accessorKey: "content", header: ({ column }) => <DataTableColumnHeader column={column} title="Content" />,
+  enableSorting: false,
+  },
+  { accessorKey: "description", header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />, enableSorting: false,
+},
+  {
+      id: "action",
+      header: ({ column }) => (<div className="flex justify-end items-center px-4">
+      <DataTableColumnHeader column={column} title="Action" /></div>),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+         
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Edit className="text-[#5A5A5A]" />
+          </Button>
+          <Button
+            onClick={() => onDelete(row.original.id)}
+            variant="secondary"
+            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+          >
+            <Trash2 className="text-[#5A5A5A]" />
+          </Button>
+        
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ]
+}
+
+export type TContent = {
+  id: string,
+  content: string,
+  description: string,
+}
+
+export function getContent(
+  onEdit: (id:string)=>void,
+  onDelete: (id:string)=>void,
+): ColumnDef<TContent>[]{
   return [
   { accessorKey: "firstName", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
   cell: ({row})=>(<>

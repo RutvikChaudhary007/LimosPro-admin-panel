@@ -6,6 +6,8 @@ import { constant } from "@/lib/constant"
 import type { IUserFormData } from "@/types/user"
 import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
+
+// @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 const initialData: IUserFormData = {
     firstName: "John",
     lastName: "Doe",

@@ -12,8 +12,12 @@ export const constant = {
         DASHBOARD: "/dashboard",
         REPORTS: "/reports",
         CONTENT_MANAGEMENT_ALL_PAGES: "/content_management/pages",
+        CREATE_CONTENT_MANAGEMENT: "/content_management/pages/create",
+        EDIT_CONTENT_MANAGEMENT: "/content_management/pages/edit/:id",
+        // VIEW_CONTENT_MANAGEMENT: "/content_management/pages/:id",
         CREW_MEMBERS: "/crew_members",
         CREATE_CREW_MEMBERS: "/crew_members/create",
+        EDIT_CREW_MEMBERS: "/crew_members/edit/:id",
         VIEW_CREW_MEMBERS: "/crew_members/:id",
         STAFF_MEMBERS: "/staff_members",
         CREATE_STAFF_MEMBERS: "/staff_members/create",
@@ -77,5 +81,8 @@ export const constant = {
         REFUND: "/refund",
         VIEW_REFUND: "/refund/:id",
         REFUND_REQUEST: "/payments/refund_request",
+        SEO: "/content_management/seo",
+        CREATE_SEO: "/seo/create",
+        EDIT_SEO: "/seo/edit/:id",
     }
 };

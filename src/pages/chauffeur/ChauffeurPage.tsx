@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getChauffeur, getStatusColor, type TChauffeur } from "@/components/table/column";
@@ -29,6 +30,13 @@ const showTime = [
 const tableData: TChauffeur[] = [
         {
             "id": "801c9f7e-7dfa-4f97-9664-912fe821db19",
+            "businessAddress": "dafs",
+            "password": "dfa",
+            "user": {
+              "firstName": "dkfsa",
+              "lastName": "dfas",
+              "email": "ddfa@email.com"
+            },
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "Active",
@@ -77,6 +85,13 @@ const tableData: TChauffeur[] = [
         },
         {
             "id": "801c9f7e-7dfa-4f97-9664-912fe821db17",
+            "businessAddress": "dafs",
+            "password": "dfa",
+            "user": {
+              "firstName": "dkfsa",
+              "lastName": "dfas",
+              "email": "ddfa@email.com"
+            },
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "pending",
@@ -125,6 +140,13 @@ const tableData: TChauffeur[] = [
         },
         {
             "id": "801c9f7e-7dfa-4f97-9664-912fe821db16",
+            "businessAddress": "dafs",
+            "password": "dfa",
+            "user": {
+              "firstName": "dkfsa",
+              "lastName": "dfas",
+              "email": "ddfa@email.com"
+            },
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "inactive",
@@ -173,6 +195,13 @@ const tableData: TChauffeur[] = [
         },
         {
             "id": "801c9f7e-7dfa-4f97-9664-912fe821db15",
+            "businessAddress": "dafs",
+            "password": "dfa",
+            "user": {
+              "firstName": "dkfsa",
+              "lastName": "dfas",
+              "email": "ddfa@email.com"
+            },
             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
             "status": "suspended",

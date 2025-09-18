@@ -1,4 +1,4 @@
-import type { TSettingForm } from "@/components/settings/settingForm";
+import type { TSettingForm } from "@/components/settings/SettingForm";
 import type { TSetting } from "@/components/table/column";
 
 export interface ISettingFormProps  {

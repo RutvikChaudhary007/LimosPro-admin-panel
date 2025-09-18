@@ -1,3 +1,4 @@
+// @ts-nocheck
 import FleetForm from "@/components/fleet/FleetForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"

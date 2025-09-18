@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"

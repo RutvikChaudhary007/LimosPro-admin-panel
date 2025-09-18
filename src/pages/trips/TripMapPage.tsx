@@ -9,7 +9,7 @@ import { useState } from "react";
 const TripMapPage = () => {
   const pickup = { lat: 30.2672, lng: -97.7431 }; // Austin
   const drop = { lat: 40.7128, lng: -74.006 };   // NYC
-  const car = { lat: 35.0, lng: -90.0 }; // Somewhere on route
+  // const car = { lat: 35.0, lng: -90.0 }; // Somewhere on route
 
   return (
     <AdminRootLayout>

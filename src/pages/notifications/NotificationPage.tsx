@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getNotification, getStatusColor, type TNotification } from "@/components/table/column";

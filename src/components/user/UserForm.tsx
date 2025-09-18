@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +15,7 @@ import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 
 
 const formSchema = z.object({

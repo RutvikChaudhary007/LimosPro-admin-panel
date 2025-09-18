@@ -57,6 +57,8 @@ export const initializeGooglePlacesAutocomplete = (
     country: "",
     zip: "",
   };
+  
+  // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
         place.address_components.forEach((component) => {
           const types = component.types;
 

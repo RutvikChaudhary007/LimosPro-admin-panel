@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
   ComposableMap,
   Geographies,
@@ -38,7 +38,7 @@ const WorldMap = () => {
         {regions.map((region) => (
           <Marker
             key={region.id}
-            coordinates={region.coordinates}
+            // coordinates={region.coordinates}
             onMouseEnter={() => setHovered(region.id)}
             onMouseLeave={() => setHovered(null)}
             onTouchStartCapture={() => setHovered(!hovered ? region?.id: null)}

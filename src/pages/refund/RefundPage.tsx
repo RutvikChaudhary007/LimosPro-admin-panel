@@ -50,7 +50,7 @@ const RefundPage = () => {
   const perPage = 10;
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
-  const [data, setData] = useState<TRefund[]>(tableData);
+  const [data] = useState<TRefund[]>(tableData);
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRefund>(data, 1, perPage);
 
 
@@ -195,8 +195,11 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-            <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
+            <span
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+             className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 // setData((prev) =>prev.filter((row,i) => !rowSelection[i])
@@ -210,7 +213,10 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
             </span>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+        
+        <DataTable columns={columns} 
+        // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+        data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
            />
         

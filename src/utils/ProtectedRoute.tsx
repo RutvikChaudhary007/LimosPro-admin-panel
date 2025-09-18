@@ -1,13 +1,92 @@
-import React from "react";
-import { Outlet,Navigate, useLocation } from "react-router-dom";
-import useAuthStore from "@/store/useAuthStore";
+import { Navigate, Outlet, useLocation, matchPath } from "react-router-dom";
+import { ROUTE_PERMISSIONS } from "./roles";
+import { constant } from "@/lib/constant";
 
-function ProtectedRoute() {
-   const {token} = useAuthStore(); // Implement your authentication check here
-   
+const ProtectedRoute: React.FC = () => {
+  const location = useLocation();
 
-return token ? <Outlet/> : <Navigate to="/login" />;
-  
-}
+  let userRole: string | null = null;
+  try {
+    userRole = localStorage.getItem("role");
+  } catch {
+    userRole = null;
+  }
+
+  // ✅ Find first matching route pattern in ROUTE_PERMISSIONS
+  const matchedKey = Object.keys(ROUTE_PERMISSIONS).find((pattern) =>
+    matchPath(pattern, location.pathname)
+  );
+
+  const allowedRoles = matchedKey ? ROUTE_PERMISSIONS[matchedKey] : [];
+
+  if (!userRole) {
+    return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
+  } else if (!allowedRoles.includes(userRole)) {
+    return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />;
+  }
+
+  return <Outlet />;
+};
 
 export default ProtectedRoute;
+
+
+
+// // ProtectedRoute.tsx
+// import React from "react";
+// import { Navigate, useLocation } from "react-router-dom";
+// import { ROUTE_PERMISSIONS } from "./constant";
+// import { constant } from "@/lib/constant";
+
+// interface ProtectedRouteProps {
+//   children: React.ReactNode;
+// }
+
+// const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+//   const location = useLocation();
+//   const userRole = localStorage.getItem("user");
+
+//   const allowedRoles = ROUTE_PERMISSIONS[location.pathname] || [];
+
+//   if (!userRole || !allowedRoles.includes(userRole)) {
+//     return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />;
+//   }
+
+//   return <>{children}</>;
+// };
+
+// export default ProtectedRoute;
+
+
+// import React from "react";
+// import { Navigate, Outlet, useLocation } from "react-router-dom";
+// import { ROUTE_PERMISSIONS } from "./roles";
+// import { constant } from "@/lib/constant";
+
+// const ProtectedRoute: React.FC = () => {
+//   const location = useLocation();
+
+//   // Get user role from localStorage
+//   let userRole: string | null = null;
+//   try {
+//     const stored = localStorage.getItem("user");
+//     if (stored) {
+//       userRole = stored;
+//     }
+//   } catch {
+//     userRole = null;
+//   }
+
+//   // Get allowed roles for this path
+//   const allowedRoles = ROUTE_PERMISSIONS[location.pathname] || [];
+
+//   if (!userRole ) {
+//     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
+//   }else if(userRole && !allowedRoles.includes(userRole)){
+//    return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace  />;
+//   }
+
+//   return <Outlet />; // ✅ renders the child route if allowed
+// };
+
+// export default ProtectedRoute;

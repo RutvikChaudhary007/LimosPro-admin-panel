@@ -8,7 +8,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from '@/hooks/use-pagination';
 import { constant } from '@/lib/constant';
 import { ChevronDown, Download } from 'lucide-react';
-import React, { useCallback, useMemo, useState } from 'react'
+import  { useCallback, useMemo, useState } from 'react'
 
 import {
   Dialog,
@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+// import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 
 
@@ -76,7 +76,7 @@ const RefundRequestPage = () => {
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
-    const [data, setData] = useState<TRefundRequest[]>(tableData);
+    const [data] = useState<TRefundRequest[]>(tableData);
     const [modalData, setModalData] = useState<IModalData>({
       user: {
         firstName: "John",
@@ -240,8 +240,11 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-            <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
+            <span className={`${Object.keys(rowSelection).filter((k) => 
+               // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+               rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
             <Button variant={"secondary"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 // setData((prev) =>prev.filter((row,i) => !rowSelection[i])

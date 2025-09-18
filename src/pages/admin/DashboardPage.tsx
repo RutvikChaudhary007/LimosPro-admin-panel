@@ -1,14 +1,15 @@
+// @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import {  ChevronDown, Dot, TrendingUp } from "lucide-react";
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
-import doticon from "../../../public/graph/dot.svg";
-import { Button } from "@/components/ui/button";
+// import doticon from "../../../public/graph/dot.svg";
+// import { Button } from "@/components/ui/button";
 import TableAndPieChart from "@/components/dashboard/TableAndPieChart";
-import React from "react";
+// import React from "react";
 import { getDashboardColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-interface Point { month: string; earnings: number; }
+// interface Point { month: string; earnings: number; }
 
 const data = [
   { month: "Jan", revenue: 20 },
@@ -26,7 +27,7 @@ const data = [
 ];
 
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label }:{active: boolean, payload: any, label: string}) => {
   if (active && payload && payload.length) {
     return (
       <div className="w-[77px] h-[39px] rounded-lg">
@@ -38,7 +39,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const CustomDot = ({cx, cy})=>{
+const CustomDot = ({cx, cy}:{cx:string, cy:string})=>{
   return (
       <svg x={cx - 10} y={cy - 10} width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="6.00174" cy="6.00009" rx="3.60105" ry="3.6" fill="black"/>

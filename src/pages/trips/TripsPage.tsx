@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState, type JSX } from "react"
-import { Link, useNavigate } from "react-router-dom";
+import { ChevronDown, Trash2 } from "lucide-react";
+import {   useState, type JSX } from "react"
+import {  useNavigate } from "react-router-dom";
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -182,11 +182,17 @@ function TripsPage():JSX.Element {
 
           </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
-            <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
+            <span className={`${Object.keys(rowSelection).filter((k) =>
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+               rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
-                setData((prev) =>prev.filter((row,i) => !rowSelection[i])
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+
+                setData((prev) =>prev.filter((_,i) => !rowSelection[i])
                 );
                 setRowSelection({});
               }}

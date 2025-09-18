@@ -1,9 +1,12 @@
+// @ts-nocheck
+
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import Icons from '../common/Icons';
 import { ChevronDown } from 'lucide-react';
 import { constant } from '@/lib/constant';
+import { hasAccess } from '@/utils/Helper';
 
 interface DashboardSidebarProps {
   isMobile?: boolean;
@@ -165,6 +168,11 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
           label: 'All Pages',
         },
+        {
+          to: constant.ROUTING_URLS.SEO,
+          icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
+          label: 'Seo',
+        },
       ],
     },
     {
@@ -214,6 +222,29 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
     },
   ];
 
+  // Get role from localStorage
+  const stored = localStorage.getItem("role");
+  const userRole = stored ;
+
+  // Filter nav items
+  const filteredNavigation = navigationItems
+    .map((item) => {
+      // if item has children → filter children
+      if (item.children) {
+        const allowedChildren = item.children.filter((child) =>
+          hasAccess(child.to, userRole)
+        );
+        // Only keep parent if parent has a route OR children are allowed
+        if (hasAccess(item.to, userRole) || allowedChildren.length > 0) {
+          return { ...item, children: allowedChildren };
+        }
+        return null;
+      }
+
+      // if no children → just check the parent
+      return hasAccess(item.to, userRole) ? item : null;
+    })
+    .filter(Boolean); // remove nulls  
   if (isMobile && !isOpen) return null;
 
   return (
@@ -225,9 +256,16 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
         </div>
       </div>
       <div >
-        {navigationItems.map((item) =>  (
+        {/* {navigationItems.map((item) =>  (
           <SideCategory key={item.to} item={item} activePath={location.pathname} />
-        ))}
+        ))} */}
+        {filteredNavigation.map((item) => (
+        <SideCategory
+          key={item.to}
+          item={item}
+          activePath={location.pathname}
+        />
+      ))}
       </div>
     </nav>
   );

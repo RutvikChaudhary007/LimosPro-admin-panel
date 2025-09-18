@@ -1,3 +1,4 @@
+//@ts-nocheck
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';

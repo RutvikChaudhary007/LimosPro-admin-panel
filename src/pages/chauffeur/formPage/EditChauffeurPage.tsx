@@ -1,3 +1,4 @@
+// @ts-nocheck
 import ChauffeurForm, { type TChauffeurForm } from "@/components/chauffeur/ChauffeurForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"

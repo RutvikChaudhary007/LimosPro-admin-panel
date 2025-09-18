@@ -17,6 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { constant } from "@/lib/constant";
+import { toast } from "sonner"
+import { login } from "@/api/login";
+import { useMutation } from "@tanstack/react-query";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -37,18 +40,78 @@ function AdminLoginPage() {
       email: ""
     }
   });
-
+  // const userRole = localStorage.getItem("user");
+  // if(["Admin","Seo","Affiliate"].includes(userRole)){
+  //   navigate(constant.ROUTING_URLS.DASHBOARD)
+  // }const [open, setOpen] = React.useState(false);
+	//  const loginMutation = useMutation({
+  //     mutationFn: login,
+  //     onSuccess: (response,variables) => {
+  //       const token = response?.data?.accessToken;
+  //       const user = response?.data;
+  //       console.log('user====>',response)
+  //       if(user?.)
+  //       if(user?.roles){
+  //         navigate(constant.ROUTING_URLS.DASHBOARD);
+  //         // toast({
+  //         //   title: "Unauthorized login",
+  //         //   description: `Oops! This section is for super admins only. Please log in with an super admin account.`,
+  //         //   variant: "destructive"
+  //         // });
+  //         return;
+  //       }
+  //       // setUser(user, token);
+  //       const staySignedInMessage = variables.staySignedIn ? 'You will stay signed in' : 'You will be logged out after session expires';
+      
+  //     // toast({
+  //     //   title: "Login successful",
+  //     //   description: `Welcome back! ${staySignedInMessage}`,
+  //     // });
+  //       navigate('/postmanadm');
+  //     },
+  //     onError: (err: unknown) => {
+      
+  //       let errorMessage = 'An unexpected error occurred';
+      
+  //       if (err && typeof err === 'object' && 'isAxiosError' in err) {
+  //         const axiosError = err as AxiosError<ApiErrorResponse>;
+  //         errorMessage = axiosError.response?.data?.message || errorMessage;
+  //       }
+  //       if(errorMessage==="Request failed with status code 429") return;
+  //     //   toast({
+  //     //   title: "Login failed",
+  //     //   description: errorMessage,
+  //     //   variant: "destructive"
+  //     // });
+  //       // setError(errorMessage);
+  //     }
+  //   });
   const onSubmit = async (data: LoginFormValues) => {
+    toast("Event has been created.",)
+    toast("Logged in successfull")
+    // delete data.remember;
+    // return await loginMutation.mutateAsync(data);
     return new Promise(res => setTimeout(() => {
       console.log(data);
       res("ok");
       form.reset();
-      navigate(constant.ROUTING_URLS.DASHBOARD)
-    }, 2000));
+      if(data.email === "admin@email.com"){
+        localStorage.setItem("role","Super Admin")
+        navigate(constant.ROUTING_URLS.DASHBOARD)
+      }else if(data.email === "affiliate@email.com"){
+        localStorage.setItem("role","Affiliate")
+        navigate(constant.ROUTING_URLS.DASHBOARD)
+      }else if(data.email === "seo@email.com"){
+        localStorage.setItem("role","Seo")
+        navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES)
+      }
+      
+    }, 1000));
   };
 
   return (
     <div className="flex items-center justify-center h-screen min-h-screen ">
+      
       <div className="w-[597px] h-[618px] min-w-[597px] min-h-[618px] flex flex-col gap-[63px] shadow-lg shadow-[#F1F1F1] rounded-[6px]">
         <div style={{ background: "#F1F1F1" }} className="min-w-full h-[146px] pl-8 pr-8 w-full flex gap-[231px] rounded-t-[6px]">
           <div className="flex flex-col mt-8 items-start gap-3 w-[195px] h-[61px]">

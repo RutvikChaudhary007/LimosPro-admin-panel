@@ -1,3 +1,4 @@
+import CrewMemberForm from "@/components/crewMember/crewMemberForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
@@ -6,6 +7,10 @@ import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 
 const CreateCrewMemberPage = () => {
+  function handleCreateCrewMember (){
+    
+  }
+
   return (
     <AdminRootLayout>
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
@@ -20,8 +25,8 @@ const CreateCrewMemberPage = () => {
             </div>
           </div>
         </Header>
-        <FleetForm 
-        onSubmit={handleCreateFleet}
+        <CrewMemberForm 
+        onSubmit={handleCreateCrewMember}
         type={"Create Crew Member"} 
         />
       </div>

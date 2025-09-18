@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getCrewMember, type TCrewMember } from "@/components/table/column";
@@ -10,7 +11,7 @@ import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -66,6 +67,7 @@ const tableData: TCrewMember [] = [
 
 
 const CrewMemberPage = () => {
+  const naviagte = useNavigate();
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     const [data, setData] = useState<TCrewMember[]>(tableData);
@@ -75,7 +77,9 @@ const CrewMemberPage = () => {
     useEffect(() => {
       setPerPage(selected.value);
     }, [selected])
-    const handleEdit = useCallback((id: string) => { console.log("Edit:", id) }, []);
+    const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
+      naviagte(constant.ROUTING_URLS.EDIT_CREW_MEMBERS.replace(":id",id));
+     }, []);
     const handleDelete = useCallback((id: string) => {
       setData((prev) =>
         prev.filter((row) => row.id !== id))

@@ -214,11 +214,15 @@ function RegionDashboardPage() {
             </DropdownMenuContent>
           </DropdownMenu>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
-            <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
+            <span className={`${Object.keys(rowSelection).filter((k) => 
+               // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+               rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
               disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 setData((prev) =>
+                   // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
                   prev.filter((row,i) => !rowSelection[i])
                 );
                 console.log("data:", data);

@@ -59,14 +59,29 @@ import EditRegionAdmin from "./pages/regionAdmin/formpage/EditRegionAdmin";
 import ReportPage from "./pages/report/ReportPage";
 import TripMapPage from "./pages/trips/TripMapPage";
 import ViewBookingPage from "./pages/booking/ViewBookingPage";
+import ContentManagement from "./pages/contentManagment/ContentManagementPage";
+import CreateContent from "./pages/contentManagment/formpage/CreateContent";
+import EditContent from "./pages/contentManagment/formpage/EditContent";
+import CreateCrewMemberPage from "./pages/crewMember/formpage/CreateCrewMemberPage";
+import EditCrewMemberPage from "./pages/crewMember/formpage/EditCrewMemberPage";
+// import AdminProtectedRoute from "./utils/AdminProtectedRoute";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import SeoPage from "./pages/contentManagment/SeoPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 function App() {
 
   return (
     <TooltipProvider>
       <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
       <Routes >
-          <Route path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<AdminLoginPage/>} />
+        
+          <Route  path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<AdminLoginPage/>} />
+
+           {/* Protected wrapper */}
+          <Route element={<ProtectedRoute />}>
           <Route index path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
           <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />
@@ -103,6 +118,8 @@ function App() {
           <Route path={constant.ROUTING_URLS.VIEW_REFUND} element={<ViewRefundPage />} />
           <Route path={constant.ROUTING_URLS.REFUND_REQUEST} element={<RefundRequestPage />} />
           <Route path={constant.ROUTING_URLS.CREW_MEMBERS} element={<CrewMemberPage />} />
+          <Route path={constant.ROUTING_URLS.CREATE_CREW_MEMBERS} element={<CreateCrewMemberPage />} />
+          <Route path={constant.ROUTING_URLS.EDIT_CREW_MEMBERS} element={<EditCrewMemberPage />} />
           <Route path={constant.ROUTING_URLS.STAFF_MEMBERS} element={<StaffMemberPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_STAFF_MEMBERS} element={<CreateStaffMemberPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_STAFF_MEMBERS} element={<EditStaffMemberPage />} />
@@ -124,7 +141,15 @@ function App() {
           <Route path={constant.ROUTING_URLS.CREATE_FAQ} element={<CreateFaqPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_FAQ} element={<EditFaqPage />} />
           <Route path={constant.ROUTING_URLS.REPORTS} element={<ReportPage />} />
+          <Route path={constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES} element={<ContentManagement />} />
+          <Route path={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT} element={<CreateContent />} />
+          <Route path={constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT} element={<EditContent />} />
+          <Route path={constant.ROUTING_URLS.SEO} element={<SeoPage />} />
+          {/* <Route path={constant.ROUTING_URLS.CREATE_SEO} element={<SeoPage />} />
+          <Route path={constant.ROUTING_URLS.EDIT_SEO} element={<SeoPage />} /> */}
+          </Route>
       </Routes>
+      </QueryClientProvider>
       </BrowserRouter>
     </TooltipProvider>
   )
