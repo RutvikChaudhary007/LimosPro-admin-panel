@@ -1,15 +1,21 @@
 import { Navigate, Outlet, useLocation, matchPath } from "react-router-dom";
 import { ROUTE_PERMISSIONS } from "./roles";
+import { hasDynamicAccess } from "./Helper";
 import { constant } from "@/lib/constant";
 
 const ProtectedRoute: React.FC = () => {
   const location = useLocation();
 
   let userRole: string | null = null;
+  let userPermissions: string[] = [];
+  
   try {
     userRole = localStorage.getItem("role");
+    const storedPermissions = localStorage.getItem("permissions");
+    userPermissions = storedPermissions ? JSON.parse(storedPermissions) : [];
   } catch {
     userRole = null;
+    userPermissions = [];
   }
 
   // ✅ Find first matching route pattern in ROUTE_PERMISSIONS
@@ -21,7 +27,7 @@ const ProtectedRoute: React.FC = () => {
 
   if (!userRole) {
     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
-  } else if (!allowedRoles.includes(userRole)) {
+  } else if (!hasDynamicAccess(location.pathname, userRole, userPermissions)) {
     return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />;
   }
 

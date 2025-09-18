@@ -11,6 +11,11 @@ export const login = async (data:object) => {
       localStorage.setItem("accessToken",response?.data?.data?.accessToken)
       localStorage.setItem("refreshToken",response?.data?.data?.refreshToken)
       localStorage.setItem("role",response?.data?.data?.roles)
+      
+      // Store permissions from login response
+      if(response?.data?.data?.permissions){
+        localStorage.setItem("permissions", JSON.stringify(response.data.data.permissions))
+      }
     }
   return response.data;
 };

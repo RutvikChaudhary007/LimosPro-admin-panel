@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from "axios";
 
 // Import Form UI components from shadcn/ui
 import {
@@ -29,9 +30,16 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+// Define the API error response type
+interface ApiErrorResponse {
+  message: string;
+  error?: string;
+}
+
 function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -40,73 +48,65 @@ function AdminLoginPage() {
       email: ""
     }
   });
-  // const userRole = localStorage.getItem("user");
-  // if(["Admin","Seo","Affiliate"].includes(userRole)){
-  //   navigate(constant.ROUTING_URLS.DASHBOARD)
-  // }const [open, setOpen] = React.useState(false);
-	//  const loginMutation = useMutation({
-  //     mutationFn: login,
-  //     onSuccess: (response,variables) => {
-  //       const token = response?.data?.accessToken;
-  //       const user = response?.data;
-  //       console.log('user====>',response)
-  //       if(user?.)
-  //       if(user?.roles){
-  //         navigate(constant.ROUTING_URLS.DASHBOARD);
-  //         // toast({
-  //         //   title: "Unauthorized login",
-  //         //   description: `Oops! This section is for super admins only. Please log in with an super admin account.`,
-  //         //   variant: "destructive"
-  //         // });
-  //         return;
-  //       }
-  //       // setUser(user, token);
-  //       const staySignedInMessage = variables.staySignedIn ? 'You will stay signed in' : 'You will be logged out after session expires';
+
+  // Check if user is already logged in
+  const userRole = localStorage.getItem("role");
+  if (userRole && ["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
+    navigate(constant.ROUTING_URLS.DASHBOARD);
+  }
+
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (response, variables: LoginFormValues) => {
+      console.log('Login response:', response);
       
-  //     // toast({
-  //     //   title: "Login successful",
-  //     //   description: `Welcome back! ${staySignedInMessage}`,
-  //     // });
-  //       navigate('/postmanadm');
-  //     },
-  //     onError: (err: unknown) => {
+      const userData = response?.data;
+      const userRole = userData?.roles;
+      // userPermissions are automatically stored in localStorage by the login API
       
-  //       let errorMessage = 'An unexpected error occurred';
+      // Check if user has valid role for admin panel
+      if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
+        toast.error("Access Denied", {
+          description: "This section is for authorized users only. Please contact your administrator.",
+        });
+        return;
+      }
+
+      // Success message
+      const staySignedInMessage = variables.remember ? 'You will stay signed in' : 'You will be logged out after session expires';
+      toast.success("Login Successful", {
+        description: `Welcome back! ${staySignedInMessage}`,
+      });
+
+      // Navigate to dashboard
+      navigate(constant.ROUTING_URLS.DASHBOARD);
+    },
+    onError: (err: unknown) => {
+      let errorMessage = 'An unexpected error occurred';
       
-  //       if (err && typeof err === 'object' && 'isAxiosError' in err) {
-  //         const axiosError = err as AxiosError<ApiErrorResponse>;
-  //         errorMessage = axiosError.response?.data?.message || errorMessage;
-  //       }
-  //       if(errorMessage==="Request failed with status code 429") return;
-  //     //   toast({
-  //     //   title: "Login failed",
-  //     //   description: errorMessage,
-  //     //   variant: "destructive"
-  //     // });
-  //       // setError(errorMessage);
-  //     }
-  //   });
-  const onSubmit = async (data: LoginFormValues) => {
-    toast("Event has been created.",)
-    toast("Logged in successfull")
-    // delete data.remember;
-    // return await loginMutation.mutateAsync(data);
-    return new Promise(res => setTimeout(() => {
-      console.log(data);
-      res("ok");
-      form.reset();
-      if(data.email === "admin@email.com"){
-        localStorage.setItem("role","Super Admin")
-        navigate(constant.ROUTING_URLS.DASHBOARD)
-      }else if(data.email === "affiliate@email.com"){
-        localStorage.setItem("role","Affiliate")
-        navigate(constant.ROUTING_URLS.DASHBOARD)
-      }else if(data.email === "seo@email.com"){
-        localStorage.setItem("role","Seo")
-        navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES)
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
       }
       
-    }, 1000));
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      
+      toast.error("Login Failed", {
+        description: errorMessage,
+      });
+    }
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      // Remove remember field before sending to API
+      const { remember, ...loginData } = data;
+      await loginMutation.mutateAsync(loginData);
+    } catch (error) {
+      // Error handling is done in onError callback
+      console.error('Login error:', error);
+    }
   };
 
   return (
@@ -199,10 +199,10 @@ function AdminLoginPage() {
               <div className="flex h-[46px] mt-[34px] w-full items-center justify-center gap-2.5 rounded ">
                 <Button
                   type="submit"
-                  disabled={form.formState.isSubmitting}
+                  disabled={form.formState.isSubmitting || loginMutation.isPending}
                   className="w-full h-full pl-6 pr-6 pt-5 pb-5 text-[#515151] font-['Akatab'] font-medium hover:text-white bg-[#E4E4E4] cursor-pointer"
                 >
-                  {form.formState.isSubmitting ? "Loading..." : "Log In"}
+                  {form.formState.isSubmitting || loginMutation.isPending ? "Loading..." : "Log In"}
                 </Button>
               </div>
 

@@ -6,16 +6,16 @@ function AdminProtectedRoute() {
     const navigate = useNavigate()
 //    const {token , user} = useAdminAuthStore(); // Implement your authentication check here
    
-const userRole = localStorage.getItem("user");
+const userRole = localStorage.getItem("role");
 console.log(userRole)
 useEffect(()=>{
-        if(!userRole || !["Admin","Seo","Affiliate"].includes(userRole)){
+        if(!userRole || !["Super Admin","SEO Agent","Affiliate"].includes(userRole)){
             console.log("login..")
         navigate("/cms/login")
     }
 
     },[])
-return userRole && ["Admin","Seo","Affiliate"].includes(userRole)  && (<Outlet/>) ;
+return userRole && ["Super Admin","SEO Agent","Affiliate"].includes(userRole)  && (<Outlet/>) ;
   
 }
 

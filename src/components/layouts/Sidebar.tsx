@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import Icons from '../common/Icons';
 import { ChevronDown } from 'lucide-react';
 import { constant } from '@/lib/constant';
-import { hasAccess } from '@/utils/Helper';
+import { hasAccess, hasDynamicAccess } from '@/utils/Helper';
 
 interface DashboardSidebarProps {
   isMobile?: boolean;
@@ -222,27 +222,38 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
     },
   ];
 
-  // Get role from localStorage
-  const stored = localStorage.getItem("role");
-  const userRole = stored ;
+  // Get user data from localStorage
+  const storedRole = localStorage.getItem("role");
+  const storedPermissions = localStorage.getItem("permissions");
+  
+  // Parse permissions from localStorage (they should be stored as JSON array)
+  let userPermissions: string[] = [];
+  try {
+    userPermissions = storedPermissions ? JSON.parse(storedPermissions) : [];
+  } catch (error) {
+    console.warn("Failed to parse permissions from localStorage:", error);
+    userPermissions = [];
+  }
 
-  // Filter nav items
+  const userRole = storedRole;
+
+  // Filter nav items using dynamic access (permissions first, then role fallback)
   const filteredNavigation = navigationItems
     .map((item) => {
       // if item has children → filter children
       if (item.children) {
         const allowedChildren = item.children.filter((child) =>
-          hasAccess(child.to, userRole)
+          hasDynamicAccess(child.to, userRole, userPermissions)
         );
         // Only keep parent if parent has a route OR children are allowed
-        if (hasAccess(item.to, userRole) || allowedChildren.length > 0) {
+        if (hasDynamicAccess(item.to, userRole, userPermissions) || allowedChildren.length > 0) {
           return { ...item, children: allowedChildren };
         }
         return null;
       }
 
       // if no children → just check the parent
-      return hasAccess(item.to, userRole) ? item : null;
+      return hasDynamicAccess(item.to, userRole, userPermissions) ? item : null;
     })
     .filter(Boolean); // remove nulls  
   if (isMobile && !isOpen) return null;
