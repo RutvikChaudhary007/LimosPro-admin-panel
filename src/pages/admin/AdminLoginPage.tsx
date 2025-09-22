@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod"
@@ -18,9 +18,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { constant } from "@/lib/constant";
-import { toast } from "sonner"
 import { login } from "@/api/login";
 import { useMutation } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -37,6 +37,7 @@ interface ApiErrorResponse {
 }
 
 function AdminLoginPage() {
+  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   
@@ -45,15 +46,17 @@ function AdminLoginPage() {
     defaultValues: {
       remember: false,
       password: "",
-      email: ""
+      email: localStorage.getItem("Email") || ""
     }
   });
 
-  // Check if user is already logged in
-  const userRole = localStorage.getItem("role");
-  if (userRole && ["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
-    navigate(constant.ROUTING_URLS.DASHBOARD);
-  }
+  // Check if user is already logged in (must not navigate during render)
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role && ["Super Admin", "SEO Agent", "Affiliate"].includes(role)) {
+      navigate(constant.ROUTING_URLS.DASHBOARD);
+    }
+  }, [navigate]);
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -62,20 +65,29 @@ function AdminLoginPage() {
       
       const userData = response?.data;
       const userRole = userData?.roles;
+      const remember = localStorage.getItem("remember");
+      if(remember === "true"){
+        localStorage.setItem("Email", userData?.email);
+      }
       // userPermissions are automatically stored in localStorage by the login API
       
       // Check if user has valid role for admin panel
       if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
-        toast.error("Access Denied", {
+        
+        toast({
+          title: "Access Denied",
           description: "This section is for authorized users only. Please contact your administrator.",
+          variant: "destructive",
         });
         return;
       }
 
       // Success message
       const staySignedInMessage = variables.remember ? 'You will stay signed in' : 'You will be logged out after session expires';
-      toast.success("Login Successful", {
+      toast({
+        title: "Login Successful",
         description: `Welcome back! ${staySignedInMessage}`,
+        variant: "default",
       });
 
       // Navigate to dashboard
@@ -91,9 +103,10 @@ function AdminLoginPage() {
       
       // Don't show toast for rate limiting
       if (errorMessage.includes("429")) return;
-      
-      toast.error("Login Failed", {
+      toast({
+        title: "Login Failed",
         description: errorMessage,
+        variant: "destructive",
       });
     }
   });
@@ -102,13 +115,18 @@ function AdminLoginPage() {
     try {
       // Remove remember field before sending to API
       const { remember, ...loginData } = data;
+      console.log("remember me:",remember);
+      if(remember){
+        localStorage.setItem("remember", "true");
+      }else{
+        localStorage.removeItem("remember");
+      }
       await loginMutation.mutateAsync(loginData);
     } catch (error) {
       // Error handling is done in onError callback
       console.error('Login error:', error);
     }
   };
-
   return (
     <div className="flex items-center justify-center h-screen min-h-screen ">
       

@@ -7,10 +7,10 @@ function AdminProtectedRoute() {
 //    const {token , user} = useAdminAuthStore(); // Implement your authentication check here
    
 const userRole = localStorage.getItem("role");
-console.log(userRole)
+// console.log(userRole)
 useEffect(()=>{
         if(!userRole || !["Super Admin","SEO Agent","Affiliate"].includes(userRole)){
-            console.log("login..")
+            // console.log("login..")
         navigate("/cms/login")
     }
 
