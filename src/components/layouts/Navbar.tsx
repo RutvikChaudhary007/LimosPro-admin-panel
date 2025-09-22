@@ -59,7 +59,14 @@ const Navbar = () => {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={()=>{localStorage.clear()
+              <DropdownMenuItem onClick={()=>{
+                const remember = localStorage.getItem("remember") === "true";
+                const savedEmail = localStorage.getItem("Email");
+                localStorage.clear();
+                if (remember && savedEmail) {
+                  localStorage.setItem("remember", "true");
+                  localStorage.setItem("Email", savedEmail);
+                }
                 navigate(constant.ROUTING_URLS.ADMIN_LOGIN)
               }}>
                 <LogOut className="mr-2 h-4 w-4"/>
