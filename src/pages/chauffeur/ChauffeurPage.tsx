@@ -1,4 +1,5 @@
 // @ts-nocheck
+import UsefetchAllChauffeur from "@/api/getAllChauffeur";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getChauffeur, getStatusColor, type TChauffeur } from "@/components/table/column";
@@ -254,25 +255,29 @@ function ChauffeurPage() {
     const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const [data, setData] = useState<TChauffeur[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data, 1, perPage);
-
-
+  const {data, isFetching, error} = UsefetchAllChauffeur();
+  console.log("fetchedData:",data)
+  // const [data, setData] = useState<TChauffeur[]>(tableData);
+  
+  
+  
   const handleView = useCallback((id: string) => { console.log("view:", id) 
     navigate(constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id",id));
   }, []);
   const handleEdit = useCallback((id: string) => { console.log("Edit:", id) 
     navigate(constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id",id));
   }, []);
-    const handleDelete = useCallback((id: string) => {
-      console.log("id",id)
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
-    }, []);
+  const handleDelete = useCallback((id: string) => {
+    console.log("id",id)
+    setData((prev) =>
+      prev.filter((row) => row.id !== id))
+  }, []);
   const columns = useMemo(() => getChauffeur(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs, 1, perPage);
+  if(isFetching) return (<p>Loading...</p>);
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 

@@ -1,15 +1,55 @@
+import { createChauffeur } from "@/api/createChauffeur"
 import ChauffeurForm, { type TChauffeurForm } from "@/components/chauffeur/ChauffeurForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
+import { toast, toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
+import { useMutation } from "@tanstack/react-query"
+import type { AxiosError } from "axios"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 const CreateChauffeurPage = () => {
+  const navigate = useNavigate();
+  const createChauffeurMutation = useMutation({
+    mutationFn: createChauffeur,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      // userPermissions are automatically stored in localStorage by the login API
+      navigate(constant.ROUTING_URLS.CHAUFFEUR);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      toast({
+        title: "Create chauffeur failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  });
+  
     const handleCreateChauffeur = async (data: TChauffeurForm)=>{
-        console.log("called handle create chauffeur!")
-        return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000));
+        console.log("called handle create chauffeur!",data)
+        try{
+        toastPromise(await createChauffeurMutation.mutateAsync(data), {
+          loading: "Submitting...",
+          success: "Chauffeur created successfully!",
+          error: (e) => (e instanceof Error ? e.message : "Failed to create chauffeur"),
+        });
+      } catch (error) {
+        // Error handling is done in onError callback
+        console.error('Login error:', error);
+      }
     }
   return (
     <AdminRootLayout>

@@ -20,7 +20,7 @@ import {
 import { constant } from "@/lib/constant";
 import { login } from "@/api/login";
 import { useMutation } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
+import { toastPromise, useToast } from "@/hooks/use-toast";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -113,6 +113,7 @@ function AdminLoginPage() {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
+     
       // Remove remember field before sending to API
       const { remember, ...loginData } = data;
       console.log("remember me:",remember);
@@ -121,7 +122,12 @@ function AdminLoginPage() {
       }else{
         localStorage.removeItem("remember");
       }
-      await loginMutation.mutateAsync(loginData);
+      // await loginMutation.mutateAsync(loginData);
+     toastPromise(await loginMutation.mutateAsync(loginData), {
+        loading: "Logging in...",
+        success: "Logged in successfully!",
+        error: (e) => (e instanceof Error ? e.message : "Failed to login"),
+      });
     } catch (error) {
       // Error handling is done in onError callback
       console.error('Login error:', error);

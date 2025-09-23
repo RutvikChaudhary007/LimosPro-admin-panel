@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useRef, useState, type FC } from "react"
+import { useRef, useState, type FC, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
@@ -36,9 +36,9 @@ const formSchema = z.object({
         .string()
         .min(1, { message: "Phone is required" })
         .regex(/^\d+$/, { message: "Must be number" })
-        .transform((v) => Number(v))
+        // .transform((v) => Number(v))
         .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-    entityType: z.enum(["active"]),
+    entityType: z.string().min(1, { message: "Entity Type is required" }),
     isChauffer: z.boolean(),
     taxId: z.string().min(2, { message: "Tax id is required." }),
     businessEmail: z.email(),
@@ -51,26 +51,16 @@ const formSchema = z.object({
     password: z.string().refine(value => value.trim() !== "", {
         message: "Password cannot be empty or just whitespace.",
     }),
-    documents: z.custom<FileList>().check((ctx) => {
-        const list = ctx.value;
-        //   if (!(list instanceof FileList)) {
-        //     ctx.issues.push({ code: "custom", message: "Invalid file input", input: list });
-        //     return;
-        //   }
-        if (list.length < 1) {
-            ctx.issues.push({ code: "custom", message: "Select at least 1 file", input: list });
-        }
-        //   console.log("list:")
-        if (list.length > 4) {
-            ctx.issues.push({ code: "custom", message: "You can upload up to 4 files", input: list });
-        }
+    documents: z
+    .array(z.instanceof(File))
+    .min(1, { message: "Select at least 1 file" })
+    .max(4, { message: "You can upload up to 4 files" })
+    .refine(files => files.every(f => f.size <= maxSize), {
+      message: `Max size ${maxSize / (1024 * 1024)}MB`,
     })
-        .transform(list => Array.from(list)).refine(files => files.every(f => f.size <= maxSize), {
-            message: `Max size ${maxSize / (1024 * 1024)}MB`,
-        })
-        .refine(files => files.every(f => ALLOWED_MIME_TYPES.includes(f.type)), {
-            message: "Invalid file types detected",
-        }),
+    .refine(files => files.every(f => ALLOWED_MIME_TYPES.includes(f.type)), {
+      message: "Invalid file types detected",
+    }),
     //   password: z.string().min(10, { message: "Password must be at least 10 characters" }),
     status: z.string().optional(),
     // status: z.union([z.string(), z.literal("")]).optional(),
@@ -85,9 +75,9 @@ interface AffiliateFormProps {
 }
 
 const showStatus = [
-    { label: "Active", value: "active" },
-    { label: "Completed", value: "completed" },
-    { label: "InActive", value: "inactive" },
+    { label: "Pending", value: "pending" },
+    { label: "Approved", value: "approved" },
+    { label: "Rejected", value: "rejected" },
 ];
 
 const showEntity = [
@@ -110,10 +100,16 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
         const [newAddress, setNewAddress] = useState("");
         const [addressObj, setAddressObj] = useState<IAddressObj>();
         const [isAddressValid, setIsAddressValid] = useState(false);
+        const fileRef = useRef<HTMLInputElement | null>(null);
 
+        const [statusValue, setStatusValue] = useState<{status:string, entityType:string}>({
+            status: "",
+            entityType: ""
+        });
     const transformInitialData = (data?: TAffiliateForm): TAffiliateForm | undefined => {
         if (!data) return undefined;
-
+        // console.log("initial data:", data)
+        
         return {
             firstName: data.firstName,
             lastName: data.lastName,
@@ -127,12 +123,11 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
             businessLocation: data.businessLocation,
             entityType: data.entityType,
             taxId: data.taxId,
-            commissionRate: data.commissionRate,
+            commissionRate: !isNaN(data?.commissionRate) ? parseInt(data.commissionRate):0,
             documents: data.documents,
             status: data.status,
         };
     };
-    const fileRef = useRef<HTMLInputElement | null>(null);
     const form = useForm<TAffiliateForm>({
         resolver: zodResolver(formSchema),
         defaultValues: transformInitialData(initialData) || {
@@ -149,34 +144,60 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
                 latitude: 0,
                 longitude: 0,
             },
-            entityType: "active",
+            entityType: "",
             taxId: "",
             commissionRate: 0,
             documents: [],
             status: "",
+            
         }
     });
+    useEffect(()=>{
+        if(initialData?.businessAddress){
+            setNewAddress(initialData.businessAddress);
+        }
+    },[initialData])
     const documents = form.watch("documents");
     const fileCount = documents?.length || 0;
-    const handleFormSubmit = async (data: IAffiliate) => {
+    const handleFormSubmit = async (values: IAffiliate) => {
         try {
-            if (data) {
-                data.businessLocation = {
+            if (values) {
+                values.businessLocation = {
                 latitude: addressObj?.location.latitude,
                 longitude: addressObj?.location.longitude,
                 } 
             }
+            console.log("values:",values)
+            const formData = new FormData();
+
+            // Append all scalar values
+            formData.append("firstName", values.firstName);
+            formData.append("lastName", values.lastName);
+            formData.append("email", values.email);
+            formData.append("password", values.password);
+            formData.append("companyName", values.companyName);
+            formData.append("businessEmail", values.businessEmail);
+            formData.append("businessContactNumber", values.businessContactNumber);
+            formData.append("businessAddress", values.businessAddress);
+            formData.append("entityType", values.entityType);
+            formData.append("commissionRate", values.commissionRate.toString());
+            formData.append("status", values.status);
+            formData.append("isChauffer", values.isChauffer ? "true" : "false");
+            formData.append("taxId", values.taxId);
+            formData.append("businessLocation", JSON.stringify(values.businessLocation));
+          
+            // Append files
+            values.documents.forEach((file) => {
+              formData.append(`documents`, file); 
+            });
             
+            await onSubmit(formData);
             form.reset()
-            await onSubmit(data);
         } catch (error) {
             console.error(error)
         }
     }
-    const [statusValue, setStatusValue] = useState<{status:string, entityType:string}>({
-        status: "",
-        entityType: ""
-    });
+    
     return (
 
         <Form  {...form}>
@@ -332,7 +353,7 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
                                             {...field}
                                         /> */}
                                         <AddressInput
-                                            value={newAddress}
+                                            value={field.value}
                                             field={field}
                                             onChange={(value) => {
                                             setNewAddress(value);
@@ -358,26 +379,15 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
                             control={form.control}
                             name="entityType"
                             render={({ field }) => (
-                                <FormItem className="">
+                                <FormItem>
                                     <FormLabel>Entity Type</FormLabel>
-                                    <Select value={statusValue.entityType} onValueChange={(v)=>{field.onChange(v);
-                                        setStatusValue({...statusValue, entityType: v})
-                                    }} defaultValue={field.value}>
-                                        <FormControl className="w-full min-w-full rounded">
-                                            <SelectTrigger className="cursor-pointer">
-                                                <SelectValue className="" placeholder="select entity type" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent className="">
-                                            {showEntity.map(option => (
-                                                <SelectItem className="cursor-pointer" key={option.value} value={option.value}>{option.label}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-
-                                    </Select>
+                                    <FormControl className="px-3 py-4 rounded">
+                                        <Input placeholder="Corporation"
+                                            disabled={isFieldDisabled(disabledFields, "entityType")} {...field} />
+                                    </FormControl>
                                     <FormMessage
-                                        className={`mt-1 h-5 ${form.formState.errors.entityType ? 'visible text-red-600' : 'invisible'
-                                            } `}
+                                        className={`mt-1 h-5 ${form.formState.errors.taxId ? 'visible text-red-600' : 'invisible'
+                                            }`}
                                     >
                                         {form.formState.errors.entityType?.message}
                                     </FormMessage>
@@ -423,6 +433,38 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
                             )}
                         />
                         <FormField
+  control={form.control}
+  name="documents"
+  render={({ field }) => (
+    <FormItem className="col-span-2 col-start-1 rounded ">
+      <FormLabel>
+        Upload Documents: {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
+          <span
+            key={idx}
+            className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
+          >
+            {text}{" "}
+          </span>
+        ))}
+      </FormLabel>
+      <FormControl>
+        <Input
+          type="file"
+          ref={fileRef}
+          multiple
+          accept="image/jpeg,image/png,application/pdf"
+          value={undefined}
+          onChange={e => {
+            const files = e.target.files;
+            if (files) field.onChange(Array.from(files)); // File[]
+          }}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+                        {/* <FormField
                             control={form.control}
                             name="documents"
                             defaultValue={[]}
@@ -453,14 +495,17 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> */}
                         <Controller
                             control={form.control}
                             name="status"
                             render={({ field }) => (
                                 <FormItem className="">
                                     <FormLabel>Status</FormLabel>
-                                    <Select value={statusValue.status} onValueChange={(v) => { field.onChange(v); setStatusValue({...statusValue,status: v});}} >
+                                    <Select value={field.value} onValueChange={(v) => { 
+                                        field.onChange(v);
+                                        // setStatusValue((prev) => ({ ...prev, status: v }));
+                                        }} >
                                         <FormControl className="w-full min-w-full rounded">
                                             <SelectTrigger className="cursor-pointer">
                                                 <SelectValue className="" placeholder="select status" />
@@ -535,7 +580,7 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
         entityType: "",
         taxId: "",
         commissionRate: "",
-        documents: [],
+        // documents: [],
         status: ""
     });
     setStatusValue({ status: "", entityType: "" });

@@ -1,3 +1,4 @@
+import UsefetchAffiliateById from "@/api/getAffiliateById"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { getStatusColor } from "@/components/table/column"
@@ -9,17 +10,17 @@ import { constant } from "@/lib/constant"
 import { cn } from "@/lib/utils"
 import { ArrowLeft } from "lucide-react"
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
-const data = { 
-    id: 1,
-    email: "name@email.com",
-    phone: "+1-424-231-6798",
-    location: "Company Location",
-    entityType: "Private Limited Company (Pvt Ltd)",
-    address: "123 Main St, Anytown, USA",
-    Documents: ["/4.25x6_Standard_Mailing_Print_Template_Alt.pdf","link 2"]
-}
+// const data = { 
+//     id: 1,
+//     email: "name@email.com",
+//     phone: "+1-424-231-6798",
+//     location: "Company Location",
+//     entityType: "Private Limited Company (Pvt Ltd)",
+//     address: "123 Main St, Anytown, USA",
+//     Documents: ["/4.25x6_Standard_Mailing_Print_Template_Alt.pdf","link 2"]
+// }
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -30,15 +31,21 @@ const showStatus = [
 
 const ViewAffiliatePage = () => {
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-    const documentsLength = data.Documents.length
+    const { id } = useParams(); 
+    // console.log("id:",id)
+    const {data,isFetching, error} = UsefetchAffiliateById({id});
+    // console.log("data:",data)
+    if(isFetching) return (<p>Loading...</p>);
+    // if(error) return (<h1>error.message</h1>);
+    const documentsLength = data?.documents?.length
     // const docJsx = [];
     const docJsx=[1,2,3,4].map((i)=>(
       <div key={i} className="flex items-center gap-6">
                             <Label className="block text-sm font-semibold capitalize w-[95px] ">Document {i}:</Label>
                             <div className={cn("bg-[#FFFFFF] w-full h-[33px] flex items-center space-x-5", i > documentsLength && "opacity-50 cursor-no-drop")} >
                             <Label className="inline-block bg-[#444444] text-white px-2 py-0.5 rounded text-xs text-center !w-[70px] h-5">{i<=documentsLength ? "Submitted" : "Pending"}</Label>
-                            <Link to={i <= documentsLength ? data.Documents[(i - 1)]: "#"} rel="noreferrer" target="_blank"><img src="/document-eye.svg" alt="eye page" /> </Link>
-                            <Link to={i <= documentsLength ? data.Documents[(i-1)]:"#"} download={i <= documentsLength ? data.Documents[(i-1)]:"#"} target="_blank"><img src="/document-arrow-down.svg" alt="down page" />
+                            <Link to={i <= documentsLength ? data?.documents[(i - 1)]?.fileUrl: "#"} rel="noreferrer" target="_blank"><img src="/document-eye.svg" alt="eye page" /> </Link>
+                            <Link to={i <= documentsLength ? data?.documents[(i-1)]?.fileUrl:"#"} download={i <= documentsLength ? data?.documents[(i-1)]:"#"} target="_blank"><img src="/document-arrow-down.svg" alt="down page" />
                             </Link>
                             </div>
                         </div>
@@ -105,7 +112,8 @@ const ViewAffiliatePage = () => {
             <div className="w-full h-[209px] space-y-4">
                 <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Company</h6>
                 {Object.entries(data).map(([key,val])=>{
-                    if (!["email","phone", "location", "entityType", "address"].includes(key.toLowerCase())) return;
+                    // if (!["email","phone", "location", "entityType", "address"].includes(key.toLowerCase())) return;
+                    if (!["businessemail","businesscontactnumber",  "entitytype", "businessaddress"].includes(key.toLowerCase())) return;
                   return  (
                     <div key={key} className="flex items-center gap-6">
                     <Label className="text-sm font-semibold capitalize">{key}:</Label>

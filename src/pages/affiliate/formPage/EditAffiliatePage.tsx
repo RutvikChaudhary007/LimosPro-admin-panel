@@ -1,4 +1,5 @@
 // @ts-nocheck
+import UsefetchAffiliateById from "@/api/getAffiliateById";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
@@ -6,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
 import type { IAffiliate } from "@/types/affiliate";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function EditAffiliatePage() {
+  const { id } = useParams(); 
+  console.log("id:",id)
+  const {data,isFetching, error} = UsefetchAffiliateById({id});
   const handleEditAffiliate = async (data:unknown) => {
     
       console.log("called handleCreateAffiliate")
@@ -16,26 +20,8 @@ function EditAffiliatePage() {
         setTimeout(()=>res(console.log("promise:",data)),5000);
       });
   }
-  const initialData: IAffiliate ={
-            firstName: "Jhon",
-            lastName: "Doe",
-            email: "jhondoe@gmail.com",
-            password: "jhon@1234",
-            isChauffer: false,
-            companyName: "AMC pvt ltd",
-            businessContactNumber: "1234567890",
-            businessAddress: "2145 sunnydale bvd, clearwater, FL, 33764",
-            businessEmail: "AMC@gmail.com",
-            businessLocation: {
-                latitude: 44.0,
-                longitude: 75.0,
-            },
-            entityType: "Private Limited Company (Pvt Ltd)",
-            taxId: "tax-husainsdfb",
-            commissionRate: "12",
-            documents: ["affiliate-documents.pdf"],
-            status: "pending",
-        }
+  
+    if(isFetching) return (<p>Loading...</p>);
   return (
     <AdminRootLayout>
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
@@ -52,7 +38,7 @@ function EditAffiliatePage() {
         </Header>
       <AffiliateForm
        onSubmit={handleEditAffiliate}
-       initialData={initialData}
+       initialData={data}
        type={"Edit Affiliate"}
       />
       </div>

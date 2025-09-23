@@ -15,6 +15,7 @@ import { Switch } from "../ui/switch"
 // import { geoDecoding } from "@/utils/googleMaps"
 // import { useLoadScript } from "@react-google-maps/api";
 import type { TChauffeur } from "../table/column"
+import UsefetchAllAffiliate from "@/api/getAllAffiliate"
 
 
 const affiliate = [
@@ -59,11 +60,16 @@ const affiliate = [
         ],
         stripeAccountId: "acct_1RtRSU3C8pRaWHyZ",
         stripeAccountStatus: "inPogress",
-        status: "pending",
+        status: "Active",
         createdAt: "2025-08-07T10:54:10.651Z",
         updatedAt: "2025-08-07T10:54:10.651Z",
         chauffeurs: []
     }
+]  
+const statusValues = [
+    {label:"Active", value:"Active"},
+    {label:"Inactive", value:"Inactive"},
+    {label:"Suspended", value:"Suspended"},
 ]
 const maxSize = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/jpeg", "image/png"];
@@ -75,20 +81,14 @@ const formSchema = z.object({
     lastName: z.string().refine(value => value.trim() !== "", {
         message: "Last name cannot be empty or just whitespace.",
     }).min(3, { message: "Last name must be at least 3 characters" }),
-    location: z.object({
-        latitude: z.number(),
-        longitude: z.number(),
-    }),
+    // location: z.object({
+    //     latitude: z.number(),
+    //     longitude: z.number(),
+    // }),
     businessAddress: z.string().refine(value => value.trim() !== "", {
         message: "Business Address cannot be empty or just whitespace.",
     }).min(3, { message: "Business Address must be at least 3 characters" }),
     email: z.email(),
-    // businessContactNumber: z
-    //     .string()
-    //     .min(1, { message: "Phone is required" })
-    //     .regex(/^\d+$/, { message: "Must be number" })
-    //     .transform((v) => Number(v))
-    //     .refine((n) => n >= 0, { message: "Must be non‑negative" }),
     affiliateId: z.string().refine(value => value.trim() !== "", {
         message: "Affiliate Id cannot be empty or just whitespace.",
     }),
@@ -140,30 +140,30 @@ interface IAddressObj {
 }
 export type TChauffeurForm = z.infer<typeof formSchema>;
 const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disabledFields, type }) => {
-
+const {data,isFetching} = UsefetchAllAffiliate({DateRange:{}});
     const [newAddress, setNewAddress] = useState("11 Greenwich Street, New York, NY, 10124, US");
     const [addressObj, setAddressObj] = useState<IAddressObj>();
     const [isAddressValid, setIsAddressValid] = useState(false);
 
-    const transformInitialData = async (data?: TChauffeur): TChauffeurForm | undefined => {
+    const transformInitialData =  (data?: TChauffeur): TChauffeurForm | undefined => {
         if (!data) return undefined;
         // console.log("edit chauffeur formdata:>",data)
         return {
-            firstName: data?.user?.firstName,
-            lastName: data?.user?.lastName,
-            email: data?.user?.email,
-            password: data?.password,
-            businessAddress: data?.businessAddress,
-            location: data?.location,
-            documents: data?.documents,
-            status: data?.status,
-            affiliateId: data?.affiliateId,
-            panNumber: data?.panNumber,
-            licenseNumber: data?.licenseNumber,
-            vehicleId: data?.vehicleId,
-            availability: data?.availability,
-            gratuity: data?.gratuity
-        }; 
+            firstName: data.user?.firstName || "",
+            lastName: data.user?.lastName || "",
+            email: data.user?.email || "",
+            password: data.password || "",
+            businessAddress: data.businessAddress || "",
+            location: data.location || { latitude: 0, longitude: 0 },
+            documents: data.documents || [],
+            status: data.status || "",
+            affiliateId: data.affiliateId || "",
+            panNumber: data.panNumber || "",
+            licenseNumber: data.licenseNumber || "",
+            vehicleId: data.vehicleId || "",
+            availability: data.availability ?? false,
+            gratuity: !isNaN(Number(data.gratuity)) ? Number(data.gratuity) : 0,
+          };
     };
 
     const fileRef = useRef<HTMLInputElement | null>(null);
@@ -181,19 +181,41 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
             },
             documents: [],
             status: "",
+            availability: false,
         }
     });
 
     const documents = form.watch("documents");
     const fileCount = documents?.length || 0;
 
-    const handleFormSubmit = async (data: unknown) => {
+    const handleFormSubmit = async (values: unknown) => {
         try {
-            // console.log("data:>>",data)
-            if (addressObj && data) {
-                data.location = addressObj.location;
+            
+            const formData = new FormData();
+
+            // Append all scalar values
+            formData.append("firstName", values.firstName);
+            formData.append("lastName", values.lastName);
+            // formData.append("businessAddress", values.businessAddress);
+            formData.append("email", values.email);
+            formData.append("affiliateId", values.affiliateId);
+            formData.append("panNumber", values.panNumber);
+            formData.append("licenseNumber", values.licenseNumber);
+            formData.append("vehicleId", values.vehicleId);
+            formData.append("availability", values.availability??false);
+            formData.append("password", values.password);
+            formData.append("gratuity", values.gratuity);
+            values.documents.forEach((file) => {
+                console.log("file:",file)
+                formData.append(`documents`, file); 
+              });
+            formData.append("status", values.status);
+            console.log("data:>>",values)
+            if (addressObj) {
+                formData.append("location", JSON.stringify({latitude: addressObj.location.latitude, longitude: addressObj.location.longitude}));
+                
             }
-            await onSubmit(data);
+            await onSubmit(formData);
         } catch (error) {
             console.error("Error:", error)
         }
@@ -255,38 +277,44 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                                 </FormItem>
                             )}
                         />
+                    {isFetching ? (<p>Loading...</p>): 
+                    data?.affiliates.length>0 ?
+                    (<FormField
+                        control={form.control}
+                        name="affiliateId"
+                        render={({ field }) => (
+                            <FormItem className="w-full col-span-4 col-start-1">
+                                <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Affiliate</FormLabel>
+                                <Select value={field.value} onValueChange={(v) => {
+                                    field.onChange(v);
+                                    // setStatusValue({ ...statusValue, affiliate: v })
+                                }} defaultValue={field.value}>
+                                    <FormControl className="w-full min-w-full rounded">
+                                        <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
+                                            <SelectValue className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="">
+                                    {data?.affiliates?.map(option => (
+                                             <SelectItem className="cursor-pointer" key={option.id} value={option.id}>{option.companyName}</SelectItem>
+                                         ))}
+                                    </SelectContent>
 
-                        <FormField
-                            control={form.control}
-                            name="affiliateId"
-                            render={({ field }) => (
-                                <FormItem className="w-full col-span-4 col-start-1">
-                                    <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Affiliate</FormLabel>
-                                    <Select value={statusValue.affiliate} onValueChange={(v) => {
-                                        field.onChange(v);
-                                        setStatusValue({ ...statusValue, affiliate: v })
-                                    }} defaultValue={field.value}>
-                                        <FormControl className="w-full min-w-full rounded">
-                                            <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
-                                                <SelectValue className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent className="">
-                                            {affiliate.map(option => (
-                                                <SelectItem className="cursor-pointer" key={option.id} value={option.id}>{option.affiliateName}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-
-                                    </Select>
-                                    <FormMessage
-                                        className={`mt-1 h-5 ${form.formState.errors.affiliateId ? 'visible text-red-600' : 'invisible'
-                                            } `}
-                                    >
-                                        {form.formState.errors.affiliateId?.message}
-                                    </FormMessage>
-                                </FormItem>
-                            )}
-                        />
+                                </Select>
+                                <FormMessage
+                                    className={`mt-1 h-5 ${form.formState.errors.affiliateId ? 'visible text-red-600' : 'invisible'
+                                        } `}
+                                >
+                                    {form.formState.errors.affiliateId?.message}
+                                </FormMessage>
+                            </FormItem>
+                        )}
+                    />
+                    ): (
+                        <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}><Label>Add Affiliate</Label></Link>
+                    )
+                }  
+                        
 
                         <FormField
                             control={form.control}
@@ -294,9 +322,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                             render={({ field }) => (
                                 <FormItem className="w-full col-span-2 col-start-5">
                                     <FormLabel>Select Status</FormLabel>
-                                    <Select value={statusValue.status} onValueChange={(v) => {
+                                    <Select value={field.value} onValueChange={(v) => {
                                         field.onChange(v);
-                                        setStatusValue({ ...statusValue, status: v })
+                                        // setStatusValue({ ...statusValue, status: v })
                                     }} defaultValue={field.value}>
                                         <FormControl className="w-full min-w-full rounded">
                                             <SelectTrigger className="cursor-pointer w-full">
@@ -304,8 +332,8 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="">
-                                            {affiliate.map(option => (
-                                                <SelectItem className="cursor-pointer" key={option.id} value={option.status}>{option.status}</SelectItem>
+                                            {statusValues.map(option => (
+                                                <SelectItem className="cursor-pointer" key={option.value} value={option.value}>{option.label}</SelectItem>
                                             ))}
                                         </SelectContent>
 
@@ -409,10 +437,10 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                                         />
                                     </FormControl>
                                     <FormMessage
-                                        className={`mt-1 h-5 ${form.formState.errors.password ? 'visible text-red-600' : 'invisible'
+                                        className={`mt-1 h-5 ${form.formState.errors.panNumber ? 'visible text-red-600' : 'invisible'
                                             }`}
                                     >
-                                        {form.formState.errors.password?.message}
+                                        {form.formState.errors.panNumber?.message}
                                     </FormMessage>
                                 </FormItem>)}
                         />
@@ -470,7 +498,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                                         <Switch
                     className="cursor-pointer"
                       checked={field.value}
-                      onCheckedChange={field.onChange}
+                      onCheckedChange={(v)=>field.onChange(v)}
+                      defaultChecked="false"
+                    //   defaultValue={}
                     />
                                     </FormControl>
                                     <FormMessage
@@ -491,7 +521,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                                         <Input
                                             className="rounded placeholder:text-[#E6E6E6] font-medium"
                                             placeholder="0"
-                                            disabled={isFieldDisabled(disabledFields, "vehicleId")}
+                                            disabled={isFieldDisabled(disabledFields, "gratuity")}
                                             {...field}
                                         />
                                     </FormControl>

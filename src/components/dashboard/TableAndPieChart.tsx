@@ -4,7 +4,7 @@ import { Button } from "../ui/button"
 import { Table } from "../ui/table"
 import { DataTable } from "../table/data-table"
 import { getChauffeurAvailablility, type TChauffeurAvailablility } from "../table/column";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { constant } from "@/lib/constant";
 import { Link, useNavigate } from "react-router-dom";
 import { Label } from "../ui/label";
@@ -30,6 +30,12 @@ const tableData: TChauffeurAvailablility[] = [
     status: "Active"
   },
 ];
+type FleetStat = {
+  id?: string
+  name: string
+  count: number
+}
+
 function TableAndPieChart() {
   const navigate = useNavigate();
   const [data, setData] = useState(tableData);
@@ -43,24 +49,62 @@ function TableAndPieChart() {
   };
   const columns = getChauffeurAvailablility(handleEdit, handleDelete);
   ChartJS.register(ArcElement, Tooltip, Legend);
-  const Chartdata = {
-    labels: ['Most Requested Fleet', 'Least Requested Fleet',],
+
+  // Fleet stats from API (fallback to static data)
+  const [fleetStats, setFleetStats] = useState<FleetStat[]>([
+    { name: 'Executive Sedan', count: 12 },
+    { name: 'Executive Large SUV.', count: 3 },
+  ])
+  const [loadingFleetStats, setLoadingFleetStats] = useState<boolean>(false)
+
+  useEffect(() => {
+    let isMounted = true
+    const fetchFleetStats = async () => {
+      try {
+        setLoadingFleetStats(true)
+        // Replace with your real endpoint
+        const response = await fetch('/api/dashboard/fleet-stats', { credentials: 'include' })
+        if (!response.ok) throw new Error('Failed to fetch fleet stats')
+        const json = await response.json()
+        if (isMounted && Array.isArray(json) && json.length) {
+          setFleetStats(json as FleetStat[])
+        }
+      } catch {
+        // keep fallback silently
+      } finally {
+        if (isMounted) setLoadingFleetStats(false)
+      }
+    }
+    fetchFleetStats()
+    return () => { isMounted = false }
+  }, [])
+
+  const topAndBottom = useMemo(() => {
+    if (!fleetStats.length) return [] as FleetStat[]
+    const most = fleetStats.reduce((a, b) => (a.count >= b.count ? a : b))
+    const least = fleetStats.reduce((a, b) => (a.count <= b.count ? a : b))
+    if (most === least) return [most]
+    return [most, least]
+  }, [fleetStats])
+
+  const Chartdata = useMemo(() => ({
+    labels: topAndBottom.length === 1 ? ["Most Requested Fleet"]:["Most Requested Fleet", "Least Requested Fleet"],
     datasets: [
       {
-        label: '# Requested Fleet',
-        data: [12, 3],
+        label: 'Requested Fleet',
+        data: topAndBottom.map(s => s.count),
         backgroundColor: [
           '#3A3A3A',
           '#939393',
-        ],
+        ].slice(0, Math.max(1, topAndBottom.length)),
         borderColor: [
           '#3A3A3A',
           '#939393',
-        ],
+        ].slice(0, Math.max(1, topAndBottom.length)),
         borderWidth: 1,
       },
     ],
-  }
+  }), [topAndBottom])
 
   return (
     <div className="flex justify-between">
@@ -93,7 +137,22 @@ function TableAndPieChart() {
               <Doughnut data={Chartdata}
                 options={{
                   responsive: true,
-                  maintainAspectRatio: true, // or false depending on aspect needs
+                  maintainAspectRatio: true,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        // Use API data for tooltip: show fleet name
+                        label: (ctx) => {
+                          const idx = ctx.dataIndex ?? 0
+                          const item = topAndBottom[idx]
+                          return item ? `${item.name}` : ''
+                        },
+                      },
+                    },
+                    legend: {
+                      display: true,
+                    },
+                  },
                 }}
               />
             </div>

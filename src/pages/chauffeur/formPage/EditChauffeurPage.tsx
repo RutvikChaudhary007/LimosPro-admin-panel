@@ -1,11 +1,12 @@
 // @ts-nocheck
+import UsefetchChauffeurById from "@/api/getChauffeurById"
 import ChauffeurForm, { type TChauffeurForm } from "@/components/chauffeur/ChauffeurForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
 import { constant } from "@/lib/constant"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 const initialData: TChauffeurForm = {
     id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -60,6 +61,9 @@ const initialData: TChauffeurForm = {
     }
     }
 const EditChauffeurPage = () => {
+  const {id} = useParams();
+  const {data, isFetching, error} = UsefetchChauffeurById({id});
+  if (isFetching) return (<p>Loading...</p>);
    const handleEditChauffeur = async (data: TChauffeurForm)=>{
           console.log("called handle edit chauffeur!")
           return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000));
@@ -81,7 +85,7 @@ const EditChauffeurPage = () => {
       <ChauffeurForm 
         onSubmit={handleEditChauffeur}
         type={"Edit Chauffeur"} 
-        initialData={initialData}
+        initialData={data}
         />
       </div>
     </AdminRootLayout>

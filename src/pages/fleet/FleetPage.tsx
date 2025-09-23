@@ -1,4 +1,5 @@
 // @ts-nocheck
+import UsefetchAllFleets from "@/api/getAllFleets";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getFleets, type TFleet } from "@/components/table/column";
@@ -59,8 +60,9 @@ function FleetPage() {
     const perPage = 10;
 
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const [data, setData] = useState<TFleet[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
+  // const [data, setData] = useState<TFleet[]>(tableData);
+  const {data, isFetching, error} = UsefetchAllFleets();
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
 
 
   const handleView = useCallback((id: string) => { console.log("view:", id)
@@ -75,7 +77,7 @@ function FleetPage() {
   const columns = useMemo(() => getFleets(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
-
+if(isFetching) return (<p>Loading...</p>);
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 

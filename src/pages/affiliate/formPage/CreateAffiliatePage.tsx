@@ -1,19 +1,61 @@
+import { createAffiliate } from "@/api/createAffiliate";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
+import { toast, toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import type { IAffiliate } from "@/types/affiliate";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function CreateAffiliatePage() {
+  const navigate = useNavigate();
+  const createAffiliateMutation = useMutation({
+    mutationFn: createAffiliate,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      
+      // userPermissions are automatically stored in localStorage by the login API
+      
+      navigate(constant.ROUTING_URLS.AFFILIATE);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      toast({
+        title: "Create affiliate Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+  });
   const handleCreateAffiliate = async (data:IAffiliate) => {
     
-      console.log("called handleCreateAffiliate")
-      return await new Promise((res)=>{
-        setTimeout(()=>res(console.log("promise:",data)),5000);
-      });
+      console.log("called handleCreateAffiliate",data);
+      try {
+     
+        // Remove remember field before sending to API
+        // await loginMutation.mutateAsync(loginData);
+       toastPromise(await createAffiliateMutation.mutateAsync(data), {
+          loading: "submitting...",
+          success: "Affiliate created successfully!",
+          error: (e) => (e instanceof Error ? e.message : "Failed to create affiliate"),
+        });
+      } catch (error) {
+        // Error handling is done in onError callback
+        console.error('Login error:', error);
+      }
   }
   return (
     <AdminRootLayout>

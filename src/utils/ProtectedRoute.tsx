@@ -28,6 +28,7 @@ const ProtectedRoute: React.FC = () => {
   if (!userRole) {
     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
   } else if (!hasDynamicAccess(location.pathname, userRole, userPermissions)) {
+    console.log(location.pathname, userRole, userPermissions)
     return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />;
   }
 
