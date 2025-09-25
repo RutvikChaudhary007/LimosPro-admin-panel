@@ -108,8 +108,8 @@ function App() {
           <Route path={constant.ROUTING_URLS.EDIT_USERS} element={<EditUserPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_USERS} element={<ViewUserPage />} />
           <Route path={constant.ROUTING_URLS.FLEETS} element={<FleetPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<EditFleetPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_FLEET} element={<CreateFleetPage />} />
+          <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
+          <Route path={constant.ROUTING_URLS.EDIT_FLEET} element={<EditFleetPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_FLEET} element={<ViewFleetPage />} />
           <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
           <Route path={constant.ROUTING_URLS.TRIPS} element={<TripsPage />} />

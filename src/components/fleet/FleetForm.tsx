@@ -131,8 +131,19 @@ const fleetOption = [
     },
 ]
 
-const FleetForm = ({ initialData, onSubmit, disabledFields, type }: IFleetFormProps) => {
+const FleetOptions= [
+    'Executive Sedan Fit for 3 Passengers',
+    'Executive SUV Fit for 6 Passengers',
+    'Business SUV Fit for 6 Passengers',
+    'Executive VAN Fit for 10 Passengers',
+    'Executive VAN Fit for 14 Passengers',
+    'Executive Mini Bus 16 Passengers',
+    'Executive Coach 40 Passenger',
+]
+
+const FleetForm = ({ initialData, isFetching, affiliateData, onSubmit, disabledFields, type }: IFleetFormProps) => {
     const [zonePricing, setZonePricing] = useState([]);
+    console.log("affiliateData:",affiliateData)
     const [isZoneActive, setIsZoneActive] = useState(false);
     const [previews, setPreviews] = useState<string[]>([])
     const [date, setDate] = useState(new Date());
@@ -227,7 +238,25 @@ const FleetForm = ({ initialData, onSubmit, disabledFields, type }: IFleetFormPr
         //     formData.append("zonePrice", null);
         // }
         //     formData.append("zonePricingEnabled", isZoneActive);
-            await onSubmit(data);
+            const formData = new FormData();
+
+            formData.append("affiliateId", data?.affiliateId);
+            formData.append("bagsCapacity", data?.bagsCapacity);
+            formData.append("brand", data?.brand);
+            formData.append("model", data?.model);
+            formData.append("capacity", data?.capacity);
+            formData.append("color", data?.color);
+            // formData.append("name", data?.name);
+            formData.append("vehicleType", data?.vehicleType);
+            formData.append("plateNumber", data?.plateNumber);
+            formData.append("vehicleImages", data?.vehicleImages);
+            formData.append("year", data?.year);
+
+            data?.documents?.forEach((file) => {
+                formData.append(`documents`, file); 
+              });
+
+            await onSubmit(formData);
         } catch (error) {
             console.error("Error:", error)
         }
@@ -274,7 +303,8 @@ const FleetForm = ({ initialData, onSubmit, disabledFields, type }: IFleetFormPr
                             render={({ field }) => (
                                 <FormItem className="w-full col-span-3 col-start-4">
                                     <FormLabel className="">Affiliate</FormLabel>
-                                    <Select value={field.value} onValueChange={(v) => {
+                                    {isFetching ? (<h1>Loading...</h1>):
+                                    (<Select value={field.value} onValueChange={(v) => {
                                         field.onChange(v);
                                         // setStatusValue({ ...statusValue, affiliate: v })
                                     }} defaultValue={field.value}>
@@ -286,12 +316,12 @@ const FleetForm = ({ initialData, onSubmit, disabledFields, type }: IFleetFormPr
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="">
-                                            {fleetOption.map(option => (
-                                                <SelectItem className="cursor-pointer" key={option.id} value={option.id}>{option.affiliate}</SelectItem>
+                                            {affiliateData?.affiliates?.map(option => (
+                                                <SelectItem className="cursor-pointer" key={option.id} value={option.id}>{option.companyName}</SelectItem>
                                             ))}
                                         </SelectContent>
 
-                                    </Select>
+                                    </Select>)}
                                     <FormMessage
                                         className={`mt-1 h-5 ${form.formState.errors.affiliateId ? 'visible text-red-600' : 'invisible'
                                             } `}
@@ -640,6 +670,41 @@ const FleetForm = ({ initialData, onSubmit, disabledFields, type }: IFleetFormPr
                                             }`}
                                     >
                                         {form.formState.errors.year?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
+                        />
+
+<FormField
+                            control={form.control}
+                            name="vehicleType"
+                            render={({ field }) => (
+                                <FormItem className="w-full col-span-3 col-start-2">
+                                    <FormLabel className="">Vehicle Type</FormLabel>
+                                    {isFetching ? (<h1>Loading...</h1>):
+                                    (<Select value={field.value} onValueChange={(v) => {
+                                        field.onChange(v);
+                                        // setStatusValue({ ...statusValue, affiliate: v })
+                                    }} defaultValue={field.value}>
+                                        <FormControl className="w-full min-w-full rounded">
+
+                                            <SelectTrigger className="cursor-pointer w-full">
+                                                <SelectValue className="placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" />
+                                                {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent className="">
+                                            {FleetOptions?.map((option,i) => (
+                                                <SelectItem className="cursor-pointer" key={i} value={option}>{option}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+
+                                    </Select>)}
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.affiliateId ? 'visible text-red-600' : 'invisible'
+                                            } `}
+                                    >
+                                        {form.formState.errors.affiliateId?.message}
                                     </FormMessage>
                                 </FormItem>
                             )}

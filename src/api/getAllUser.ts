@@ -4,28 +4,30 @@ import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 
 type DateRange = { startDate ?: Date | undefined; endDate ?: Date | undefined };
-export const getAllFleets = async (DateRange: DateRange) => {
-  const params: Record<string, unknown> = {};
+
+
+export const getAllUsers = async (DateRange: DateRange) => {
+    const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
       startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
       endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
     };
   }
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_FLEETS}`,{params});
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_USERS}`,{params});
     // console.log("response:",response)
-  
+
     return response.data.data;
   };
 
-const UsefetchAllFleets = ({DateRange}:{DateRange:DateRange}) =>
+const UsefetchAllUsers = ({DateRange}:{DateRange:DateRange}) =>
   useQuery({
-    queryKey: ['Fleets', DateRange],
-    queryFn: () => getAllFleets(DateRange),
+    queryKey: ['users'],
+    queryFn: () => getAllUsers(DateRange),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,
     // keepPreviousData: true, // for pagination
   });
 
-export default UsefetchAllFleets;
+export default UsefetchAllUsers;

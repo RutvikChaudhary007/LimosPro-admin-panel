@@ -9,7 +9,7 @@ import { constant } from "@/lib/constant"
 import { cn } from "@/lib/utils"
 import { ArrowLeft } from "lucide-react"
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 const data = {
     id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -29,9 +29,10 @@ const data = {
     updatedAt: "2025-05-05T12:19:41.972Z",
 }
 const showStatus = [
-    { label: 'On Going', value: 'OnGoing' },
-    { label: 'Completed', value: 'Completed' },
-    { label: 'Cancelled', value: 'Cancelled' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'In-Progress', value: 'inProgress' },
+    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'Pending', value: 'pending' },
 ];
 
 const newStatus = [
@@ -48,6 +49,8 @@ const getNewStatusColor = (value: string)=>{
     return newStatus.find(status=> status.value.toLowerCase().trim() === value.toLowerCase().trim())
 }
 const ViewTripsPage = () => {
+    const  {id} = useParams();
+    
         const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     
   return (

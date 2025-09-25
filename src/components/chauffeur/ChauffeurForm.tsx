@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Input } from "../ui/input"
 import isFieldDisabled from "@/utils/disableFormField"
-import { useRef, useState, type FC } from "react"
+import { useRef, useState, type FC, useEffect } from "react"
 import type { IChauffeurFormProps } from "@/types/chauffeur"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -18,54 +18,54 @@ import type { TChauffeur } from "../table/column"
 import UsefetchAllAffiliate from "@/api/getAllAffiliate"
 
 
-const affiliate = [
-    {
-        id: "ac28bba6-7823-4a84-8f57-89d1a7d160e0",
-        affiliateName: "Zenith Holdings",
-        userId: "1694b4a2-c5dd-4e1c-9fa4-ebe70687b18f",
-        isChauffer: true,
-        companyName: "bhoraniya enterpricebb",
-        taxId: "tax-husainsdfd",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniyddfa2@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [
-            {
-                size: 120009,
-                status: "pending",
-                fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045264-resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf",
-                mimetype: "application/pdf",
-                originalName: "resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf"
-            },
-            {
-                size: 157039,
-                status: "pending",
-                fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045264-Screenshot%20%288%29.png",
-                mimetype: "image/png",
-                "originalName": "Screenshot (8).png"
-            },
-            {
-                size: 254971,
-                status: "pending",
-                fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045269-Screenshot%20%287%29.png",
-                mimetype: "image/png",
-                "originalName": "Screenshot (7).png"
-            }
-        ],
-        stripeAccountId: "acct_1RtRSU3C8pRaWHyZ",
-        stripeAccountStatus: "inPogress",
-        status: "Active",
-        createdAt: "2025-08-07T10:54:10.651Z",
-        updatedAt: "2025-08-07T10:54:10.651Z",
-        chauffeurs: []
-    }
-]  
+// const affiliate = [
+//     {
+//         id: "ac28bba6-7823-4a84-8f57-89d1a7d160e0",
+//         affiliateName: "Zenith Holdings",
+//         userId: "1694b4a2-c5dd-4e1c-9fa4-ebe70687b18f",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterpricebb",
+//         taxId: "tax-husainsdfd",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniyddfa2@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [
+//             {
+//                 size: 120009,
+//                 status: "pending",
+//                 fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045264-resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf",
+//                 mimetype: "application/pdf",
+//                 originalName: "resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf"
+//             },
+//             {
+//                 size: 157039,
+//                 status: "pending",
+//                 fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045264-Screenshot%20%288%29.png",
+//                 mimetype: "image/png",
+//                 "originalName": "Screenshot (8).png"
+//             },
+//             {
+//                 size: 254971,
+//                 status: "pending",
+//                 fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/affiliates/1754564045269-Screenshot%20%287%29.png",
+//                 mimetype: "image/png",
+//                 "originalName": "Screenshot (7).png"
+//             }
+//         ],
+//         stripeAccountId: "acct_1RtRSU3C8pRaWHyZ",
+//         stripeAccountStatus: "inPogress",
+//         status: "Active",
+//         createdAt: "2025-08-07T10:54:10.651Z",
+//         updatedAt: "2025-08-07T10:54:10.651Z",
+//         chauffeurs: []
+//     }
+// ]  
 const statusValues = [
     {label:"Active", value:"Active"},
     {label:"Inactive", value:"Inactive"},
@@ -144,17 +144,17 @@ const {data,isFetching} = UsefetchAllAffiliate({DateRange:{}});
     const [newAddress, setNewAddress] = useState("11 Greenwich Street, New York, NY, 10124, US");
     const [addressObj, setAddressObj] = useState<IAddressObj>();
     const [isAddressValid, setIsAddressValid] = useState(false);
-
+    
     const transformInitialData =  (data?: TChauffeur): TChauffeurForm | undefined => {
         if (!data) return undefined;
-        // console.log("edit chauffeur formdata:>",data)
+        console.log("edit chauffeur formdata:>",data)
         return {
-            firstName: data.user?.firstName || "",
-            lastName: data.user?.lastName || "",
-            email: data.user?.email || "",
+            firstName: data?.userFirstName || "",
+            lastName: data?.userLastName || "",
+            email: data?.userEmail || "",
             password: data.password || "",
             businessAddress: data.businessAddress || "",
-            location: data.location || { latitude: 0, longitude: 0 },
+            location: data.Address || { latitude: 0, longitude: 0 },
             documents: data.documents || [],
             status: data.status || "",
             affiliateId: data.affiliateId || "",
@@ -184,7 +184,12 @@ const {data,isFetching} = UsefetchAllAffiliate({DateRange:{}});
             availability: false,
         }
     });
-
+    useEffect(() => {
+        if (initialData) {
+          form.reset(transformInitialData(initialData));
+          setNewAddress(initialData.businessAddress || "");
+        }
+      }, [initialData]);
     const documents = form.watch("documents");
     const fileCount = documents?.length || 0;
 
@@ -400,7 +405,7 @@ const {data,isFetching} = UsefetchAllAffiliate({DateRange:{}});
                                     <FormLabel>Location</FormLabel>
                                      <FormControl>
                                         <AddressInput
-                                            value={newAddress}
+                                            value={field.value}
                                             field={field}
                                             onChange={(value) => {
                                                 setNewAddress(value);

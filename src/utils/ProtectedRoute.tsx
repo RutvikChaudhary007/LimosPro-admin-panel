@@ -1,5 +1,6 @@
-import { Navigate, Outlet, useLocation, matchPath } from "react-router-dom";
-import { ROUTE_PERMISSIONS } from "./roles";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+// import { Navigate, Outlet, useLocation, matchPath } from "react-router-dom";
+// import { ROUTE_PERMISSIONS } from "./roles";
 import { hasDynamicAccess } from "./Helper";
 import { constant } from "@/lib/constant";
 
@@ -19,11 +20,11 @@ const ProtectedRoute: React.FC = () => {
   }
 
   // ✅ Find first matching route pattern in ROUTE_PERMISSIONS
-  const matchedKey = Object.keys(ROUTE_PERMISSIONS).find((pattern) =>
-    matchPath(pattern, location.pathname)
-  );
+  // const matchedKey = Object.keys(ROUTE_PERMISSIONS).find((pattern) =>
+  //   matchPath(pattern, location.pathname)
+  // );
 
-  const allowedRoles = matchedKey ? ROUTE_PERMISSIONS[matchedKey] : [];
+  // const allowedRoles = matchedKey ? ROUTE_PERMISSIONS[matchedKey] : [];
 
   if (!userRole) {
     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;

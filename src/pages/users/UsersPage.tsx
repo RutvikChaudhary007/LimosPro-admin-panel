@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
+import { deleteUser } from '@/api/deleteUser';
+import UsefetchAllUsers from '@/api/getAllUser';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
 import { getStatusColor, getUsers, type TUsers } from '@/components/table/column';
@@ -8,9 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
+import { toastPromise, useToast} from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
+import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const showStatus = [
@@ -27,79 +33,167 @@ const showTime = [
   { label: 'Yearly', value: 'yearly' },
 ]
 
-const tableData: TUsers[] = [
-    {
-            id: "a4067b19-271d-4352-90dc-458f5fa97da3",
-            firstName: "NoahAnderson",
-            lastName: "",
-            email: "testuser@qalbit.com",
-            phoneNumber: "+1-424-231-3438",
-            dateOfBirth: "",
-            gender: "male",
-            status: "active",
-            paymentMethod: "creditCard",
-            profilePicture: "",
-            social: "",
-            createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-            updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-            deletedAt: ""
-        },
-    {
-            id: "b4067b19-271d-4352-90dc-458f5fa97da3",
-            firstName: "Charlotte_Brown",
-            lastName: "",
-            email: "testuser2@qalbit.com",
-            phoneNumber: "+1-424-133-7698",
-            dateOfBirth: "",
-            gender: "male",
-            status: "banned",
-            paymentMethod: "creditCard",
-            profilePicture: "",
-            social: "",
-            createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-            updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-            deletedAt: ""
-        },
-    {
-            id: "c4067b19-271d-4352-90dc-458f5fa97da4",
-            firstName: "Liam_Wilson99",
-            lastName: "",
-            email: "testuser3@qalbit.com",
-            phoneNumber: "+1-424-041-6798",
-            dateOfBirth: "",
-            gender: "male",
-            status: "inactive",
-            paymentMethod: "creditCard",
-            profilePicture: "",
-            social: "",
-            createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-            updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-            deletedAt: ""
-        },
-]
+// const tableData: TUsers[] = [
+//     {
+//             id: "a4067b19-271d-4352-90dc-458f5fa97da3",
+//             firstName: "NoahAnderson",
+//             lastName: "",
+//             email: "testuser@qalbit.com",
+//             phoneNumber: "+1-424-231-3438",
+//             dateOfBirth: "",
+//             gender: "male",
+//             status: "active",
+//             paymentMethod: "creditCard",
+//             profilePicture: "",
+//             social: "",
+//             createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+//             updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+//             deletedAt: ""
+//         },
+//     {
+//             id: "b4067b19-271d-4352-90dc-458f5fa97da3",
+//             firstName: "Charlotte_Brown",
+//             lastName: "",
+//             email: "testuser2@qalbit.com",
+//             phoneNumber: "+1-424-133-7698",
+//             dateOfBirth: "",
+//             gender: "male",
+//             status: "banned",
+//             paymentMethod: "creditCard",
+//             profilePicture: "",
+//             social: "",
+//             createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+//             updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+//             deletedAt: ""
+//         },
+//     {
+//             id: "c4067b19-271d-4352-90dc-458f5fa97da4",
+//             firstName: "Liam_Wilson99",
+//             lastName: "",
+//             email: "testuser3@qalbit.com",
+//             phoneNumber: "+1-424-041-6798",
+//             dateOfBirth: "",
+//             gender: "male",
+//             status: "inactive",
+//             paymentMethod: "creditCard",
+//             profilePicture: "",
+//             social: "",
+//             createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+//             updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
+//             deletedAt: ""
+//         },
+// ]
 function UsersPage() {
+  const {toast} = useToast();
   const navigate = useNavigate();
   const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const [data, setData] = useState<TUsers[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data, 1, perPage);
+      // --- Time range helper ---
+  const { startDate, endDate } = useMemo(() => {
+    const now = new Date();
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23, 59, 59, 999
+      )
+    );
+    let start: Date | undefined;
+  
+    switch (selectedTime.value) {
+      case 'weekly': {
+        // last 7 days inclusive (UTC)
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6,
+            0, 0, 0, 0
+          )
+        );
+        break;
+      }
+      case 'monthly': {
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            1,
+            0, 0, 0, 0
+          )
+        );
+        break;
+      }
+      case 'yearly': {
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            0,
+            1,
+            0, 0, 0, 0
+          )
+        );
+        break;
+      }
+      default: {
+        // All time: leave undefined so callers can omit filters
+        start = undefined;
+      }
+    }
+  
+    return { startDate: start, endDate: selectedTime.value ? end : undefined };
+  }, [selectedTime]);
 
+  const {data, refetch, isFetching} = UsefetchAllUsers({DateRange:{startDate,endDate}});
+  
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
 
-  const handleView = useCallback((id: string) => { console.log("view:", id)
+  const handleView = (id: string) => { console.log("view:", id)
     navigate(constant.ROUTING_URLS.VIEW_USERS.replace(":id",id));
-   }, []);
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
-    navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id",id));
-   }, []);
-    const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
-    }, []);
-  const columns = useMemo(() => getUsers(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
-  const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<object>({});
+   };
 
+  const handleEdit = (id: string) => { console.log("Edit:", id)
+    navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id",id));
+   };
+const deleteUserMutation = useMutation({
+  mutationFn: deleteUser,
+  onSuccess: ()=>{
+    refetch();
+  },
+  onError: (err: unknown) => {
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      toast({
+        title: "Delete user",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    }
+})
+    const handleDelete = async (id: string) => {
+      toastPromise(await deleteUserMutation.mutateAsync(id),{
+        loading: "Loading...",
+        success: "yeah! user deleted successfully",
+        error: "Failed to delete user.",
+      })
+    //   setData((prev) =>
+    //     prev.filter((row) => row.id !== id))
+    };
+
+  const columns = getUsers(handleView,handleEdit, handleDelete)
+  const [searchValue, setSearchValue] = useState("");
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+
+  if(isFetching) return (<p>Loading...</p>)
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
@@ -184,11 +278,11 @@ function UsersPage() {
               <h2 className="font-medium text-xl text-black">User</h2>
               <h4> <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#939393] w-[50px] h-4">/ User</span></h4>
             </div>
-            <Link to={constant.ROUTING_URLS.CREATE_USERS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            {/* <Link to={constant.ROUTING_URLS.CREATE_USERS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add User</span>
             </Button>
-            </Link>
+            </Link> */}
           </div>
         </Header>
 
@@ -238,18 +332,15 @@ function UsersPage() {
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
             
             <span className={`${Object.keys(rowSelection).filter((k) => 
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
               rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
               
             <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
             
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 
-                // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                setData((prev) =>prev.filter((_,i) => !rowSelection[i])
-                );
+                // setData((prev) =>prev.filter((_,i) => !rowSelection[i])
+                // );
                 setRowSelection({});
               }}
             >
@@ -266,14 +357,13 @@ function UsersPage() {
         
         <DataTable columns={columns} data={currentItems}
 
-// @ts-expect-error: We are intentionally assigning a number to a string type for testing.
          rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
         
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
+        {data?.users?.length > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>

@@ -12,6 +12,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from '@/hooks/use-pagination';
 import { toast, toastPromise } from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
+import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
@@ -383,7 +384,7 @@ const { startDate, endDate } = useMemo(() => {
 }, [selectedTime]);
 
 
-  const {data: FetchData, isFetching, error} = UsefetchAllAffiliate({DateRange:{startDate,endDate}});  
+  const {data: FetchData, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}});  
   const [data, setData] = useState<TAffiliate[]>([]);
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
 useEffect(()=>{
@@ -420,7 +421,7 @@ useEffect(()=>{
 
   const deleteAffiliateMutation = useMutation({
     mutationFn: deleteAffiliate,
-    onSuccess: (response, variables) => {
+    onSuccess: () => {
       // TODO: need id
       // setData((prev) =>
       //   prev.filter((row) => row.id !== response.id))

@@ -1,3 +1,4 @@
+import UsefetchAllBookings from '@/api/getAllBookings';
 import { Calendar28 } from '@/components/date/DateRange';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
@@ -10,7 +11,7 @@ import usePagination from '@/hooks/use-pagination';
 import { constant } from '@/lib/constant';
 import { exportToCsv } from '@/utils/export';
 import { ChevronDown, Download } from 'lucide-react';
-import {  useMemo, useState } from 'react';
+import {  useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -89,12 +90,19 @@ function countByStatus(bookings: TBooking[]) {
         }
     );
 }
+
+type RowData = {
+  affiliateId: string;
+  id: string;
+  status: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
 function BookingPage() {
     const perPage = 10;
     const navigate = useNavigate();
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-    const [data, ] = useState<TBooking[]>(tableData);
-
+    
     const [dateRange, setDateRange] = useState<{
 
         from: Date | undefined;
@@ -103,16 +111,24 @@ function BookingPage() {
         from: undefined,
         to: undefined,
     });
+    // const [data, setData] = useState<TBooking[]>(tableData);
+    const {data, isFetching} = UsefetchAllBookings({DateRange: dateRange})
+
+    useEffect(()=>{
+        if(data){
+            console.log("fetchData:",data)
+        }
+    },[data])
 
     const handleView = (id: string) => { console.log("view:", id)
-        navigate(constant.ROUTING_URLS.VIEW_BOOKING);
+        navigate(constant.ROUTING_URLS.VIEW_BOOKING.replace(":id",id));
      };
     const columns = getBooking(handleView);
     const [searchValue, setSearchValue] = useState("");
-    const [rowSelection, setRowSelection] = useState({});
+    const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
 
     // Filter data
-    const filterData = data?.filter(row => {
+    const filterData = data?.bookings?.filter((row:RowData) => {
         if (searchValue === "") return true;
         if (searchValue &&
             !row.affiliateId.toLowerCase().includes(searchValue.toLowerCase()) &&
@@ -151,11 +167,6 @@ function BookingPage() {
     const statusCounts = useMemo(() => {
         return countByStatus(tableData);
     }, []);
-
-    // console.log({
-    //     total: tableData.length,
-    //     ...statusCounts,
-    // });
 
 
       // Handle CSV export
@@ -263,6 +274,8 @@ function BookingPage() {
 
         return items;
     };
+
+    if(isFetching) return (<p>Loading...</p>);
     return (
         <AdminRootLayout>
             <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">

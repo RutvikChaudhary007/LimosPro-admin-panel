@@ -111,10 +111,10 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
         // console.log("initial data:", data)
         
         return {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
-            password: data.password,
+            firstName: data?.user?.firstName,
+            lastName: data?.user?.lastName,
+            email: data?.user?.email,
+            password: data?.user?.password,
             isChauffer: data.isChauffer,
             companyName: data.companyName,
             businessContactNumber: data.businessContactNumber,

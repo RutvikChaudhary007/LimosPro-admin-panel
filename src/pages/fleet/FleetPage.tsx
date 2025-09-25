@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { deletefleet } from "@/api/deleteFleet";
 import UsefetchAllFleets from "@/api/getAllFleets";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
@@ -9,7 +10,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -60,21 +65,107 @@ function FleetPage() {
     const perPage = 10;
 
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
+    // --- Time range helper ---
+  const { startDate, endDate } = useMemo(() => {
+    const now = new Date();
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23, 59, 59, 999
+      )
+    );
+    let start: Date | undefined;
+  
+    switch (selectedTime.value) {
+      case 'weekly': {
+        // last 7 days inclusive (UTC)
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6,
+            0, 0, 0, 0
+          )
+        );
+        break;
+      }
+      case 'monthly': {
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            1,
+            0, 0, 0, 0
+          )
+        );
+        break;
+      }
+      case 'yearly': {
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            0,
+            1,
+            0, 0, 0, 0
+          )
+        );
+        break;
+      }
+      default: {
+        // All time: leave undefined so callers can omit filters
+        start = undefined;
+      }
+    }
+  
+    return { startDate: start, endDate: selectedTime.value ? end : undefined };
+  }, [selectedTime]);
+  
   // const [data, setData] = useState<TFleet[]>(tableData);
-  const {data, isFetching, error} = UsefetchAllFleets();
+  const {data,refetch, isFetching} = UsefetchAllFleets({DateRange: {startDate, endDate}});
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
 
+  const deletefleetMutation = useMutation({
+    mutationFn: deletefleet,
+    onSuccess: ()=>{refetch()},
+    onError: (err: unknown)=>{
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      // toast({
+      //   title: "Delete fleet failed",
+      //   description: errorMessage,
+      //   variant: "destructive",
+      // });
+    }
+  });
 
-  const handleView = useCallback((id: string) => { console.log("view:", id)
+  const handleView = (id: string) => { console.log("view:", id)
     navigate(constant.ROUTING_URLS.VIEW_FLEET.replace(":id",id));
-   }, []);
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
+   };
+  const handleEdit = (id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_FLEET.replace(":id",id));
-   }, []);
-    const handleDelete = useCallback((id: string) => {
-      setData((prev) => prev.filter((row) => row.id !== id));
-      }, []);
-  const columns = useMemo(() => getFleets(handleView,handleEdit, handleDelete),[handleView,handleEdit, handleDelete])
+   };
+    const handleDelete = async(id: string) => {
+      try {
+        toastPromise(await deletefleetMutation.mutateAsync(id),{
+          loading: "Deleting...",
+          success: "Yeah! fleet deleted successfully.",
+          error: "Opps! failed to delete fleet.",
+        })
+      } catch (error) {
+        console.log(error)
+      }
+      // setData((prev) => prev.filter((row) => row.id !== id));
+      };
+  const columns =  getFleets(handleView,handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 if(isFetching) return (<p>Loading...</p>);

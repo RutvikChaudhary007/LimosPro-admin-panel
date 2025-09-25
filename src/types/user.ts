@@ -5,7 +5,7 @@ export interface IUserFormData {
     dateOfBirth: Date ;
     email: string;
     phone: string;
-    status: "active" | "inactive" | "banned";
+    status: "active" | "inactive" | "suspended";
     address: string;
     password?: string;
 }

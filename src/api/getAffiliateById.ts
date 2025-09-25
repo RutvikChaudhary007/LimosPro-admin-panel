@@ -11,10 +11,10 @@ export const getAffiliateById = async (id: string) => {
   return response?.data?.data;
 };
 
-const UsefetchAffiliateById = ({ id }: { id: string }) =>
+const UsefetchAffiliateById = ({ id }: { id: string | undefined }) =>
   useQuery({
     queryKey: ['affiliateById', id],
-    queryFn: () => getAffiliateById(id),
+    queryFn: () => id?getAffiliateById(id) : ()=>{console.log("id missing")},
     refetchOnWindowFocus: false,
     retry: false,
   });

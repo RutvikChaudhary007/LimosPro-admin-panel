@@ -1,23 +1,50 @@
-//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL || 'http://localhost/api';
 //  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
+//  export const BASE_URL  = 'http://localhost:3000/api/v1';
 //  export const BASE_URL1  = import.meta.env.VITE_API_BA2SE_URL ||'http://localhost:3001/api/v1';
 //  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3002/api/v1';
- export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.5:3000/api/v1';
- export const BASE_URL1  = import.meta.env.VITE_API_BA2SE_URL ||'http://192.168.1.5:3001/api/v1';
- export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.5:3002/api/v1';
-console.log("baseurl:",BASE_URL);
+
+ export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
+ export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
+ export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.10:3002/api/v1';
+
+
 export const API_ENDPOINTS = {
+  // Auth
   SIGN_UP: `${BASE_URL}/signup`,
   LOG_IN: `${BASE_URL}/login`,
+
+  // Affiliate
   GET_ALL_AFFILIATE: `${BASE_URL1}/affiliates`,
   GET_AFFILIATE_BY_ID: `${BASE_URL1}/affiliate/:id`,
   CREATE_AFFILIATE: `${BASE_URL1}/affiliate`,
   UPDATE_AFFILIATE: `${BASE_URL1}/affiliate/:id`,
   DELETE_AFFILIATE: `${BASE_URL1}/affiliate/:id`,
+  
+  // Fleets
+  GET_ALL_FLEETS: `${BASE_URL1}/vehicles`,
+  GET_FLEET_BY_ID: `${BASE_URL1}/vehicle/:id`,
+  CREATE_FLEET: `${BASE_URL1}/vehicle`,
+  DELETE_FLEET: `${BASE_URL1}/vehicle/:id`,
+  
+  // Booking
+  GET_ALL_BOOKINGS: `${BASE_URL2}/bookings`,
+  GET_BOOKING_BY_ID: `${BASE_URL2}/booking/:id`,
+  
+  // Chauffeur
   GET_ALL_CHAUFFEUR: `${BASE_URL1}/chauffeurs`,
   GET_CHAUFFEUR_BY_ID: `${BASE_URL1}/chauffeur/:id`,
-  GET_ALL_FLEETS: `${BASE_URL1}/vehicles`,
   CREATE_CHAFFEUR: `${BASE_URL1}/chauffeur`,
+
+  //Users
   USER_PROFILE :`${BASE_URL}/user/profile`,
-  RESET_PASSWORD:`/auth/reset-password`,
+  GET_ALL_USERS: `${BASE_URL1}/users`,
+  GET_USERS_BY_ID: `${BASE_URL1}/user/:id`,
+  UPDATE_USER_BY_ID: `${BASE_URL1}/user/ban/:id`,
+  DELETE_USERS: `${BASE_URL1}/user/:id`,
+
+  // Accounts
+  RESET_PASSWORD:`${BASE_URL}/auth/reset-password`,
+
+  // Trips
+  GET_ALL_TRIPS:  `${BASE_URL}/trips`
 };

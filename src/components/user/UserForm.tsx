@@ -19,29 +19,36 @@ import { Calendar } from '../ui/calendar';
 
 
 const formSchema = z.object({
-    firstName: z.string().refine(value => value.trim() !== "", {
-        message: "First name cannot be empty or just whitespace.",
-    }).min(3, { message: "First name must be at least 3 characters" }),
-    lastName: z.string().refine(value => value.trim() !== "", {
-        message: "Last name cannot be empty or just whitespace.",
-    }).min(3, { message: "Last name must be at least 3 characters" }),
-    dateOfBirth: z.date({
-        message: "A date of birth is required.",
-    }),
+    // firstName: z.string().refine(value => value.trim() !== "", {
+    //     message: "First name cannot be empty or just whitespace.",
+    // }).min(3, { message: "First name must be at least 3 characters" }),
+    // lastName: z.string().refine(value => value.trim() !== "", {
+    //     message: "Last name cannot be empty or just whitespace.",
+    // }).min(3, { message: "Last name must be at least 3 characters" }),
+    // dateOfBirth: z.date({
+    //     message: "A date of birth is required.",
+    // }),
     // address: z.string().refine(value => value.trim() !== "", {
     //     message: "Address cannot be empty or just whitespace.",
     // }).min(3, { message: "Address must be at least 3 characters" }),    
-    email: z.email(),
+    // email: z.email(),
     // password: z.string().optional(),
-    phone: z
-        .string()
-        .min(1, { message: "Phone is required" })
-        .regex(/^\d+$/, { message: "Must be number" })
-        .transform((v) => Number(v))
-        .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-    status: z.string().optional(),
-    gender: z.enum(["male", "female", "other"]),
+    // phone: z
+    //     .string()
+    //     .min(1, { message: "Phone is required" })
+    //     .regex(/^\d+$/, { message: "Must be number" })
+    //     .transform((v) => Number(v))
+    //     .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    status: z.string(),
+    // gender: z.enum(["male", "female", "other"]),
 });
+
+
+const statusAction = [
+    {label: "Active", value: "active" },
+    {label: "Suspended", value: "suspended" },
+    {label: "InActive", value: "inactive" },
+];
 
 type TUserForm = z.infer<typeof formSchema>;
 const UserForm = ({ initialData, onSubmit, disabledFields, type }: TUserFormProps) => {
@@ -49,29 +56,29 @@ const UserForm = ({ initialData, onSubmit, disabledFields, type }: TUserFormProp
     const transformInitialData = (data?: IUserFormData): TUserForm | undefined => {
         if (!data) return undefined;
         return {
-            firstName: data.firstName,
-            lastName: data.lastName,
-            email: data.email,
+            // firstName: data.firstName,
+            // lastName: data.lastName,
+            // email: data.email,
             // password: data.password,
             // address: data.address,
-            dateOfBirth: data.dateOfBirth,
-            gender: data.gender,
-            phone: parseInt(data.phone),
+            // dateOfBirth: data.dateOfBirth,
+            // gender: data.gender,
+            // phone: parseInt(data.phone),
             status: data.status,
         };
     };
     const form = useForm<IUserFormData>({
         resolver: zodResolver(formSchema),
         defaultValues: transformInitialData(initialData) || {
-            firstName: "",
-            lastName: "",
-            email: "",
+            // firstName: "",
+            // lastName: "",
+            // email: "",
             // address: "",
-            dateOfBirth: "",
+            // dateOfBirth: "",
             // password: "",
             status: "active",
-            gender: "",
-            phone: "",
+            // gender: "",
+            // phone: "",
         }
     });
     const handleFormSubmit = async (data:IUserFormData) => {
@@ -87,7 +94,7 @@ const UserForm = ({ initialData, onSubmit, disabledFields, type }: TUserFormProp
                         <CardTitle className='text-lg'>{type}</CardTitle>
                     </CardHeader>
                     <CardContent className='w-full grid grid-cols-6 space-x-5 space-y-5'>
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name='firstName'
                             render={({ field }) => (
@@ -253,6 +260,37 @@ const UserForm = ({ initialData, onSubmit, disabledFields, type }: TUserFormProp
                                     </FormMessage>
                                 </FormItem>
                             )}
+                        /> */}
+                        <FormField
+                            name='status'
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem className="col-span-2  mr-5 mb-5">
+                                    <FormLabel className='text-sm h-3.5'>Status</FormLabel>
+                                    <Select value={field.value} onValueChange={(v) => {
+                                    field.onChange(v);
+                                    // setStatusValue({ ...statusValue, affiliate: v })
+                                }} defaultValue={field.value}>
+                                    <FormControl className="w-full min-w-full rounded">
+                                        <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
+                                            <SelectValue className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="">
+                                    {statusAction?.map(option => (
+                                             <SelectItem className="cursor-pointer" key={option.label} value={option.value}>{option.label}</SelectItem>
+                                         ))}
+                                    </SelectContent>
+
+                                </Select>
+                                    <FormMessage
+                                        className={`mt-1 h-5 ${form.formState.errors.status ? 'visible text-red-600' : 'invisible'
+                                            }`}
+                                    >
+                                        {form.formState.errors.status?.message}
+                                    </FormMessage>
+                                </FormItem>
+                            )}
                         />
                         {/* <FormField
                         control={form.control}
@@ -288,14 +326,14 @@ const UserForm = ({ initialData, onSubmit, disabledFields, type }: TUserFormProp
                      <div className="flex items-center justify-start rounded px-6 space-x-2.5">
                                             <Button className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50" variant={"secondary"} type="button" onClick={() => {
                                                 form.reset({
-                                                    firstName: "",
-                                                    lastName: "",
-                                                    email: "",
-                                                    phone: "",
-                                                    gender: null,
-                                                    dateOfBirth: null,
+                                                    // firstName: "",
+                                                    // lastName: "",
+                                                    // email: "",
+                                                    // phone: "",
+                                                    // gender: null,
+                                                    // dateOfBirth: null,
                                                     // password: "",
-                                                    // status: "",
+                                                    status: "",
                                                 });
                                                 // setGender("");
                                                 // setStatusValue({ status: "", affiliate: "" });

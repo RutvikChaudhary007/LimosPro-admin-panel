@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast, toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import type { IAffiliate } from "@/types/affiliate";
+import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";

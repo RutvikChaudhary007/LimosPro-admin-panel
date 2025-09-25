@@ -1,18 +1,53 @@
-// @ts-nocheck
+
+import { createFleet } from "@/api/createFleet"
+import UsefetchAllAffiliate from "@/api/getAllAffiliate"
 import FleetForm from "@/components/fleet/FleetForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
+import { toastPromise, useToast } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
 import type { TFleetData } from "@/types/fleet"
+import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
+import { useMutation } from "@tanstack/react-query"
+import type { AxiosError } from "axios"
 import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 
 const CreateFleetPage = () => {
-  
-    const handleCreateFleet = async (data: TFleetData)=>{
-        console.log("called handle create fleet!")
-        return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000));
+  const {toast} = useToast();
+  const {data,isFetching} = UsefetchAllAffiliate({DateRange: undefined});
+  const createFleetMutation = useMutation({
+    mutationFn: createFleet,
+    onSuccess: ()=>{},
+    onError: (err: unknown) => {
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      toast({
+        title: "Create fleet failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    },
+  })
+    const handleCreateFleet = async (data: TFleetData)=> {
+        console.log("called handle create fleet!", data)
+        try {
+          toastPromise(await createFleetMutation.mutateAsync(data),{
+            loading: "Loading...",
+            success: "Yeah! fleet created successfully.",
+            error: "Opps! failed to create fleet.",
+          })      
+        } catch (error) {
+          console.error("Error while creating fleet", error);
+        }
     }
   return (
     <AdminRootLayout>
@@ -30,6 +65,8 @@ const CreateFleetPage = () => {
         </Header>
         <FleetForm 
         onSubmit={handleCreateFleet}
+        isFetching={isFetching}
+        affiliateData={data}
         type={"Create Fleet"} 
         />
       </div>

@@ -1,3 +1,4 @@
+import useFetchAllTrips from "@/api/getAllTrips";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getStatusColor, getTrips, type TTrips } from "@/components/table/column";
@@ -12,11 +13,13 @@ import { ChevronDown, Trash2 } from "lucide-react";
 import {   useState, type JSX } from "react"
 import {  useNavigate } from "react-router-dom";
 
+
+
 const showStatus = [
-  { label: 'Active', value: 'active' },
+  { label: 'Completed', value: 'completed' },
   { label: 'Pending', value: 'pending' },
-  { label: 'Inactive', value: 'inactive' },
-  { label: 'Suspended', value: 'suspended' },
+  { label: 'In-Progress', value: 'inProgress' },
+  { label: 'Cancelled', value: 'cancelled' },
 ];
 
 const tableData: TTrips[] = [
@@ -25,7 +28,7 @@ const tableData: TTrips[] = [
     bookingId: "67890",
     chaufferId: "67890",
     tripType: "oneWay",
-    tripStatus: "ongoing",
+    tripStatus: "inProgress",
     tripStartTime: "2025-04-16T10:00:00Z",
     tripEndTime: "2025-04-16T12:00:00Z",
     distanceInKm: 15.5,
@@ -52,10 +55,11 @@ const tableData: TTrips[] = [
 
 function TripsPage():JSX.Element {
   const navigate = useNavigate();
-    const perPage = 10;
+  const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-  const [data, setData] = useState<TTrips[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data, 1, perPage);
+  // const [data, setData] = useState<TTrips[]>(tableData);
+  const {data, isFetching, error} = useFetchAllTrips();
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips, 1, perPage);
 
 
   const handleView = (id: string) => { console.log("view:", id)

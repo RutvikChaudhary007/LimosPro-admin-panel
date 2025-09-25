@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 
-export const getAllAffiliate = async (DateRange: DateRange) => {
+export const getAllAffiliate = async (DateRange?: DateRange) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -19,7 +19,7 @@ export const getAllAffiliate = async (DateRange: DateRange) => {
   return response?.data?.data;
 };
 
-const UsefetchAllAffiliate = ({ DateRange }: { DateRange: { startDate: Date | undefined; endDate: Date | undefined } }) =>
+const UsefetchAllAffiliate = ({ DateRange }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined } }) =>
   useQuery({
     queryKey: ['affiliate', DateRange],
     queryFn: () => getAllAffiliate(DateRange),

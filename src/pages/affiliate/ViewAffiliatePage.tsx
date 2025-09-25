@@ -33,7 +33,7 @@ const ViewAffiliatePage = () => {
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const { id } = useParams(); 
     // console.log("id:",id)
-    const {data,isFetching, error} = UsefetchAffiliateById({id});
+    const {data,isFetching} = UsefetchAffiliateById({id});
     // console.log("data:",data)
     if(isFetching) return (<p>Loading...</p>);
     // if(error) return (<h1>error.message</h1>);
@@ -111,12 +111,12 @@ const ViewAffiliatePage = () => {
             <hr className="w-full h-[1px] bg-[#EEEEEE]"/>
             <div className="w-full h-[209px] space-y-4">
                 <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Company</h6>
-                {Object.entries(data).map(([key,val])=>{
+                {Object.entries(data as Record<string, React.ReactNode>).map(([key,val])=>{
                     // if (!["email","phone", "location", "entityType", "address"].includes(key.toLowerCase())) return;
                     if (!["businessemail","businesscontactnumber",  "entitytype", "businessaddress"].includes(key.toLowerCase())) return;
                   return  (
                     <div key={key} className="flex items-center gap-6">
-                    <Label className="text-sm font-semibold capitalize">{key}:</Label>
+                    <Label className="text-sm font-semibold capitalize min-w-[158px]">{key}:</Label>
                     <span className="text-[#3A3A3A] font-medium">{val}</span>
                 </div>
                 )})}

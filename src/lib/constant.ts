@@ -55,8 +55,8 @@ export const constant = {
         // Booking URLS
         BOOKING: "/booking",
         CREATE_BOOKING: "/booking/create",
-        EDIT_BOOKING: "/booking/edit",
-        VIEW_BOOKING: "/booking/view",
+        // EDIT_BOOKING: "/booking/edit",
+        VIEW_BOOKING: "/booking/view/:id",
         // Users URLS
         USERS: "/users",
         CREATE_USERS: "/users/create",

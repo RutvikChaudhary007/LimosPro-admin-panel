@@ -1,3 +1,4 @@
+import useFetchUserById from "@/api/getUserById";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getStatusColor } from "@/components/table/column";
@@ -8,25 +9,25 @@ import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Suspense, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
-const data = {
-    id: "e3848306-8768-478e-987e-f6e85fa5959e",
-    userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
-    user: {
-        firstName: "John",
-        lastName: "Doe",
-        email: "name@email.com",
-        gender: "female",
-        dateOfBirth: "20-08-2000"
-    },
-    phone: "+1-424-231-6798",
-    location: "California",
-    status: "Active",
-    createdAt: "2025-05-05T12:19:41.972Z",
-    updatedAt: "2025-05-05T12:19:41.972Z",
-}
+// const data = {
+//     id: "e3848306-8768-478e-987e-f6e85fa5959e",
+//     userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
+//     user: {
+//         firstName: "John",
+//         lastName: "Doe",
+//         email: "name@email.com",
+//         gender: "female",
+//         dateOfBirth: "20-08-2000"
+//     },
+//     phone: "+1-424-231-6798",
+//     location: "California",
+//     status: "Active",
+//     createdAt: "2025-05-05T12:19:41.972Z",
+//     updatedAt: "2025-05-05T12:19:41.972Z",
+// }
 
 const showStatus = [
     { label: 'Active', value: 'active' },
@@ -36,7 +37,10 @@ const showStatus = [
 ];
 
 const ViewUserPage = () => {
+    const {id} = useParams();
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
+
+    const {data} = useFetchUserById({id});
     
   return (
         <AdminRootLayout>
@@ -53,6 +57,7 @@ const ViewUserPage = () => {
                     </div>
                 </Header>
                 <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+                    <Suspense fallback={<h1 className="text-2xl">Loading...</h1>}>
                     <CardHeader className="w-full h-[55px] flex items-center justify-between">
                         <div className="w-full h-full">
                             <h4 className="font-semibold text-xl text-[#000000]">NoahAnderson</h4>
@@ -87,23 +92,28 @@ const ViewUserPage = () => {
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">All Details</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">DOB:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.user.dateOfBirth}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.dateOfBirth}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Gender:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.user.gender}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.gender}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Email:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.user.email}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.email}</span>
+                            </div>
+                            <div className="flex items-center gap-6">
+                                <Label className="text-sm font-semibold capitalize">Payment Method:</Label>
+                                <span className="text-[#3A3A3A] font-medium">{data?.paymentMethod}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Phone:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.phone}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.phoneNumber}</span>
                             </div>
 
                         </div>
                     </CardContent>
+                    </Suspense>
                 </Card>
             </div>
         </AdminRootLayout>

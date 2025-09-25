@@ -26,14 +26,14 @@ const EditFleetPage = () => {
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Fleet</h2>
-              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">Fleet</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Fleet</span></h4>
+              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">Fleet</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Fleet</span></h4>
             </div>
           </div>
         </Header>
         <FleetForm 
         initialData={dummnyData}
         onSubmit={handleEditFleet}
-        type={"Create Fleet"} 
+        type={"Edit Fleet"} 
         />
       </div>
     </AdminRootLayout>
