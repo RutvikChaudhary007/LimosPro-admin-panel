@@ -1,7 +1,7 @@
 //  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
 //  export const BASE_URL  = 'http://localhost:3000/api/v1';
-//  export const BASE_URL1  = import.meta.env.VITE_API_BA2SE_URL ||'http://localhost:3001/api/v1';
-//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3002/api/v1';
+//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
+//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
 
  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
@@ -46,5 +46,9 @@ export const API_ENDPOINTS = {
   RESET_PASSWORD:`${BASE_URL}/auth/reset-password`,
 
   // Trips
-  GET_ALL_TRIPS:  `${BASE_URL}/trips`
+  GET_ALL_TRIPS:  `${BASE_URL}/trips`,
+  GET_TRIP_BY_ID:  `${BASE_URL}/trip/:id`,
+
+  // Regions
+  GET_ALL_REGIONS: `${BASE_URL1}/regions`,
 };

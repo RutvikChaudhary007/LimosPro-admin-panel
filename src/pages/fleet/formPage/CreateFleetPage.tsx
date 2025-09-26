@@ -1,6 +1,7 @@
 
 import { createFleet } from "@/api/createFleet"
 import UsefetchAllAffiliate from "@/api/getAllAffiliate"
+import useFetchAllRegions from "@/api/getAllRegion"
 import FleetForm from "@/components/fleet/FleetForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
@@ -16,7 +17,8 @@ import { Link } from "react-router-dom"
 
 const CreateFleetPage = () => {
   const {toast} = useToast();
-  const {data,isFetching} = UsefetchAllAffiliate({DateRange: undefined});
+  const {data: AffiliateData,isFetching: isAffiliateFetching} = UsefetchAllAffiliate({DateRange: undefined});
+  const {data: RegionData, isFetching: isRegionFetching} = useFetchAllRegions({});
   const createFleetMutation = useMutation({
     mutationFn: createFleet,
     onSuccess: ()=>{},
@@ -44,7 +46,7 @@ const CreateFleetPage = () => {
             loading: "Loading...",
             success: "Yeah! fleet created successfully.",
             error: "Opps! failed to create fleet.",
-          })      
+          });      
         } catch (error) {
           console.error("Error while creating fleet", error);
         }
@@ -65,8 +67,10 @@ const CreateFleetPage = () => {
         </Header>
         <FleetForm 
         onSubmit={handleCreateFleet}
-        isFetching={isFetching}
-        affiliateData={data}
+        isAffiliateFetching={isAffiliateFetching}
+        affiliateData={AffiliateData}
+        RegionData={RegionData}
+        isRegionFetching={isRegionFetching}
         type={"Create Fleet"} 
         />
       </div>

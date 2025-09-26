@@ -3,7 +3,7 @@ import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 
-export const getAllTrips = async () => {
+export const getTripById = async () => {
  const params = {};
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_TRIPS}`,{params});
     // console.log("response:",response)
@@ -11,14 +11,14 @@ export const getAllTrips = async () => {
     return response.data.data;
   };
 
-const useFetchAllTrips = () =>
+const useFetchTripById = () =>
   useQuery({
-    queryKey: ['Trips',],
-    queryFn: () => getAllTrips(),
+    queryKey: ['TripById'],
+    queryFn: () => getTripById(),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,
     // keepPreviousData: true, // for pagination
   });
 
-export default useFetchAllTrips;
+export default useFetchTripById;

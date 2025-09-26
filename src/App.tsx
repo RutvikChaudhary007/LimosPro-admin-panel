@@ -68,7 +68,6 @@ import EditCrewMemberPage from "./pages/crewMember/formpage/EditCrewMemberPage";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import SeoPage from "./pages/contentManagment/SeoPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
@@ -76,7 +75,6 @@ function App() {
 
   return (
     <TooltipProvider>
-      <Toaster />
       <Sonner position="top-right" />
       <BrowserRouter>
       <QueryClientProvider client={queryClient}>

@@ -5,8 +5,10 @@ export type TFleetData = {
 }
 export interface IFleetFormProps {
     initialData?: TFleetData[];
-    isFetching?: boolean;
+    isAffiliateFetching?: boolean;
+    isRegionFetching?: boolean;
     affiliateData?: TAffiliate;
+    RegionData?: unknown;
     onSubmit: (data:TFleetData)=> Promise<void>;
     disabledFields?: string[];
     type: string;

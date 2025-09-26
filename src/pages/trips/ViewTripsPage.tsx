@@ -1,3 +1,4 @@
+import useFetchTripById from "@/api/getTripById"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { getStatusColor } from "@/components/table/column"
@@ -50,7 +51,7 @@ const getNewStatusColor = (value: string)=>{
 }
 const ViewTripsPage = () => {
     const  {id} = useParams();
-    
+    useFetchTripById({id});
         const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     
   return (
