@@ -51,7 +51,7 @@ const getNewStatusColor = (value: string)=>{
 }
 const ViewTripsPage = () => {
     const  {id} = useParams();
-    useFetchTripById({id});
+    useFetchTripById({id: id!});
         const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     
   return (

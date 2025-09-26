@@ -15,9 +15,9 @@ import { constant } from '@/lib/constant';
 import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
 import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
-import { ChevronDown, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 const showStatus = [
   { label: 'Active', value: 'active' },

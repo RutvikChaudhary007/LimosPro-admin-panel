@@ -3,18 +3,18 @@ import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 
-export const getTripById = async () => {
+export const getTripById = async (id: string) => {
  const params = {};
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_TRIPS}`,{params});
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_TRIP_BY_ID.replace(":id",id)}`,{params});
     // console.log("response:",response)
   
     return response.data.data;
   };
 
-const useFetchTripById = () =>
+const useFetchTripById = ({id}: {id:string}) =>
   useQuery({
-    queryKey: ['TripById'],
-    queryFn: () => getTripById(),
+    queryKey: ['TripById', id],
+    queryFn: () => getTripById(id),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

@@ -6,12 +6,12 @@ import { useQuery } from '@tanstack/react-query';
 type DateRange = { startDate ?: Date | undefined; endDate ?: Date | undefined };
 export const getAllRegions = async (DateRange?: DateRange) => {
   const params: Record<string, unknown> = {};
-//   if (DateRange?.startDate || DateRange?.endDate) {
+  if (DateRange?.startDate || DateRange?.endDate) {
 //     params.DateRange = {
 //       startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
 //       endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
 //     };
-//   }
+  }
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_REGIONS}`,{params});
     // console.log("response:",response)
   
