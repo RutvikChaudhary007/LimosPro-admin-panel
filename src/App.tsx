@@ -69,6 +69,8 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import SeoPage from "./pages/contentManagment/SeoPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import ErrorBoundary from "./components/ErrorBoundary";
+
 
 const queryClient = new QueryClient();
 function App() {
@@ -78,6 +80,7 @@ function App() {
       <Sonner position="top-right" />
       <BrowserRouter>
       <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>      
       <Routes >
         
           <Route  path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<AdminLoginPage/>} />
@@ -151,6 +154,7 @@ function App() {
           <Route path={constant.ROUTING_URLS.EDIT_SEO} element={<SeoPage />} /> */}
           </Route>
       </Routes>
+      </ErrorBoundary>
       </QueryClientProvider>
       </BrowserRouter>
     </TooltipProvider>

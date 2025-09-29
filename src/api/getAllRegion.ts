@@ -1,7 +1,7 @@
 
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
-import { useQuery } from '@tanstack/react-query';
+import {  useQuery } from '@tanstack/react-query';
 
 type DateRange = { startDate ?: Date | undefined; endDate ?: Date | undefined };
 export const getAllRegions = async (DateRange?: DateRange) => {

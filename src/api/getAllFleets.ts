@@ -4,7 +4,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 
 type DateRange = { startDate ?: Date | undefined; endDate ?: Date | undefined };
-export const getAllFleets = async (DateRange: DateRange) => {
+export const getAllFleets = async (DateRange: DateRange, page?: number) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -12,16 +12,19 @@ export const getAllFleets = async (DateRange: DateRange) => {
       endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
     };
   }
+  if(page){
+    params.offset = page
+  }
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_FLEETS}`,{params});
     // console.log("response:",response)
   
     return response.data.data;
   };
 
-const UsefetchAllFleets = ({DateRange}:{DateRange:DateRange}) =>
+const UsefetchAllFleets = ({DateRange,page}:{DateRange:DateRange, page?: number, }) =>
   useQuery({
-    queryKey: ['Fleets', DateRange],
-    queryFn: () => getAllFleets(DateRange),
+    queryKey: ['Fleets', {DateRange}, {page}],
+    queryFn: () => getAllFleets(DateRange, page),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,
