@@ -1,5 +1,5 @@
 // ... existing code ...
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import  { Component, type ErrorInfo,type ReactNode } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"; // Import Card components
 import { Button } from "@/components/ui/button"; // Import Button component
 import { Link } from 'react-router-dom'; // Assuming react-router-dom for navigation

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 import { deleteUser } from '@/api/deleteUser';
 import UsefetchAllUsers from '@/api/getAllUser';
+import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
 import { getStatusColor, getUsers, type TUsers } from '@/components/table/column';
@@ -193,7 +194,7 @@ const deleteUserMutation = useMutation({
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
 
-  if(isFetching) return (<p>Loading...</p>)
+  
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
@@ -354,14 +355,14 @@ const deleteUserMutation = useMutation({
             /></div>
           </div>
         </div>
-        
-        <DataTable columns={columns} data={currentItems}
+        {isFetching?(<Spinner/>):(<DataTable columns={columns} data={currentItems}
 
-         rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
-          globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
-        
+rowSelection={rowSelection}
+ onRowSelectionChange={setRowSelection}
+ globalFilter={searchValue}
+ onGlobalFilterChange={setSearchValue} />
+)}
+         
         {/* Pagination */}
         {data?.users?.length > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">

@@ -1,11 +1,11 @@
 //  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
-//  export const BASE_URL  = 'http://localhost:3000/api/v1';
-//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
-//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
+ export const BASE_URL  = 'http://localhost:3000/api/v1';
+ export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
+ export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
 
- export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
- export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
- export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.10:3002/api/v1';
+//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
+//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
+//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.10:3002/api/v1';
 
 
 export const API_ENDPOINTS = {

@@ -1,4 +1,5 @@
 import UsefetchAllBookings from '@/api/getAllBookings';
+import { Spinner } from '@/components/Spinner';
 import { Calendar28 } from '@/components/date/DateRange';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
@@ -101,6 +102,7 @@ type RowData = {
 function BookingPage() {
     const perPage = 10;
     const navigate = useNavigate();
+    const [newPage, setNewPage] = useState<number>(1);
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     
     const [dateRange, setDateRange] = useState<{
@@ -112,7 +114,7 @@ function BookingPage() {
         to: undefined,
     });
     // const [data, setData] = useState<TBooking[]>(tableData);
-    const {data, isFetching} = UsefetchAllBookings({DateRange: dateRange})
+    const {data,  isFetching} = UsefetchAllBookings({DateRange: dateRange, page: newPage})
 
     useEffect(()=>{
         if(data){
@@ -162,7 +164,7 @@ function BookingPage() {
     });
 
 
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TBooking>(filterData, 1, perPage);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TBooking>(filterData, newPage, perPage, data?.pagination);
 
     const statusCounts = useMemo(() => {
         return countByStatus(tableData);
@@ -205,6 +207,7 @@ function BookingPage() {
     // Handle page change
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
+        setNewPage(newPage)
         window.scrollTo(0, 0);
     };
 
@@ -275,7 +278,6 @@ function BookingPage() {
         return items;
     };
 
-    if(isFetching) return (<p>Loading...</p>);
     return (
         <AdminRootLayout>
             <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
@@ -337,10 +339,13 @@ function BookingPage() {
                         </div>
                     </div>
                 </div>
+                {isFetching? (<Spinner/>):(
                 <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
-                    onRowSelectionChange={setRowSelection}
-                    globalFilter={searchValue}
-                    onGlobalFilterChange={setSearchValue} />
+                onRowSelectionChange={setRowSelection}
+                globalFilter={searchValue}
+                onGlobalFilterChange={setSearchValue} />
+                )}
+
 
                 {/* Pagination */}
                 {tableData.length > 0 && calculatedTotalPages > 1 && (

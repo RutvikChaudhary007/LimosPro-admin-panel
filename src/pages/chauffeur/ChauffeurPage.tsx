@@ -1,5 +1,6 @@
 // @ts-nocheck
 import UsefetchAllChauffeur from "@/api/getAllChauffeur";
+import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getChauffeur, getStatusColor, type TChauffeur } from "@/components/table/column";
@@ -278,7 +279,7 @@ function ChauffeurPage() {
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
 
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs, 1, perPage);
-  if(isFetching) return (<p>Loading...</p>);
+  
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
@@ -434,10 +435,13 @@ function ChauffeurPage() {
             /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+        {isFetching? (<Spinner/>): (
+          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
+        )}
+        
         
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (

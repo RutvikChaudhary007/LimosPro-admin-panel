@@ -1,5 +1,4 @@
 // @ts-nocheck
-import { deletefleet } from "@/api/deleteFleet";
 import UsefetchAllFleets from "@/api/getAllFleets";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
@@ -12,13 +11,12 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
-import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
-import { useMutation } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import queries from "@/lib/queries";
+import { Spinner } from "@/components/Spinner";
 const showTime = [
   { label: 'All Time', value: '' },
   { label: 'Weekly', value: 'weekly' },
@@ -37,6 +35,214 @@ const tableData: TFleet[] = [
         "color": "black",
         "vehicleType": "Executive Sedan Fit for 3 Passengers",
         "capacity": 3,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
+        "documents": [],
+        "vehicleImages": [],
+        "createdAt": "2025-07-15T12:43:58.461Z",
+        "updatedAt": "2025-07-15T12:43:58.461Z",
+        "deletedAt": null
+    },
+    {
+        "id": "3959bb6d-8782-41db-9365-ff7876e88132",
+        "affiliateId": "a194f9aa-8bee-4c36-9d50-c2df01882efe",
+        "plateNumber": "BB-123-CDa",
+        "brand": "Mercedes-S-classa",
+        "model": "2023",
+        "year": 2025,
+        "color": "black",
+        "vehicleType": "Executive Sedan Fit for 4 Passengers",
+        "capacity": 4,
         "documents": [],
         "vehicleImages": [],
         "createdAt": "2025-07-15T12:43:58.461Z",
@@ -123,29 +329,16 @@ function FleetPage() {
   }, [selectedTime]);
   
   // const [data, setData] = useState<TFleet[]>(tableData);
-  const {data,refetch, isFetching} = UsefetchAllFleets({DateRange: {startDate, endDate}});
+  const {data, refetch, isPending} = UsefetchAllFleets({DateRange: {startDate,endDate}});
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
+  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
 
-  const deletefleetMutation = useMutation({
-    mutationFn: deletefleet,
-    onSuccess: ()=>{refetch()},
-    onError: (err: unknown)=>{
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      // toast({
-      //   title: "Delete fleet failed",
-      //   description: errorMessage,
-      //   variant: "destructive",
-      // });
-    }
-  });
+  const queryClient = useQueryClient();
+  useEffect(() => {
+  //   queryClient.prefetchQuery(UsefetchAllFleets({DateRange: {startDate,endDate}, page: currentPage + 1}));
+  }, [queryClient, currentPage, startDate, endDate]);
+
+
 
   const handleView = (id: string) => { console.log("view:", id)
     navigate(constant.ROUTING_URLS.VIEW_FLEET.replace(":id",id));
@@ -155,7 +348,7 @@ function FleetPage() {
    };
     const handleDelete = async(id: string) => {
       try {
-        toastPromise(await deletefleetMutation.mutateAsync(id),{
+        toastPromise(await queries.useDeletefleetMutation(refetch).mutateAsync(id),{
           loading: "Deleting...",
           success: "Yeah! fleet deleted successfully.",
           error: "Opps! failed to delete fleet.",
@@ -168,10 +361,10 @@ function FleetPage() {
   const columns =  getFleets(handleView,handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
-if(isFetching) return (<p>Loading...</p>);
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
+  // if(isFetching) return <Spinner/>
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -304,11 +497,11 @@ if(isFetching) return (<p>Loading...</p>);
             /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
-          globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
-        
+        {isPending ? (<Spinner/>):(<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
+            globalFilter={searchValue}
+            onGlobalFilterChange={setSearchValue} />)}
+
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">

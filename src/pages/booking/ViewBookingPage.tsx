@@ -1,4 +1,5 @@
 import UsefetchBookingById from '@/api/getBookingById'
+import { Spinner } from '@/components/Spinner'
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header'
 import { getStatusColor } from '@/components/table/column'
@@ -111,7 +112,7 @@ const ViewBookingPage = () => {
             isMounted = false;
         };
     }, [isLoaded, loadError, data]);
-    if(isFetching) return (<p>Loading...</p>);
+
   return (
     <AdminRootLayout>
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
@@ -126,7 +127,8 @@ const ViewBookingPage = () => {
                         </div>
                     </div>
                 </Header>
-                 <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+                {isFetching ? (<Spinner/>):(
+                    <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
                     <CardHeader className="w-full h-[55px] flex items-center justify-between">
                         <div className="w-full h-full">
                             <h4 className="font-semibold text-xl text-[#000000]">Booking ID: {data?.id}</h4>
@@ -209,6 +211,8 @@ const ViewBookingPage = () => {
                         </div>
                     </CardContent>
                 </Card>
+                )}
+                 
             </div>
     </AdminRootLayout>
   )

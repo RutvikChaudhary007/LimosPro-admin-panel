@@ -1,4 +1,5 @@
 import UsefetchChauffeurById from "@/api/getChauffeurById";
+import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getStatusColor } from "@/components/table/column";
@@ -116,7 +117,7 @@ const ViewChauffeurPage = () => {
         };
     }, [isLoaded, loadError, data]);
 
-    if (isFetching) return (<p>Loading...</p>);
+    // if (isFetching) return (<p>Loading...</p>);
     if (error) return (<h1>{error.message}</h1>);
     const documentsLength = data.documents.length
     // const docJsx = [];
@@ -145,7 +146,8 @@ const ViewChauffeurPage = () => {
                         </div>
                     </div>
                 </Header>
-                <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+                {isFetching? (<Spinner/>):(
+                    <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
                     <CardHeader className="w-full h-[55px] flex items-center justify-between">
                         <div className="w-full h-full">
                             <h4 className="font-semibold text-xl text-[#000000]">{data?.userFirstName} {data?.userLastName}</h4>
@@ -217,6 +219,8 @@ const ViewChauffeurPage = () => {
                         </div>
                     </CardContent>
                 </Card>
+                )}
+                
             </div>
         </AdminRootLayout>
     )

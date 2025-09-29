@@ -1,6 +1,7 @@
  
 import { deleteAffiliate } from '@/api/deleteAffiliate';
 import UsefetchAllAffiliate from '@/api/getAllAffiliate';
+import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
 import { getAffiliate, getStatusColor, type TAffiliate } from '@/components/table/column';
@@ -384,15 +385,20 @@ const { startDate, endDate } = useMemo(() => {
 }, [selectedTime]);
 
 
-  const {data: FetchData, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}});  
-  const [data, setData] = useState<TAffiliate[]>([]);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
+const [newPage, setNewPage] = useState<number>(1);
+  const {data: FetchData, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
+  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(FetchData?.affiliates, newPage, perPage, FetchData?.pagination);
 useEffect(()=>{
-  if(FetchData){
-    setData(FetchData?.affiliates);
+  if(currentPage){
+    setNewPage(currentPage)
   }
-},[FetchData])
-
+},[currentPage])
+useEffect(()=>{
+if(currentItems){
+  console.log("currentItems:",currentItems)
+}
+},[currentItems])
   const handleView = (id: string) => { console.log("view:", id) 
     navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id",id));
 
@@ -446,10 +452,10 @@ useEffect(()=>{
  
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
-
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+    setNewPage(newPage)
     window.scrollTo(0, 0);
   };
 
@@ -519,7 +525,7 @@ useEffect(()=>{
 
     return items;
   };
-if(isFetching) return (<p>Loading...</p>)
+// if(isFetching) return (<p>Loading...</p>)
   return (
     <AdminRootLayout>
         <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
@@ -589,8 +595,8 @@ if(isFetching) return (<p>Loading...</p>)
             <Button variant={"outline"} className={`p-2.5 w-[137px] h-full rounded flex items-center justify-evenly   bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0`}
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
-                setData((prev) => prev.filter((_, i) => !rowSelection[i])
-                );
+                // setData((prev) => prev.filter((_, i) => !rowSelection[i])
+                // );
                 setRowSelection({});
               }}
             >
@@ -604,10 +610,13 @@ if(isFetching) return (<p>Loading...</p>)
             /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+        {isFetching ? (<Spinner/>):(
+          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
+        )}
+        
         
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (

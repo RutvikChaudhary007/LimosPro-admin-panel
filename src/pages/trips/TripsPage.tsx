@@ -1,3 +1,4 @@
+import useFetchAllTrips from "@/api/getAllTrips";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getStatusColor, getTrips, type TTrips } from "@/components/table/column";
@@ -56,10 +57,10 @@ function TripsPage():JSX.Element {
   const navigate = useNavigate();
   const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-  const [data, setData] = useState<TTrips[]>(tableData);
-  // const {data, isFetching, error} = useFetchAllTrips();
-  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
+  // const [data, setData] = useState<TTrips[]>(tableData);
+  const {data} = useFetchAllTrips();
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
+  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
 
   const handleView = (id: string) => { console.log("view:", id)

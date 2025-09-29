@@ -3,7 +3,7 @@ import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
-import { toast, toastPromise } from "@/hooks/use-toast";
+import { toastPromise, useToast } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import type { IAffiliate } from "@/types/affiliate";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
@@ -13,6 +13,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 function CreateAffiliatePage() {
+  const {toast} = useToast();
   const navigate = useNavigate();
   const createAffiliateMutation = useMutation({
     mutationFn: createAffiliate,
@@ -48,6 +49,7 @@ function CreateAffiliatePage() {
      
         // Remove remember field before sending to API
         // await loginMutation.mutateAsync(loginData);
+        await createAffiliateMutation.mutateAsync(data)
        toastPromise(await createAffiliateMutation.mutateAsync(data), {
           loading: "submitting...",
           success: "Affiliate created successfully!",
