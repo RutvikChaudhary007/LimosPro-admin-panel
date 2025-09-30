@@ -1,3 +1,5 @@
+import useFetchAllRefund from '@/api/getAllRefund';
+import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import { getRefund, getStatusColor, type TRefund } from '@/components/table/column';
@@ -6,18 +8,12 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
+import { constant } from '@/lib/constant';
 import { ChevronDown, Download } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 
-const showStatus = [
-  { label: 'Select Status', value: '' },
-  { label: 'InProgress', value: 'in-progress' },
-  { label: 'Pending', value: 'pending' },
-  { label: 'Failed', value: 'failed' },
-  { label: 'Completed', value: 'completed' },
-  { label: 'Refunded', value: 'refunded' },
-];
 
 const showOptions = [
   { label: 'Show 10', value: 10 },
@@ -47,16 +43,18 @@ const tableData: TRefund[] = [
     ]
 
 const RefundPage = () => {
-  const perPage = 10;
-    const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
+  // const perPage = 10;
+  const navigate = useNavigate();
+  const [newPage, setNewPage] = useState(1);
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
-  const [data] = useState<TRefund[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRefund>(data, 1, perPage);
+  // const [data] = useState<TRefund[]>(tableData);
+  const {data,isFetching} = useFetchAllRefund({page: newPage, limit: selectedOption.value, });
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRefund>(data?.payments,newPage , selectedOption.value);
 
 
   
 const handleView = useCallback((id: string) => { console.log("view:", id)
-    
+    navigate(constant.ROUTING_URLS.VIEW_REFUND)
    }, []);
   const columns = useMemo(() => getRefund(handleView),[handleView])
   const [rowSelection, setRowSelection] = useState({});
@@ -67,6 +65,7 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+    setNewPage(newPage);
     window.scrollTo(0, 0);
   };
 
@@ -175,26 +174,7 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
           </div>
           
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
-             <DropdownMenu >
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded shadow-inner shadow-[#F1F1F1] cursor-pointer `}>
-                {selectedStatus.label} <ChevronDown className="ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer" align="start">
-              <DropdownMenuGroup>
-                {showStatus.map(option => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                    onClick={() => setSelectedStatus(option)}
-                  >
-                    {option.label} <ChevronDown className="ml-2" />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
             <span
             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
@@ -213,12 +193,14 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
             </span>
           </div>
         </div>
+        {isFetching? (<Spinner/>):(
+          <DataTable columns={columns} 
+          // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+          data={currentItems} rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
+             />
+        )}
         
-        <DataTable columns={columns} 
-        // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-        data={currentItems} rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
-           />
         
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (

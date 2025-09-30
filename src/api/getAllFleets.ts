@@ -13,7 +13,7 @@ export const getAllFleets = async (DateRange: DateRange, page?: number) => {
     };
   }
   if(page){
-    params.offset = page
+    params.page = page
   }
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_FLEETS}`,{params});
     // console.log("response:",response)

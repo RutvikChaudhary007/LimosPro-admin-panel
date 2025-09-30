@@ -893,10 +893,10 @@ export function getPayments(
     enableHiding: false,
   },
   { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
-    { accessorKey: "BookingId", header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Id" />,enableSorting: false, },
-    { accessorKey: "PaymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
+    { accessorKey: "bookingId", header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Id" />,enableSorting: false, },
+    { accessorKey: "paymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
   },
-  { accessorKey: "Amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
+  { accessorKey: "amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
   {
       id: "action",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
@@ -927,10 +927,10 @@ export function getPayments(
 
 export type TRefund = {
   id: string;
-  PassengerName: string;
-  RefundId: string;
-  PaymentId: string;
-  Amount: string;
+  transactionId: string;
+  id: string;
+  paymentId: string;
+  amount: string;
   Status: string;
 }
 export function getRefund(
@@ -961,11 +961,11 @@ export function getRefund(
     enableSorting: false,
     enableHiding: false,
   },
-  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
-    { accessorKey: "RefundId", header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,enableSorting: false, },
-    { accessorKey: "PaymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
+  { accessorKey: "transactionId", header: ({ column }) => <DataTableColumnHeader column={column} title="Transaction Id" />, enableSorting: false, },
+    { accessorKey: "id", header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,enableSorting: false, },
+    { accessorKey: "paymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
   },
-  { accessorKey: "Amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
+  { accessorKey: "amount", header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,enableSorting: false, },
   {
       id: "action",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,

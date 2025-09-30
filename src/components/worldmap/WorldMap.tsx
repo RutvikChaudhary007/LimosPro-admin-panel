@@ -35,21 +35,21 @@ const WorldMap = () => {
           }
         </Geographies>
 
-        {regions.map((region) => (
+        {regions?.map((region) => (
           <Marker
-            key={region.id}
-            // coordinates={region.coordinates}
-            onMouseEnter={() => setHovered(region.id)}
+            key={region?.id}
+            coordinates={region?.coordinates}
+            onMouseEnter={() => setHovered(region?.id)}
             onMouseLeave={() => setHovered(null)}
             onTouchStartCapture={() => setHovered(!hovered ? region?.id: null)}
           >
             <circle r={16} fill="#333" stroke="#fff" strokeWidth={2}  className="cursor-crosshair"/>
-            {hovered === region.id && (
+            {hovered === region?.id && (
               <foreignObject x={10} y={-40} width={120} height={60}>
                 <div className="bg-gray-800 text-white text-sm p-2 rounded shadow-md ">
-                  <strong>{region.id}</strong>
+                  <strong>{region?.id}</strong>
                   <br />
-                  Bookings: {region.bookings}
+                  Bookings: {region?.bookings}
                 </div>
               </foreignObject>
             )}

@@ -1,4 +1,6 @@
 // @ts-nocheck
+import useFetchAllStaffMember from "@/api/getAllCrewMember";
+import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getCrewMember, type TCrewMember } from "@/components/table/column";
@@ -68,15 +70,14 @@ const tableData: TCrewMember [] = [
 
 const CrewMemberPage = () => {
   const naviagte = useNavigate();
-   const [perPage, setPerPage] = useState(10);
+   const [newPage, setNewPage] = useState(1);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TCrewMember[]>(tableData);
+    // const [data, setData] = useState<TCrewMember[]>(tableData);
+    const {data, isFetching} = useFetchAllStaffMember({page: newPage, limit: selected.value})
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TCrewMember>(data, 1, perPage);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TCrewMember>(data?.staffMembers, newPage, selected.value);
   
-    useEffect(() => {
-      setPerPage(selected.value);
-    }, [selected])
+    
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
       naviagte(constant.ROUTING_URLS.EDIT_CREW_MEMBERS.replace(":id",id));
      }, []);
@@ -94,6 +95,7 @@ const CrewMemberPage = () => {
     // Handle page change
     const handlePageChange = (newPage: number) => {
       setPage(newPage);
+      setNewPage(newPage);
       window.scrollTo(0, 0);
     };
   
@@ -223,10 +225,13 @@ const CrewMemberPage = () => {
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             </div>
           </div>
-          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+          {isFetching? (<Spinner/>):(
+            <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />
+          )}
+          
   
           {/* Pagination */}
           {tableData.length > 0 && calculatedTotalPages > 1 && (

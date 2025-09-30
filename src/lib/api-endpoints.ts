@@ -51,4 +51,14 @@ export const API_ENDPOINTS = {
 
   // Regions
   GET_ALL_REGIONS: `${BASE_URL1}/regions`,
+
+  // Payments
+  GET_ALL_PAYMENTS: `${BASE_URL1}/payments`,
+
+  // Refund
+  GET_ALL_REFUND: `${BASE_URL1}/payments`,
+  // VIEW_REFUND: `${BASE_URL1}/payments`,
+
+  // Crew member OR staff member
+  GET_ALL_CREW_MEMBER: `${BASE_URL1}/staff-members`
 };

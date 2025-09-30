@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+import useFetchAllPayments from '@/api/getAllPayments';
+import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import { getPayments, getStatusColor, type TPayments } from '@/components/table/column';
@@ -16,7 +18,6 @@ import { useNavigate } from 'react-router-dom';
 
 const showStatus = [
   { label: 'Select Status', value: '' },
-  { label: 'InProgress', value: 'in-progress' },
   { label: 'Pending', value: 'pending' },
   { label: 'Failed', value: 'failed' },
   { label: 'Completed', value: 'completed' },
@@ -52,11 +53,14 @@ const tableData: TPayments[] = [
     ]
 const PaymentsPage = () => {
   const navigate = useNavigate();
-  const perPage = 10;
+  
+  const [newPage, setNewPage] = useState<number>(1);
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
-  const [data, setData] = useState<TPayments[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data, 1, perPage);
+  // const [data, setData] = useState<TPayments[]>(tableData);
+  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data, 1, perPage);
+  const {data, isFetching} = useFetchAllPayments({page: newPage, limit: selectedOption.value, status: selectedStatus.value});
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data?.payments, newPage, selectedOption.value, data?.pagination);
 
 
   
@@ -76,6 +80,7 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+    setNewPage(newPage);
     window.scrollTo(0, 0);
   };
 
@@ -223,10 +228,13 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
             </span>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
-          globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
+        {isFetching ? (<Spinner/>):(
+                  <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+                  onRowSelectionChange={setRowSelection}
+                  globalFilter={searchValue}
+                  onGlobalFilterChange={setSearchValue} />
+        )}
+
         
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (
