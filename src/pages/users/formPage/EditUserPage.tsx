@@ -1,16 +1,17 @@
-import { updateUser } from "@/api/updateUserById"
+// import { updateUser } from "@/api/updateUserById"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
 import UserForm from "@/components/user/UserForm"
-import { toastPromise, useToast } from "@/hooks/use-toast"
+import { toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
-import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
+import queries from "@/lib/queries"
+// import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
 import type { IUserFormData } from "@/types/user"
-import { useMutation } from "@tanstack/react-query"
-import type { AxiosError } from "axios"
+// import { useMutation } from "@tanstack/react-query"
+// import type { AxiosError } from "axios"
 import { ArrowLeft } from "lucide-react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link,  useParams } from "react-router-dom"
 
 // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 const initialData: IUserFormData = {
@@ -25,38 +26,15 @@ const initialData: IUserFormData = {
 
 const EditUserPage = () => {
   const {id} = useParams();
-  const navigate = useNavigate();
-  const {toast} = useToast();
 
-  const updateUserMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string, data: IUserFormData }) => updateUser(id, data),
-    onSuccess: ()=>{
-      navigate(constant.ROUTING_URLS.USERS);
-    },
-    onError: (err: unknown)=>{
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Failed to edit user",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    },
-  });
+  const updateUserMutation = queries.useUpdateUserMutation();
   const handleEditUser = async (data: IUserFormData)=>{
     
     try {
       toastPromise(await updateUserMutation.mutateAsync( { id: id!, data }),{
         loading: "Loading...",
         success: "Yeah! sucessfully updated the user.",
-        error: "Opps! failed to edit user.",
+        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update the user."),
       })
     } catch (error) {
       console.error(error);

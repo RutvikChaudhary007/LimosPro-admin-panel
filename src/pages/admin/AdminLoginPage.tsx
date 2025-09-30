@@ -19,7 +19,7 @@ import {
 import { constant } from "@/lib/constant";
 // import { login } from "@/api/login";
 // import { useMutation } from "@tanstack/react-query";
-import { useToast, toastPromise } from "@/hooks/use-toast";
+import {  toastPromise } from "@/hooks/use-toast";
 import queries from "@/lib/queries";
 
 const loginSchema = z.object({
@@ -33,7 +33,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 
 function AdminLoginPage() {
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   
