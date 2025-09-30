@@ -1,43 +1,20 @@
-import { createChauffeur } from "@/api/createChauffeur"
+// import { createChauffeur } from "@/api/createChauffeur"
 import ChauffeurForm, { type TChauffeurForm } from "@/components/chauffeur/ChauffeurForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
-import { toast, toastPromise } from "@/hooks/use-toast"
+import { toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
-import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
-import { useMutation } from "@tanstack/react-query"
-import type { AxiosError } from "axios"
+import queries from "@/lib/queries"
+// import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
+// import { useMutation } from "@tanstack/react-query"
+// import type { AxiosError } from "axios"
 import { ArrowLeft } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const CreateChauffeurPage = () => {
-  const navigate = useNavigate();
-  const createChauffeurMutation = useMutation({
-    mutationFn: createChauffeur,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      // userPermissions are automatically stored in localStorage by the login API
-      navigate(constant.ROUTING_URLS.CHAUFFEUR);
-      // Navigate to dashboard
-    },
-    onError: (err: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Create chauffeur failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  });
+  
+  const createChauffeurMutation = queries.useCreateChauffeurMutation();
   
     const handleCreateChauffeur = async (data: TChauffeurForm)=>{
         console.log("called handle create chauffeur!",data)

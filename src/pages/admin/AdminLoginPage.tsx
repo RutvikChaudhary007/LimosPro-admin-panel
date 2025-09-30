@@ -6,7 +6,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AxiosError } from "axios";
 
 // Import Form UI components from shadcn/ui
 import {
@@ -18,9 +17,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { constant } from "@/lib/constant";
-import { login } from "@/api/login";
-import { useMutation } from "@tanstack/react-query";
-import { toastPromise, useToast } from "@/hooks/use-toast";
+// import { login } from "@/api/login";
+// import { useMutation } from "@tanstack/react-query";
+import { useToast, toastPromise } from "@/hooks/use-toast";
+import queries from "@/lib/queries";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -30,11 +30,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-// Define the API error response type
-interface ApiErrorResponse {
-  message: string;
-  error?: string;
-}
+
 
 function AdminLoginPage() {
   const { toast } = useToast();
@@ -58,59 +54,8 @@ function AdminLoginPage() {
     }
   }, [navigate]);
 
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess: (response, variables: LoginFormValues) => {
-      console.log('Login response:', response);
-      
-      const userData = response?.data;
-      const userRole = userData?.roles;
-      const remember = localStorage.getItem("remember");
-      if(remember === "true"){
-        localStorage.setItem("Email", userData?.email);
-      }
-      // userPermissions are automatically stored in localStorage by the login API
-      
-      // Check if user has valid role for admin panel
-      if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
-        
-        toast({
-          title: "Access Denied",
-          description: "This section is for authorized users only. Please contact your administrator.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Success message
-      const staySignedInMessage = variables.remember ? 'You will stay signed in' : 'You will be logged out after session expires';
-      toast({
-        title: "Login Successful",
-        description: `Welcome back! ${staySignedInMessage}`,
-        variant: "default",
-      });
-
-      // Navigate to dashboard
-      navigate(constant.ROUTING_URLS.DASHBOARD);
-    },
-    onError: (err: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Login Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  });
-
+ 
+  const loginMutation = queries.useLoginMutation()
   const onSubmit = async (data: LoginFormValues) => {
     try {
      
@@ -123,13 +68,27 @@ function AdminLoginPage() {
         localStorage.removeItem("remember");
       }
       // await loginMutation.mutateAsync(loginData);
-     toastPromise(await loginMutation.mutateAsync(loginData), {
+     toastPromise(loginMutation.mutateAsync({...loginData,remember}), {
         loading: "Logging in...",
-        success: "Logged in successfully!",
-        error: (e) => (e instanceof Error ? e.message : "Failed to login"),
+        success: () => {
+          const staySignedInMessage = data.remember
+            ? "You will stay signed in"
+            : "You will be logged out after session expires";
+  
+          return `Welcome back! ${staySignedInMessage}`;
+        },
+        error: (e) => {
+          // normalized in onError above
+          return e instanceof Error ? e.message : "Login failed";
+        },
       });
     } catch (error) {
       // Error handling is done in onError callback
+      // toast({
+      //   title: "Delete failed",
+      //   description: error instanceof Error ? error.message : "Failed to delete affiliate",
+      //   variant: "destructive",
+      // })
       console.error('Login error:', error);
     }
   };

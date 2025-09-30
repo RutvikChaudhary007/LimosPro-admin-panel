@@ -186,7 +186,7 @@ export { useToast, toast }
 type PromiseMessages<T> = {
   loading: React.ReactNode
   success: React.ReactNode | ((data: T) => React.ReactNode)
-  error: React.ReactNode | ((error: unknown) => React.ReactNode)
+  error?: React.ReactNode | ((error: unknown) => React.ReactNode)
 }
 
 export function toastPromise<T>(

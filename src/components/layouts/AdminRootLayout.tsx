@@ -64,7 +64,6 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <hr className="w-full bg-[#E7E7E7]" />
 
                     {children}
-                    <Toaster/>    
                     {/* Footer */}
                     <Footer />
                 </div>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
-import { deleteUser } from '@/api/deleteUser';
+// import { deleteUser } from '@/api/deleteUser';
 import UsefetchAllUsers from '@/api/getAllUser';
 import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
@@ -11,14 +11,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
-import { toastPromise, useToast} from '@/hooks/use-toast';
+import { toastPromise} from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
-import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
-import { useMutation } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
 import { ChevronDown, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {  useNavigate } from 'react-router-dom';
+import queries from '@/lib/queries';
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -85,7 +83,6 @@ const showTime = [
 //         },
 // ]
 function UsersPage() {
-  const {toast} = useToast();
   const navigate = useNavigate();
   const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
@@ -158,33 +155,16 @@ function UsersPage() {
   const handleEdit = (id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id",id));
    };
-const deleteUserMutation = useMutation({
-  mutationFn: deleteUser,
-  onSuccess: ()=>{
-    refetch();
-  },
-  onError: (err: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Delete user",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-})
+const deleteUserMutation = queries.useDeleteUserMutation();
     const handleDelete = async (id: string) => {
       toastPromise(await deleteUserMutation.mutateAsync(id),{
         loading: "Loading...",
-        success: "yeah! user deleted successfully",
-        error: "Failed to delete user.",
+        success: (res)=>{
+          if(res) refetch();
+          return "yeah! user deleted successfully"},
+        error: (e)=>{
+          return  (e instanceof Error ? e.message :"Failed to delete user.")
+        },
       })
     //   setData((prev) =>
     //     prev.filter((row) => row.id !== id))

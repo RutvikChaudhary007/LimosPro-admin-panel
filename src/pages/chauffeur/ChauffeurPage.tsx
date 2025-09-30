@@ -254,6 +254,7 @@ const tableData: TChauffeur[] = [
 function ChauffeurPage() {
   const navigate = useNavigate();
     const perPage = 10;
+    const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
   const {data, isFetching} = UsefetchAllChauffeur();
@@ -278,7 +279,7 @@ function ChauffeurPage() {
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
 
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs, 1, perPage);
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs, newPage, perPage, data?.pagination);
   
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -286,6 +287,7 @@ function ChauffeurPage() {
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+    setNewPage(newPage);
     window.scrollTo(0, 0);
   };
 

@@ -1,7 +1,7 @@
  
 import { API_ENDPOINTS } from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
-import { useQuery } from '@tanstack/react-query';
+import {  useQuery } from '@tanstack/react-query';
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 
@@ -30,4 +30,13 @@ const UsefetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Da
     refetchOnWindowFocus: false,
     retry: false,
   });
+
+// export const fetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined }, page?: number }) =>
+//   queryOptions({
+//     queryKey: ['affiliate', DateRange, page],
+//     queryFn: () => getAllAffiliate(DateRange, page),
+//     refetchOnWindowFocus: false,
+//     retry: false,
+//   });
+
 export default UsefetchAllAffiliate;

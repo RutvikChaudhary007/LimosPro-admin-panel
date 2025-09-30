@@ -346,9 +346,10 @@ function FleetPage() {
   const handleEdit = (id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_FLEET.replace(":id",id));
    };
+   const deleteMutation = queries.useDeletefleetMutation(refetch);
     const handleDelete = async(id: string) => {
       try {
-        toastPromise(await queries.useDeletefleetMutation(refetch).mutateAsync(id),{
+        toastPromise(deleteMutation.mutateAsync(id),{
           loading: "Deleting...",
           success: "Yeah! fleet deleted successfully.",
           error: "Opps! failed to delete fleet.",

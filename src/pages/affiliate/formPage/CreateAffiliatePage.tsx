@@ -1,47 +1,22 @@
-import { createAffiliate } from "@/api/createAffiliate";
+// import { createAffiliate } from "@/api/createAffiliate";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
-import { toastPromise, useToast } from "@/hooks/use-toast";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import type { IAffiliate } from "@/types/affiliate";
-import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
-import { useMutation } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
+// import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
+// import { useMutation } from "@tanstack/react-query";
+// import type { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function CreateAffiliatePage() {
-  const {toast} = useToast();
-  const navigate = useNavigate();
-  const createAffiliateMutation = useMutation({
-    mutationFn: createAffiliate,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      
-      // userPermissions are automatically stored in localStorage by the login API
-      
-      navigate(constant.ROUTING_URLS.AFFILIATE);
-      // Navigate to dashboard
-    },
-    onError: (err: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Create affiliate Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  });
+  // const {toast} = useToast();
+  // const navigate = useNavigate();
+  const createAffiliateMutation = queries.useCreateAffiliateMutation()
   const handleCreateAffiliate = async (data:IAffiliate) => {
     
       console.log("called handleCreateAffiliate",data);
@@ -49,8 +24,8 @@ function CreateAffiliatePage() {
      
         // Remove remember field before sending to API
         // await loginMutation.mutateAsync(loginData);
-        await createAffiliateMutation.mutateAsync(data)
-       toastPromise(await createAffiliateMutation.mutateAsync(data), {
+        // await createAffiliateMutation.mutateAsync(data)
+       toastPromise(createAffiliateMutation.mutateAsync(data), {
           loading: "submitting...",
           success: "Affiliate created successfully!",
           error: (e) => (e instanceof Error ? e.message : "Failed to create affiliate"),

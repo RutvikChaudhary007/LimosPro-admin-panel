@@ -1,5 +1,4 @@
  
-import { deleteAffiliate } from '@/api/deleteAffiliate';
 import UsefetchAllAffiliate from '@/api/getAllAffiliate';
 import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
@@ -11,11 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
-import { toast, toastPromise } from '@/hooks/use-toast';
+import {  toastPromise } from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
-import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
-import { useMutation } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
+import queries from '@/lib/queries';
+// import { useQueryClient } from '@tanstack/react-query';
+// import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
+// import { useMutation } from '@tanstack/react-query';
+// import type { AxiosError } from 'axios';
 import { ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
@@ -386,7 +387,12 @@ const { startDate, endDate } = useMemo(() => {
 
 
 const [newPage, setNewPage] = useState<number>(1);
-  const {data: FetchData, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
+  const {data: FetchData, refetch, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
+  // const queryClient = useQueryClient();
+  // useEffect(() => {
+  //   queryClient.prefetchQuery(fetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage+1}));
+  // }, [queryClient, newPage]);
+
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(FetchData?.affiliates, newPage, perPage, FetchData?.pagination);
 useEffect(()=>{
@@ -403,6 +409,8 @@ if(currentItems){
     navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id",id));
 
   };
+
+  const deleteAffiliateMutation = queries.useDeleteAffiliateMutation(refetch)
   const handleEdit = (id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id",id));
    };
@@ -411,10 +419,10 @@ if(currentItems){
      
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
-     toastPromise(await  deleteAffiliateMutation.mutateAsync(id), {
+     toastPromise(deleteAffiliateMutation.mutateAsync(id), {
         loading: "Deleting...",
         success: "Affiliate deleted successfully!",
-        error: (e) => (e instanceof Error ? e.message : "Failed to delete affiliate"),
+        error: (e) => (e instanceof Error ? (e.message) : "Failed to delete affiliate"),
       });
     } catch (error) {
       // Error handling is done in onError callback
@@ -425,30 +433,7 @@ if(currentItems){
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
-  const deleteAffiliateMutation = useMutation({
-    mutationFn: deleteAffiliate,
-    onSuccess: () => {
-      // TODO: need id
-      // setData((prev) =>
-      //   prev.filter((row) => row.id !== response.id))
-    },
-    onError: (err: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Delete affiliate Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    }
-  });
+
  
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
