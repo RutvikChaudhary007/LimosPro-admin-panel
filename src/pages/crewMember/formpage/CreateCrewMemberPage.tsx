@@ -2,13 +2,24 @@ import CrewMemberForm from "@/components/crewMember/crewMemberForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
+import { toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
+import queries from "@/lib/queries"
 import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 
 const CreateCrewMemberPage = () => {
-  function handleCreateCrewMember (){
-    
+  const createCrewMember = queries.useCreateCrewMemberMutation();
+  function handleCreateCrewMember (data){
+    try {
+      toastPromise(createCrewMember.mutateAsync(data),{
+        loading: "Loading...",
+        success: "Yeah!, crew member created successfully.",
+        error: (e) => (e instanceof Error ? e.message : "Failed to create crew member."),
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (

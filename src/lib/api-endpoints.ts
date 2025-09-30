@@ -60,5 +60,6 @@ export const API_ENDPOINTS = {
   // VIEW_REFUND: `${BASE_URL1}/payments`,
 
   // Crew member OR staff member
-  GET_ALL_CREW_MEMBER: `${BASE_URL1}/staff-members`
+  GET_ALL_CREW_MEMBER: `${BASE_URL1}/staff-members`,
+  CREATE_CREW_MEMBER: `${BASE_URL1}/staff-members`,
 };

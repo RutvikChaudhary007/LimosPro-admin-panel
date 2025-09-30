@@ -11,6 +11,7 @@ import { createChauffeur } from "@/api/createChauffeur";
 import type { IUserFormData } from "@/types/user";
 import { updateUser } from "@/api/updateUserById";
 import { createAffiliate } from "@/api/createAffiliate";
+import { createCrewMember } from "@/api/createCrewMember";
 
 
 type TRefetch= (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>
@@ -267,6 +268,36 @@ const useCreateChauffeurMutation = ()=>{
   });
 } 
 
+/**
+ * #################################################
+ * Crew Member
+ * #################################################
+ */
+
+const useCreateCrewMemberMutation = ()=>{
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: createCrewMember,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      // userPermissions are automatically stored in localStorage by the login API
+      navigate(constant.ROUTING_URLS.CREW_MEMBERS);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        throw new Error(
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred"
+          );
+        }
+        throw new Error("An unexpected error occurred");
+      },
+  })
+}
+
 export default {
     useDeletefleetMutation,
     useDeleteAffiliateMutation,
@@ -275,4 +306,5 @@ export default {
     useCreateAffiliateMutation,
     useCreateChauffeurMutation,
     useUpdateUserMutation,
+    useCreateCrewMemberMutation,
 }
