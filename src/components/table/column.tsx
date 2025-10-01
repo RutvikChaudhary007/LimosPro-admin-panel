@@ -892,7 +892,13 @@ export function getPayments(
     enableSorting: false,
     enableHiding: false,
   },
-  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
+  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
+  cell: ({ row }) => {
+    console.log("row", row.original?.userDetails)
+    return (
+    <span className="text-[#3A3A3A] font-medium">{row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}</span>
+  )},
+   enableSorting: false, },
     { accessorKey: "bookingId", header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Id" />,enableSorting: false, },
     { accessorKey: "paymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
   },
@@ -961,7 +967,10 @@ export function getRefund(
     enableSorting: false,
     enableHiding: false,
   },
-  { accessorKey: "transactionId", header: ({ column }) => <DataTableColumnHeader column={column} title="Transaction Id" />, enableSorting: false, },
+  { accessorKey: "passengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,cell: ({ row }) =>(
+    <span className="text-[#3A3A3A] font-medium">{row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}</span>
+  ),
+   enableSorting: false, },
     { accessorKey: "id", header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,enableSorting: false, },
     { accessorKey: "paymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
   },
@@ -1021,7 +1030,13 @@ export function getRefundRequest(
     enableSorting: false,
     enableHiding: false,
   },
-  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />, enableSorting: false, },
+  { accessorKey: "PassengerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
+  cell: ({ row }) => {
+    console.log("row", row.original?.userDetails)
+    return (
+    <span className="text-[#3A3A3A] font-medium">{row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}</span>
+  )},
+   enableSorting: false, },
     { accessorKey: "RefundId", header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,enableSorting: false, },
     { accessorKey: "PaymentId", header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />, enableSorting: false,
   },
@@ -1099,10 +1114,10 @@ export function getCrewMember(
     enableHiding: false,
   },
   { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />, enableSorting: false, },
-    { accessorKey: "designation", header: ({ column }) => <DataTableColumnHeader column={column} title="Designation" />,enableSorting: false, },
+    { accessorKey: "description", header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,enableSorting: false, },
     { accessorKey: "email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />, enableSorting: false,
   },
-  { accessorKey: "phone", header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,enableSorting: false, },
+  { accessorKey: "phoneNumber", header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,enableSorting: false, },
   {
       id: "action",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
@@ -1171,11 +1186,11 @@ export function getStaffMember(
   { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
   cell: ({ row }) => (
         <>
-          {row.original.firstName} {row.original.lastName}
+          {row.original?.user?.firstName} {row.original?.user?.lastName}
         </>
         
       ), enableSorting: false, },
-    { accessorKey: "email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />, enableSorting: false,
+    { accessorKey: "user.email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />, enableSorting: false,
   },
   {
       id: "access",

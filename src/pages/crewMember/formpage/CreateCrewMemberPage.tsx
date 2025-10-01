@@ -9,10 +9,11 @@ import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 
 const CreateCrewMemberPage = () => {
-  const createCrewMember = queries.useCreateCrewMemberMutation();
+  const createCrewMemberMutation = queries.useCreateCrewMemberMutation();
   function handleCreateCrewMember (data){
     try {
-      toastPromise(createCrewMember.mutateAsync(data),{
+      console.log("data", data)
+      toastPromise(createCrewMemberMutation.mutateAsync(data),{
         loading: "Loading...",
         success: "Yeah!, crew member created successfully.",
         error: (e) => (e instanceof Error ? e.message : "Failed to create crew member."),

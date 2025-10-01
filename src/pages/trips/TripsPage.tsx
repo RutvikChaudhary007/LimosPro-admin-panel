@@ -1,6 +1,7 @@
-import useFetchAllTrips from "@/api/getAllTrips";
+import useFetchAllTrips from "@/api/getAllTrips.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getStatusColor, getTrips, type TTrips } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -22,43 +23,43 @@ const showStatus = [
   { label: 'Cancelled', value: 'cancelled' },
 ];
 
-const tableData: TTrips[] = [
-{
-    id: "12345",
-    bookingId: "67890",
-    chaufferId: "67890",
-    tripType: "oneWay",
-    tripStatus: "inProgress",
-    tripStartTime: "2025-04-16T10:00:00Z",
-    tripEndTime: "2025-04-16T12:00:00Z",
-    distanceInKm: 15.5,
-    gratuity: 5,
-    paymentStatus: "pending",
-    createdAt: "2025-04-16T10:00:00Z",
-    updatedAt: "2025-04-16T10:00:00Z"
-},
-{
-    id: "67890",
-    bookingId: "12345",
-    chaufferId: "12345",
-    tripType: "roundTrip",
-    tripStatus: "completed",
-    tripStartTime: "2025-04-17T08:00:00Z",
-    tripEndTime: "2025-04-17T10:00:00Z",
-    distanceInKm: 20,
-    gratuity: 10,
-    paymentStatus: "paid",
-    createdAt: "2025-04-17T08:00:00Z",
-    updatedAt: "2025-04-17T10:00:00Z"
-}
-];
+// const tableData: TTrips[] = [
+// {
+//     id: "12345",
+//     bookingId: "67890",
+//     chaufferId: "67890",
+//     tripType: "oneWay",
+//     tripStatus: "inProgress",
+//     tripStartTime: "2025-04-16T10:00:00Z",
+//     tripEndTime: "2025-04-16T12:00:00Z",
+//     distanceInKm: 15.5,
+//     gratuity: 5,
+//     paymentStatus: "pending",
+//     createdAt: "2025-04-16T10:00:00Z",
+//     updatedAt: "2025-04-16T10:00:00Z"
+// },
+// {
+//     id: "67890",
+//     bookingId: "12345",
+//     chaufferId: "12345",
+//     tripType: "roundTrip",
+//     tripStatus: "completed",
+//     tripStartTime: "2025-04-17T08:00:00Z",
+//     tripEndTime: "2025-04-17T10:00:00Z",
+//     distanceInKm: 20,
+//     gratuity: 10,
+//     paymentStatus: "paid",
+//     createdAt: "2025-04-17T08:00:00Z",
+//     updatedAt: "2025-04-17T10:00:00Z"
+// }
+// ];
 
 function TripsPage():JSX.Element {
   const navigate = useNavigate();
   const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   // const [data, setData] = useState<TTrips[]>(tableData);
-  const {data} = useFetchAllTrips();
+  const {data, isFetching} = useFetchAllTrips();
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
@@ -149,6 +150,7 @@ function TripsPage():JSX.Element {
 
     return items;
   };
+
   return (
     <AdminRootLayout>
       <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
@@ -212,13 +214,13 @@ function TripsPage():JSX.Element {
             /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+        {isFetching ? <Spinner /> : (<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
+          onGlobalFilterChange={setSearchValue} />)}
         
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
+        {totalPages > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>

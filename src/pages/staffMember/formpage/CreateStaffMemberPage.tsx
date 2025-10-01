@@ -2,15 +2,30 @@ import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import StaffMemberForm from "@/components/staffMember/StaffMemberForm";
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const CreateStaffMemberPage = () => {
- 
-     async function onSubmit(values: unknown) {
-     await new Promise(res => setTimeout(res, 1200)); // artificial delay to notice isSubmitting
-   console.log("data:", values);
+  const createStaffMutation = queries.useCreateStaffMemberMutation();
+     async function onSubmit(values: object) {
+      console.log("data:", values);
+      try {
+        toastPromise(createStaffMutation.mutateAsync(values),{
+          loading: "Creating Staff Member...",
+          success: "Staff Member Created Successfully",
+          error: (e) => (e instanceof Error ? e.message : "Failed to create Staff Member"),
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unexpected error occurred");
+        }
+      }
    }
    return (
      <AdminRootLayout>

@@ -1,17 +1,18 @@
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import { useMutation, type RefetchOptions, type QueryObserverResult } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { deletefleet } from "@/api/deleteFleet";
-import { deleteAffiliate } from "@/api/deleteAffiliate";
-import { login } from "@/api/login";
+import { deletefleet } from "@/api/deleteFleet.api";
+import { deleteAffiliate } from "@/api/deleteAffiliate.api";
+import { login } from "@/api/login.api";
 import { useNavigate } from "react-router-dom";
 import { constant } from "./constant";
-import { deleteUser } from "@/api/deleteUser";
-import { createChauffeur } from "@/api/createChauffeur";
+import { deleteUser } from "@/api/deleteUser.api";
+import { createChauffeur } from "@/api/chauffeur.api";
 import type { IUserFormData } from "@/types/user";
-import { updateUser } from "@/api/updateUserById";
-import { createAffiliate } from "@/api/createAffiliate";
-import { createCrewMember } from "@/api/createCrewMember";
+import { updateUser } from "@/api/updateUserById.api";
+import { createAffiliate } from "@/api/createAffiliate.api";
+import { createStaffMember, deleteStaffMember, editStaffMember } from "@/api/staffMember.api";
+import { createCrewMember, deleteCrewMember, editCrewMember } from "@/api/crewMember.api";
 
 
 type TRefetch= (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>
@@ -298,13 +299,131 @@ const useCreateCrewMemberMutation = ()=>{
   })
 }
 
+const useUpdateCrewMemberMutation = ()=>useMutation({
+  mutationFn: editCrewMember,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useDeleteCrewMemberMutation = ()=>useMutation({
+  mutationFn: deleteCrewMember,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+/**
+ * ###################################################
+ * Staff Member
+ * ###################################################
+ */
+
+const useCreateStaffMemberMutation = ()=>{
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: createStaffMember,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      // userPermissions are automatically stored in localStorage by the login API
+      navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        throw new Error(
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred"
+          );
+        }
+        throw new Error("An unexpected error occurred");
+      },
+  })
+}
+
+const useUpdateStaffMemberMutation = ()=>{
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: editStaffMember,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      // userPermissions are automatically stored in localStorage by the login API
+      navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+}
+
+const useDeleteStaffMemberMutation = ()=>useMutation({
+  mutationFn: deleteStaffMember,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+/**
+ * ###################################################
+ * Functions Exports
+ * ###################################################
+ */
+
 export default {
-    useDeletefleetMutation,
-    useDeleteAffiliateMutation,
     useLoginMutation,
+    useDeletefleetMutation,
+    useUpdateUserMutation,
     useDeleteUserMutation,
     useCreateAffiliateMutation,
+    useDeleteAffiliateMutation,
     useCreateChauffeurMutation,
-    useUpdateUserMutation,
     useCreateCrewMemberMutation,
+    useUpdateCrewMemberMutation,
+    useDeleteCrewMemberMutation,
+    useCreateStaffMemberMutation,
+    useDeleteStaffMemberMutation,
+    useUpdateStaffMemberMutation,
 }

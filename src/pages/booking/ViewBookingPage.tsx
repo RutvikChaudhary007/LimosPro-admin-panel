@@ -1,4 +1,4 @@
-import UsefetchBookingById from '@/api/getBookingById'
+import UsefetchBookingById from '@/api/getBookingById.api'
 import { Spinner } from '@/components/Spinner'
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header'

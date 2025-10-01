@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 // import { deleteUser } from '@/api/deleteUser';
-import UsefetchAllUsers from '@/api/getAllUser';
+import UsefetchAllUsers from '@/api/getAllUser.api';
 import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';

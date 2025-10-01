@@ -1,5 +1,5 @@
 // @ts-nocheck
-import useFetchAllStaffMember from "@/api/getAllCrewMember";
+import useFetchAllCrewMember from "@/api/crewMember.api";
 import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
@@ -10,10 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -73,19 +76,36 @@ const CrewMemberPage = () => {
    const [newPage, setNewPage] = useState(1);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TCrewMember[]>(tableData);
-    const {data, isFetching} = useFetchAllStaffMember({page: newPage, limit: selected.value})
-  
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TCrewMember>(data?.staffMembers, newPage, selected.value);
+  const {data,refetch, isFetching} = useFetchAllCrewMember({page: newPage, limit: 10});
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TCrewMember>(data?.crewMembers || [], newPage, selected.value, data?.pagination);
   
     
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
       naviagte(constant.ROUTING_URLS.EDIT_CREW_MEMBERS.replace(":id",id));
      }, []);
-    const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
-    }, []);
-    const columns = useMemo(() => getCrewMember(handleEdit, handleDelete), [handleDelete, handleEdit])
+     const deleteCrewMember = queries.useDeleteCrewMemberMutation();
+
+    const handleDelete = (id: string) => {
+      try {
+        toastPromise(deleteCrewMember.mutateAsync({id}),{
+          loading: "Deleting crew member...",
+          success: (res)=> {
+            if(res) refetch();
+            return `Crew member deleted successfully`
+          },
+          error: (e)=> (e instanceof Error ? e.message : "Failed to delete crew member"),
+        })
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unknown error occurred");
+        }
+      }
+      // setData((prev) =>
+      //   prev.filter((row) => row.id !== id))
+    };
+    const columns = getCrewMember(handleEdit, handleDelete);
   
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState({});

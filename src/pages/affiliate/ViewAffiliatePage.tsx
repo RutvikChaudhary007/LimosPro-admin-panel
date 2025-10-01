@@ -1,4 +1,4 @@
-import UsefetchAffiliateById from "@/api/getAffiliateById"
+import UsefetchAffiliateById from "@/api/getAffiliateById.api"
 import { Spinner } from "@/components/Spinner"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"

@@ -1,4 +1,4 @@
-import UsefetchChauffeurById from "@/api/getChauffeurById";
+import UsefetchChauffeurById from "@/api/getChauffeurById.api";
 import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
@@ -80,7 +80,7 @@ const ViewChauffeurPage = () => {
     const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [isaddress, setAddress] = useState<string | undefined>(undefined);
-    const { data, isFetching, error } = UsefetchChauffeurById({ id: id! });
+    const { data, isFetching } = UsefetchChauffeurById({ id: id! });
     // Load Google Maps script
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: googleMapsApiKey || "",
@@ -118,8 +118,8 @@ const ViewChauffeurPage = () => {
     }, [isLoaded, loadError, data]);
 
     // if (isFetching) return (<p>Loading...</p>);
-    if (error) return (<h1>{error.message}</h1>);
-    const documentsLength = data.documents.length
+    // if (error) return (<h1>{error.message}</h1>);
+    const documentsLength = data?.documents?.length || 0;
     // const docJsx = [];
     const docJsx = [1, 2, 3, 4].map((i) => (
         <div key={i} className="flex items-center gap-6">
@@ -209,7 +209,7 @@ const ViewChauffeurPage = () => {
                                 <Label className="text-sm font-semibold capitalize w-[80px] min-w-[158px]">
                                     License:
                                 </Label>
-                                <span className="text-[#3A3A3A] font-medium">{data.licenseNumber}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.licenseNumber}</span>
                             </div>
                         </div>
                         <hr className="w-full h-[1px] bg-[#EEEEEE]" />

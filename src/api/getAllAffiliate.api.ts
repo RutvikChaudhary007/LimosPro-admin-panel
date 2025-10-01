@@ -23,7 +23,7 @@ export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
   return response?.data?.data;
 };
 
-const UsefetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined }, page?: number }) =>
+const useFetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined }, page?: number }) =>
   useQuery({
     queryKey: ['affiliate', DateRange, page],
     queryFn: () => getAllAffiliate(DateRange, page),
@@ -39,4 +39,4 @@ const UsefetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Da
 //     retry: false,
 //   });
 
-export default UsefetchAllAffiliate;
+export default useFetchAllAffiliate;

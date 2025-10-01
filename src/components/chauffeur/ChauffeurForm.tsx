@@ -15,7 +15,7 @@ import { Switch } from "../ui/switch"
 // import { geoDecoding } from "@/utils/googleMaps"
 // import { useLoadScript } from "@react-google-maps/api";
 import type { TChauffeur } from "../table/column"
-import UsefetchAllAffiliate from "@/api/getAllAffiliate"
+import UsefetchAllAffiliate from "@/api/getAllAffiliate.api"
 
 
 // const affiliate = [
@@ -152,7 +152,7 @@ const {data,isFetching} = UsefetchAllAffiliate({DateRange:{}});
             firstName: data?.userFirstName || "",
             lastName: data?.userLastName || "",
             email: data?.userEmail || "",
-            password: data.password || "",
+            password: data?.password?.replaceAll(/./g, "*") || "*************",
             businessAddress: data.businessAddress || "",
             location: data.Address || { latitude: 0, longitude: 0 },
             documents: data.documents || [],

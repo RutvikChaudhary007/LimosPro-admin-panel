@@ -1,5 +1,5 @@
  
-import UsefetchAllAffiliate from '@/api/getAllAffiliate';
+import UsefetchAllAffiliate from '@/api/getAllAffiliate.api';
 import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';

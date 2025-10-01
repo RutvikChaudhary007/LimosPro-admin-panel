@@ -1,4 +1,4 @@
-import useFetchUserById from "@/api/getUserById";
+import useFetchUserById from "@/api/getUserById.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getStatusColor } from "@/components/table/column";

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import UsefetchAffiliateById from "@/api/getAffiliateById";
+import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";

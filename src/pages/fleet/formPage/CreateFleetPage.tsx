@@ -1,7 +1,7 @@
 
-import { createFleet } from "@/api/createFleet"
-import UsefetchAllAffiliate from "@/api/getAllAffiliate"
-import useFetchAllRegions from "@/api/getAllRegion"
+import { createFleet } from "@/api/createFleet.api"
+import UsefetchAllAffiliate from "@/api/getAllAffiliate.api"
+import useFetchAllRegions from "@/api/getAllRegion.api"
 import FleetForm from "@/components/fleet/FleetForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"

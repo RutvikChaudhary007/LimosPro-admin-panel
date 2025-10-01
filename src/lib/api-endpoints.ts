@@ -1,7 +1,11 @@
- export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://apilimo.qalbit.in/user-service/';
+//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
 //  export const BASE_URL  = 'http://localhost:3000/api/v1';
- export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://apilimo.qalbit.in/booking-service/';
- export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://apilimo.qalbit.in/admin-service/';
+//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
+//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
+
+ export const BASE_URL  = 'http://192.168.1.7:3000/api/v1';
+ export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.7:3001/api/v1';
+ export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.7:3002/api/v1';
 
 //  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
 //  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
@@ -47,7 +51,7 @@ export const API_ENDPOINTS = {
 
   // Trips
   GET_ALL_TRIPS:  `${BASE_URL}/trips`,
-  GET_TRIP_BY_ID:  `${BASE_URL}/trip/:id`,
+  GET_TRIP_BY_ID:  `${BASE_URL2}/trip/:id`,
 
   // Regions
   GET_ALL_REGIONS: `${BASE_URL1}/regions`,
@@ -59,7 +63,15 @@ export const API_ENDPOINTS = {
   GET_ALL_REFUND: `${BASE_URL1}/payments`,
   // VIEW_REFUND: `${BASE_URL1}/payments`,
 
-  // Crew member OR staff member
-  GET_ALL_CREW_MEMBER: `${BASE_URL1}/staff-members`,
-  CREATE_CREW_MEMBER: `${BASE_URL1}/staff-members`,
+  // Crew member 
+  GET_ALL_CREW_MEMBER: `${BASE_URL1}/crewMembers`,
+  CREATE_CREW_MEMBER: `${BASE_URL1}/crewMember`,
+  EDIT_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
+  DELETE_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
+
+  // Crew member 
+  GET_ALL_STAFF_MEMBER: `${BASE_URL1}/staff-members`,
+  CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member`,
+  EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
+  DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
 };

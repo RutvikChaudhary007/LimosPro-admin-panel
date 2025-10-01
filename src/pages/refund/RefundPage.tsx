@@ -1,4 +1,4 @@
-import useFetchAllRefund from '@/api/getAllRefund';
+import useFetchAllRefund from '@/api/getAllRefund.api';
 import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';

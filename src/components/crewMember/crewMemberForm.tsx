@@ -18,6 +18,9 @@ const formSchema = z.object({
     designation: z.string().refine(value => value.trim() !== "", {
         message: "Designation cannot be empty or just whitespace.",
     }).min(3, { message: "Designation must be at least 3 characters" }),
+    password: z.string().refine(value => value.trim() !== "", {
+        message: "Password cannot be empty or just whitespace.",
+    }).min(3, { message: "Password must be at least 3 characters" }),
     email: z.email(),
     phone: z.string().refine(value => value.trim() !== "", {
         message: "phone cannot be empty or just whitespace.",
@@ -36,6 +39,7 @@ const CrewMemberForm = ({ initialData, onSubmit, disabledFields, type }: { initi
                 designation: data?.designation,      
                 email: data?.email,
                 phone: data?.phone,
+                password: data?.password,
             };
         };
         const form = useForm<z.infer<typeof formSchema>>({
@@ -46,6 +50,7 @@ const CrewMemberForm = ({ initialData, onSubmit, disabledFields, type }: { initi
                 designation: "",
                 email: "",
                 phone: "",
+                password: "",
                 
             },
         });
@@ -108,6 +113,17 @@ const CrewMemberForm = ({ initialData, onSubmit, disabledFields, type }: { initi
                                 <FormItem className='flex flex-col gap-3 mb-[31px]'>
                                     <FormControl>
                                         <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='phone' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem className='flex flex-col gap-3 mb-[31px]'>
+                                    <FormControl>
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='password' {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

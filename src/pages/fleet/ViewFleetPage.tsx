@@ -1,4 +1,4 @@
-import useFetchFleetById from "@/api/getFleetById";
+import useFetchFleetById from "@/api/getFleetById.api";
 import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";

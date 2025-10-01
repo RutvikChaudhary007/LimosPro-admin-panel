@@ -1,5 +1,5 @@
 // @ts-nocheck
-import UsefetchAllChauffeur from "@/api/getAllChauffeur";
+import useFetchAllChauffeur from "@/api/chauffeur.api";
 import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
@@ -12,7 +12,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const showStatus = [
@@ -29,237 +29,242 @@ const showTime = [
   { label: 'Yearly', value: 'yearly' },
 ]
 
-const tableData: TChauffeur[] = [
-        {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db19",
-            "businessAddress": "dafs",
-            "password": "dfa",
-            "user": {
-              "firstName": "dkfsa",
-              "lastName": "dfas",
-              "email": "ddfa@email.com"
-            },
-            "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-            "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-            "status": "Active",
-            "panNumber": "chauffeur_pan_875f",
-            "licenseNumber": "license_number_875f",
-            "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-            "documents": [
-                {
-                    "size": 254971,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot (7).png"
-                },
-                {
-                    "size": 316890,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot 2023-07-25 120555.png"
-                }
-            ],
-            "rating": "5.00",
-            "availability": true,
-            "location": {
-                "latitude": 40.76303278785429,
-                "longitude": -73.81583247888925
-            },
-            "gratuity": "0.00",
-            "createdAt": "2025-07-15T13:07:17.448Z",
-            "updatedAt": "2025-07-15T13:07:17.448Z",
-            "vehicle": {
-                "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-                "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-                "plateNumber": "AB-123-CDa",
-                "brand": "Mercedes-S-classa",
-                "model": "2024",
-                "year": 2025,
-                "color": "black",
-                "vehicleType": "Executive Sedan Fit for 3 Passengers",
-                "capacity": 4,
-                "documents": [],
-                "vehicleImages": [],
-                "createdAt": "2025-07-15T12:43:58.461Z",
-                "updatedAt": "2025-07-15T12:43:58.461Z",
-                "deletedAt": null
-            }
-        },
-        {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db17",
-            "businessAddress": "dafs",
-            "password": "dfa",
-            "user": {
-              "firstName": "dkfsa",
-              "lastName": "dfas",
-              "email": "ddfa@email.com"
-            },
-            "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-            "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-            "status": "pending",
-            "panNumber": "chauffeur_pan_875f",
-            "licenseNumber": "license_number_875f",
-            "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-            "documents": [
-                {
-                    "size": 254971,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot (7).png"
-                },
-                {
-                    "size": 316890,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot 2023-07-25 120555.png"
-                }
-            ],
-            "rating": "5.00",
-            "availability": true,
-            "location": {
-                "latitude": 40.76303278785429,
-                "longitude": -73.81583247888925
-            },
-            "gratuity": "0.00",
-            "createdAt": "2025-07-15T13:07:17.448Z",
-            "updatedAt": "2025-07-15T13:07:17.448Z",
-            "vehicle": {
-                "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-                "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-                "plateNumber": "AB-123-CDa",
-                "brand": "Mercedes-S-classa",
-                "model": "2024",
-                "year": 2025,
-                "color": "black",
-                "vehicleType": "Executive Sedan Fit for 3 Passengers",
-                "capacity": 4,
-                "documents": [],
-                "vehicleImages": [],
-                "createdAt": "2025-07-15T12:43:58.461Z",
-                "updatedAt": "2025-07-15T12:43:58.461Z",
-                "deletedAt": null
-            }
-        },
-        {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db16",
-            "businessAddress": "dafs",
-            "password": "dfa",
-            "user": {
-              "firstName": "dkfsa",
-              "lastName": "dfas",
-              "email": "ddfa@email.com"
-            },
-            "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-            "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-            "status": "inactive",
-            "panNumber": "chauffeur_pan_875f",
-            "licenseNumber": "license_number_875f",
-            "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-            "documents": [
-                {
-                    "size": 254971,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot (7).png"
-                },
-                {
-                    "size": 316890,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot 2023-07-25 120555.png"
-                }
-            ],
-            "rating": "5.00",
-            "availability": true,
-            "location": {
-                "latitude": 40.76303278785429,
-                "longitude": -73.81583247888925
-            },
-            "gratuity": "0.00",
-            "createdAt": "2025-07-15T13:07:17.448Z",
-            "updatedAt": "2025-07-15T13:07:17.448Z",
-            "vehicle": {
-                "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-                "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-                "plateNumber": "AB-123-CDa",
-                "brand": "Mercedes-S-classa",
-                "model": "2024",
-                "year": 2025,
-                "color": "black",
-                "vehicleType": "Executive Sedan Fit for 3 Passengers",
-                "capacity": 4,
-                "documents": [],
-                "vehicleImages": [],
-                "createdAt": "2025-07-15T12:43:58.461Z",
-                "updatedAt": "2025-07-15T12:43:58.461Z",
-                "deletedAt": null
-            }
-        },
-        {
-            "id": "801c9f7e-7dfa-4f97-9664-912fe821db15",
-            "businessAddress": "dafs",
-            "password": "dfa",
-            "user": {
-              "firstName": "dkfsa",
-              "lastName": "dfas",
-              "email": "ddfa@email.com"
-            },
-            "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-            "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-            "status": "suspended",
-            "panNumber": "chauffeur_pan_875f",
-            "licenseNumber": "license_number_875f",
-            "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-            "documents": [
-                {
-                    "size": 254971,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot (7).png"
-                },
-                {
-                    "size": 316890,
-                    "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-                    "mimetype": "image/png",
-                    "originalName": "Screenshot 2023-07-25 120555.png"
-                }
-            ],
-            "rating": "5.00",
-            "availability": true,
-            "location": {
-                "latitude": 40.76303278785429,
-                "longitude": -73.81583247888925
-            },
-            "gratuity": "0.00",
-            "createdAt": "2025-07-15T13:07:17.448Z",
-            "updatedAt": "2025-07-15T13:07:17.448Z",
-            "vehicle": {
-                "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-                "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-                "plateNumber": "AB-123-CDa",
-                "brand": "Mercedes-S-classa",
-                "model": "2024",
-                "year": 2025,
-                "color": "black",
-                "vehicleType": "Executive Sedan Fit for 3 Passengers",
-                "capacity": 4,
-                "documents": [],
-                "vehicleImages": [],
-                "createdAt": "2025-07-15T12:43:58.461Z",
-                "updatedAt": "2025-07-15T12:43:58.461Z",
-                "deletedAt": null
-            }
-        },
-    ]
+// const tableData: TChauffeur[] = [
+//         {
+//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db19",
+//             "businessAddress": "dafs",
+//             "password": "dfa",
+//             "user": {
+//               "firstName": "dkfsa",
+//               "lastName": "dfas",
+//               "email": "ddfa@email.com"
+//             },
+//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
+//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+//             "status": "Active",
+//             "panNumber": "chauffeur_pan_875f",
+//             "licenseNumber": "license_number_875f",
+//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
+//             "documents": [
+//                 {
+//                     "size": 254971,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot (7).png"
+//                 },
+//                 {
+//                     "size": 316890,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot 2023-07-25 120555.png"
+//                 }
+//             ],
+//             "rating": "5.00",
+//             "availability": true,
+//             "location": {
+//                 "latitude": 40.76303278785429,
+//                 "longitude": -73.81583247888925
+//             },
+//             "gratuity": "0.00",
+//             "createdAt": "2025-07-15T13:07:17.448Z",
+//             "updatedAt": "2025-07-15T13:07:17.448Z",
+//             "vehicle": {
+//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
+//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
+//                 "plateNumber": "AB-123-CDa",
+//                 "brand": "Mercedes-S-classa",
+//                 "model": "2024",
+//                 "year": 2025,
+//                 "color": "black",
+//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
+//                 "capacity": 4,
+//                 "documents": [],
+//                 "vehicleImages": [],
+//                 "createdAt": "2025-07-15T12:43:58.461Z",
+//                 "updatedAt": "2025-07-15T12:43:58.461Z",
+//                 "deletedAt": null
+//             }
+//         },
+//         {
+//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db17",
+//             "businessAddress": "dafs",
+//             "password": "dfa",
+//             "user": {
+//               "firstName": "dkfsa",
+//               "lastName": "dfas",
+//               "email": "ddfa@email.com"
+//             },
+//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
+//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+//             "status": "pending",
+//             "panNumber": "chauffeur_pan_875f",
+//             "licenseNumber": "license_number_875f",
+//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
+//             "documents": [
+//                 {
+//                     "size": 254971,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot (7).png"
+//                 },
+//                 {
+//                     "size": 316890,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot 2023-07-25 120555.png"
+//                 }
+//             ],
+//             "rating": "5.00",
+//             "availability": true,
+//             "location": {
+//                 "latitude": 40.76303278785429,
+//                 "longitude": -73.81583247888925
+//             },
+//             "gratuity": "0.00",
+//             "createdAt": "2025-07-15T13:07:17.448Z",
+//             "updatedAt": "2025-07-15T13:07:17.448Z",
+//             "vehicle": {
+//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
+//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
+//                 "plateNumber": "AB-123-CDa",
+//                 "brand": "Mercedes-S-classa",
+//                 "model": "2024",
+//                 "year": 2025,
+//                 "color": "black",
+//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
+//                 "capacity": 4,
+//                 "documents": [],
+//                 "vehicleImages": [],
+//                 "createdAt": "2025-07-15T12:43:58.461Z",
+//                 "updatedAt": "2025-07-15T12:43:58.461Z",
+//                 "deletedAt": null
+//             }
+//         },
+//         {
+//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db16",
+//             "businessAddress": "dafs",
+//             "password": "dfa",
+//             "user": {
+//               "firstName": "dkfsa",
+//               "lastName": "dfas",
+//               "email": "ddfa@email.com"
+//             },
+//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
+//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+//             "status": "inactive",
+//             "panNumber": "chauffeur_pan_875f",
+//             "licenseNumber": "license_number_875f",
+//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
+//             "documents": [
+//                 {
+//                     "size": 254971,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot (7).png"
+//                 },
+//                 {
+//                     "size": 316890,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot 2023-07-25 120555.png"
+//                 }
+//             ],
+//             "rating": "5.00",
+//             "availability": true,
+//             "location": {
+//                 "latitude": 40.76303278785429,
+//                 "longitude": -73.81583247888925
+//             },
+//             "gratuity": "0.00",
+//             "createdAt": "2025-07-15T13:07:17.448Z",
+//             "updatedAt": "2025-07-15T13:07:17.448Z",
+//             "vehicle": {
+//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
+//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
+//                 "plateNumber": "AB-123-CDa",
+//                 "brand": "Mercedes-S-classa",
+//                 "model": "2024",
+//                 "year": 2025,
+//                 "color": "black",
+//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
+//                 "capacity": 4,
+//                 "documents": [],
+//                 "vehicleImages": [],
+//                 "createdAt": "2025-07-15T12:43:58.461Z",
+//                 "updatedAt": "2025-07-15T12:43:58.461Z",
+//                 "deletedAt": null
+//             }
+//         },
+//         {
+//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db15",
+//             "businessAddress": "dafs",
+//             "password": "dfa",
+//             "user": {
+//               "firstName": "dkfsa",
+//               "lastName": "dfas",
+//               "email": "ddfa@email.com"
+//             },
+//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
+//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+//             "status": "suspended",
+//             "panNumber": "chauffeur_pan_875f",
+//             "licenseNumber": "license_number_875f",
+//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
+//             "documents": [
+//                 {
+//                     "size": 254971,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot (7).png"
+//                 },
+//                 {
+//                     "size": 316890,
+//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
+//                     "mimetype": "image/png",
+//                     "originalName": "Screenshot 2023-07-25 120555.png"
+//                 }
+//             ],
+//             "rating": "5.00",
+//             "availability": true,
+//             "location": {
+//                 "latitude": 40.76303278785429,
+//                 "longitude": -73.81583247888925
+//             },
+//             "gratuity": "0.00",
+//             "createdAt": "2025-07-15T13:07:17.448Z",
+//             "updatedAt": "2025-07-15T13:07:17.448Z",
+//             "vehicle": {
+//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
+//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
+//                 "plateNumber": "AB-123-CDa",
+//                 "brand": "Mercedes-S-classa",
+//                 "model": "2024",
+//                 "year": 2025,
+//                 "color": "black",
+//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
+//                 "capacity": 4,
+//                 "documents": [],
+//                 "vehicleImages": [],
+//                 "createdAt": "2025-07-15T12:43:58.461Z",
+//                 "updatedAt": "2025-07-15T12:43:58.461Z",
+//                 "deletedAt": null
+//             }
+//         },
+//     ]
 function ChauffeurPage() {
   const navigate = useNavigate();
     const perPage = 10;
     const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const {data, isFetching} = UsefetchAllChauffeur();
-  console.log("fetchedData:",data)
+  const {data, isFetching} = useFetchAllChauffeur();
+  // console.log("fetchedData:",data)
+
+  /**
+   * Dummy data
+   */
   // const [data, setData] = useState<TChauffeur[]>(tableData);
+  // const isFetching =   false;
   
   
   
@@ -279,7 +284,14 @@ function ChauffeurPage() {
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
 
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs, newPage, perPage, data?.pagination);
+  /**
+   * Below is for dummy data
+   */
+  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data || [], newPage, perPage, );
+  /**
+   * Below is for real data
+   */
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs || [], newPage, perPage, data?.pagination);
   
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -446,7 +458,7 @@ function ChauffeurPage() {
         
         
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
+        {totalPages > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>

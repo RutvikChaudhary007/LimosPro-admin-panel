@@ -1,6 +1,7 @@
-import useFetchTripById from "@/api/getTripById"
+import useFetchTripById from "@/api/getTripById.api"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
+import { Spinner } from "@/components/Spinner"
 import { getStatusColor } from "@/components/table/column"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -8,27 +9,29 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Label } from "@/components/ui/label"
 import { constant } from "@/lib/constant"
 import { cn } from "@/lib/utils"
+import { geoDecoding } from "@/utils/googleMaps"
+import { useLoadScript, type Libraries } from "@react-google-maps/api"
 import { ArrowLeft } from "lucide-react"
-import { useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link,  useParams } from "react-router-dom"
 
-const data = {
-    id: "e3848306-8768-478e-987e-f6e85fa5959e",
-    userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
-    user: {
-        firstName: "John",
-        lastName: "Doe",
-        email: "name@email.com",
-        gender: "female",
-        dateOfBirth: "20-08-2000"
-    },
-    phone: "+1-424-231-6798",
-    affiliate: "NoahAnderson",
-    description: "Sedan Car 4 Doors. Clean In and out. 2 Rows of Seats. Fit for up to 3 Adults with 2 Check-In Bags, and 1 Carry-On Bag.",
-    status: "Active",
-    createdAt: "2025-05-05T12:19:41.972Z",
-    updatedAt: "2025-05-05T12:19:41.972Z",
-}
+// const data = {
+//     id: "e3848306-8768-478e-987e-f6e85fa5959e",
+//     userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
+//     user: {
+//         firstName: "John",
+//         lastName: "Doe",
+//         email: "name@email.com",
+//         gender: "female",
+//         dateOfBirth: "20-08-2000"
+//     },
+//     phone: "+1-424-231-6798",
+//     affiliate: "NoahAnderson",
+//     description: "Sedan Car 4 Doors. Clean In and out. 2 Rows of Seats. Fit for up to 3 Adults with 2 Check-In Bags, and 1 Carry-On Bag.",
+//     status: "Active",
+//     createdAt: "2025-05-05T12:19:41.972Z",
+//     updatedAt: "2025-05-05T12:19:41.972Z",
+// }
 const showStatus = [
     { label: 'Completed', value: 'completed' },
     { label: 'In-Progress', value: 'inProgress' },
@@ -43,7 +46,7 @@ const newStatus = [
     {label: "Refund Done", css:'bg-[#959595]', value: "RefundDone"},
     {label: "Refund Requested", css:'bg-[#959595]', value: "RefundRequested"},
 ]
-
+const libraries = ["places", "geocoding"];
 const getNewStatusColor = (value: string)=>{
     console.log(value.toLowerCase().trim())
     console.log("newStatus:",newStatus.find(status=> status.value.toLowerCase().trim() === value.toLowerCase().trim()))
@@ -51,7 +54,54 @@ const getNewStatusColor = (value: string)=>{
 }
 const ViewTripsPage = () => {
     const  {id} = useParams();
-    useFetchTripById({id: id!});
+    const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+    const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(undefined);
+    const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(undefined);
+
+// Load Google Maps script
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: googleMapsApiKey || "",
+        libraries: libraries as Libraries,
+    });
+
+   
+   const {data, isFetching} =  useFetchTripById({id: id!});
+    // Initialize Places Autocomplete
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchAddress = async () => {
+            if (isLoaded && data && !loadError) {
+                try {
+                    const address = await geoDecoding({
+                        lat: data?.pickupLocation?.latitude,
+                        lng: data?.pickupLocation?.longitude,
+                    });
+                    const address2 = await geoDecoding({
+                        lat: data?.dropoffLocation?.latitude,
+                        lng: data?.dropoffLocation?.longitude,
+                    });
+                    if (isMounted) {
+                        console.log("Decoded Address:", address);
+                        if (address) {
+                            setPickUpAddress(address as string);
+                        }
+                        if(address2){
+                            setDropOffAddress(address2 as string);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Geocoding failed:", err);
+                }
+            }
+        };
+
+        fetchAddress();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isLoaded, loadError, data]);
         const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     
   return (
@@ -68,7 +118,7 @@ const ViewTripsPage = () => {
                         </div>
                     </div>
                 </Header>
-                <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+                {isFetching ? <Spinner/> : (<Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
                     <CardHeader className="w-full  flex items-center justify-between">
                         <div className="w-full h-full space-y-6">
                             <div className="flex items-center justify-between">
@@ -100,8 +150,8 @@ const ViewTripsPage = () => {
                             </DropdownMenuContent>
                         </DropdownMenu>
                             </div>
-                            <Link to={"#"}> 
-                           <Button variant={"secondary"}>View Live Location</Button></Link>
+                            <Link to={constant.ROUTING_URLS.TRIPS_MAP.replace(":id", id!)}> 
+                           <Button type="button" variant={"secondary"} >View Live Location</Button></Link>
                         </div>
                         
                     </CardHeader>
@@ -111,15 +161,15 @@ const ViewTripsPage = () => {
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Name:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.user.firstName} {data?.user.lastName}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.user?.firstName} {data?.user?.lastName}</span>
                             </div>
                                                         <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Email:</Label>
-                                <span className="text-[#3A3A3A] font-medium">name@email.com</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.user?.email}</span>
                             </div>
                                                         <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">phone:</Label>
-                                <span className="text-[#3A3A3A] font-medium">+1-424-231-6798</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.user?.phoneNumber}</span>
                             </div>
                         <hr className="w-full h-[1px] bg-[#EEEEEE]" />
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
@@ -130,34 +180,34 @@ const ViewTripsPage = () => {
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
-                                <span className="text-[#3A3A3A] font-medium">David Thompson</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.chauffeur?.firstName} {data?.chauffeur?.lastName}</span>
                             </div>
                         <hr className="w-full h-[1px] bg-[#EEEEEE]" />
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Trip</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Price:</Label>
-                                <span className="text-[#3A3A3A] font-medium">$1879</span>
+                                <span className="text-[#3A3A3A] font-medium">${data?.fare}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Status:</Label>
-                                <span className={`text-[#3A3A3A] font-medium ${getNewStatusColor("paymentDone")?.css} px-2 py-0.5 rounded`}>Payment Done</span>
+                                <span className={`text-[#3A3A3A] font-medium ${getNewStatusColor(data?.tripStatus)?.css} px-2 py-0.5 rounded`}>{data?.tripStatus}</span>
                             </div>
                             <div className="flex items-center gap-6">
-                                <Label className="min-w-[153px] text-sm font-semibold capitalize">type:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Airport Transfer</span>
+                                <Label className="min-w-[153px] text-sm font-semibold capitalize">Type:</Label>
+                                <span className="text-[#3A3A3A] font-medium">{data?.tripType}</span>
                             </div>
                         <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">From:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Houston Airport Marriott at George Bush Intercontinental, John F Kennedy Boulevard, Houston, TX, USA</span>
+                                <span className="text-[#3A3A3A] font-medium">{loadError ? "Error map api loading" : (!pickUpAddress ? "Error fetching address": pickUpAddress) }</span>
                             </div>
                         <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">To:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Royal Caribbean International-Cruise Terminal 2, Harborside Drive, Galveston, TX, USA</span>
+                                <span className="text-[#3A3A3A] font-medium">{loadError ? "Error map api loading" : (!dropOffAddress ? "Error fetching address": dropOffAddress) }</span>
                             </div>
 
                         </div>
                     </CardContent>
-                </Card>
+                </Card>)}
             </div>
     </AdminRootLayout>
   )

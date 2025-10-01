@@ -1,5 +1,7 @@
+import useFetchAllStaffMember from "@/api/staffMember.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -7,43 +9,65 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 
 
-const tableData: TStaffMember [] = [
-  { id: "1", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com",  },
-  { id: "2", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
-  { id: "3", lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker",  email: "name@email.com", },
-  { id: "4", lastName:"adf", password:"dfa", role:"dfa", firstName: "Casey Walker", email: "name@email.com",},
-  { id: "5", lastName:"adf", password:"dfa", role:"dfa", firstName: "Jordon Lee", email: "name@email.com",},
-  { id: "6", lastName:"adf", password:"dfa", role:"dfa", firstName: "Taylor Morgan", email: "name@email.com", },
-  { id: "7", lastName:"adf", password:"dfa", role:"dfa", firstName: "Sam Patel",  email: "name@email.com", },
-  { id: "8", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com", },
-  { id: "9", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
-  { id: "10",lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker", email: "name@email.com", },
+// const tableData: TStaffMember [] = [
+//   { id: "1", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com",  },
+//   { id: "2", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
+//   { id: "3", lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker",  email: "name@email.com", },
+//   { id: "4", lastName:"adf", password:"dfa", role:"dfa", firstName: "Casey Walker", email: "name@email.com",},
+//   { id: "5", lastName:"adf", password:"dfa", role:"dfa", firstName: "Jordon Lee", email: "name@email.com",},
+//   { id: "6", lastName:"adf", password:"dfa", role:"dfa", firstName: "Taylor Morgan", email: "name@email.com", },
+//   { id: "7", lastName:"adf", password:"dfa", role:"dfa", firstName: "Sam Patel",  email: "name@email.com", },
+//   { id: "8", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com", },
+//   { id: "9", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
+//   { id: "10",lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker", email: "name@email.com", },
   
-];
+// ];
 
 const StaffMemberPage = () => {
    const navigate = useNavigate();
-  const [perPage] = useState(10);
-   
-    const [data, setData] = useState<TStaffMember[]>(tableData);
+  // const [perPage] = useState(10);
+   const [newPage, setNewPage] = useState(1);
+    // const [data, setData] = useState<TStaffMember[]>(tableData);
+        const {data,refetch, isFetching} = useFetchAllStaffMember({page: newPage, limit: 10, })
+
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(data, 1, perPage);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(data, newPage, 10);
   
     
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
        navigate(constant.ROUTING_URLS.EDIT_STAFF_MEMBERS.replace(":id",id));
      }, []);
     const handleAccess = useCallback((id: string) => { console.log("Access:", id) }, []);
+    const deleteStaffMember = queries.useDeleteStaffMemberMutation();
     const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
+      try {
+        toastPromise(deleteStaffMember.mutateAsync({id}),{
+          loading: "Deleting staff member...",
+          success: (res)=>{
+            if(res) refetch();
+            return "Staff member deleted successfully";
+          },
+          error: (e)=> (e instanceof Error) ? e.message : "An unknown error occurred",
+        })
+      } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else {
+          toast.error("An unknown error occurred");
+        }
+      }
+      // setData((prev) =>
+      //   prev.filter((row) => row.id !== id))
     }, []);
     const columns = useMemo(() => getStaffMember(handleEdit,handleAccess, handleDelete), [handleEdit,handleAccess,handleDelete])
   
@@ -55,6 +79,7 @@ const StaffMemberPage = () => {
     // Handle page change
     const handlePageChange = (newPage: number) => {
       setPage(newPage);
+      setNewPage(newPage);
       window.scrollTo(0, 0);
     };
   
@@ -173,13 +198,14 @@ const StaffMemberPage = () => {
               
           </div>
           </div>
-          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+          {isFetching? <Spinner/> : (<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />
-  
+  )}
+          
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>

@@ -1,4 +1,4 @@
-import UsefetchAllBookings from '@/api/getAllBookings';
+import UsefetchAllBookings from '@/api/getAllBookings.api';
 import { Spinner } from '@/components/Spinner';
 import { Calendar28 } from '@/components/date/DateRange';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'

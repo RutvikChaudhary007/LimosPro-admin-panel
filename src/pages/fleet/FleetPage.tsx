@@ -1,5 +1,5 @@
 // @ts-nocheck
-import UsefetchAllFleets from "@/api/getAllFleets";
+import UsefetchAllFleets from "@/api/getAllFleets.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getFleets, type TFleet } from "@/components/table/column";

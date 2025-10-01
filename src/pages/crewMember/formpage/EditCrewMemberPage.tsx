@@ -3,10 +3,12 @@ import CrewMemberForm from '@/components/crewMember/crewMemberForm'
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header'
 import { Button } from '@/components/ui/button'
+import { toastPromise } from '@/hooks/use-toast'
 import { constant } from '@/lib/constant'
+import queries from '@/lib/queries'
 import { ArrowLeft } from 'lucide-react'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const dummyData = {
     firstName: "John",
@@ -17,7 +19,30 @@ const dummyData = {
 }
 
 const EditCrewMemberPage = () => {
-    const handleEditCrewMember = ()=>{}
+  const {id} = useParams();
+ 
+  const navigate = useNavigate();
+  const updateCrewMemberMutation = queries.useUpdateCrewMemberMutation();
+    const handleEditCrewMember = (data: TCrewMemberForm)=>{
+      try {
+       toastPromise(updateCrewMemberMutation.mutate({data,id}),{
+        loading:"Updating Crew Member...",
+        success: (res)=>{
+          if(res) navigate(constant.ROUTING_URLS.CREW_MEMBERS);
+          return "Crew Member Updated Successfully!"
+        },
+        error: (e)=> (e instanceof Error) ? e.message : "Failed to Update Crew Member!"
+       })  
+      } catch (error) {
+        if(error instanceof Error){
+          toast.error(error.message);
+        } else{
+          toast.error("Failed to Update Crew Member!");
+        }
+          
+      }
+      
+    }
   return (
      <AdminRootLayout>
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
