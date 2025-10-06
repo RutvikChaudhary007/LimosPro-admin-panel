@@ -1,7 +1,7 @@
 // @ts-nocheck
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
-import {  ChevronDown, Dot, TrendingUp } from "lucide-react";
+import {  ChevronDown, Dot, TrendingDown, TrendingUp } from "lucide-react";
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
 // import doticon from "../../../public/graph/dot.svg";
 // import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import TableAndPieChart from "@/components/dashboard/TableAndPieChart";
 // import React from "react";
 import { getDashboardColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 // interface Point { month: string; earnings: number; }
 
 const data = [
@@ -76,13 +77,13 @@ function DashboardPage() {
           </div>
         </Header>
         <main className="flex-1 h-full overflow-y-auto p-4 md:p-6">
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 relative">
             <div className="h-4 flex items-center justify-start">
               <Dot />
               <p className="text-xs">In This Week</p>
             </div>
             {/* cards */}
-            <div className="h-[126px] w-full grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+            <Card className="h-[126px] w-full grid gap-5 md:grid-cols-2 lg:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="p-4 w-[250px] h-full rounded-[6px] bg-linear-to-r from-[#FFFFFF] to-[#EBEBEB]">
                   <div className="w-full h-[94px] flex flex-col gap-1.5">
@@ -93,27 +94,27 @@ function DashboardPage() {
                       </div>
                     </div>
                     <div className="w-full h-[64px]">
-
-                    </div>
-                  </div>
-                    {/* <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
+ <CardHeader>
+          <div>Total Revenue</div>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
             $1,250.00
           </CardTitle>
-          <CardAction >
+          {/* <CardAction >
             <div className="w-[45px] h-4 text-white flex items-center justify-center gap-0.5">
-              <TrendingUp className="w-4 h-4"/> */}
-              {/* <TrendingDown /> */}
-              {/* <span className="text-xs font-semibold">+12.5%</span>
+              <TrendingUp className="w-4 h-4"/>
+              <TrendingDown />
+              <span className="text-xs font-semibold">+12.5%</span>
             </div>  
-          </CardAction>
-        </CardHeader> */}
+          </CardAction> */}
+        </CardHeader>
+                    </div>
+                  </div>
+                   
                     
                 </div>
               ))
               }
-            </div>
+            </Card>
             {/* Graph and Table */}
             <div className="w-full grid grid-cols-2">
               <div className="w-[520px] h-[355px] rounded-[6px]" >

@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Button } from "../ui/button"
 import AddressInput from "../AddressInput"
 import { Switch } from "../ui/switch"
-import type { IAffiliate } from "@/types/affiliate"
+import type { IAffiliate } from "@/types/affiliate.type"
 
 const maxSize = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/jpeg", "image/png"];
@@ -23,10 +23,10 @@ const formSchema = z.object({
     lastName: z.string().refine(value => value.trim() !== "", {
         message: "Last name cannot be empty or just whitespace.",
     }).min(3, { message: "Last name must be at least 3 characters" }),
-    businessLocation: z.object({
-        latitude: z.number(),
-        longitude: z.number(),
-    }),
+    // businessLocation: z.object({
+    //     latitude: z.number(),
+    //     longitude: z.number(),
+    // }),
     businessAddress: z.string().refine(value => value.trim() !== "", {
         message: "Business Address cannot be empty or just whitespace.",
     }).min(3, { message: "Business Address must be at least 3 characters" }),
@@ -51,17 +51,36 @@ const formSchema = z.object({
     password: z.string().refine(value => value.trim() !== "", {
         message: "Password cannot be empty or just whitespace.",
     }),
-    documents: z
-    .array(z.instanceof(File))
-    .min(1, { message: "Select at least 1 file" })
-    .max(4, { message: "You can upload up to 4 files" })
-    .refine(files => files.every(f => f.size <= maxSize), {
-      message: `Max size ${maxSize / (1024 * 1024)}MB`,
+    documents: z.array(z.any())
+    .refine(files => {
+      // If we have existing documents (with url property), they're already validated
+      if (files.length > 0 && files.some(file => file.url)) {
+        return true;
+      }
+      
+      // For new file uploads, validate length
+      return files.length >= 1;
+    }, {
+      message: "Select at least 1 file"
     })
-    .refine(files => files.every(f => ALLOWED_MIME_TYPES.includes(f.type)), {
-      message: "Invalid file types detected",
+    .refine(files => files.length <= 4, {
+      message: "You can upload up to 4 files"
+    })
+    .refine(files => {
+      // Only check size for actual File objects, not for existing document objects
+      const fileObjects = files.filter(f => f instanceof File);
+      return fileObjects.length === 0 || fileObjects.every(f => f.size <= maxSize);
+    }, {
+      message: `Max size ${maxSize / (1024 * 1024)}MB`
+    })
+    .refine(files => {
+      // Only check mime types for actual File objects, not for existing document objects
+      const fileObjects = files.filter(f => f instanceof File);
+      return fileObjects.length === 0 || fileObjects.every(f => ALLOWED_MIME_TYPES.includes(f.type));
+    }, {
+      message: "Invalid file types detected"
     }),
-    //   password: z.string().min(10, { message: "Password must be at least 10 characters" }),
+    // password: z.string().min(10, { message: "Password must be at least 10 characters" }),
     status: z.string().optional(),
     // status: z.union([z.string(), z.literal("")]).optional(),
 });
@@ -96,11 +115,11 @@ interface IAddressObj {
     }
 }
 
-const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabledFields, type }) => {
+const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ initialData, onSubmit, disabledFields, type, businessAddress }) => {
         const [newAddress, setNewAddress] = useState("");
         const [addressObj, setAddressObj] = useState<IAddressObj>();
         const [isAddressValid, setIsAddressValid] = useState(false);
-        const fileRef = useRef<HTMLInputElement | null>(null);
+        // const fileRef = useRef<HTMLInputElement | null>(null);
 
         const [statusValue, setStatusValue] = useState<{status:string, entityType:string}>({
             status: "",
@@ -120,10 +139,11 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
             businessContactNumber: data.businessContactNumber,
             businessAddress: data.businessAddress,
             businessEmail: data.businessEmail,
-            businessLocation: data.businessLocation,
+            businessLocation: businessAddress,
             entityType: data.entityType,
             taxId: data.taxId,
-            commissionRate: !isNaN(data?.commissionRate) ? parseInt(data.commissionRate):0,
+            // commissionRate: !isNaN(data?.commissionRate) ? parseInt(data.commissionRate):'0',
+            commissionRate: parseInt(data?.commissionRate).toString() ?? '0',
             documents: data.documents,
             status: data.status,
         };
@@ -137,7 +157,7 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
             password: "",
             isChauffer: false,
             companyName: "",
-            businessContactNumber: 0,
+            businessContactNumber: "",
             businessAddress: "",
             businessEmail: "",
             businessLocation: {
@@ -146,7 +166,7 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
             },
             entityType: "",
             taxId: "",
-            commissionRate: 0,
+            commissionRate: "0",
             documents: [],
             status: "",
             
@@ -156,7 +176,10 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
         if(initialData?.businessAddress){
             setNewAddress(initialData.businessAddress);
         }
-    },[initialData])
+        if(businessAddress){
+            form.setValue("businessAddress", businessAddress);
+        }
+    },[initialData, businessAddress])
     const documents = form.watch("documents");
     const fileCount = documents?.length || 0;
     const handleFormSubmit = async (values: IAffiliate) => {
@@ -180,14 +203,14 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
             formData.append("businessContactNumber", values.businessContactNumber);
             formData.append("businessAddress", values.businessAddress);
             formData.append("entityType", values.entityType);
-            formData.append("commissionRate", values.commissionRate.toString());
+            formData.append("commissionRate", values.commissionRate?.toString() || "0");
             formData.append("status", values.status);
             formData.append("isChauffer", values.isChauffer ? "true" : "false");
             formData.append("taxId", values.taxId);
             formData.append("businessLocation", JSON.stringify(values.businessLocation));
           
             // Append files
-            values.documents.forEach((file) => {
+            values?.documents?.forEach((file) => {
               formData.append(`documents`, file); 
             });
             
@@ -432,38 +455,39 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
                                 </FormItem>
                             )}
                         />
-                        <FormField
-  control={form.control}
-  name="documents"
-  render={({ field }) => (
-    <FormItem className="col-span-2 col-start-1 rounded ">
-      <FormLabel>
-        Upload Documents: {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
-          <span
-            key={idx}
-            className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
-          >
-            {text}{" "}
-          </span>
-        ))}
-      </FormLabel>
-      <FormControl>
-        <Input
-          type="file"
-          ref={fileRef}
-          multiple
-          accept="image/jpeg,image/png,application/pdf"
-          value={undefined}
-          onChange={e => {
-            const files = e.target.files;
-            if (files) field.onChange(Array.from(files)); // File[]
-          }}
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+                <FormField
+                    control={form.control}
+                    name="documents"
+                    render={({ field }) => (
+                        <FormItem className="col-span-2 col-start-1 rounded ">
+                        <FormLabel>
+                            Upload Documents: {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
+                            <span
+                                key={idx}
+                                className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
+                            >
+                                {text}{" "}
+                            </span>
+                            ))}
+                        </FormLabel>
+                        <FormControl>
+                            <Input
+                            type="file"
+                            multiple
+                            accept="image/jpeg,image/png,application/pdf"
+                            value={undefined}
+                            onChange={(e) => {
+                                            const newFiles = Array.from(e.target.files ?? []);
+                                            // Filter out File objects from current value (keep only document objects with url)
+                                            const existingDocs = field.value.filter((doc: any) => !(doc instanceof File) && doc.url);
+                                            field.onChange([...existingDocs, ...newFiles]);
+                                        }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
                         {/* <FormField
                             control={form.control}
                             name="documents"
@@ -584,7 +608,7 @@ const AffiliateForm: FC<AffiliateFormProps> = ({ initialData, onSubmit, disabled
         status: ""
     });
     setStatusValue({ status: "", entityType: "" });
-    if (fileRef.current) fileRef.current.value = "";
+    // if (fileRef.current) fileRef.current.value = "";
     setNewAddress("");
     setAddressObj(undefined);
     setIsAddressValid(false);

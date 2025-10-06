@@ -54,12 +54,26 @@ export const createChauffeur = async (data:object) => {
  * @param data 
  * @returns response data
  */
-export const editChauffeur = async (data:object) => {
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_CHAFFEUR,data, {
+export const editChauffeur = async ({data,id}:{data:FormData,id:string| undefined}) => {
+  // console.log("edit chauffeur..:",data)
+  const response = await adminAxiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(':id', id!),data, {
     headers: {
     'Content-Type': 'multipart/form-data',
     },
     });
+    
+  return response.data;
+};
+
+/**
+ * #############################################
+ *  Delete Chauffeur
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const deleteChauffeur = async (id:string) => {
+  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(':id', id));
     
   return response.data;
 };

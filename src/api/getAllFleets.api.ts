@@ -21,7 +21,7 @@ export const getAllFleets = async (DateRange: DateRange, page?: number) => {
     return response.data.data;
   };
 
-const UsefetchAllFleets = ({DateRange,page}:{DateRange:DateRange, page?: number, }) =>
+const useFetchAllFleets = ({DateRange,page}:{DateRange:DateRange, page?: number, }) =>
   useQuery({
     queryKey: ['Fleets', {DateRange}, {page}],
     queryFn: () => getAllFleets(DateRange, page),
@@ -31,4 +31,4 @@ const UsefetchAllFleets = ({DateRange,page}:{DateRange:DateRange, page?: number,
     // keepPreviousData: true, // for pagination
   });
 
-export default UsefetchAllFleets;
+export default useFetchAllFleets;

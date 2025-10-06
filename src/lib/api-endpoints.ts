@@ -38,6 +38,8 @@ export const API_ENDPOINTS = {
   GET_ALL_CHAUFFEUR: `${BASE_URL1}/chauffeurs`,
   GET_CHAUFFEUR_BY_ID: `${BASE_URL1}/chauffeur/:id`,
   CREATE_CHAFFEUR: `${BASE_URL1}/chauffeur`,
+  EDIT_CHAFFEUR: `${BASE_URL1}/chauffeur/:id`,
+  DELETE_CHAFFEUR: `${BASE_URL1}/chauffeur/:id`,
 
   //Users
   USER_PROFILE :`${BASE_URL}/user/profile`,

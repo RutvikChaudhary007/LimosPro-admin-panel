@@ -10,10 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -257,7 +260,7 @@ function ChauffeurPage() {
     const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const {data, isFetching} = useFetchAllChauffeur();
+  const {data,refetch, isFetching} = useFetchAllChauffeur();
   // console.log("fetchedData:",data)
 
   /**
@@ -274,8 +277,25 @@ function ChauffeurPage() {
   const handleEdit = (id: string) => { console.log("Edit:", id) 
     navigate(constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id",id));
   };
+  const deleteAffiliateMutation = queries.useDeleteChauffeurMutation();
   const handleDelete = (id: string) => {
     console.log("id",id)
+    try {
+      toastPromise(deleteAffiliateMutation.mutateAsync(id),{
+        loading: "Deleting chauffeur...",
+        success: (res)=>{
+          if(res) refetch();
+          return "Yeah! Chauffeur deleted successfully";
+        },
+        error: (e)=> (e instanceof Error) ? e.message : "Opps! Failed to delete chauffeur"
+      })
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("Unknown error occurred");
+      }
+    }
     // setData((prev) =>
     //   prev.filter((row) => row.id !== id))
   };

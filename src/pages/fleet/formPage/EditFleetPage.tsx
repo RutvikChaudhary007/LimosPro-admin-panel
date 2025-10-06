@@ -4,7 +4,7 @@ import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
 import { constant } from "@/lib/constant"
-import type { TFleetData } from "@/types/fleet"
+import type { TFleetData } from "@/types/fleet.type"
 import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 

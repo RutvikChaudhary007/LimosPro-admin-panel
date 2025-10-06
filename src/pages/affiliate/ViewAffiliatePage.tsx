@@ -9,8 +9,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Label } from "@/components/ui/label"
 import { constant } from "@/lib/constant"
 import { cn } from "@/lib/utils"
+import { geoDecoding } from "@/utils/googleMaps"
+import { useLoadScript, type Libraries } from "@react-google-maps/api"
 import { ArrowLeft } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
 // const data = { 
@@ -29,12 +31,51 @@ const showStatus = [
   { label: 'Inactive', value: 'inactive' },
   { label: 'Suspended', value: 'suspended' },
 ];
+const libraries = ["places", "geocoding"];
 
 const ViewAffiliatePage = () => {
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const { id } = useParams(); 
+ const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+    const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
+    // Load Google Maps script
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: googleMapsApiKey || "",
+        libraries: libraries as Libraries,
+    });
+
     // console.log("id:",id)
     const {data,isFetching} = UsefetchAffiliateById({id});
+     // Initialize Places Autocomplete
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchAddress = async () => {
+            if (isLoaded && data && !loadError) {
+                try {
+                    const address = await geoDecoding({
+                        lat: data?.businessLocation?.latitude,
+                        lng: data?.businessLocation?.longitude,
+                    });
+                    if (isMounted) {
+                        console.log("Decoded Address:", address);
+                        if (address) {
+                            setBusinessAddress(address as string);
+                        }
+                       
+                    }
+                } catch (err) {
+                    console.error("Geocoding failed:", err);
+                }
+            }
+        };
+
+        fetchAddress();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isLoaded, loadError, data]);
     // console.log("data:",data)
     // if(error) return (<h1>error.message</h1>);
     const documentsLength = data?.documents?.length
@@ -81,8 +122,8 @@ const ViewAffiliatePage = () => {
         {isFetching? (<Spinner/>):(<Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
         <CardHeader className="w-full h-[55px] flex items-center justify-between">
             <div className="w-full h-full">
-                <h4 className="font-semibold text-xl text-[#000000]">Zenith Holdings</h4>
-                <h5 className="text-[#5A5A5A] font-semibold">Mark Reynolds</h5>
+                <h4 className="font-semibold text-xl text-[#000000]">{data?.companyName}</h4>
+                <h5 className="text-[#5A5A5A] font-semibold">{data?.user?.firstName} {data?.user?.lastName}</h5>
             </div>
             <DropdownMenu >
             <DropdownMenuTrigger asChild>
@@ -117,7 +158,7 @@ const ViewAffiliatePage = () => {
                   return  (
                     <div key={key} className="flex items-center gap-6">
                     <Label className="text-sm font-semibold capitalize min-w-[158px]">{key}:</Label>
-                    <span className="text-[#3A3A3A] font-medium">{val}</span>
+                    <span className="text-[#3A3A3A] font-medium">{["businessaddress"].includes(key.toLowerCase()) ? loadError ? "Error map api loading" : (!businessAddress ? "Error fetching address": businessAddress) : val}</span>
                 </div>
                 )})}
             </div>

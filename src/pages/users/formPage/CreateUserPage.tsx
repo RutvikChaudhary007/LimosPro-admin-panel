@@ -3,7 +3,7 @@ import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
 import UserForm from "@/components/user/UserForm"
 import { constant } from "@/lib/constant"
-import type { IUserFormData } from "@/types/user"
+import type { IUserFormData } from "@/types/user.type"
 import { ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 

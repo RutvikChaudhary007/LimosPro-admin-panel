@@ -3,7 +3,7 @@ import Header from "@/components/layouts/Header";
 import TestimonialForm from "@/components/testimonail/TestimonialForm";
 import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
-import type { TTestimonialFormData } from "@/types/testimonial";
+import type { TTestimonialFormData } from "@/types/testimonial.type";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 

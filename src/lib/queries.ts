@@ -7,12 +7,15 @@ import { login } from "@/api/login.api";
 import { useNavigate } from "react-router-dom";
 import { constant } from "./constant";
 import { deleteUser } from "@/api/deleteUser.api";
-import { createChauffeur } from "@/api/chauffeur.api";
-import type { IUserFormData } from "@/types/user";
+import { createChauffeur, editChauffeur } from "@/api/chauffeur.api";
+import type { IUserFormData } from "@/types/user.type";
 import { updateUser } from "@/api/updateUserById.api";
 import { createAffiliate } from "@/api/createAffiliate.api";
 import { createStaffMember, deleteStaffMember, editStaffMember } from "@/api/staffMember.api";
 import { createCrewMember, deleteCrewMember, editCrewMember } from "@/api/crewMember.api";
+import { editAffiliate } from "@/api/editAffiliate.api";
+import { deleteChauffeur } from "@/api/chauffeur.api";
+
 
 
 type TRefetch= (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>
@@ -22,39 +25,6 @@ const useLoginMutation = ()=> {
   const navigate = useNavigate()
   return useMutation({
   mutationFn: login,
-  // onSuccess: (response, variables) => {
-  //   console.log('Login response:', response);
-    
-  //   const userData = response?.data;
-  //   const userRole = userData?.roles;
-  //   const remember = localStorage.getItem("remember");
-  //   if(remember === "true"){
-  //     localStorage.setItem("Email", userData?.email);
-  //   }
-  //   // userPermissions are automatically stored in localStorage by the login API
-    
-  //   // Check if user has valid role for admin panel
-  //   if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
-      
-  //     toast({
-  //       title: "Access Denied",
-  //       description: "This section is for authorized users only. Please contact your administrator.",
-  //       variant: "destructive",
-  //     });
-  //     return;
-  //   }
-
-  //   // Success message
-  //   const staySignedInMessage = variables.remember ? 'You will stay signed in' : 'You will be logged out after session expires';
-  //   toast({
-  //     title: "Login Successful",
-  //     description: `Welcome back! ${staySignedInMessage}`,
-  //     variant: "default",
-  //   });
-
-  //   // Navigate to dashboard
-  //   navigate(constant.ROUTING_URLS.DASHBOARD);
-  // },
   onSuccess: (response, variables: {email: string, password: string,remember: boolean | undefined}) => {
     
     // You can still do things like storing localStorage, navigating, etc.
@@ -69,6 +39,7 @@ const useLoginMutation = ()=> {
 
     // reject unauthorized role
     if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
+      //  return Promise.reject(new Error("Unauthorized user"));
       throw new Error("Unauthorized user");
     }
 
@@ -84,6 +55,8 @@ const useLoginMutation = ()=> {
           axiosError.response?.data?.error ||
           "An unexpected error occurred"
       );
+    }else if(err instanceof Error){
+      throw err;
     }
     throw new Error("An unexpected error occurred");
   
@@ -148,6 +121,34 @@ const useDeletefleetMutation = (refetch: TRefetch)=> useMutation({
 
     return useMutation({
     mutationFn: createAffiliate,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      
+      // userPermissions are automatically stored in localStorage by the login API
+      
+      navigate(constant.ROUTING_URLS.AFFILIATE);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        throw new Error(
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    
+    }
+  });
+}
+  
+const useEditAffiliateMutation = ()=> {
+    const navigate = useNavigate();
+
+    return useMutation({
+    mutationFn: editAffiliate,
     onSuccess: (response, variables) => {
       console.log(variables, response);
       
@@ -268,6 +269,50 @@ const useCreateChauffeurMutation = ()=>{
     },
   });
 } 
+
+const useEditChauffeurMutation = ()=>{
+  const navigate = useNavigate();
+ return useMutation({
+    mutationFn: editChauffeur,
+  onSuccess: (response, variables) => {
+    console.log(variables, response);
+    // userPermissions are automatically stored in localStorage by the login API
+    navigate(constant.ROUTING_URLS.CHAUFFEUR);
+    // Navigate to dashboard
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+  });
+} 
+
+const useDeleteChauffeurMutation = ()=>useMutation({
+  mutationFn: deleteChauffeur,
+  onSuccess: (response, variables) => {
+    console.log("variables:",variables);
+    return response;
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+  });
+
 
 /**
  * #################################################
@@ -418,8 +463,11 @@ export default {
     useUpdateUserMutation,
     useDeleteUserMutation,
     useCreateAffiliateMutation,
+    useEditAffiliateMutation,
     useDeleteAffiliateMutation,
     useCreateChauffeurMutation,
+    useEditChauffeurMutation,
+    useDeleteChauffeurMutation,
     useCreateCrewMemberMutation,
     useUpdateCrewMemberMutation,
     useDeleteCrewMemberMutation,

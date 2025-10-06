@@ -1,15 +1,17 @@
-import UsefetchChauffeurById from "@/api/getChauffeurById.api"
 import ChauffeurForm, { type TChauffeurForm } from "@/components/chauffeur/ChauffeurForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
 import { constant } from "@/lib/constant"
 import { ArrowLeft } from "lucide-react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { geoDecoding } from "@/utils/googleMaps";
 import { useLoadScript, type Libraries } from "@react-google-maps/api";
 import {  useEffect, useMemo, useState } from "react"
 import { Spinner } from "@/components/Spinner"
+import queries from "@/lib/queries"
+import { toastPromise, useToast } from "@/hooks/use-toast"
+import useFetchChauffeurById from "@/api/getChauffeurById.api"
 
 // const initialData: TChauffeurForm = {
 //     id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -67,10 +69,11 @@ import { Spinner } from "@/components/Spinner"
     const libraries = ["places", "geocoding"];
 const EditChauffeurPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const googleMapsApiKey = useMemo(() => import.meta.env.VITE_GOOGLE_MAP_KEY as string, []);
   // const [data, setData] = useState(initialData);
   // const isFetching = false;
-  const { data, isFetching } = UsefetchChauffeurById({ id: id! });
+  const { data, isFetching } = useFetchChauffeurById({ id: id! });
   const [address, setAddress] = useState<string | undefined>(undefined);
   
   // Load Google Maps script
@@ -130,10 +133,35 @@ const EditChauffeurPage = () => {
     //     };
     // }, [isLoaded, loadError, data]);
   // if (isFetching) return (<p>Loading...</p>);
-  
-  const handleEditChauffeur = async (data: TChauffeurForm)=>{
+  const {toast} = useToast();
+  const editChauffeurMutation = queries.useEditChauffeurMutation();
+  const handleEditChauffeur = async (data: FormData)=>{
           console.log("called handle edit chauffeur!")
-          return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000));
+          // return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000));
+          try {
+           toastPromise(editChauffeurMutation.mutateAsync({data,id}),{
+            loading: "Updating Chauffeur...",
+            success: (res)=>{
+              if(res) navigate(constant.ROUTING_URLS.CHAUFFEUR)
+                return "Yeah! Chauffeur updated successfully."
+            },
+            error: (e)=> (e instanceof Error) ? e.message : "Opps! failed to update chauffeur",
+           }) 
+          } catch (error) {
+            if(error instanceof Error){
+              toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+              });
+            }else{
+             toast({
+                title: "Error",
+                description: "An unexpected error occurred",
+                variant: "destructive",
+              });
+          }
+          }
   }
     
   return (

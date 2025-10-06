@@ -4,21 +4,84 @@ import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
-import type { IAffiliate } from "@/types/affiliate";
+import queries from "@/lib/queries";
+import type { IAffiliate } from "@/types/affiliate.type";
+import { geoDecoding } from "@/utils/googleMaps";
+import { useLoadScript, type Libraries } from "@react-google-maps/api";
 import { ArrowLeft } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+
+const libraries = ["places", "geocoding"];
 
 function EditAffiliatePage() {
   const { id } = useParams(); 
-  console.log("id:",id)
+  const navigate = useNavigate();
+  // console.log("id:",id)
+   const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+    const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
+    // Load Google Maps script
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: googleMapsApiKey || "",
+        libraries: libraries as Libraries,
+    });
+
   const {data,isFetching, error} = UsefetchAffiliateById({id});
+   // Initialize Places Autocomplete
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchAddress = async () => {
+            if (isLoaded && data && !loadError) {
+                try {
+                    const address = await geoDecoding({
+                        lat: data?.businessLocation?.latitude,
+                        lng: data?.businessLocation?.longitude,
+                    });
+                    if (isMounted) {
+                        console.log("Decoded Address:", address);
+                        if (address) {
+                            setBusinessAddress(address as string);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Geocoding failed:", err);
+                }
+            }
+        };
+
+        fetchAddress();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isLoaded, loadError, data]);
+  const editAffiliateMutation = queries.useEditAffiliateMutation();
   const handleEditAffiliate = async (data:unknown) => {
     
-      console.log("called handleCreateAffiliate")
-      return await new Promise((res)=>{
-        setTimeout(()=>res(console.log("promise:",data)),5000);
-      });
+      // console.log("called handleCreateAffiliate")
+      try {
+        toastPromise(editAffiliateMutation.mutateAsync({ data, id }), {
+          loading: "Updating affiliate...",
+          success: (res)=>{
+            if(res) navigate(constant.ROUTING_URLS.AFFILIATE);
+            return "Yeah! Affiliate updated successfully";
+          },
+          error: (e)=> (e instanceof Error) ? e.message: "Opps! failed to update affiliate."
+        });
+      } catch (error) {
+        if(error instanceof Error) {
+          toast.error(error.message);
+        }else{
+          toast.error("An unexpected error occurred");
+        }
+      }
+      // return await new Promise((res)=>{
+      //   setTimeout(()=>res(console.log("promise:",data)),5000);
+      // });
   }
   
     if(isFetching) return (<p>Loading...</p>);
@@ -39,6 +102,7 @@ function EditAffiliatePage() {
       <AffiliateForm
        onSubmit={handleEditAffiliate}
        initialData={data}
+       businessAddress={businessAddress}
        type={"Edit Affiliate"}
       />
       </div>

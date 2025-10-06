@@ -1,6 +1,6 @@
 import adminAxiosInstance from "@/utils/axiosInstance";
 import {API_ENDPOINTS} from "../lib/api-endpoints"
-import type { IUserFormData } from "@/types/user";
+import type { IUserFormData } from "@/types/user.type";
 
 export const updateUser = async (id: string, data: IUserFormData) => {
     console.log("iUser", data)

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import type { IAffiliate } from "@/types/affiliate";
+import type { IAffiliate } from "@/types/affiliate.type";
 // import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 // import { useMutation } from "@tanstack/react-query";
 // import type { AxiosError } from "axios";

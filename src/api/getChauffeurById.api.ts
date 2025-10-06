@@ -11,11 +11,11 @@ export const getChauffeurById = async (id: string) => {
   return response?.data?.data;
 };
 
-const UsefetchChauffeurById = ({ id }: { id: string }) =>
+const useFetchChauffeurById = ({ id }: { id: string }) =>
   useQuery({
     queryKey: ['affiliateById', id],
     queryFn: () => getChauffeurById(id),
     refetchOnWindowFocus: false,
     retry: false,
   });
-export default UsefetchChauffeurById;
+export default useFetchChauffeurById;

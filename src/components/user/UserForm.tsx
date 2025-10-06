@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '../ui/input';
 import isFieldDisabled from '@/utils/disableFormField';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import type { IUserFormData, TUserFormProps } from '@/types/user';
+import type { IUserFormData, TUserFormProps } from '@/types/user.type';
 import z from 'zod';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';

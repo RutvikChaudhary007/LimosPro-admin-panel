@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import type { ITestimonialFormProps, TTestimonialFormData } from "@/types/testimonial";
+import type { ITestimonialFormProps, TTestimonialFormData } from "@/types/testimonial.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Plus, X } from "lucide-react";
 import { Button } from "../ui/button";
