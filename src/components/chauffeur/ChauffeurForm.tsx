@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import isFieldDisabled from "@/utils/disableFormField";
 import { useRef, useState, type FC, useEffect } from "react";
-import type { IChauffeurFormProps } from "@/types/chauffeur";
+import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "../ui/button";

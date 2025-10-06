@@ -937,6 +937,7 @@ export type TRefund = {
   id: string;
   paymentId: string;
   amount: string;
+  refundId?: string;
   Status: string;
 }
 export function getRefund(

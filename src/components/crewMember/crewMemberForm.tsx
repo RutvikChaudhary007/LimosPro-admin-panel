@@ -1,6 +1,6 @@
 //@ts-nocheck
 import z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem,  FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
@@ -28,7 +28,7 @@ const formSchema = z.object({
 });
 
 export type TCrewMemberForm = z.infer<typeof formSchema>;
-const CrewMemberForm = ({ initialData, onSubmit, disabledFields, type }: { initialData?: object, onSubmit: ()=>void, disabledFields?: [], type: string}) => {
+const CrewMemberForm = ({ initialData, onSubmit, disabledFields, type }: { initialData?: object, onSubmit: (data:TCrewMemberForm)=>void, disabledFields?: [], type: string}) => {
     const transformInitialData = (data?: z.infer<typeof formSchema>) => {
     
             if (!data) return undefined;
@@ -56,7 +56,13 @@ const CrewMemberForm = ({ initialData, onSubmit, disabledFields, type }: { initi
         });
   return (
     <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(async (data:TCrewMemberForm) => {
+                try {
+                    await onSubmit(data);
+                } catch (error) {
+                    console.error(error)
+                }
+            })}>
                 <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                     <CardHeader>
                         <CardTitle>{type}</CardTitle>

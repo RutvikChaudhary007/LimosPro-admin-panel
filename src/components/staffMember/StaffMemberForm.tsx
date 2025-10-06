@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 
 import z from "zod";
 import { Button } from "../ui/button";
-import type { TStaffMemberForm } from "@/types/staffMember";
+import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";

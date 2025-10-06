@@ -22,25 +22,25 @@ const showOptions = [
   { label: 'Show 25', value: 25 },
 ];
 
-const tableData: TRefund[] = [
-        {
-            id: "801c9f7e-7dfa-4f97-9664-912fe821db19",
-            Status: "Pending",
-            Amount: "1879",
-            RefundId: "AA57329144",
-            PassengerName: "Chris Johnson",
-            PaymentId: "TRXPAY000111"
-        },
-        {
-            id: "801c9f7e-7dfa-4f97-a664-912fe821db1b",
-            Status: "InProgress",
-            Amount: "1879",
-            RefundId: "AA57329144",
-            PassengerName: "Jane Smith",
-            PaymentId: "SAMPLEPAY123"
-        },
+// const tableData: TRefund[] = [
+//         {
+//             id: "801c9f7e-7dfa-4f97-9664-912fe821db19",
+//             Status: "Pending",
+//             amount: "1879",
+//             refundId: "AA57329144",
+//             PassengerName: "Chris Johnson",
+//             PaymentId: "TRXPAY000111"
+//         },
+//         {
+//             id: "801c9f7e-7dfa-4f97-a664-912fe821db1b",
+//             Status: "InProgress",
+//             amount: "1879",
+//             refundId: "AA57329144",
+//             PassengerName: "Jane Smith",
+//             PaymentId: "SAMPLEPAY123"
+//         },
         
-    ]
+//     ]
 
 const RefundPage = () => {
   // const perPage = 10;
@@ -203,7 +203,7 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
         
         
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
+        {totalPages > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>

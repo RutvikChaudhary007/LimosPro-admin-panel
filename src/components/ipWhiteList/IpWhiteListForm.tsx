@@ -1,4 +1,4 @@
-import type { IIpWhiteListFormProps } from "@/types/ipWhiteList";
+import type { IIpWhiteListFormProps } from "@/types/ipWhiteList.type";
 import z from "zod";
 import type { TIpWhiteList } from "../table/column";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";

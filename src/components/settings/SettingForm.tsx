@@ -7,7 +7,7 @@ import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { ISettingFormProps } from "@/types/settings";
+import type { ISettingFormProps } from "@/types/settings.type";
 import type { TSetting } from "../table/column";
 
 

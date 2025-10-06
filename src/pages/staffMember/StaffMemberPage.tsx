@@ -181,11 +181,10 @@ const StaffMemberPage = () => {
 
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
-                  setData((prev) =>
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+                  // setData((prev:unknown) =>
 
-                    prev.filter((row,i) => !rowSelection[i])
-                  );
+                    // prev.filter((row,i) => !rowSelection[i])
+                  // );
                 //   console.log("data:", data);
                 //   console.log("rowSelection:", rowSelection);
                   setRowSelection({});

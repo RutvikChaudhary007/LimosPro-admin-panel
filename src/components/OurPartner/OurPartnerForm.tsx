@@ -8,7 +8,7 @@ import { Plus, X } from "lucide-react";
 import { Button } from "../ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { IOurPartnerFormProps } from "@/types/ourPartner";
+import type { IOurPartnerFormProps } from "@/types/ourPartner.type";
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];

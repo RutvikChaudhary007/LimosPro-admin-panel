@@ -1,4 +1,4 @@
-import CrewMemberForm from "@/components/crewMember/crewMemberForm"
+import CrewMemberForm, { type TCrewMemberForm } from "@/components/crewMember/crewMemberForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
@@ -10,7 +10,7 @@ import { Link } from "react-router-dom"
 
 const CreateCrewMemberPage = () => {
   const createCrewMemberMutation = queries.useCreateCrewMemberMutation();
-  function handleCreateCrewMember (data){
+  function handleCreateCrewMember (data:TCrewMemberForm){
     try {
       console.log("data", data)
       toastPromise(createCrewMemberMutation.mutateAsync(data),{

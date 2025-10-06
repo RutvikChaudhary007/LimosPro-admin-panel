@@ -2,6 +2,7 @@ import adminAxiosInstance from "@/utils/axiosInstance";
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
+import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
 
 /**
  * #############################################
@@ -54,7 +55,7 @@ export const createChauffeur = async (data:object) => {
  * @param data 
  * @returns response data
  */
-export const editChauffeur = async ({data,id}:{data:FormData,id:string| undefined}) => {
+export const editChauffeur = async ({data,id}:{data:TChauffeurForm,id:string| undefined}) => {
   // console.log("edit chauffeur..:",data)
   const response = await adminAxiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(':id', id!),data, {
     headers: {

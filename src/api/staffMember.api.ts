@@ -14,6 +14,7 @@ type TArg = {page?: number, limit: number,  };
  */
 export const getAllStaffMember = async ({limit, page}:TArg) => {
   const params: Record<string, unknown> = {};
+  console.log(limit,page)
 //   if(limit) params.limit = limit;
 //   if(page){
 //     params.page = page

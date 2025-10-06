@@ -1,8 +1,8 @@
 
-import type { TCrewMember } from "@/components/table/column";
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
+import type { TCrewMemberForm } from "@/components/crewMember/crewMemberForm";
 
 type TArg = {page?: number, limit: number,  };
 /**
@@ -52,7 +52,7 @@ export const deleteCrewMember = async ({id}:{id:string}) => {
  * @param {id}
  * @return {*}
  */
-export const createCrewMember = async (data:TCrewMember) => {
+export const createCrewMember = async (data:TCrewMemberForm) => {
   const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CREW_MEMBER,data, {    });
     
   return response.data;
@@ -63,7 +63,7 @@ export const createCrewMember = async (data:TCrewMember) => {
  * @param {id}
  * @return {*}
  */
-export const editCrewMember = async ({data,id}:{data:TCrewMember,id: string}) => {
+export const editCrewMember = async ({data,id}:{data:TCrewMemberForm,id: string}) => {
      console.log("iddd",id)
   const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CREW_MEMBER.replace(":id",id),data, {    });
     

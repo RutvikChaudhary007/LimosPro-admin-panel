@@ -6,7 +6,7 @@ import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { INewsFormProps } from "@/types/news";
+import type { INewsFormProps } from "@/types/news.type";
 import type { TNews } from "../table/column";
 
 

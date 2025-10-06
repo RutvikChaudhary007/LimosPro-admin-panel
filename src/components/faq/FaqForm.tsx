@@ -6,7 +6,7 @@ import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { IFaqFormProps } from "@/types/faq";
+import type { IFaqFormProps } from "@/types/faq.type";
 import type { TFaqs } from "../table/column";
 
 const formSchema = z.object({

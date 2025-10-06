@@ -8,7 +8,7 @@ type TStaffData =
 } | undefined
 export type TStaffMemberForm = {
     initialData?: TStaffData, 
-    onSubmit: (data:unknown)=>void, 
+    onSubmit: (data:object)=>void, 
     disabledFields?: string[], 
     type: string,
 } 

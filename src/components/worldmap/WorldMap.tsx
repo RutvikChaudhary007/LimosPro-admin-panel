@@ -1,3 +1,4 @@
+import type { TRegion } from "@/types/map.type";
 import  { useState } from "react";
 import {
   ComposableMap,
@@ -9,7 +10,7 @@ import {
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 
-const regions = [
+const regions: TRegion[] = [
   { id: "Region 1", coordinates: [-100, 40], bookings: 1537 },
   { id: "Region 2", coordinates: [0, 50], bookings: 1537 },
   { id: "Region 3", coordinates: [10, 10], bookings: 1537 },
