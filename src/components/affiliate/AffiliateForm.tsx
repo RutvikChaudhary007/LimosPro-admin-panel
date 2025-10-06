@@ -224,7 +224,7 @@ const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ ini
     return (
 
         <Form  {...form}>
-            <form method="POST" onSubmit={
+            <form onSubmit={
                 form.handleSubmit(handleFormSubmit)
             } className="space-y-6 pb-[68px]">
                 

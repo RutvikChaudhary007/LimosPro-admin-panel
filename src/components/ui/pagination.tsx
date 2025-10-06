@@ -46,8 +46,17 @@ function PaginationLink({
   className,
   isActive,
   size = "icon",
+  onClick,
   ...props
 }: PaginationLinkProps) {
+  // Create a wrapper for onClick to prevent default behavior
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); // Prevent default anchor behavior
+    if (onClick) {
+      onClick(e);
+    }
+  };
+
   return (
     <a
       aria-current={isActive ? "page" : undefined}
@@ -60,6 +69,7 @@ function PaginationLink({
         }),
         className
       )}
+      onClick={handleClick}
       {...props}
     />
   )
