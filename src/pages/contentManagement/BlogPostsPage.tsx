@@ -13,7 +13,7 @@ import {
 import { Plus, Search, Filter } from 'lucide-react';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import BlogPostCard from '@/components/contentManagement/BlogPostCard';
-import { blogService } from '@/api/contentServices';
+import { blogService } from '@/api/contentServices.api';
 import type { BlogPost, BlogQueryParams } from '@/types/content';
 import { constant } from '@/lib/constant';
 import { toast } from 'sonner';

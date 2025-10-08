@@ -73,6 +73,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import BlogPostsPage from "./pages/contentManagement/BlogPostsPage";
 import EditBlogPostPage from "./pages/contentManagement/EditBlogPostPage";
 import ViewBlogPostPage from "./pages/contentManagement/ViewBlogPostPage";
+import CreateBlogPostPage from "./pages/contentManagement/CreateBlogPostPage";
 
 
 const queryClient = new QueryClient();
@@ -154,7 +155,7 @@ function App() {
           <Route path={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT} element={<CreateContent />} />
           <Route path={constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT} element={<EditContent />} />
           <Route path={constant.ROUTING_URLS.BLOG_POSTS} element={<BlogPostsPage />} />
-          {/* <Route path={constant.ROUTING_URLS.CREATE_BLOG_POST} element={<CreateBlogPostPage />} /> */}
+          <Route path={constant.ROUTING_URLS.CREATE_BLOG_POST} element={<CreateBlogPostPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_BLOG_POST} element={<EditBlogPostPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_BLOG_POST} element={<ViewBlogPostPage />} />
           <Route path={constant.ROUTING_URLS.SEO} element={<SeoPage />} />

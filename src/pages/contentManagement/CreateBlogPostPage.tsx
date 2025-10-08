@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Save, ArrowLeft, Plus, X, Loader } from 'lucide-react';
-import AdminRootLayout from '@/components/layouts/AdminRootLayout';
-import ImageUpload from '@/components/ui/image-upload';
-import MultipleImageUpload from '@/components/ui/multiple-image-upload';
-import { blogService } from '@/api/contentServices.api';
-import type { BlogPost, BlogPostFormData } from '@/types/content';
-import { constant } from '@/lib/constant';
+} from '../../components/ui/select';
+import { Badge } from '../../components/ui/badge';
+import { Save, ArrowLeft, Plus, X } from 'lucide-react';
+import AdminRootLayout from '../../components/layouts/AdminRootLayout';
+import ImageUpload from '../../components/ui/image-upload';
+import MultipleImageUpload from '../../components/ui/multiple-image-upload';
+import { blogService } from '../../api/contentServices.api';
+import type { BlogPostFormData } from '../../types/content';
+import { constant } from '../../lib/constant';
 import { toast } from 'sonner';
 
 const blogPostSchema = z.object({
@@ -40,12 +40,9 @@ const blogPostSchema = z.object({
 
 type BlogPostForm = z.infer<typeof blogPostSchema>;
 
-const EditBlogPostPage: React.FC = () => {
+const CreateBlogPostPage: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [metaKeywords, setMetaKeywords] = useState<string[]>([]);
@@ -57,52 +54,15 @@ const EditBlogPostPage: React.FC = () => {
     handleSubmit,
     setValue,
     watch,
-    reset,
     formState: { errors },
   } = useForm<BlogPostForm>({
     resolver: zodResolver(blogPostSchema),
+    defaultValues: {
+      status: 'draft',
+    },
   });
 
   const title = watch('title');
-
-  useEffect(() => {
-    if (id) {
-      fetchBlogPost();
-    }
-  }, [id]);
-
-  const fetchBlogPost = async () => {
-    try {
-      setFetchLoading(true);
-      const response = await blogService.getById(id!);
-      const post = response.data;
-      setBlogPost(post);
-      
-      // Set form values
-      reset({
-        title: post.title,
-        content: post.content,
-        excerpt: post.excerpt || '',
-        featuredImage: post.featuredImage || '',
-        slug: post.slug,
-        status: post.status as any,
-        author: post.author || '',
-        metaTitle: post.seo?.metaTitle || '',
-        metaDescription: post.seo?.metaDescription || '',
-        ogImage: post.seo?.ogImage || '',
-      });
-
-      setTags(post.tags || []);
-      setMetaKeywords(post.seo?.metaKeywords || []);
-      setBlogImages(post.images || []);
-    } catch (error) {
-      console.error('Error fetching blog post:', error);
-      toast.error('Failed to fetch blog post');
-      navigate(constant.ROUTING_URLS.BLOG_POSTS);
-    } finally {
-      setFetchLoading(false);
-    }
-  };
 
   // Generate slug from title
   const generateSlug = (title: string) => {
@@ -116,6 +76,9 @@ const EditBlogPostPage: React.FC = () => {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     setValue('title', newTitle);
+    if (newTitle) {
+      setValue('slug', generateSlug(newTitle));
+    }
   };
 
   const addTag = () => {
@@ -144,7 +107,7 @@ const EditBlogPostPage: React.FC = () => {
     try {
       setLoading(true);
       
-      const blogPostData: Partial<BlogPostFormData> = {
+      const blogPostData: BlogPostFormData = {
         title: data.title,
         content: data.content,
         excerpt: data.excerpt || '',
@@ -162,46 +125,16 @@ const EditBlogPostPage: React.FC = () => {
         },
       };
 
-      await blogService.update(id!, blogPostData);
-      toast.success('Blog post updated successfully');
+      await blogService.create(blogPostData);
+      toast.success('Blog post created successfully');
       navigate(constant.ROUTING_URLS.BLOG_POSTS);
     } catch (error) {
-      console.error('Error updating blog post:', error);
-      toast.error('Failed to update blog post');
+      console.error('Error creating blog post:', error);
+      toast.error('Failed to create blog post');
     } finally {
       setLoading(false);
     }
   };
-
-  if (fetchLoading) {
-    return (
-      <AdminRootLayout>
-        <div className="p-6 flex items-center justify-center min-h-96">
-          <div className="text-center">
-            <Loader className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Loading blog post...</p>
-          </div>
-        </div>
-      </AdminRootLayout>
-    );
-  }
-
-  if (!blogPost) {
-    return (
-      <AdminRootLayout>
-        <div className="p-6">
-          <div className="text-center py-12">
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Blog post not found
-            </h3>
-            <Button onClick={() => navigate(constant.ROUTING_URLS.BLOG_POSTS)}>
-              Back to Posts
-            </Button>
-          </div>
-        </div>
-      </AdminRootLayout>
-    );
-  }
 
   return (
     <AdminRootLayout>
@@ -217,8 +150,8 @@ const EditBlogPostPage: React.FC = () => {
               Back to Posts
             </Button>
             <div>
-              <h1 className="text-3xl font-bold">Edit Blog Post</h1>
-              <p className="text-gray-600">Update blog post details</p>
+              <h1 className="text-3xl font-bold">Create Blog Post</h1>
+              <p className="text-gray-600">Create a new blog post</p>
             </div>
           </div>
         </div>
@@ -367,7 +300,7 @@ const EditBlogPostPage: React.FC = () => {
                     <Label htmlFor="status">Status</Label>
                     <Select
                       onValueChange={(value) => setValue('status', value as any)}
-                      value={watch('status')}
+                      defaultValue="draft"
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -392,7 +325,7 @@ const EditBlogPostPage: React.FC = () => {
                   <div className="pt-4">
                     <Button type="submit" disabled={loading} className="w-full">
                       <Save className="mr-2 h-4 w-4" />
-                      {loading ? 'Updating...' : 'Update Post'}
+                      {loading ? 'Creating...' : 'Create Post'}
                     </Button>
                   </div>
                 </CardContent>
@@ -469,4 +402,4 @@ const EditBlogPostPage: React.FC = () => {
   );
 };
 
-export default EditBlogPostPage;
+export default CreateBlogPostPage;

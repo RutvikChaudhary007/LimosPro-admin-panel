@@ -4,7 +4,7 @@ import { Input } from './input';
 import { Label } from './label';
 import { Card, CardContent } from './card';
 import { Upload, X, Image as ImageIcon, Loader, Link as LinkIcon } from 'lucide-react';
-import { mediaService } from '../../api/contentServices';
+import { mediaService } from '../../api/contentServices.api';
 import { toast } from 'sonner';
 
 interface ImageUploadProps {

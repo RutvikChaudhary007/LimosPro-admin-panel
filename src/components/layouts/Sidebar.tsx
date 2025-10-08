@@ -163,6 +163,11 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
       icon: <Icons path="/sidebarIcons/content.svg" alt="Content Management icon" />,
       label: 'Content Management',
       children: [
+         {
+          to: constant.ROUTING_URLS.BLOG_POSTS,
+          icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,
+          label: 'Blog Posts',
+        },
         {
           to: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
           icon: <Icons path="/sidebarIcons/Pointer.svg" alt="pointer icon" />,

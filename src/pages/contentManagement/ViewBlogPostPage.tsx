@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, Calendar, Eye, User } from 'lucide-react';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
-import { blogService } from '@/api/contentServices';
+import { blogService } from '@/api/contentServices.api';
 import type { BlogPost } from '@/types/content';
 import { constant } from '@/lib/constant';
 import { toast } from 'sonner';
