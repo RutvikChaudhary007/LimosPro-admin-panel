@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import type { BlogPost } from '../../types/content';
+import type { BlogPost } from '@/types/content';
 
 interface BlogPostCardProps {
   blogPost: BlogPost;

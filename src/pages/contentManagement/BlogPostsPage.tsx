@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../components/ui/select';
+} from '@/components/ui/select';
 import { Plus, Search, Filter } from 'lucide-react';
-import AdminRootLayout from '../../components/layouts/AdminRootLayout';
-import BlogPostCard from '../../components/contentManagement/BlogPostCard';
-import { blogService } from '../../api/contentServices';
-import type { BlogPost, BlogQueryParams } from '../../types/content';
-import { constant } from '../../lib/constant';
+import AdminRootLayout from '@/components/layouts/AdminRootLayout';
+import BlogPostCard from '@/components/contentManagement/BlogPostCard';
+import { blogService } from '@/api/contentServices';
+import type { BlogPost, BlogQueryParams } from '@/types/content';
+import { constant } from '@/lib/constant';
 import { toast } from 'sonner';
 
 const BlogPostsPage: React.FC = () => {

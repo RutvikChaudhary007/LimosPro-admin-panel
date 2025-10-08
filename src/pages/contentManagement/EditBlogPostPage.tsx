@@ -3,26 +3,26 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Textarea } from '../../components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../../components/ui/select';
-import { Badge } from '../../components/ui/badge';
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { Save, ArrowLeft, Plus, X, Loader } from 'lucide-react';
-import AdminRootLayout from '../../components/layouts/AdminRootLayout';
-import ImageUpload from '../../components/ui/image-upload';
-import MultipleImageUpload from '../../components/ui/multiple-image-upload';
-import { blogService } from '../../api/contentServices';
-import type { BlogPost, BlogPostFormData } from '../../types/content';
-import { constant } from '../../lib/constant';
+import AdminRootLayout from '@/components/layouts/AdminRootLayout';
+import ImageUpload from '@/components/ui/image-upload';
+import MultipleImageUpload from '@/components/ui/multiple-image-upload';
+import { blogService } from '@/api/contentServices';
+import type { BlogPost, BlogPostFormData } from '@/types/content';
+import { constant } from '@/lib/constant';
 import { toast } from 'sonner';
 
 const blogPostSchema = z.object({
