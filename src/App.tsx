@@ -70,6 +70,9 @@ import SeoPage from "./pages/contentManagment/SeoPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import ErrorBoundary from "./components/ErrorBoundary";
+import BlogPostsPage from "./pages/contentManagement/BlogPostsPage";
+import EditBlogPostPage from "./pages/contentManagement/EditBlogPostPage";
+import ViewBlogPostPage from "./pages/contentManagement/ViewBlogPostPage";
 
 
 const queryClient = new QueryClient();
@@ -146,9 +149,14 @@ function App() {
           <Route path={constant.ROUTING_URLS.CREATE_FAQ} element={<CreateFaqPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_FAQ} element={<EditFaqPage />} />
           <Route path={constant.ROUTING_URLS.REPORTS} element={<ReportPage />} />
+           {/* Content Management Routes */}
           <Route path={constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES} element={<ContentManagement />} />
           <Route path={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT} element={<CreateContent />} />
           <Route path={constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT} element={<EditContent />} />
+          <Route path={constant.ROUTING_URLS.BLOG_POSTS} element={<BlogPostsPage />} />
+          {/* <Route path={constant.ROUTING_URLS.CREATE_BLOG_POST} element={<CreateBlogPostPage />} /> */}
+          <Route path={constant.ROUTING_URLS.EDIT_BLOG_POST} element={<EditBlogPostPage />} />
+          <Route path={constant.ROUTING_URLS.VIEW_BLOG_POST} element={<ViewBlogPostPage />} />
           <Route path={constant.ROUTING_URLS.SEO} element={<SeoPage />} />
           {/* <Route path={constant.ROUTING_URLS.CREATE_SEO} element={<SeoPage />} />
           <Route path={constant.ROUTING_URLS.EDIT_SEO} element={<SeoPage />} /> */}

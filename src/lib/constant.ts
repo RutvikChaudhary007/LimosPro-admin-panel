@@ -84,5 +84,11 @@ export const constant = {
         SEO: "/content_management/seo",
         CREATE_SEO: "/seo/create",
         EDIT_SEO: "/seo/edit/:id",
+         // Content Management URLs
+        CONTENT_MANAGEMENT: "/content_management",
+        BLOG_POSTS: "/content_management/blog",
+        CREATE_BLOG_POST: "/content_management/blog/create",
+        EDIT_BLOG_POST: "/content_management/blog/edit/:id",
+        VIEW_BLOG_POST: "/content_management/blog/view/:id",
     }
 };
