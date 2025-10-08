@@ -4,9 +4,11 @@ import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import type { TFaqs } from '@/components/table/column';
 import { Button } from '@/components/ui/button';
+import { toastPromise, useToast } from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
+import queries from '@/lib/queries';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const mockData: TFaqs = {
     id: "1",
@@ -14,7 +16,29 @@ const mockData: TFaqs = {
     answer: "ans1"
 }
 const EditFaqPage = () => {
- const handleSubmit = (data:TFaqForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+  const {id} = useParams();
+  const navigate = useNavigate();
+  const {toast} = useToast();
+  const editFAQ = queries.useEditFaqMutation();
+ const handleSubmit = async (data:TFaqForm):Promise<void> =>{
+  try{
+    toastPromise(editFAQ.mutateAsync({id:id!,data}),{
+      loading: "Updating FAQ...",
+      success: (res)=>{
+        if(res) navigate(constant.ROUTING_URLS.FAQ);
+        return "Yeah! FAQ updated successfully";
+      },
+      error: (e)=> (e instanceof Error) ? e.message : "Opps! Edit FAQ failed",
+    });
+  }catch(err){
+   if(err instanceof Error)
+    toast({
+      title: "Edit FAQ failed",
+      description: err.message,
+      variant: "destructive",
+    });
+  }
+ }; 
        
      return (
        <AdminRootLayout>

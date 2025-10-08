@@ -1,10 +1,15 @@
+import { useFetchIPWhiteListById } from "@/api/ipWhiteList.api";
 import IpWhiteListForm, { type TIpWhiteListForm } from "@/components/ipWhiteList/IpWhiteListForm";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const mockData = {
     id: "1",
@@ -12,8 +17,27 @@ const mockData = {
     name: "Aadmirals"
 }
 const EditIpWhiteListPage = () => {
-    
-    const handleSubmit = (data:TIpWhiteListForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+    const {id} = useParams();
+    const navigate = useNavigate();
+    const {data, isFetching} = useFetchIPWhiteListById(id!);
+    const editIpWhiteList = queries.useEditIPWhiteListMutation();
+    const handleSubmit = (data:TIpWhiteListForm):Promise<void> => {
+      try {
+        toastPromise(editIpWhiteList.mutateAsync({id:id!,data}),{
+          loading: "Updating IP white list...",
+          success: res=>{
+            if(res) navigate(constant.ROUTING_URLS.IP_WHITE_LIST);
+            return "Yeah! IP white list updated successfully."},
+          error: (e)=> (e instanceof Error ? e.message : "Opps! Failed to edit IP white list. Please try again..."),
+        })
+      } catch (error) {
+        if(error instanceof Error){
+          toast.error(error.message);
+        }else{
+          toast.error("Failed to edit IP white list. Please try again...");
+        }
+      }
+    }; 
     
   return (
     <AdminRootLayout>
@@ -29,7 +53,7 @@ const EditIpWhiteListPage = () => {
             </div>
           </div>
         </Header>
-      <IpWhiteListForm initialData={mockData} onSubmit={handleSubmit} type="Edit IP"  />
+     {isFetching ? <Spinner/>:(<IpWhiteListForm initialData={data} onSubmit={handleSubmit} type="Edit IP"  />)} 
       </div>
     </AdminRootLayout>
   )

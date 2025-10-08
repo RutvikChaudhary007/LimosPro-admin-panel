@@ -73,8 +73,8 @@ const ViewFleetPage = () => {
                   <div className="w-[154px] h-[154px] bg-[#D9D9D9] rounded">
                     <img
                       src={
-                        data?.vehicleImages?.image1
-                          ? data?.vehicleImages?.image1
+                        data?.vehicleImages?.[0]?.url
+                          ? data?.vehicleImages?.[0]?.url
                           : "/fleet/fleetimg.svg"
                       }
                       alt="image1"
@@ -85,8 +85,8 @@ const ViewFleetPage = () => {
                     <img
                       className="w-full h-full object-cover"
                       src={
-                        data?.vehicleImages?.image2
-                          ? data?.vehicleImages?.image2
+                        data?.vehicleImages?.[1]?.url
+                          ? data?.vehicleImages?.[1]?.url
                           : "/fleet/fleetimg.svg"
                       }
                       alt="image2"
@@ -96,8 +96,8 @@ const ViewFleetPage = () => {
                     <img
                       className="w-full h-full object-cover"
                       src={
-                        data?.vehicleImages?.image3
-                          ? data?.vehicleImages?.image3
+                        data?.vehicleImages?.[2]?.url
+                          ? data?.vehicleImages?.[2]?.url
                           : "/fleet/fleetimg.svg"
                       }
                       alt="image3"

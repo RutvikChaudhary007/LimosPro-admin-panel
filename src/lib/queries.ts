@@ -19,6 +19,8 @@ import { createTestimonial, deleteTestimonial, editTestimonial } from "@/api/tes
 import { createFleet } from "@/api/createFleet.api";
 import { createNews, deleteNewsById, editNewsById } from "@/api/news.api";
 import { createPartner, deletePartnerById, editPartnerById } from "@/api/ourPartners.api";
+import { createFAQ, deleteFAQById, editFAQById } from "@/api/faq.api";
+import { createIPWhiteList, deleteIPWhiteListById, editIPWhiteListById } from "@/api/ipWhiteList.api";
 
 
 
@@ -661,31 +663,172 @@ const useDeleteOurPartnerMutation = ()=>useMutation({
     },
 })
 
+
+/**
+ * ###################################################
+ * FAQ
+ * ###################################################
+ */
+
+const useCreateFaqMutation = ()=>useMutation({
+  mutationFn: createFAQ,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useEditFaqMutation = ()=>useMutation({
+  mutationFn: editFAQById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useDeleteFaqMutation = ()=>useMutation({
+  mutationFn: deleteFAQById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+/**
+ * ###################################################
+ * IP White List
+ * ###################################################
+ */
+
+const useCreateIPWhiteListMutation = ()=>useMutation({
+  mutationFn: createIPWhiteList,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useEditIPWhiteListMutation = ()=>useMutation({
+  mutationFn: editIPWhiteListById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useDeleteIPWhiteListMutation = ()=>useMutation({
+  mutationFn: deleteIPWhiteListById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+
+
 export default {
+  // Auth
     useLoginMutation,
+    // Fleet
     useCreatefleetMutation,
     useDeletefleetMutation,
+    // User
     useUpdateUserMutation,
     useDeleteUserMutation,
+    // Affiliate
     useCreateAffiliateMutation,
     useEditAffiliateMutation,
     useDeleteAffiliateMutation,
+    // Chauffeur
     useCreateChauffeurMutation,
     useEditChauffeurMutation,
     useDeleteChauffeurMutation,
+    // Crew Member
     useCreateCrewMemberMutation,
     useUpdateCrewMemberMutation,
     useDeleteCrewMemberMutation,
+    // Staff Member
     useCreateStaffMemberMutation,
     useDeleteStaffMemberMutation,
     useUpdateStaffMemberMutation,
+    // Testimonial
     useCreateTestimonialMutation,
     useEditTestimonialMutation,
     useDeleteTestimonialMutation,
+    // News
     useCreateNewsMutation,
     useEditNewsMutation,
     useDeleteNewsMutation,
+    // Our Partner
     useCreateOurPartnerMutation,
     useEditOurPartnerMutation,
     useDeleteOurPartnerMutation,
+    // FAQ
+    useCreateFaqMutation,
+    useEditFaqMutation,
+    useDeleteFaqMutation,
+    // IP White List
+    useCreateIPWhiteListMutation,
+    useEditIPWhiteListMutation,
+    useDeleteIPWhiteListMutation,
 }

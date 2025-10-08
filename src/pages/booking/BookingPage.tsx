@@ -21,76 +21,76 @@ const showStatus = [
     { label: 'Completed', value: 'completed' },
 ];
 
-const tableData: TBooking[] = [
-    {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "userId": "550e8400-e29b-41d4-a716-446655440000",
-        "affiliateId": "550e8400-e29b-41d4-a716-446655440000",
-        "bookingType": "twoWay",
-        "pickupLocation": {
-            "latitude": 40.712776,
-            "longitude": -74.005974
-        },
-        "dropoffLocation": {
-            "latitude": 34.052235,
-            "longitude": -118.243683
-        },
-        "isThirdPartyUser": true,
-        "thirdPartyUser": {
-            "name": "test",
-            "email": "test@mailinator.com",
-            "phone": "9876543210"
-        },
-        "scheduledTime": "2025-04-16T15:30:00Z",
-        "fare": 99.99,
-        "status": "pending",
-        "createdAt": "2025-04-16T15:30:00Z",
-        "updatedAt": "2025-04-16T15:30:00Z"
-    },
-    {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "userId": "550e8400-e29b-41d4-a716-446655440000",
-        "affiliateId": "550e8400-e29b-41d4-a716-446655440000",
-        "bookingType": "twoWay",
-        "pickupLocation": {
-            "latitude": 40.712776,
-            "longitude": -74.005974
-        },
-        "dropoffLocation": {
-            "latitude": 34.052235,
-            "longitude": -118.243683
-        },
-        "isThirdPartyUser": true,
-        "thirdPartyUser": {
-            "name": "test",
-            "email": "test@mailinator.com",
-            "phone": "9876543210"
-        },
-        "scheduledTime": "2025-04-16T15:30:00Z",
-        "fare": 99.99,
-        "status": "pending",
-        "createdAt": "2025-04-16T15:30:00Z",
-        "updatedAt": "2025-04-16T15:30:00Z"
-    }
-];
+// const tableData: TBooking[] = [
+//     {
+//         "id": "550e8400-e29b-41d4-a716-446655440000",
+//         "userId": "550e8400-e29b-41d4-a716-446655440000",
+//         "affiliateId": "550e8400-e29b-41d4-a716-446655440000",
+//         "bookingType": "twoWay",
+//         "pickupLocation": {
+//             "latitude": 40.712776,
+//             "longitude": -74.005974
+//         },
+//         "dropoffLocation": {
+//             "latitude": 34.052235,
+//             "longitude": -118.243683
+//         },
+//         "isThirdPartyUser": true,
+//         "thirdPartyUser": {
+//             "name": "test",
+//             "email": "test@mailinator.com",
+//             "phone": "9876543210"
+//         },
+//         "scheduledTime": "2025-04-16T15:30:00Z",
+//         "fare": 99.99,
+//         "status": "pending",
+//         "createdAt": "2025-04-16T15:30:00Z",
+//         "updatedAt": "2025-04-16T15:30:00Z"
+//     },
+//     {
+//         "id": "550e8400-e29b-41d4-a716-446655440000",
+//         "userId": "550e8400-e29b-41d4-a716-446655440000",
+//         "affiliateId": "550e8400-e29b-41d4-a716-446655440000",
+//         "bookingType": "twoWay",
+//         "pickupLocation": {
+//             "latitude": 40.712776,
+//             "longitude": -74.005974
+//         },
+//         "dropoffLocation": {
+//             "latitude": 34.052235,
+//             "longitude": -118.243683
+//         },
+//         "isThirdPartyUser": true,
+//         "thirdPartyUser": {
+//             "name": "test",
+//             "email": "test@mailinator.com",
+//             "phone": "9876543210"
+//         },
+//         "scheduledTime": "2025-04-16T15:30:00Z",
+//         "fare": 99.99,
+//         "status": "pending",
+//         "createdAt": "2025-04-16T15:30:00Z",
+//         "updatedAt": "2025-04-16T15:30:00Z"
+//     }
+// ];
 
-type BookingStatus = "pending" | "inprogress" | "canceled" | "completed";
+type BookingStatus = "pending" | "accepted" | "canceled" | "completed";
 
-function countByStatus(bookings: TBooking[]) {
-    return bookings.reduce<Record<BookingStatus, number>>(
-        (acc, booking) => {
-            const status = booking.status as BookingStatus;
-            acc[status] = (acc[status] || 0) + 1;
-            return acc;
-        },
-        {
-            pending: 0,
-            inprogress: 0,
-            canceled: 0,
-            completed: 0,
-        }
-    );
-}
+// function countByStatus(bookings: TBooking[]) {
+//     return bookings.reduce<Record<BookingStatus, number>>(
+//         (acc, booking) => {
+//             const status = booking.status as BookingStatus;
+//             acc[status] = (acc[status] || 0) + 1;
+//             return acc;
+//         },
+//         {
+//             pending: 0,
+//             accepted: 0,
+//             canceled: 0,
+//             completed: 0,
+//         }
+//     );
+// }
 
 type RowData = {
   affiliateId: string;
@@ -166,10 +166,10 @@ function BookingPage() {
 
     const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TBooking>(filterData, newPage, perPage, data?.pagination);
 
-    const statusCounts = useMemo(() => {
-        return countByStatus(tableData);
-    }, []);
-
+    // const statusCounts = useMemo(() => {
+        // return countByStatus(data?.statusCounts);
+    // }, []);
+    const statusCounts = data?.statusCounts;
 
       // Handle CSV export
   const handleExportCsv = () => {
@@ -183,14 +183,14 @@ function BookingPage() {
       'Created At',   
     ];
 
-    const csvData = tableData.map(v => [
-      v.id,
-      v.affiliateId,
-      v.bookingType,
-      v.scheduledTime,
-      v.fare,
-      v.status,
-      formatDate(v.createdAt),
+    const csvData = data?.bookings?.map(v => [
+      v?.id || '',
+      v?.affiliateId || '',
+      v?.bookingType || '',
+      v?.scheduledTime || '',
+      v?.fare?.toString() || '',
+      v?.status || '',
+      formatDate(v?.createdAt || ''),
     ]);
 
     exportToCsv('booking_history', headers, csvData);
@@ -289,19 +289,19 @@ function BookingPage() {
                         </div>
                         <div className='w-[612px] h-[47px] flex gap-[50px]  items-center justify-between'>
                             <div className='flex flex-col gap-1'>
-                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{tableData.length}</div>
-                                <div className='text-center text-black h-4 text-xs w-[79px]'>Total Bookings</div>
+                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts?.accepted}</div>
+                                <div className='text-center text-black h-4 text-xs w-[79px]'>Accepted</div>
                             </div>
                             <div className='flex flex-col gap-1'>
-                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts.inprogress}</div>
-                                <div className='text-center text-black h-4 text-xs w-[79px]'>Inprogress</div>
+                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts?.pending}</div>
+                                <div className='text-center text-black h-4 text-xs w-[79px]'>Pending</div>
                             </div>
                             <div className='flex flex-col gap-1'>
-                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts.canceled}</div>
-                                <div className='text-center text-black h-4 text-xs w-[79px]'>Canceled</div>
+                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts?.cancelled}</div>
+                                <div className='text-center text-black h-4 text-xs w-[79px]'>Cancelled</div>
                             </div>
                             <div className='flex flex-col gap-1'>
-                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts.completed}</div>
+                                <div className='text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl'>{statusCounts?.completed}</div>
                                 <div className='text-center text-black h-4 text-xs w-[79px]'>Completed</div>
                             </div>
                         </div>
@@ -348,7 +348,7 @@ function BookingPage() {
 
 
                 {/* Pagination */}
-                {tableData.length > 0 && calculatedTotalPages > 1 && (
+                {totalPages > 0 && calculatedTotalPages > 1 && (
                     <Pagination className="justify-end mt-5 cursor-pointer">
                         <PaginationContent>
                             <PaginationItem>

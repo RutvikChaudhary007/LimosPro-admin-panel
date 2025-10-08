@@ -3,12 +3,33 @@ import FaqForm from '@/components/faq/FaqForm';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import { Button } from '@/components/ui/button';
+import { toastPromise } from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
+import queries from '@/lib/queries';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const CreateFaqPage = () => {
-  const handleSubmit = (data:TFaqForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+  const navigate = useNavigate();
+  const createFaqMutation = queries.useCreateFaqMutation();
+  const handleSubmit = async(data:TFaqForm):Promise<void> =>{
+    try {
+      toastPromise(createFaqMutation.mutateAsync(data),{
+        loading: "Creating faq...",
+        success: (res)=>{
+          if(res) navigate(constant.ROUTING_URLS.FAQ)
+          return "Yeah! Faq created successfully"},
+        error: "Failed to create faq",
+      })
+    } catch (error) {
+      if(error instanceof Error) {
+        toast.error(error.message);
+      }else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  }; 
       
     return (
       <AdminRootLayout>

@@ -1,6 +1,8 @@
 // @ts-nocheck
+import useFetchALLFAQs from "@/api/faq.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getFaqs, type TFaqs } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -8,7 +10,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuTrigg
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise, useToast } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,26 +25,27 @@ const showOptions = [
 ];
 
 
-const tableData: TFaqs[] = [
-    {
-        id: "1",
-        question: "127.0.0.1",
-        answer: "Localhost"
-    },
-    {
-        id: "2",
-        question: "127.0.0.2",
-        answer: "Localhost2"
-    },
-];
+// const tableData: TFaqs[] = [
+//     {
+//         id: "1",
+//         question: "127.0.0.1",
+//         answer: "Localhost"
+//     },
+//     {
+//         id: "2",
+//         question: "127.0.0.2",
+//         answer: "Localhost2"
+//     },
+// ];
 
 const FaqsPage = () => {
  const navigate = useNavigate();
+ const {toast} = useToast()
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TFaqs[]>(tableData);
-  
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFaqs>(data, 1, perPage);
+    // const [data, setData] = useState<TFaqs[]>(tableData);
+   const {data, refetch, isFetching} = useFetchALLFAQs(perPage);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFaqs>(data?.items, 1, perPage, data?.pagination);
   
     useEffect(() => {
       setPerPage(selected.value);
@@ -48,9 +53,32 @@ const FaqsPage = () => {
     const handleEdit = (id: string) => { console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_FAQ.replace(":id",id))
      };
-    const handleDelete = (id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
+     const deleteFaq = queries.useDeleteFaqMutation();
+    const handleDelete =  (id: string) => {
+      try{
+        toastPromise(deleteFaq.mutateAsync(id),{
+          loading: "Deleting FAQ...",
+          success: (res)=>{
+            if(res) refetch();
+            return "Yeah! FAQ deleted successfully";
+          },
+          error: (e)=> (e instanceof Error) ? e.message : "Opps! Delete FAQ failed",
+        });
+      }catch(err){
+        if(err instanceof Error){
+          toast({
+            title: "Delete FAQ failed",
+            description: err.message,
+            variant: "destructive",
+          });
+        }else{
+          toast({
+            title: "Delete FAQ failed",
+            description: "An unknown error occurred",
+            variant: "destructive",
+          });
+        }
+      }
     };
     const columns =  getFaqs(handleEdit, handleDelete);
   
@@ -173,14 +201,14 @@ const FaqsPage = () => {
               <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
               <Button variant={"secondary"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                onClick={() => {
-                  setData((prev) =>
-                    prev.filter((row,i) => !rowSelection[i])
-                  );
+                // onClick={() => {
+                //   setData((prev) =>
+                //     prev.filter((row,i) => !rowSelection[i])
+                //   );
                 //   console.log("data:", data);
                 //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
+                //   setRowSelection({});
+                // }}
               >
                 <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
                 <Trash2 size={14} className="text-[#959595] cursor-pointer" />
@@ -191,13 +219,13 @@ const FaqsPage = () => {
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             </div>
           </div>
-          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+         {isFetching? (<Spinner/>):( <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />
-  
+  )}
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>

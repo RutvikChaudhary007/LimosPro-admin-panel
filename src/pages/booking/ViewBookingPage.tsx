@@ -163,11 +163,11 @@ const ViewBookingPage = () => {
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Car Name:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or Similar.</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.vehicle?.make} {data?.vehicle?.model}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Chauffeur:</Label>
-                                <span className="text-[#3A3A3A] font-medium underline">David Thompson</span>
+                                <span className="text-[#3A3A3A] font-medium underline">{data?.chauffeur?.firstName} {data?.chauffeur?.lastName}</span>
                             </div>
 
                         </div>

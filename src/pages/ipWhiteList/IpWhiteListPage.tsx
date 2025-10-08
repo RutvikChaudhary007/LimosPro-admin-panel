@@ -1,6 +1,8 @@
 // @ts-nocheck
+import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getIpWhiteList, type TIpWhiteList } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -8,10 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -281,9 +286,10 @@ const IpWhiteListPage = () => {
  const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TIpWhiteList[]>(tableData);
+    // const [data, setData] = useState<TIpWhiteList[]>(tableData);
+    const {data , refetch, isFetching} = useFetchALLIPWhiteLists(perPage);
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TIpWhiteList>(data, 1, perPage);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TIpWhiteList>(data?.items, 1, perPage, data?.pagination);
   // console.log("tableData:",tableData.length)
     useEffect(() => {
       setPerPage(selected.value);
@@ -291,9 +297,23 @@ const IpWhiteListPage = () => {
     const handleEdit = (id: string) => { console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_IP_WHITE_LIST.replace(":id",id))
      };
+     const deleteIPWhiteListMutation = queries.useDeleteIPWhiteListMutation();
     const handleDelete = (id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
+      try {
+        toastPromise(deleteIPWhiteListMutation.mutateAsync(id),{
+          loading: "Deleting IP White List...",
+          success: (res)=>{
+            if(res) refetch();
+            return "Yeah! IP White List deleted successfully."},
+          error: (e)=> (e instanceof Error) ? e.message : "Failed to delete IP White List."
+        })
+      } catch (error) {
+        if(error instanceof Error){
+          toast.error(error.message);
+        }else{
+          toast.error("An unknown error occurred.");
+        }
+      }
     };
     const columns =  getIpWhiteList(handleEdit, handleDelete);
   
@@ -437,13 +457,13 @@ const IpWhiteListPage = () => {
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             </div>
           </div>
-          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+       {isFetching ? <Spinner/> :(  <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
-            onGlobalFilterChange={setSearchValue} />
+            onGlobalFilterChange={setSearchValue} />)} 
   
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>
