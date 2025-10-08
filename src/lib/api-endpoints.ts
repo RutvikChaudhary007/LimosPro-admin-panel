@@ -76,4 +76,14 @@ export const API_ENDPOINTS = {
   CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member`,
   EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
   DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
+
+  // Content Management APIs (Admin Service)
+  BLOG: {
+    GET_ALL: `${BASE_URL1}/blog/posts`,
+    GET_BY_ID: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
+    CREATE: `${BASE_URL1}/blog/posts`,
+    UPDATE: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
+    DELETE: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
+    GET_STATS: `${BASE_URL1}/blog/stats`,
+  },
 };

@@ -75,7 +75,7 @@ const EditBlogPostPage: React.FC = () => {
     try {
       setFetchLoading(true);
       const response = await blogService.getById(id!);
-      const post = response.data;
+      const post = response?.data ;
       setBlogPost(post);
       
       // Set form values
