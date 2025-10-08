@@ -33,11 +33,25 @@ const formSchema = z.object({
     companyName: z.string().min(3, { message: "Company name must be at least 3 characters" }),
     email: z.email(),
     businessContactNumber: z
-        .string()
-        .min(1, { message: "Phone is required" })
-        .regex(/^\d+$/, { message: "Must be number" })
-        // .transform((v) => Number(v))
-        .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+  .string()
+  .min(1, { message: "Phone is required" })
+  .regex(/^[\+]?[(]?\d+[)]?[-\s\.]?[(]?\d+[)]?[-\s\.]?\d+[-\s\.]?\d+$/, { 
+    message: "Invalid phone number format" 
+  })
+  .refine(
+    (phone) => {
+      // Remove all non-digit characters and check length
+      const digitsOnly = phone.replace(/\D/g, '');
+      return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+    },
+    { message: "Phone number must have 10-15 digits" }
+  ),
+    // businessContactNumber: z
+    //     .string()
+    //     .min(1, { message: "Phone is required" })
+    //     .regex(/^\d+$/, { message: "Must be number" })
+    //     // .transform((v) => Number(v))
+    //     .refine((n) => n >= 0, { message: "Must be non‑negative" }),
     entityType: z.string().min(1, { message: "Entity Type is required" }),
     isChauffer: z.boolean(),
     taxId: z.string().min(2, { message: "Tax id is required." }),
@@ -116,6 +130,76 @@ interface IAddressObj {
 }
 
 const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ initialData, onSubmit, disabledFields, type, businessAddress }) => {
+  const formatPhoneNumber = (value: string): string => {
+  if (!value) return '';
+  
+  // Keep the + and all digits
+  let input = value.replace(/[^\d+]/g, '');
+  
+  // Ensure it starts with +
+  if (!input.startsWith('+')) {
+    input = '+' + input;
+  }
+  
+  // Remove any + after the first one
+  input = '+' + input.slice(1).replace(/\+/g, '');
+  
+  // Extract country code and remaining digits
+  const withoutPlus = input.slice(1);
+  
+  if (withoutPlus.length === 0) {
+    return '+';
+  }
+  
+  // Detect country code length (1-3 digits typically)
+  // For simplicity, assume US/Canada (+1) or other (+XX or +XXX)
+  let countryCode = '';
+  let phoneDigits = '';
+  
+  if (withoutPlus[0] === '1' && withoutPlus.length > 1) {
+    // US/Canada format: +1 (XXX) XXX-XXXX
+    countryCode = '1';
+    phoneDigits = withoutPlus.slice(1, 11); // Max 10 digits after country code
+    
+    if (phoneDigits.length === 0) {
+      return `+${countryCode} `;
+    } else if (phoneDigits.length <= 3) {
+      return `+${countryCode} (${phoneDigits}`;
+    } else if (phoneDigits.length <= 6) {
+      return `+${countryCode} (${phoneDigits.slice(0, 3)}) ${phoneDigits.slice(3)}`;
+    } else {
+      return `+${countryCode} (${phoneDigits.slice(0, 3)}) ${phoneDigits.slice(3, 6)}-${phoneDigits.slice(6)}`;
+    }
+  } else {
+    // International format: +XX XXXX XXXX or +XXX XXXX XXXX
+    // Determine country code (1-3 digits)
+    if (withoutPlus.length <= 2) {
+      return `+${withoutPlus}`;
+    }
+    
+    // Try 2-digit country code first, then 3-digit, then 1-digit
+    let ccLength = 2;
+    if (withoutPlus.length > 3 && parseInt(withoutPlus.slice(0, 3)) >= 100) {
+      ccLength = 3;
+    } else if (withoutPlus[0] === '1') {
+      ccLength = 1;
+    }
+    
+    countryCode = withoutPlus.slice(0, ccLength);
+    phoneDigits = withoutPlus.slice(ccLength, ccLength + 10);
+    
+    if (phoneDigits.length === 0) {
+      return `+${countryCode} `;
+    } else if (phoneDigits.length <= 4) {
+      return `+${countryCode} ${phoneDigits}`;
+    } else if (phoneDigits.length <= 7) {
+      return `+${countryCode} ${phoneDigits.slice(0, 4)} ${phoneDigits.slice(4)}`;
+    } else {
+      return `+${countryCode} ${phoneDigits.slice(0, 4)} ${phoneDigits.slice(4, 7)} ${phoneDigits.slice(7)}`;
+    }
+  }
+};
+
         const [newAddress, setNewAddress] = useState("");
         const [addressObj, setAddressObj] = useState<IAddressObj>();
         const [isAddressValid, setIsAddressValid] = useState(false);
@@ -350,8 +434,14 @@ const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ ini
                                 <FormItem>
                                     <FormLabel>Phone</FormLabel>
                                     <FormControl className="px-3 py-4 rounded">
-                                        <Input placeholder="+1-234-567-890"
-                                            disabled={isFieldDisabled(disabledFields, "email")} {...field} />
+                                        <Input {...field} 
+                                        value={field.value || ''}
+                                        placeholder="+1 (891) 943-9826"
+                                          onChange={(e) => {
+            const formatted = formatPhoneNumber(e.target.value);
+            field.onChange(formatted);
+          }}
+                                            disabled={isFieldDisabled(disabledFields, "email")}  />
                                     </FormControl>
                                     <FormMessage
                                         className={`mt-1 h-5 ${form.formState.errors.businessContactNumber ? 'visible text-red-600' : 'invisible'
@@ -466,7 +556,7 @@ const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ ini
                                 key={idx}
                                 className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
                             >
-                                {text}{" "}
+                                {text}
                             </span>
                             ))}
                         </FormLabel>
@@ -604,9 +694,10 @@ const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ ini
         entityType: "",
         taxId: "",
         commissionRate: "",
-        // documents: [],
+        documents: [],
         status: ""
     });
+    // form.setValue("documents", []);
     setStatusValue({ status: "", entityType: "" });
     // if (fileRef.current) fileRef.current.value = "";
     setNewAddress("");

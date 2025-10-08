@@ -1,6 +1,8 @@
 // @ts-nocheck
+import useFetchALLPartners from "@/api/ourPartners.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getOurPartner, type TOurPartner } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -8,10 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -58,21 +63,35 @@ const OurPartnerPage = () => {
  const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TOurPartner[]>(tableData);
-  
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TOurPartner>(data, 1, perPage);
+    // const [data, setData] = useState<TOurPartner[]>(tableData);
+  const {data, refetch, isFetching} = useFetchALLPartners();
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TOurPartner>(data?.items, 1, perPage, data?.pagination);
   
     useEffect(() => {
       setPerPage(selected.value);
     }, [selected])
-    const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
+    const handleEdit = (id: string) => { console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_OUR_PARTNERS.replace(":id",id))
-     }, []);
-    const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
-    }, []);
-    const columns = useMemo(() => getOurPartner(handleEdit, handleDelete), [handleDelete, handleEdit])
+     };
+     const deletePartnerMutation = queries.useDeleteOurPartnerMutation();
+    const handleDelete = async(id: string) => {
+      try {
+         toastPromise(deletePartnerMutation.mutateAsync(id),{
+          loading: "Deleting partner...",
+          success: (res)=>{
+            if(res) refetch();
+            return "Yeah! Partner deleted successfully";
+          },
+          error: (e)=> (e instanceof Error) ? e.message : "Opps! Failed to delete partner",
+         });
+      } catch (error) {
+       if(error instanceof Error) {
+        toast.error(error.message);
+       }else{
+        toast.error("An unknown error occurred");
+       }
+      }};
+    const columns = getOurPartner(handleEdit, handleDelete);
   
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState({});
@@ -211,13 +230,13 @@ const OurPartnerPage = () => {
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             </div>
           </div>
-          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+          {isFetching ? <Spinner /> : (<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
-            onGlobalFilterChange={setSearchValue} />
+            onGlobalFilterChange={setSearchValue} />)}
   
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>

@@ -1,6 +1,8 @@
 // @ts-nocheck
+import useFetchALLNews from "@/api/news.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getNews, type TNews } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -8,10 +10,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -20,35 +25,36 @@ const showOptions = [
 ];
 
 
-const tableData: TNews[] = [
-    {
-        id: "1",
-        news: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip."
-    },
-    {
-        id: "2",
-        news: "Special rates may apply during the events seasons and sports games in the Houston greater areas such as Houston rodeo, Christmas lights, new year's night, and big sports games."
-    },
-    {
-        id: "3",
-        news: "The rate is subject to change at any time without advanced announcement but it will not reflect in the reservations that are under processing or already booked."
-    },
-    {
-        id: "4",
-        news: "Office times: Monday – Sunday  8:00 AM – 10:00 PM."
-    },
-    {
-        id: "5",
-        news: "Transportation between Houston Airports, Houston greater area, and Galveston Cruise Port, Galveston Hotels, please book online by clicking on the Houston – Galveston button at the Online Quote & Booking and start from there."
-    },
-]
+// const tableData: TNews[] = [
+//     {
+//         id: "1",
+//         news: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip."
+//     },
+//     {
+//         id: "2",
+//         news: "Special rates may apply during the events seasons and sports games in the Houston greater areas such as Houston rodeo, Christmas lights, new year's night, and big sports games."
+//     },
+//     {
+//         id: "3",
+//         news: "The rate is subject to change at any time without advanced announcement but it will not reflect in the reservations that are under processing or already booked."
+//     },
+//     {
+//         id: "4",
+//         news: "Office times: Monday – Sunday  8:00 AM – 10:00 PM."
+//     },
+//     {
+//         id: "5",
+//         news: "Transportation between Houston Airports, Houston greater area, and Galveston Cruise Port, Galveston Hotels, please book online by clicking on the Houston – Galveston button at the Online Quote & Booking and start from there."
+//     },
+// ]
 const Newspage = () => {
 const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TNews[]>(tableData);
-  
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TNews>(data, 1, perPage);
+    // const [data, setData] = useState<TNews[]>(tableData);
+  const {data, refetch, isFetching} = useFetchALLNews();
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TNews>(data?.items, 1, perPage, data?.pagination);
+    // console.log("currentItems:", currentItems);
   
     useEffect(() => {
       setPerPage(selected.value);
@@ -56,9 +62,24 @@ const navigate = useNavigate();
     const handleEdit = (id: string) => { console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_NEWS.replace(":id",id))
      };
+     const deleteNews = queries.useDeleteNewsMutation();
     const handleDelete = (id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
+      try {
+        toastPromise(deleteNews.mutateAsync(id),{
+          loading: "Deleting news...",
+          success: (res)=>{
+            if(res) refetch();
+            return"News deleted successfully"
+          },
+          error: (e)=> (e instanceof Error) ? e.message: "Opps! Failed to delete news",
+        })
+      } catch (error) {
+        if(error instanceof Error){
+          toast.error(error.message);
+        }else{
+          toast.error("An unexpected error occurred");
+        }
+      }
     };
     const columns =  getNews(handleEdit, handleDelete);
   
@@ -181,14 +202,14 @@ const navigate = useNavigate();
               <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
               <Button variant={"secondary"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                onClick={() => {
-                  setData((prev) =>
-                    prev.filter((row,i) => !rowSelection[i])
-                  );
+                // onClick={() => {
+                  // setData((prev) =>
+                  //   prev.filter((row,i) => !rowSelection[i])
+                  // );
                 //   console.log("data:", data);
                 //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
+                  // setRowSelection({});
+                // }}
               >
                 <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
                 <Trash2 size={14} className="text-[#959595] cursor-pointer" />
@@ -199,13 +220,13 @@ const navigate = useNavigate();
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             </div>
           </div>
-          <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+         {isFetching? (<Spinner />):( <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
-            onGlobalFilterChange={setSearchValue} />
+            onGlobalFilterChange={setSearchValue} />)}
   
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>

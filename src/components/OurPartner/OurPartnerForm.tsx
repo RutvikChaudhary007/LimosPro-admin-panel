@@ -42,7 +42,7 @@ const OurPartnerForm = ({ initialData, onSubmit, disabledFields, type }: IOurPar
         return {
             companyName: data?.companyName,
             url: data?.url,
-            photo: data?.photo
+            photo: data?.logoUrl || null,
         };
 
     };

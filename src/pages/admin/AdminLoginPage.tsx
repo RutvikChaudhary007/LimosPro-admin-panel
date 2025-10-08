@@ -19,7 +19,7 @@ import {
 import { constant } from "@/lib/constant";
 // import { login } from "@/api/login";
 // import { useMutation } from "@tanstack/react-query";
-import {  toastPromise } from "@/hooks/use-toast";
+import {  toastPromise, useToast } from "@/hooks/use-toast";
 import queries from "@/lib/queries";
 
 const loginSchema = z.object({
@@ -33,7 +33,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 
 function AdminLoginPage() {
-  // const { toast } = useToast();
+  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   
@@ -58,7 +58,6 @@ function AdminLoginPage() {
   const loginMutation = queries.useLoginMutation()
   const onSubmit = async (data: LoginFormValues) => {
     try {
-     
       // Remove remember field before sending to API
       const { remember, ...loginData } = data;
       console.log("remember me:",remember);
@@ -84,12 +83,12 @@ function AdminLoginPage() {
       });
     } catch (error) {
       // Error handling is done in onError callback
-      // toast({
-      //   title: "Delete failed",
-      //   description: error instanceof Error ? error.message : "Failed to delete affiliate",
-      //   variant: "destructive",
-      // })
-      console.error('Login error:', error);
+      toast({
+        title: "Delete failed",
+        description: error instanceof Error ? error.message : "Failed to delete affiliate",
+        variant: "destructive",
+      })
+      // console.error('Login error:', error);
     }
   };
   return (

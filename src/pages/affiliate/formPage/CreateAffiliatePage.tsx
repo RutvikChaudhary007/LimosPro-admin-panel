@@ -26,7 +26,7 @@ function CreateAffiliatePage() {
         // await loginMutation.mutateAsync(loginData);
         // await createAffiliateMutation.mutateAsync(data)
        toastPromise(createAffiliateMutation.mutateAsync(data), {
-          loading: "submitting...",
+          loading: "Submitting...",
           success: "Affiliate created successfully!",
           error: (e) => (e instanceof Error ? e.message : "Failed to create affiliate"),
         });

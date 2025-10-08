@@ -22,9 +22,8 @@ export type TNewsForm = z.infer<typeof formSchema>;
 const NewsForm = ({ initialData, onSubmit, disabledFields, type }: INewsFormProps) => {
      const transformInitialData = (data?: TNews): TNewsForm | undefined => {
          if (!data) return undefined;
-         // console.log("edit chauffeur formdata:>",data)
          return {
-             news: data?.news,
+             news: data?.body,
          };
  
      };

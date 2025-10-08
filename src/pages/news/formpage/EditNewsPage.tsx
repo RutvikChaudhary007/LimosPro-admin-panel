@@ -1,18 +1,44 @@
+import { useFetchNewsById } from "@/api/news.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import NewsForm, { type TNewsForm } from "@/components/news/NewsForm";
-import type { TNews } from "@/components/table/column";
+import { Spinner } from "@/components/Spinner";
+// import type { TNews } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
-const mockData: TNews = {
-    id: "1",
-    news: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip.",
-} 
+// const mockData: TNews = {
+//     id: "1",
+//     news: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip.",
+// } 
 const EditNewsPage = () => {
-   const handleSubmit = (data:TNewsForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+  const {id} = useParams();
+  const navigate = useNavigate();
+  const {data, isFetching} = useFetchNewsById(id!);
+  const editNews = queries.useEditNewsMutation();
+   const handleSubmit = async(data:TNewsForm):Promise<void> => {
+    try {
+      toastPromise(editNews.mutateAsync({id: id!, data: {body: data.news}}),{
+        loading: "Updating news...",
+        success: (res)=>{
+          if(res) navigate(constant.ROUTING_URLS.NEWS)
+            return "Yeah! News updated successfully";
+        },
+        error: "Failed to update news",
+      })
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("An unknown error occurred");
+      }
+    }
+   }; 
     
   return (
     <AdminRootLayout>
@@ -28,7 +54,7 @@ const EditNewsPage = () => {
             </div>
           </div>
         </Header>
-      <NewsForm initialData={mockData} onSubmit={handleSubmit} type="Edit News"  />
+    {isFetching ? <Spinner />: <NewsForm initialData={data} onSubmit={handleSubmit} type="Edit News"  />}
       </div>
     </AdminRootLayout>
   )

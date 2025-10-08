@@ -2,12 +2,33 @@ import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import NewsForm, { type TNewsForm } from "@/components/news/NewsForm";
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const CreateNewsPage = () => {
-  const handleSubmit = (data:TNewsForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+  const navigate = useNavigate();  
+  const createNewsMutation = queries.useCreateNewsMutation();
+  const handleSubmit = async (data:TNewsForm):Promise<void> => {
+    try{
+      toastPromise(createNewsMutation.mutateAsync({body: data.news}),{
+        loading: "Creating news...",
+        success: (res)=>{
+          if(res) navigate(constant.ROUTING_URLS.NEWS)
+          return "Yeah! News created successfully"},
+        error: "Failed to create news",
+      })
+    }catch(err){
+      if(err instanceof Error) {
+        toast.error(err.message);
+      }else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  };
     
   return (
     <AdminRootLayout>

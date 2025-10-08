@@ -1306,9 +1306,9 @@ export function getContactRequest(
 
 export type TTestimonial = {
   id: string,
-  name: string,
-  photo: string,
-  message: string,
+  customerName: string,
+  customerImage: string,
+  content: string,
 }
 
 export function getTestimonial(
@@ -1339,16 +1339,16 @@ export function getTestimonial(
     enableSorting: false,
     enableHiding: false,
   },
-  { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />, enableSorting: false,
+  { accessorKey: "customerName", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />, enableSorting: false,
   },
-  { accessorKey: "message", header: ({ column }) => <DataTableColumnHeader column={column} title="Message" />, 
+  { accessorKey: "content", header: ({ column }) => <DataTableColumnHeader column={column} title="Message" />, 
   cell: ({row})=> (<div className="w-[501px] text-wrap">
-  {row.original.message}
+  {row.original.content}
   </div>),
   enableSorting: false,
   },
-  { accessorKey: "photo", header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />, 
-  cell: ({row})=> (<img src={row.original.photo} className="w-[70px] h-[70px]" />),
+  { accessorKey: "customerImage", header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />, 
+  cell: ({row})=> (<img src={row.original.customerImage} className="w-[70px] h-[70px]" />),
   enableSorting: false,
   },
   {
@@ -1456,7 +1456,7 @@ export function getOurPartner(
 
 export type TNews = {
   id: string,
-  news: string,
+  body: string,
 }
 
 export function getNews(
@@ -1487,7 +1487,7 @@ export function getNews(
     enableSorting: false,
     enableHiding: false,
   },
-  { accessorKey: "news", header: ({ column }) => <DataTableColumnHeader column={column} title="News" />, enableSorting: false,
+  { accessorKey: "body", header: ({ column }) => <DataTableColumnHeader column={column} title="News" />, enableSorting: false,
   },
   {
       id: "action",

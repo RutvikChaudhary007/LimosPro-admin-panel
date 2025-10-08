@@ -1,13 +1,44 @@
+import { useFetchPartnerById } from '@/api/ourPartners.api';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import OurPartnerForm, { type TOurPartnerForm } from '@/components/OurPartner/OurPartnerForm';
+import { Spinner } from '@/components/Spinner';
 import { Button } from '@/components/ui/button';
+import { toastPromise } from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
+import queries from '@/lib/queries';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 const EditOurPartnerPage = () => {
-  const handleSubmit = (data:TOurPartnerForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
-    
+  const {id} = useParams();
+  const navigate = useNavigate();
+  const {data, isFetching} = useFetchPartnerById(id!);
+  const editPartner = queries.useEditOurPartnerMutation();
+  const handleSubmit = async (data:TOurPartnerForm):Promise<void> =>{
+    const formData = new FormData();
+    formData.append("companyName", data.companyName);
+    formData.append("url", data.url);
+    formData.append("logoUrl", data.photo);
+    try {
+      toastPromise(editPartner.mutateAsync({id: id!, data: formData}),{
+        loading: "Updating Partner...",
+        success: (res)=>{
+          if(res){
+            navigate(constant.ROUTING_URLS.OUR_PARTNERS)
+          }
+          return "Yeah! Partner updated successfully"
+        } ,
+        error: (e)=> (e instanceof Error) ? e.message : "Opps! Failed to update partner",
+      })
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("An unexpected error occurred");
+      }
+    }
+  }    
   return (
     <AdminRootLayout>
         <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
@@ -22,7 +53,7 @@ const EditOurPartnerPage = () => {
             </div>
           </div>
         </Header>
-      <OurPartnerForm onSubmit={handleSubmit} type="Edit Partners"  />
+     {isFetching ? <Spinner /> : <OurPartnerForm initialData={data} onSubmit={handleSubmit} type="Edit Partners"  />}
       </div>
     </AdminRootLayout>
   )

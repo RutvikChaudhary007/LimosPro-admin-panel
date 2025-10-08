@@ -1,20 +1,47 @@
+import { useFetchTestimonialById } from "@/api/testimonial.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import TestimonialForm from "@/components/testimonail/TestimonialForm";
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import type { TTestimonialFormData } from "@/types/testimonial.type";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
-const mockData: TTestimonialFormData = {
-    name: "John Doe",
-    message: "lorem Lorem Orem rem",
-    photo: null
-}
 const EditTestimonailPage = () => {
-   const handleSubmit = (data:TTestimonialFormData):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
-    
+  const {id} = useParams();
+  const navigate = useNavigate();
+  const {data , isFetching} = useFetchTestimonialById({id : id || ""});
+  const editTestimonialMutation = queries.useEditTestimonialMutation();
+   const handleSubmit = async(data:TTestimonialFormData):Promise<void> => {
+    try {
+    toastPromise(editTestimonialMutation.mutateAsync({
+                 data: {customerName: data.name,
+                  content: data.message,
+                  customerImage: data.photo,
+                  rating: data.rating,
+                  isFeatured: data.isFeatured,
+                },
+              id}),{
+      loading : "Updating Testimonail...",
+      success : (res)=>{
+        if(res) navigate(constant.ROUTING_URLS.TESTIMONIALS);
+        return "Yeah! Testimonail updated successfully";
+      },
+      error: (e)=>(e instanceof Error) ? e.message : "Opps! Failed to update testimonial"
+    })  
+    } catch (error) {
+    if(error instanceof Error) {
+     toast.error(error.message);
+    }else{
+      toast.error("Unexpected error occured");
+    }
+   }; 
+  };
   return (
     <AdminRootLayout>
         <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
@@ -25,11 +52,12 @@ const EditTestimonailPage = () => {
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Testimonail</h2>
-              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">Testimonail</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Testimonail</span></h4>
+              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">Testimonail</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Testimonail</span></h4>
             </div>
           </div>
         </Header>
-      <TestimonialForm initialData={mockData}  onSubmit={handleSubmit} type="Edit Testimonail"  />
+      {isFetching? <Spinner/> : (<TestimonialForm initialData={data}  onSubmit={handleSubmit} type="Edit Testimonail"  />)
+}
       </div>
     </AdminRootLayout>
   )

@@ -1,51 +1,30 @@
-
-import { createFleet } from "@/api/createFleet.api"
-import UsefetchAllAffiliate from "@/api/getAllAffiliate.api"
+import useFetchAllAffiliate from "@/api/getAllAffiliate.api"
 import useFetchAllRegions from "@/api/getAllRegion.api"
 import FleetForm from "@/components/fleet/FleetForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
 import { Button } from "@/components/ui/button"
-import { toastPromise, useToast } from "@/hooks/use-toast"
+import { toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
+import queries from "@/lib/queries"
 import type { TFleetData } from "@/types/fleet.type"
-import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
-import { useMutation } from "@tanstack/react-query"
-import type { AxiosError } from "axios"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 const CreateFleetPage = () => {
-  const {toast} = useToast();
-  const {data: AffiliateData,isFetching: isAffiliateFetching} = UsefetchAllAffiliate({DateRange: undefined});
+  const navigate = useNavigate();
+  const {data: AffiliateData,isFetching: isAffiliateFetching} = useFetchAllAffiliate({DateRange: undefined});
   const {data: RegionData, isFetching: isRegionFetching} = useFetchAllRegions({});
-  const createFleetMutation = useMutation({
-    mutationFn: createFleet,
-    onSuccess: ()=>{},
-    onError: (err: unknown) => {
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err && typeof err === 'object' && 'isAxiosError' in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-      }
-      
-      // Don't show toast for rate limiting
-      if (errorMessage.includes("429")) return;
-      toast({
-        title: "Create fleet failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
-    },
-  })
+  const createFleetMutation = queries.useCreatefleetMutation();
     const handleCreateFleet = async (data: TFleetData)=> {
         console.log("called handle create fleet!", data)
         try {
           toastPromise(await createFleetMutation.mutateAsync(data),{
-            loading: "Loading...",
-            success: "Yeah! fleet created successfully.",
-            error: "Opps! failed to create fleet.",
+            loading: "Creating fleet...",
+            success: (res)=>{
+              if (res) navigate(constant.ROUTING_URLS.FLEETS);
+              return "Yeah! fleet created successfully."},
+            error: (e)=> (e instanceof Error) ? e.message: "Opps! failed to create fleet.",
           });      
         } catch (error) {
           console.error("Error while creating fleet", error);

@@ -146,15 +146,15 @@ const ViewBookingPage = () => {
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Name:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.firstName} {data?.lastName}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.thirdPartyUser?.name}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Email:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.email}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.thirdPartyUser?.email}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="text-sm font-semibold capitalize">Phone:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.businessContactNumber}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.thirdPartyUser?.phone}</span>
                             </div>
 
                         </div>

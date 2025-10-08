@@ -1,4 +1,4 @@
-import UsefetchChauffeurById from "@/api/getChauffeurById.api";
+import {useFetchChauffeurById} from "@/api/chauffeur.api";
 import { Spinner } from "@/components/Spinner";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
@@ -80,7 +80,7 @@ const ViewChauffeurPage = () => {
     const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [isaddress, setAddress] = useState<string | undefined>(undefined);
-    const { data, isFetching } = UsefetchChauffeurById({ id: id! });
+    const { data, isFetching } = useFetchChauffeurById({ id: id! });
     // Load Google Maps script
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: googleMapsApiKey || "",

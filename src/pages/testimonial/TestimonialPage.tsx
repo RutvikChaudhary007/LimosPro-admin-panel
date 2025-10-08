@@ -1,5 +1,7 @@
+import useFetchAllTestimonials from "@/api/testimonial.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getTestimonial, type TTestimonial } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -7,10 +9,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect,  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -19,47 +24,16 @@ const showOptions = [
 ];
 
 
-const tableData: TTestimonial [] = [
-  { id: "1", name: "Chris Johnson", message: "AAdmirals was friendly, professional, on time, well priced, attentive & very accommodating. An all around great experience. I will definitely use their services again!", photo: "../../../public/sidebarIcons/feedback.svg", },
-  { id: "2", name: "Ovi Smith", message: "Administrative Assistant", photo: "../../../public/sidebarIcons/feedback.svg", },
-  { id: "3", name: "June Parker", message: "Quality Assurance Officer", photo: "../../../public/sidebarIcons/feedback.svg", },
-  { id: "4", name: "Casey Walker", message: "Booking Agent", photo: "../../../public/sidebarIcons/feedback.svg", },
-  { id: "5", name: "Jordon Lee", message: "Driver Relations Manager", photo: "name@photo.com", },
-  { id: "6", name: "Taylor Morgan", message: "Fleet Supervisor", photo: "name@photo.com", },
-  { id: "7", name: "Sam Patel", message: "Dispatcher", photo: "name@photo.com", },
-  { id: "8", name: "Chris Johnson", message: "Sales Representative", photo: "name@photo.com", },
-  { id: "9", name: "Ovi Smith", message: "Operations Manager", photo: "name@photo.com", },
-  { id: "10", name: "June Parker", message: "Sales Representative", photo: "name@photo.com", },
-  { id: "11", name: "Casey Walker", message: "Dispatcher", photo: "name@photo.com", },
-  { id: "12", name: "Jordon Lee", message: "Fleet Supervisor", photo: "name@photo.com", },
-  { id: "13", name: "Taylor Morgan", message: "Driver Relations Manager", photo: "name@photo.com", },
-  { id: "14", name: "Sam Patel", message: "Booking Agent", photo: "name@photo.com", },
-  { id: "15", name: "Chris Johnson", message: "Quality Assurance Officer", photo: "name@photo.com", },
-  { id: "16", name: "Ovi Smith", message: "Administrative Assistant", photo: "name@photo.com", },
-  { id: "17", name: "June Parker", message: "Booking Agent", photo: "name@photo.com", },
-  { id: "18", name: "Casey Walker", message: "", photo: "name@photo.com", },
-  { id: "19", name: "Jordon Lee", message: "", photo: "name@photo.com",  },
-  { id: "20", name: "Taylor Morgan", message: "", photo: "name@photo.com", },
-  { id: "21", name: "Sam Patel", message: "",photo: "name@photo.com",  },
-  { id: "22", name: "Chris Johnson", message: "",photo: "name@photo.com",  },
-  { id: "23", name: "Ovi Smith", message: "",photo: "name@photo.com",  },
-  { id: "24", name: "June Parker", message: "", photo: "name@photo.com", },
-  { id: "25", name: "Casey Walker", message: "", photo: "name@photo.com", },
-  { id: "26", name: "Jordon Lee", message: "", photo: "name@photo.com", },
-  { id: "27", name: "Taylor Morgan", message: "",photo: "name@photo.com",  },
-  { id: "28", name: "Sam Patel", message: "",photo: "name@photo.com",  },
-  { id: "29", name: "Sam Patel", message: "",photo: "name@photo.com",  },
-  { id: "30", name: "Sam Patel", message: "", photo: "name@photo.com", },
-  
-];
+
 
 const TestimonialPage = () => {
     const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
-    const [data, setData] = useState<TTestimonial[]>(tableData);
+    // const [data, setData] = useState<TTestimonial[]>(tableData);
+    const {data, refetch, isFetching} = useFetchAllTestimonials(perPage);
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTestimonial>(data, 1, perPage);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTestimonial>(data?.testimonials, 1, perPage, data?.pagination);
   
     useEffect(() => {
       setPerPage(selected.value);
@@ -67,11 +41,28 @@ const TestimonialPage = () => {
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_TESTIMONIALS.replace(":id",id))
      }, []);
-    const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
-    }, []);
-    const columns = useMemo(() => getTestimonial(handleEdit, handleDelete), [handleDelete, handleEdit])
+     const deleteTestimonial = queries.useDeleteTestimonialMutation()
+    const handleDelete =  (id: string) => {
+      try {
+        toastPromise(deleteTestimonial.mutateAsync(id),{
+          loading: "Deleting testimonial...",
+          success: (res)=>{
+            if(res) refetch();
+              return "Yeah! Testimonial deleted successfully";
+          },
+          error: (e)=> (e instanceof Error ? e.message : "Failed to delete testimonial"),
+        })
+      } catch (error) {
+        if(error instanceof Error){
+          toast.error(error.message)
+        }else{
+          toast.error(`Unexpected error occurred: ${error}`)
+        }
+      }
+      // setData((prev) =>
+      //   prev.filter((row) => row.id !== id))
+    };
+    const columns =  getTestimonial(handleEdit, handleDelete);
   
     const [searchValue, setSearchValue] = useState("");
     const [rowSelection, setRowSelection] = useState<object>({});
@@ -197,11 +188,11 @@ const TestimonialPage = () => {
 
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
-                  setData((prev) =>
+                  // setData((prev) =>
             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 
-                    prev.filter((row,i) => !rowSelection[i])
-                  );
+                  //   prev.filter((row,i) => !rowSelection[i])
+                  // );
                 //   console.log("data:", data);
                 //   console.log("rowSelection:", rowSelection);
                   setRowSelection({});
@@ -216,16 +207,17 @@ const TestimonialPage = () => {
                 onChange={(e) => setSearchValue(e.target.value)} /></div>
             </div>
           </div>
-          <DataTable columns={columns} data={currentItems} 
+       {isFetching ? (<Spinner/>):(
+        <DataTable columns={columns} data={currentItems} 
             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 
           rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
-            onGlobalFilterChange={setSearchValue} />
+            onGlobalFilterChange={setSearchValue} />)}   
   
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>

@@ -2,13 +2,40 @@ import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import TestimonialForm from "@/components/testimonail/TestimonialForm"
 import { Button } from "@/components/ui/button";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import type { TTestimonialFormData } from "@/types/testimonial.type"
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const CreateTestimonailPage = () => {
-    const handleSubmit = (data:TTestimonialFormData):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+  const navigate = useNavigate();
+  const createTestimonialMutation = queries.useCreateTestimonialMutation();
+    const handleSubmit = async(data:TTestimonialFormData):Promise<void> => {
+     try {
+      toastPromise(createTestimonialMutation.mutateAsync({
+                  customerName: data.name,
+                  content: data.message,
+                  customerImage: data.photo,
+                  rating: data.rating,
+                  isFeatured: data.isFeatured,
+                }),{
+                  loading: "Creating testimonial...",
+                  success: (res)=>{
+                    if(res) navigate(constant.ROUTING_URLS.TESTIMONIALS)
+                    return "Yeah! Testimonial created successfully"},
+                  error: (e)=> (e instanceof Error) ? e.message: "Opps! Failed to create testimonial",
+                });
+     } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+     } 
+    }; 
     
   return (
     <AdminRootLayout>

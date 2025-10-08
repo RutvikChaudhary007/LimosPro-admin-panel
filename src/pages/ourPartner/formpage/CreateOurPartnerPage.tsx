@@ -2,12 +2,38 @@ import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import OurPartnerForm, { type TOurPartnerForm } from '@/components/OurPartner/OurPartnerForm';
 import { Button } from '@/components/ui/button';
+import { toastPromise } from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
+import queries from '@/lib/queries';
 import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const CreateOurPartnerPage = () => {
-  const handleSubmit = (data:TOurPartnerForm):Promise<void> => new Promise(res=>setTimeout(()=>res(console.log("data:",data)),2000)); 
+  const navigate = useNavigate();
+  const createOurPartner = queries.useCreateOurPartnerMutation();
+  const handleSubmit = async(data:TOurPartnerForm):Promise<void> => {
+    const formData = new FormData();
+    try {
+    formData.append("companyName", data.companyName);
+    formData.append("url", data.url);
+    formData.append("logoUrl", data.photo);
+      toastPromise(createOurPartner.mutateAsync(formData),{
+        loading: "Creating Partner...",
+        success: (res)=>{
+          if(res) navigate(constant.ROUTING_URLS.OUR_PARTNERS)  
+          return "Partner created successfully"
+        },
+        error: (e)=> (e instanceof Error) ? e.message : "Opps! Failed to create partner."
+      });
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("An unknown error occurred.");
+      }
+    }
+  }; 
     
   return (
     <AdminRootLayout>

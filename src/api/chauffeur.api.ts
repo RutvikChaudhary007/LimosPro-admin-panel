@@ -33,6 +33,29 @@ export default useFetchAllChauffeur;
 
 /**
  * #############################################
+ *  Fetch Chauffeur By ID
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const getChauffeurById = async (id: string) => {
+
+  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_CHAUFFEUR_BY_ID.replace(":id",id)}`);
+  console.log("response:",response.data)
+  return response?.data?.data;
+};
+
+export const useFetchChauffeurById = ({ id }: { id: string }) =>
+  useQuery({
+    queryKey: ['affiliateById', id],
+    queryFn: () => getChauffeurById(id),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+;
+
+/**
+ * #############################################
  *  Create Chauffeur
  * ##############################################
  * @param data 

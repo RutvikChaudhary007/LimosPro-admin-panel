@@ -12,7 +12,7 @@ import {  useEffect, useMemo, useState } from "react"
 import { Spinner } from "@/components/Spinner"
 import queries from "@/lib/queries"
 import { toastPromise, useToast } from "@/hooks/use-toast"
-import useFetchChauffeurById from "@/api/getChauffeurById.api"
+import { useFetchChauffeurById } from "@/api/chauffeur.api"
 import type { TCrewMemberForm } from "@/components/crewMember/crewMemberForm"
 
 // const initialData: TChauffeurForm = {
