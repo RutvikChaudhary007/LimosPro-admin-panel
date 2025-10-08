@@ -179,7 +179,7 @@ const BlogPostsPage: React.FC = () => {
         {/* Filters */}
         <Card>
           <CardContent className="pt-6">
-            <form onSubmit={handleSearch} className="flex gap-4 items-end">
+            <form onSubmit={handleSearch} className="flex gap-4 items-end justify-between">
               <div className="flex-1">
                 <label className="text-sm font-medium mb-2 block">Search</label>
                 <div className="relative">
@@ -206,10 +206,10 @@ const BlogPostsPage: React.FC = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit">
+              {/* <Button type="button">
                 <Filter className="mr-2 h-4 w-4" />
                 Filter
-              </Button>
+              </Button> */}
             </form>
           </CardContent>
         </Card>
