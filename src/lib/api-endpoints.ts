@@ -86,4 +86,14 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
     GET_STATS: `${BASE_URL1}/blog/stats`,
   },
+  MEDIA: {
+    GET_ALL: `${BASE_URL2}/media/media`,
+    GET_BY_ID: (id: string) => `${BASE_URL2}/media/media/${id}`,
+    GET_BY_CATEGORY: (category: string) => `${BASE_URL2}/media/category/${category}`,
+    UPLOAD: `${BASE_URL2}/media/upload`,
+    UPLOAD_MULTIPLE: `${BASE_URL2}/media/upload/multiple`,
+    UPDATE: (id: string) => `${BASE_URL2}/media/media/${id}`,
+    DELETE: (id: string) => `${BASE_URL2}/media/media/${id}`,
+    GET_STATS: `${BASE_URL2}/media/stats`,
+  },
 };
