@@ -3,9 +3,9 @@
 //  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
 //  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
 
- export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://apilimo.qalbit.in/user-service/';
- export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://apilimo.qalbit.in/booking-service/';
- export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://apilimo.qalbit.in/admin-service/';
+ export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'https://apilimo.qalbit.in/user-service/api/v1';
+ export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'https://apilimo.qalbit.in/admin-service/api/v1';
+ export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'https://apilimo.qalbit.in/booking-service/api/v1';
 
 //  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
 //  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
@@ -71,11 +71,46 @@ export const API_ENDPOINTS = {
   EDIT_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
   DELETE_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
 
-  // Crew member 
+  // Staff member 
   GET_ALL_STAFF_MEMBER: `${BASE_URL1}/staff-members`,
   CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member`,
   EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
   DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
+  
+  // Testimonials
+  GET_ALL_TESTIMONIALS: `${BASE_URL1}/testimonials`,
+  GET_TESTIMONIAL_BY_ID: `${BASE_URL1}/testimonials/:id`,
+  CREATE_TESTIMONIAL: `${BASE_URL1}/testimonials`,
+  EDIT_TESTIMONIAL: `${BASE_URL1}/testimonials/:id`,
+  DELETE_TESTIMONIAL: `${BASE_URL1}/testimonials/:id`,
+
+  // FAQS
+  GET_ALL_FAQ: `${BASE_URL1}/faqs`,
+  GET_FAQ_BY_ID: `${BASE_URL1}/faqs/:id`,
+  CREATE_FAQ: `${BASE_URL1}/faqs`,
+  EDIT_FAQ: `${BASE_URL1}/faqs/:id`,
+  DELETE_FAQ: `${BASE_URL1}/faqs/:id`,
+  
+  // Our Partners
+  GET_ALL_PARTNERS: `${BASE_URL1}/partners`,
+  GET_PARTNER_BY_ID: `${BASE_URL1}/partners/:id`,
+  CREATE_PARTNER: `${BASE_URL1}/partners`,
+  EDIT_PARTNER: `${BASE_URL1}/partners/:id`,
+  DELETE_PARTNER: `${BASE_URL1}/partners/:id`,
+
+  // News
+  GET_ALL_NEWS: `${BASE_URL1}/news`,
+  GET_NEWS_BY_ID: `${BASE_URL1}/news/:id`,
+  CREATE_NEWS: `${BASE_URL1}/news`,
+  EDIT_NEWS: `${BASE_URL1}/news/:id`,
+  DELETE_NEWS: `${BASE_URL1}/news/:id`,
+
+  // IPWhiteList
+  GET_ALL_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist`,
+  GET_IP_WHITE_LIST_BY_ID: `${BASE_URL1}/ip-whitelist/:id`,
+  CREATE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist`,
+  EDIT_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist/:id`,
+  DELETE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist/:id`,
 
   // Content Management APIs (Admin Service)
   BLOG: {
@@ -86,7 +121,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
     GET_STATS: `${BASE_URL1}/blog/stats`,
   },
-  MEDIA: {
+    MEDIA: {
     GET_ALL: `${BASE_URL2}/media/media`,
     GET_BY_ID: (id: string) => `${BASE_URL2}/media/media/${id}`,
     GET_BY_CATEGORY: (category: string) => `${BASE_URL2}/media/category/${category}`,
