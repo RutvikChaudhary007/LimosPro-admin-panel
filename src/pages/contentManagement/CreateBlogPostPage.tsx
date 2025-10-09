@@ -62,7 +62,7 @@ const CreateBlogPostPage: React.FC = () => {
     },
   });
 
-  const title = watch('title');
+  // const title = watch('title');
 
   // Generate slug from title
   const generateSlug = (title: string) => {

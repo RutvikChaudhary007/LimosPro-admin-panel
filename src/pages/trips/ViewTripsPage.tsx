@@ -74,12 +74,12 @@ const ViewTripsPage = () => {
             if (isLoaded && data && !loadError) {
                 try {
                     const address = await geoDecoding({
-                        lat: data?.pickupLocation?.latitude,
-                        lng: data?.pickupLocation?.longitude,
+                        lat: data?.pickupLocation?.lat,
+                        lng: data?.pickupLocation?.lng,
                     });
                     const address2 = await geoDecoding({
-                        lat: data?.dropoffLocation?.latitude,
-                        lng: data?.dropoffLocation?.longitude,
+                        lat: data?.dropoffLocation?.lat,
+                        lng: data?.dropoffLocation?.lng,
                     });
                     if (isMounted) {
                         console.log("Decoded Address:", address);

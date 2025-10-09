@@ -1,14 +1,21 @@
+import useFetchTripById from "@/api/getTripById.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import LiveTracking from "@/components/liveTracking/LiveTracking";
+import { Spinner } from "@/components/Spinner";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { MessageSquareMore, Phone, Route, Send } from "lucide-react";
 import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 const TripMapPage = () => {
-  const pickup = { lat: 30.2672, lng: -97.7431 }; // Austin
-  const drop = { lat: 40.7128, lng: -74.006 };   // NYC
+    const  {id} = useParams();
+
+   const {data, isFetching} =  useFetchTripById({id: id!});
+  
+  //  const pickup = { lat: 30.2672, lng: -97.7431 }; // Austin
+  // const drop = { lat: 40.7128, lng: -74.006 };   // NYC
   // const car = { lat: 35.0, lng: -90.0 }; // Somewhere on route
 
   return (
@@ -25,22 +32,29 @@ const TripMapPage = () => {
           </div>
         </Header>
 
+          {isFetching ? <Spinner/> :(
+            <>
         <div className="w-full h-[684px] mt-5 rounded overflow-hidden shadow">
-          <LiveTracking
-            dropPosition={drop}
-            livePosition={pickup}
-          // carPosition={car} 
-          />
+            
+            <LiveTracking
+            dropPosition={data?.dropoffLocation}
+            pickPosition={data?.pickupLocation}
+            // carPosition={car} 
+            />
         </div>
-
+            
         {/* Passenger & Chauffeur info section */}
-        <Content />
+        <Content data={data} />
+        </>
+          )}
+
+
       </div>
     </AdminRootLayout>
   );
 };
 
-const Content = () => {
+const Content = ({data}: {data: object}) => {
   const [activeTab, setActiveTab] = useState("passengerDetails");
   return (
     <div className="w-full mx-auto bg-white rounded shadow mt-6 flex flex-col md:flex-col items-center justify-center px-6 py-2 gap-6 border">
@@ -70,18 +84,18 @@ const Content = () => {
       {activeTab === "carAndChauffeur" && (<div className="flex items-center justify-between w-full h-full">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-            <span className="text-lg font-semibold text-gray-600">N</span>
+            <span className="text-lg font-semibold text-gray-600">{data?.chauffeur?.firstName?.slice(0, 1)}</span>
           </div>
           <div>
-            <div className="font-semibold text-gray-700">Noah Anderson</div>
-            <div className="text-xs text-gray-500">Passenger</div>
+            <div className="font-semibold text-gray-700">{data?.chauffeur?.firstName} {data?.chauffeur?.lastName}</div>
+            <div className="text-xs text-gray-500">Chauffeur</div>
           </div>
         </div>
         {/* Pan */}
         <div>
           <div className="font-semibold text-gray-700">PAN:</div>
           <div className="text-xs text-gray-500 mt-2">
-            <span className="font-semibold">ABCDE1234F</span>
+            <span className="font-semibold">{data?.chauffeur?.panNumber}</span>
           </div>
         </div>
 
@@ -89,7 +103,7 @@ const Content = () => {
         <div>
           <div className="font-semibold text-gray-700">License:</div>
           <div className="text-xs text-gray-500 mt-2">
-            <span className="font-semibold">A1234567</span>
+            <span className="font-semibold">{data?.chauffeur?.licenseNumber}</span>
           </div>
         </div>
 
@@ -102,10 +116,11 @@ const Content = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="inline-flex items-center px-3 py-1 bg-[#5A5A5A] text-white rounded-lg shadow text-xs font-semibold hover:bg-gray-300 transition">
+          <Link to={`tel:${data?.chauffeur?.phoneNumber}`} className="inline-flex items-center px-3 py-1 bg-[#5A5A5A] text-white rounded-lg shadow text-xs font-semibold hover:bg-gray-300 transition ">
             <Phone className="w-4 h-4 mr-1 fill-none" />
             Call
-          </button>
+          {/* </button> */}
+          </Link>
           <button className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition">
             <MessageSquareMore className="w-4 h-4 mr-1 fill-none" />
             Chat
@@ -118,10 +133,10 @@ const Content = () => {
       {activeTab === "passengerDetails" && (<div className="flex items-center justify-between w-full h-full">
         <div className="flex items-center space-x-3">
           <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-            <span className="text-lg font-semibold text-gray-600">N</span>
+            <span className="text-lg font-semibold text-gray-600">{data?.user?.firstName?.slice(0, 1)}</span>
           </div>
           <div>
-            <div className="font-semibold text-gray-700">Noah Anderson</div>
+            <div className="font-semibold text-gray-700">{data?.user?.firstName} {data?.user?.lastName}</div>
             <div className="text-xs text-gray-500">Passenger</div>
           </div>
         </div>
@@ -129,7 +144,7 @@ const Content = () => {
         <div>
           <div className="font-semibold text-gray-700">Email:</div>
           <div className="text-xs text-gray-500 mt-2">
-            <span className="font-semibold">name@email.com</span>
+            <span className="font-semibold">{data?.user?.email}</span>
           </div>
         </div>
 
@@ -150,10 +165,10 @@ const Content = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="inline-flex items-center px-3 py-1 bg-[#5A5A5A] text-white rounded-lg shadow text-xs font-semibold hover:bg-gray-300 transition">
+          <Link to={`tel:${data?.user?.phoneNumber}`} className="inline-flex items-center px-3 py-1 bg-[#5A5A5A] text-white rounded-lg shadow text-xs font-semibold hover:bg-gray-300 transition">
             <Phone className="w-4 h-4 mr-1 fill-none" />
             Call
-          </button>
+          </Link>
           <button className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition">
             <MessageSquareMore className="w-4 h-4 mr-1 fill-none" />
             Chat

@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button"
 import { constant } from "@/lib/constant"
 import type { TFleetData } from "@/types/fleet.type"
 import { ArrowLeft } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 const dummnyData = {
     
 }
 const EditFleetPage = () => {
+  const {id} = useParams();
+  
     const handleEditFleet = async (data:TFleetData)=>{
         return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000))
     };

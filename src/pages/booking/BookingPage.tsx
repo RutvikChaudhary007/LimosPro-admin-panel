@@ -1,3 +1,4 @@
+// @ts-nocheck
 import UsefetchAllBookings from '@/api/getAllBookings.api';
 import { Spinner } from '@/components/Spinner';
 import { Calendar28 } from '@/components/date/DateRange';
@@ -74,7 +75,7 @@ const showStatus = [
 //     }
 // ];
 
-type BookingStatus = "pending" | "accepted" | "canceled" | "completed";
+// type BookingStatus = "pending" | "accepted" | "canceled" | "completed";
 
 // function countByStatus(bookings: TBooking[]) {
 //     return bookings.reduce<Record<BookingStatus, number>>(

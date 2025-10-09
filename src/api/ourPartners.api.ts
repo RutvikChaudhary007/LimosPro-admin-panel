@@ -15,7 +15,11 @@ import { useQuery } from "@tanstack/react-query";
  * @returns response data
  */
 export const getAllPartners = async (limit:number) => {
-  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_PARTNERS);
+  const params: Record<string, unknown>  = {};
+  if(limit){
+    params.limit = limit;
+  }
+  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_PARTNERS, {params})
      
   return response.data?.data;
 };

@@ -60,15 +60,15 @@ const ViewUserPage = () => {
                     <Suspense fallback={<h1 className="text-2xl">Loading...</h1>}>
                     <CardHeader className="w-full h-[55px] flex items-center justify-between">
                         <div className="w-full h-full">
-                            <h4 className="font-semibold text-xl text-[#000000]">NoahAnderson</h4>
+                            <h4 className="font-semibold text-xl text-[#000000]">{data?.firstName} {data?.lastName}</h4>
                             <h5 className="text-[#5A5A5A] font-semibold">Location: {data?.location}</h5>
                         </div>
-                        <DropdownMenu >
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}>
-                                    {selectedStatus.label}
+                        {/* <DropdownMenu >
+                            <DropdownMenuTrigger asChild> */}
+                                <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(data?.status?.toLowerCase())} ${data?.status?.toLowerCase() === "active" && "text-white"}`}>
+                                    {data?.status}
                                 </Button>
-                            </DropdownMenuTrigger>
+                            {/* </DropdownMenuTrigger>
                             <DropdownMenuContent className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
 
                             )} align="start">
@@ -84,7 +84,7 @@ const ViewUserPage = () => {
                                     ))}
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
-                        </DropdownMenu>
+                        </DropdownMenu> */}
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <hr className="w-full h-[1px] bg-[#EEEEEE]" />

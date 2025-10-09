@@ -189,7 +189,6 @@ const TestimonialPage = () => {
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
                   // setData((prev) =>
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 
                   //   prev.filter((row,i) => !rowSelection[i])
                   // );

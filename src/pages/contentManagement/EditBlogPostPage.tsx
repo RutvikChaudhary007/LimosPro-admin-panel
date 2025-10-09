@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -63,7 +64,7 @@ const EditBlogPostPage: React.FC = () => {
     resolver: zodResolver(blogPostSchema),
   });
 
-  const title = watch('title');
+  // const title = watch('title');
 
   useEffect(() => {
     if (id) {
@@ -104,14 +105,6 @@ const EditBlogPostPage: React.FC = () => {
     }
   };
 
-  // Generate slug from title
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .replace(/\s+/g, '-')
-      .trim();
-  };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;

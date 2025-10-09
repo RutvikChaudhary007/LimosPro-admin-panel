@@ -11,17 +11,13 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
-const mockData = {
-    id: "1",
-    ip: "127.0.0.1",
-    name: "Aadmirals"
-}
+
 const EditIpWhiteListPage = () => {
     const {id} = useParams();
     const navigate = useNavigate();
     const {data, isFetching} = useFetchIPWhiteListById(id!);
     const editIpWhiteList = queries.useEditIPWhiteListMutation();
-    const handleSubmit = (data:TIpWhiteListForm):Promise<void> => {
+    const handleSubmit = async(data:TIpWhiteListForm):Promise<void> => {
       try {
         toastPromise(editIpWhiteList.mutateAsync({id:id!,data}),{
           loading: "Updating IP white list...",

@@ -205,8 +205,9 @@ import {
   Polyline,
   OverlayView,
   useJsApiLoader,
-  InfoWindow,
+  InfoWindow,  
 } from "@react-google-maps/api";
+import { geoDecoding } from "@/utils/googleMaps";
 
 const containerStyle: React.CSSProperties = { width: "100%", height: "100%" };
 
@@ -218,7 +219,7 @@ const mapStyle = [
 ];
 
 const APIKEY = import.meta.env.VITE_GOOGLE_MAP_KEY;
-const libraries: ("geometry" | "places")[] = ["geometry", "places"];
+const libraries: ("geometry" | "places" | "geocoding")[] = ["geometry", "places","geocoding"];
 
 interface LatLng {
   lat: number;
@@ -227,26 +228,67 @@ interface LatLng {
 
 interface Props {
   dropPosition: LatLng;
-  livePosition: LatLng;
+  pickPosition: LatLng;
   /** Optional: external car position for WebSocket updates */
   externalCarPosition?: LatLng;
 }
 
 const CAR_SIZE = 40;
 
-const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition, externalCarPosition }) => {
-  const { isLoaded } = useJsApiLoader({
+const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCarPosition }) => {
+  // Load Google Maps script
+  const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: APIKEY,
     libraries,
   });
+  const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(undefined);
+  const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(undefined);
+
+
+     // Initialize Places Autocomplete
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchAddress = async () => {
+            if (isLoaded && pickPosition && dropPosition && !loadError) {
+                try {
+                    const address = await geoDecoding({
+                        lat: pickPosition?.lat,
+                        lng: pickPosition?.lng,
+                    });
+                    const address2 = await geoDecoding({
+                        lat: dropPosition?.lat,
+                        lng: dropPosition?.lng,
+                    });
+                    if (isMounted) {
+                        console.log("Decoded Address:", address);
+                        if (address) {
+                            setPickUpAddress(address as string);
+                        }
+                        if(address2){
+                            setDropOffAddress(address2 as string);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Geocoding failed:", err);
+                }
+            }
+        };
+
+        fetchAddress();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isLoaded, loadError, pickPosition, dropPosition]);
 
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
-  const [carPosition, setCarPosition] = useState<LatLng>(livePosition);
+  const [carPosition, setCarPosition] = useState<LatLng>(externalCarPosition || pickPosition);
   const [heading, setHeading] = useState<number>(0);
   const [isFollowing, setIsFollowing] = useState(true);
-  const [routePath, setRoutePath] = useState<LatLng[]>([livePosition]);
+  const [routePath, setRoutePath] = useState<LatLng[]>([pickPosition]);
 
-  const animationRef = useRef<number>();
+  // const animationRef = useRef<number>();
   const pathIndexRef = useRef<number>(0);
 
   // Update car position from external source (WebSocket simulation)
@@ -270,7 +312,7 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition, externalCar
     const directionsService = new window.google.maps.DirectionsService();
     directionsService.route(
       {
-        origin: livePosition,
+        origin: pickPosition,
         destination: dropPosition,
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
@@ -283,45 +325,45 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition, externalCar
           setRoutePath(path);
         } else {
           console.error("Error fetching directions", result);
-          setRoutePath([livePosition, dropPosition]); // fallback
+          setRoutePath([pickPosition, dropPosition]); // fallback
         }
       }
     );
-  }, [isLoaded, livePosition, dropPosition]);
+  }, [isLoaded, pickPosition, dropPosition]);
 
   // Smooth animation along the polyline (for now, when WebSocket is not used)
-  useEffect(() => {
-    if (!isLoaded || !window.google?.maps?.geometry || routePath.length === 0) return;
-    if (externalCarPosition) return; // skip internal animation if external position is provided
+  // useEffect(() => {
+  //   if (!isLoaded || !window.google?.maps?.geometry || routePath.length === 0) return;
+  //   if (externalCarPosition) return; // skip internal animation if external position is provided
 
-    const speed = 50; // meters per second
-    const step = 16; // ms per frame (~60fps)
+  //   const speed = 50; // meters per second
+  //   const step = 16; // ms per frame (~60fps)
 
-    const animate = () => {
-      if (pathIndexRef.current >= routePath.length - 1) return;
+  //   const animate = () => {
+  //     if (pathIndexRef.current >= routePath.length - 1) return;
 
-      const from = new window.google.maps.LatLng(carPosition);
-      const to = new window.google.maps.LatLng(routePath[pathIndexRef.current + 1]);
+  //     const from = new window.google.maps.LatLng(carPosition);
+  //     const to = new window.google.maps.LatLng(routePath[pathIndexRef.current + 1]);
 
-      const distance = window.google.maps.geometry.spherical.computeDistanceBetween(from, to);
-      const fraction = (speed * step) / 1000 / distance;
+  //     const distance = window.google.maps.geometry.spherical.computeDistanceBetween(from, to);
+  //     const fraction = (speed * step) / 1000 / distance;
 
-      if (fraction >= 1) {
-        pathIndexRef.current += 1;
-        setCarPosition(routePath[pathIndexRef.current]);
-      } else {
-        const nextPos = window.google.maps.geometry.spherical.interpolate(from, to, fraction);
-        setCarPosition({ lat: nextPos.lat(), lng: nextPos.lng() });
-        const h = window.google.maps.geometry.spherical.computeHeading(from, to);
-        setHeading(h);
-      }
+  //     if (fraction >= 1) {
+  //       pathIndexRef.current += 1;
+  //       setCarPosition(routePath[pathIndexRef.current]);
+  //     } else {
+  //       const nextPos = window.google.maps.geometry.spherical.interpolate(from, to, fraction);
+  //       setCarPosition({ lat: nextPos.lat(), lng: nextPos.lng() });
+  //       const h = window.google.maps.geometry.spherical.computeHeading(from, to);
+  //       setHeading(h);
+  //     }
 
-      animationRef.current = requestAnimationFrame(animate);
-    };
+  //     animationRef.current = requestAnimationFrame(animate);
+  //   };
 
-    animationRef.current = requestAnimationFrame(animate);
-    return () => animationRef.current && cancelAnimationFrame(animationRef.current);
-  }, [isLoaded, routePath, carPosition, externalCarPosition]);
+  //   animationRef.current = requestAnimationFrame(animate);
+  //   return () => animationRef.current && cancelAnimationFrame(animationRef.current);
+  // }, [isLoaded, routePath, carPosition, externalCarPosition]);
 
   if (!isLoaded) return <div>Loading…</div>;
 
@@ -343,14 +385,14 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition, externalCar
       >
         {/* Pickup Marker */}
         <Marker
-          position={livePosition}
+          position={pickPosition}
           icon={{ url: "/icons/pin.png", scaledSize: new window.google.maps.Size(20, 20) }}
           onClick={() => setActiveMarker("pickUpClicked")}
         />
         {activeMarker === "pickUpClicked" && (
-          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={livePosition}>
+          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={pickPosition}>
             <div>
-              <strong>Pickup:</strong> 5678 Oak Avenue Austin, TX 73301
+              <strong>Pickup:</strong> {pickUpAddress}
             </div>
           </InfoWindow>
         )}
@@ -364,7 +406,7 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition, externalCar
         {activeMarker === "dropClicked" && (
           <InfoWindow onCloseClick={() => setActiveMarker(null)} position={dropPosition}>
             <div>
-              <strong>Drop:</strong> John F. Kennedy International Airport (JFK)
+              <strong>Drop:</strong> {dropOffAddress}
             </div>
           </InfoWindow>
         )}
