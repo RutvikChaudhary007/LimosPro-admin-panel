@@ -206,7 +206,10 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       password: data?.password?.replaceAll(/./g, "*") || "*************",
       businessAddress: data.businessAddress || "",
       location: data.Address || { latitude: 0, longitude: 0 },
-      documents: data.documents || [],
+      documents:  data.documents?.map((file) => {
+        console.log("file:", file);
+        return file;
+      })|| [],
       status: data.status || "",
       affiliateId: data.affiliateId || "",
       panNumber: data.panNumber || "",
@@ -243,8 +246,8 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       setNewAddress(initialData.businessAddress || "");
     }
   }, [initialData]);
-  const documents = form.watch("documents");
-  const fileCount = documents?.length || 0;
+  // const documents = form.watch("documents");
+  // const fileCount = documents?.length || 0;
 
   const handleFormSubmit = async (values: unknown) => {
     try {
@@ -260,14 +263,18 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       formData.append("licenseNumber", values.licenseNumber);
       formData.append("vehicleId", values.vehicleId);
       formData.append("availability", values.availability ?? false);
-      formData.append("password", values.password);
-      formData.append("gratuity", values.gratuity);
+      if(values.password && values.password !== "*************"){
+        formData.append("password", values.password);
+      }
+      console.log("filetypes...:", Array.isArray(values.documents));
+      console.log("values.documents:", values.documents);
       values.documents.forEach((file) => {
-        console.log("file:", file);
-        formData.append(`documents`, file);
+        if( file instanceof File){
+          formData.append(`documents`, file);
+        }
       });
       formData.append("status", values.status);
-      console.log("data:>>", values);
+      // console.log("data:>>", values);
       if (addressObj) {
         formData.append(
           "location",
@@ -761,7 +768,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                       onChange={(e) => {
                         const newFiles = Array.from(e.target.files ?? []);
                         // Filter out File objects from current value (keep only document objects with url)
-                        const existingDocs = field.value.filter((doc: any) => !(doc instanceof File) && doc.url);
+                        const existingDocs = field.value.filter((doc: any) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl));
                         field.onChange([...existingDocs, ...newFiles]);
                       }}
                     />

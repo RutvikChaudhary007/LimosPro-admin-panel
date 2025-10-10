@@ -1,21 +1,47 @@
 // @ts-nocheck
+import useFetchAllAffiliate from "@/api/getAllAffiliate.api"
+import useFetchAllRegions from "@/api/getAllRegion.api"
+import useFetchFleetById from "@/api/getFleetById.api"
 import FleetForm from "@/components/fleet/FleetForm"
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header"
+import { Spinner } from "@/components/Spinner"
 import { Button } from "@/components/ui/button"
+import { toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
+import queries from "@/lib/queries"
 import type { TFleetData } from "@/types/fleet.type"
 import { ArrowLeft } from "lucide-react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { toast } from "sonner"
 
 const dummnyData = {
     
 }
 const EditFleetPage = () => {
   const {id} = useParams();
-  
+  const navigate = useNavigate();
+  const {data: AffiliateData,isFetching: isAffiliateFetching} = useFetchAllAffiliate({DateRange: undefined});
+  const {data: RegionData, isFetching: isRegionFetching} = useFetchAllRegions({});
+  const {data, isFetching} = useFetchFleetById({id})
+  const editFleetMutation = queries.useEditfleetMutation()
     const handleEditFleet = async (data:TFleetData)=>{
-        return new Promise((res)=>setTimeout(()=>res(console.log(data)),3000))
+        try {
+          await toastPromise(editFleetMutation.mutateAsync({id,data}),{
+            loading:"Updating fleet...",
+            success: (res)=>{
+              if(res) navigate(constant.ROUTING_URLS.FLEETS)
+              return "Fleet updated successfully"
+            },
+            error: (e)=> (e instanceof Error) ? e.message : "Failed to update fleet",
+          })
+        } catch (error) {
+          if(error instanceof Error){
+            toast.error(error.message)
+          }else{
+            toast.error("An unknown error occurred")
+          }
+        }
     };
     
   return (
@@ -32,11 +58,15 @@ const EditFleetPage = () => {
             </div>
           </div>
         </Header>
-        <FleetForm 
-        initialData={dummnyData}
+      {isFetching ? <Spinner/> :(  <FleetForm 
+        initialData={data}
         onSubmit={handleEditFleet}
+        isAffiliateFetching={isAffiliateFetching}
+        affiliateData={AffiliateData}
+        RegionData={RegionData}
+        isRegionFetching={isRegionFetching}
         type={"Edit Fleet"} 
-        />
+        />)}
       </div>
     </AdminRootLayout>
   )

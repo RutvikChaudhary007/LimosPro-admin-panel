@@ -21,6 +21,7 @@ import { createNews, deleteNewsById, editNewsById } from "@/api/news.api";
 import { createPartner, deletePartnerById, editPartnerById } from "@/api/ourPartners.api";
 import { createFAQ, deleteFAQById, editFAQById } from "@/api/faq.api";
 import { createIPWhiteList, deleteIPWhiteListById, editIPWhiteListById } from "@/api/ipWhiteList.api";
+import { editFleetById } from "@/api/editFleetById.api";
 
 
 
@@ -96,6 +97,27 @@ const useLoginMutation = ()=> {
 
 const useCreatefleetMutation = ()=> useMutation({
     mutationFn: createFleet,
+    onSuccess: (res)=>res,
+    onError: (err: unknown)=>{
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      // toast({
+      //   title: "Delete fleet failed",
+      //   description: errorMessage,
+      //   variant: "destructive",
+      // });
+    }
+  });
+
+const useEditfleetMutation = ()=> useMutation({
+    mutationFn: editFleetById,
     onSuccess: (res)=>res,
     onError: (err: unknown)=>{
       let errorMessage = 'An unexpected error occurred';
@@ -791,6 +813,7 @@ export default {
     useLoginMutation,
     // Fleet
     useCreatefleetMutation,
+    useEditfleetMutation,
     useDeletefleetMutation,
     // User
     useUpdateUserMutation,

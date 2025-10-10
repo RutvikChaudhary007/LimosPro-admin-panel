@@ -219,23 +219,57 @@ const FleetForm = ({
     setDate(newDate);
     form.setValue("year", newDate, { shouldValidate: true });
   }
-  const transformInitialData = async (
+  useEffect(() => {
+    if(initialData?.servicePricings?.[0]?.zonePricingEnabled) {
+      setIsZoneActive(Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false));
+    }
+    if(initialData?.servicePricings?.[0]?.zonePricings) {
+      setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
+    }
+    if(initialData?.year) {
+      form.setValue("year", initialData?.year, { shouldValidate: true });
+    }
+    if(initialData?.vehicleImages) {
+      setPreviews(initialData?.vehicleImages?.map(img=>img?.url));
+      
+    }
+    }, [initialData]);
+  const transformInitialData =  (
     data?: TFleetForm
   ): TFleetForm | undefined => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
     return {
-      regionId: data?.regionId,
-      description: data?.description,
+      regionId: data?.servicePricings?.[0]?.region?.id || "",
+      description: data?.servicePricings?.[0]?.description || "",
       affiliateId: data?.affiliateId,
       plateNumber: data?.plateNumber,
       brand: data?.brand,
+      documents: data?.documents,
       bagsCapacity: data?.bagsCapacity,
+      capacity: data?.capacity,
+      year: data?.year,
       color: data?.color,
       model: data?.model,
       vehicleType: data?.vehicleType,
       vehicleImages: data?.vehicleImages,
       status: data?.status,
+      baseFair: data?.servicePricings?.[0]?.basePrice ? Number(data?.servicePricings?.[0]?.basePrice) : 0,
+      minHour: data?.servicePricings?.[0]?.minHour ? Number(data?.servicePricings?.[0]?.minHour) : 0,
+      pricePerMile: data?.servicePricings?.[0]?.pricePerMile ? Number(data?.servicePricings?.[0]?.pricePerMile) : 0,  
+      pricePerHour: data?.servicePricings?.[0]?.ratePerHour ? Number(data?.servicePricings?.[0]?.ratePerHour) : 0,
+      pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute ? Number(data?.servicePricings?.[0]?.ratePerMinute) : 0,
+      minFair: data?.servicePricings?.[0]?.minPrice ? Number(data?.servicePricings?.[0]?.minPrice) : 0,
+      cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate ? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate) : 0,
+      extraTime: data?.servicePricings?.[0]?.extraTime ? Number(data?.servicePricings?.[0]?.extraTime) : 0,
+      zonePricings: data?.servicePricings?.[0]?.zonePricings?.map((zone) => {
+        return {
+          zoneStart: zone?.zoneStart,
+          zoneEnd: zone?.zoneEnd,
+          pricePerMile: zone?.pricePerMile,
+          pricePerDistance: zone?.pricePerDistance,
+        };
+      }),
     };
   };
   const imagesRef = useRef<HTMLInputElement | null>(null);
@@ -281,7 +315,10 @@ const FleetForm = ({
 
     // generate preview URLs
     const urls = fileArray.map((file) => URL.createObjectURL(file));
-    setPreviews(urls);
+    console.log("urls:",urls)
+    setPreviews((prev) => [...prev, ...urls]);
+    console.log("preview urls:",previews)
+
   };
 
   const removeImage = (index: number, field: any) => {
@@ -290,8 +327,8 @@ const FleetForm = ({
     field.onChange(updated); // keep in sync with form
   };
 
-  const documents = form.watch("documents");
-  const fileCount = documents?.length || 0;
+  // const documents = form.watch("documents");
+  // const fileCount = documents?.length || 0;
 
   const handleFormSubmit = async (data: TFleetForm) => {
     try {
@@ -299,14 +336,10 @@ const FleetForm = ({
         // console.log("description:",)
       const formData = new FormData();
 
-      data?.documents?.forEach((file) => {
-        formData.append(`documents`, file); 
-      });
-
       if (isZoneActive) {
           if (zonePricing && zonePricing.length > 0) {
               const formDataZone = [];
-              zonePricing.forEach((zone) => {
+              zonePricing?.forEach((zone) => {
                   formDataZone.push({
                       zoneStart: zone.start,
                       zoneEnd: zone.end,
@@ -334,7 +367,7 @@ const FleetForm = ({
       formData.append("description", data?.description );
       formData.append("vehicleType", data?.vehicleType);
       formData.append("plateNumber", data?.plateNumber);
-      formData.append("year", String(data?.year?.getFullYear()));
+      formData.append("year", String(data?.year));
       formData.append("pricePerMinute", data?.pricePerMinute);
       formData.append("pricePerMile", data?.pricePerMile);
       formData.append("cityToCityHourlyRate", data?.cityToCityHourlyRate);
@@ -345,10 +378,15 @@ const FleetForm = ({
       formData.append("basePrice", data?.baseFair);
 
       data?.documents?.forEach((file) => {
-        formData.append(`documents`, file);
+        if(file instanceof File){
+          console.log("file:", file instanceof File)
+          formData.append(`documents`, file);
+        }
       });
       data?.vehicleImages?.forEach((file) => {
+        if(file instanceof File){
         formData.append(`vehicleImages`, file);
+        }
       });
       console.log("formData:",formData)
       await onSubmit(formData);
@@ -953,7 +991,7 @@ const FleetForm = ({
                     <CardContent>
 
                       {isZoneActive &&
-                        zonePricing.map((zone, index) => (
+                        zonePricing?.map((zone, index) => (
                           <div
                             // className={styles.zoneGroup}
                             className={cn("flex flex-col items-start mb-4 ")}
@@ -989,7 +1027,7 @@ const FleetForm = ({
                                   min={
                                     index === 0
                                       ? 0.01
-                                      : zonePricing[index - 1].end
+                                      : zonePricing?.[index - 1]?.end
                                   }
                                   onChange={(e) => {
                                     const newZones = [...zonePricing];
@@ -1066,7 +1104,7 @@ const FleetForm = ({
                                 padding="6px 10px"
                                 onClick={() => {
                                     const newZones =
-                                        zonePricing.filter(
+                                        zonePricing?.filter(
                                             (_, i) =>
                                                 i !== index
                                         );
@@ -1093,7 +1131,7 @@ const FleetForm = ({
                               ]);
                             } else {
                               const lastEnd =
-                                zonePricing[zonePricing.length - 1].end;
+                                zonePricing?.[zonePricing.length - 1].end;
                               if (lastEnd >= globalAirportLimit) {
                                 toast({
                                     title:"Global Airport Limit", 
@@ -1217,7 +1255,7 @@ const FleetForm = ({
                                     <FormLabel>Upload Documents: {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
                                         <span
                                             key={idx}
-                                            className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
+                                            className={idx < field.value.length ? "text-gray-700 underline" : "text-gray-300"}
                                         >
                                             {text}{" "}
                                         </span>
@@ -1231,8 +1269,10 @@ const FleetForm = ({
                                             accept="image/jpeg,image/png,application/pdf"
                                             value={undefined}
                                             onChange={e => {
-                                                const files = e.target.files;
-                                                if (files) field.onChange(Array.from(files));
+                                               const newFiles = Array.from(e.target.files ?? []);
+                                          // Filter out File objects from current value (keep only document objects with url)
+                                          const existingDocs = field.value.filter((doc: any) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl));
+                                          field.onChange([...existingDocs, ...newFiles]);
                                             }}
                                         />
                                     </FormControl>

@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
   // Fleets
   GET_ALL_FLEETS: `${BASE_URL1}/vehicles`,
   GET_FLEET_BY_ID: `${BASE_URL1}/vehicle/:id`,
+  EDIT_FLEET_BY_ID: `${BASE_URL1}/vehicle/:id`,
   CREATE_FLEET: `${BASE_URL1}/vehicle`,
   DELETE_FLEET: `${BASE_URL1}/vehicle/:id`,
   
