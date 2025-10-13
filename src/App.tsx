@@ -26,7 +26,7 @@ import ViewUserPage from "./pages/users/ViewUserPage";
 import CreateFleetPage from "./pages/fleet/formPage/CreateFleetPage";
 import ViewFleetPage from "./pages/fleet/ViewFleetPage";
 import EditFleetPage from "./pages/fleet/formPage/EditFleetPage";
-import NotificationPage from "./pages/notifications/NotificationPage";
+// import NotificationPage from "./pages/notifications/NotificationPage";
 import ViewTripsPage from "./pages/trips/ViewTripsPage";
 import PaymentsPage from "./pages/payments/PaymentsPage";
 import ViewPaymentPage from "./pages/payments/ViewPaymentPage";
