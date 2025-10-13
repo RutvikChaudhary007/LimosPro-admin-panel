@@ -126,11 +126,11 @@ const Sidebar: React.FC<DashboardSidebarProps> = ({ isMobile = false, isOpen = t
       icon: <Icons path="/sidebarIcons/trip.svg" alt="Trips icon" />,
       label: 'Trips',
     },
-    {
-      to: constant.ROUTING_URLS.NOTIFICATION,
-      icon: <Icons path="/sidebarIcons/bell.svg" alt="Notifications icon" />,
-      label: 'Notifications',
-    },
+    // {
+    //   to: constant.ROUTING_URLS.NOTIFICATION,
+    //   icon: <Icons path="/sidebarIcons/bell.svg" alt="Notifications icon" />,
+    //   label: 'Notifications',
+    // },
     {
       to: constant.ROUTING_URLS.PAYMENTS,
       icon: <Icons path="/sidebarIcons/payment.svg" alt="Payments icon" />,

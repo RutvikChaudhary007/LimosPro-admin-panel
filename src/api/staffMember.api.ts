@@ -1,3 +1,4 @@
+//@ts-nocheck
 import axiosInstance from '@/utils/axiosInstance';
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import { useQuery } from '@tanstack/react-query';
@@ -45,7 +46,12 @@ export default useFetchAllStaffMember;
 
 
 export const createStaffMember = async (data:object) => {
-  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_STAFF_MEMBER,data, {    });
+  const params: Record<string, unknown> = {}
+  if(data?.region){
+    params.regionId = data?.region
+    delete data?.region;
+  }
+  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_STAFF_MEMBER.replace(":regionId",params.regionId as string),data, );
     
   return response.data;
 };
@@ -57,8 +63,11 @@ export const createStaffMember = async (data:object) => {
  */
 
 
-export const editStaffMember = async (data:object) => {
-  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_STAFF_MEMBER,data, {    });
+export const editStaffMember = async ({id,regionId, data}:{id:string,regionId:string, data:object}) => {
+   if(data?.region){
+    delete data?.region;
+  }
+  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_STAFF_MEMBER.replace(":id",id as string).replace(":regionId",regionId as string),data, {    });
     
   return response.data;
 };

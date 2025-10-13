@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import useFetchAllPayments from '@/api/getAllPayments.api';
+import useFetchAllPayments from '@/api/payment.api';
 import { Spinner } from '@/components/Spinner';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
@@ -8,7 +8,6 @@ import { getPayments, getStatusColor, type TPayments } from '@/components/table/
 import { DataTable } from '@/components/table/data-table';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import usePagination from '@/hooks/use-pagination';
 import { constant } from '@/lib/constant';

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import useFetchTripById from "@/api/getTripById.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";

@@ -1,15 +1,14 @@
+//@ts-nocheck
 import useFetchUserById from "@/api/getUserById.api";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
-import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
 
 // const data = {
@@ -38,7 +37,7 @@ const showStatus = [
 
 const ViewUserPage = () => {
     const {id} = useParams();
-    const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
+    // const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
 
     const {data} = useFetchUserById({id});
     

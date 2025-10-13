@@ -11,6 +11,7 @@ import isFieldDisabled from "@/utils/disableFormField";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import useFetchAllRegions from "@/api/getAllRegion.api";
+import useFetchAllRoles from "@/api/role.api";
 
 const formSchema = z.object({
     firstName: z.string().min(2, {
@@ -35,7 +36,8 @@ const formSchema = z.object({
 
 const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaffMemberForm) => {
     //TODO: need to change it to permission id
-const {data,isFetching} = useFetchAllRegions({DateRange:{}});
+const {data:regionsData,isFetching:isFetchingRegions} = useFetchAllRegions({DateRange:{}});
+const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllRoles();
     const transformInitialData = (data?: z.infer<typeof formSchema>) => {
 
         if (!data) return undefined;
@@ -120,7 +122,7 @@ const {data,isFetching} = useFetchAllRegions({DateRange:{}});
                             render={({ field }) => (
                                 <FormItem className="w-full col-span-full">
                                     <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Role</FormLabel>
-                                    {isFetching? <p>Loading...</p> : (
+                                    {isFetchingRoles? <p>Loading...</p> : (
                                         <Select value={field.value}  onValueChange={(v) => {
                                         field.onChange(v);
                                        
@@ -131,8 +133,8 @@ const {data,isFetching} = useFetchAllRegions({DateRange:{}});
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="">
-                                            {data?.regions?.map((option) => (
-                                                <SelectItem className="cursor-pointer" key={option?.id} value={option?.id}>{option?.regionName}</SelectItem>
+                                            {rolesData?.map((option) => (
+                                                <SelectItem className="cursor-pointer" key={option?.id} value={option?.roleName}>{option?.roleName}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
@@ -155,7 +157,7 @@ const {data,isFetching} = useFetchAllRegions({DateRange:{}});
                             render={({ field }) => (
                                 <FormItem className="w-full col-span-full">
                                     <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Region</FormLabel>
-                                    {isFetching? <p>Loading...</p> : (
+                                    {isFetchingRegions? <p>Loading...</p> : (
                                         <Select value={field.value}  onValueChange={(v) => {
                                         field.onChange(v);
                                        
@@ -166,7 +168,7 @@ const {data,isFetching} = useFetchAllRegions({DateRange:{}});
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent className="">
-                                            {data?.regions?.map((option) => (
+                                            {regionsData?.regions?.map((option) => (
                                                 <SelectItem className="cursor-pointer" key={option?.id} value={option?.id}>{option?.regionName}</SelectItem>
                                             ))}
                                         </SelectContent>

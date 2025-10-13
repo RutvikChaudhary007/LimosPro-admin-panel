@@ -41,7 +41,7 @@ const StaffMemberPage = () => {
         const {data,refetch, isFetching} = useFetchAllStaffMember({page: newPage, limit: 10, })
 
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(data, newPage, 10);
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(data?.staffMembers, newPage, 10, data?.pagination);
   
     
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)

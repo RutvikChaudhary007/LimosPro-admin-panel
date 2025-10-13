@@ -11,6 +11,7 @@ import { constant } from "@/lib/constant"
 import { cn } from "@/lib/utils"
 import { geoDecoding } from "@/utils/googleMaps"
 import { useLoadScript, type Libraries } from "@react-google-maps/api"
+import { formatDate } from "date-fns"
 import { ArrowLeft } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link,  useParams } from "react-router-dom"
@@ -125,7 +126,7 @@ const ViewTripsPage = () => {
                                 <div>
 
                             <h4 className="font-semibold text-xl text-[#000000]">Booking ID: AA57329144.</h4>
-                            <h5 className="text-[#5A5A5A] font-semibold">Created on: 03-21-2025  at 05:30 PM</h5>
+                            <h5 className="text-[#5A5A5A] font-semibold">Created on: {formatDate(data?.createdAt || "", 'dd-MM-yyyy hh:mm a')}</h5>
                                 </div>
                                 <DropdownMenu >
                             <DropdownMenuTrigger asChild>

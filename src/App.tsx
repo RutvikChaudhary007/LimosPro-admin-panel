@@ -120,7 +120,7 @@ function App() {
           <Route path={constant.ROUTING_URLS.TRIPS} element={<TripsPage />} />
           <Route path={constant.ROUTING_URLS.TRIPS_MAP} element={<TripMapPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_TRIPS} element={<ViewTripsPage />} />
-          <Route path={constant.ROUTING_URLS.NOTIFICATION} element={<NotificationPage />} />
+          {/* <Route path={constant.ROUTING_URLS.NOTIFICATION} element={<NotificationPage />} /> */}
           <Route path={constant.ROUTING_URLS.PAYMENTS} element={<PaymentsPage />} />
           <Route path={constant.ROUTING_URLS.VIEW_PAYMENTS} element={<ViewPaymentPage />} />
           <Route path={constant.ROUTING_URLS.REFUND} element={<RefundPage />} />

@@ -1,33 +1,36 @@
+import { useFetchPaymentById } from '@/api/payment.api';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
+import { Spinner } from '@/components/Spinner';
 import { getStatusColor } from '@/components/table/column';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Label } from '@/components/ui/label';
 import { constant } from '@/lib/constant';
-import { cn } from '@/lib/utils';
+import { geoDecoding } from '@/utils/googleMaps';
+import { useLoadScript, type Libraries } from '@react-google-maps/api';
+import { formatDate } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 
-const data = {
-    id: "e3848306-8768-478e-987e-f6e85fa5959e",
-    userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
-    user: {
-        firstName: "John",
-        lastName: "Doe",
-        email: "name@email.com",
-        gender: "female",
-        dateOfBirth: "20-08-2000"
-    },
-    phone: "+1-424-231-6798",
-    affiliate: "NoahAnderson",
-    description: "Sedan Car 4 Doors. Clean In and out. 2 Rows of Seats. Fit for up to 3 Adults with 2 Check-In Bags, and 1 Carry-On Bag.",
-    status: "Active",
-    createdAt: "2025-05-05T12:19:41.972Z",
-    updatedAt: "2025-05-05T12:19:41.972Z",
-}
+// const data = {
+//     id: "e3848306-8768-478e-987e-f6e85fa5959e",
+//     userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
+//     user: {
+//         firstName: "John",
+//         lastName: "Doe",
+//         email: "name@email.com",
+//         gender: "female",
+//         dateOfBirth: "20-08-2000"
+//     },
+//     phone: "+1-424-231-6798",
+//     affiliate: "NoahAnderson",
+//     description: "Sedan Car 4 Doors. Clean In and out. 2 Rows of Seats. Fit for up to 3 Adults with 2 Check-In Bags, and 1 Carry-On Bag.",
+//     status: "Active",
+//     createdAt: "2025-05-05T12:19:41.972Z",
+//     updatedAt: "2025-05-05T12:19:41.972Z",
+// }
 
 const newStatus = [
     { label: "Payment Done", css: 'bg-[#444444] text-white', value: "paymentDone" },
@@ -36,13 +39,59 @@ const newStatus = [
     { label: "Refund Done", css: 'bg-[#959595]', value: "RefundDone" },
     { label: "Refund Requested", css: 'bg-[#959595]', value: "RefundRequested" },
 ]
-
+const libraries = ["places", "geocoding"];
 const ViewPaymentPage = () => {
-    const [selectedStatus, setSelectedStatus] = useState(newStatus[0]);
+    const {id} = useParams();
+     const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+    const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(undefined);
+    const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(undefined);
+
+// Load Google Maps script
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: googleMapsApiKey || "",
+        libraries: libraries as Libraries,
+    });
+    const { data, isFetching } = useFetchPaymentById({ id: id! });
+      // Initialize Places Autocomplete
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchAddress = async () => {
+            if (isLoaded && data && !loadError) {
+                try {
+                    const address = await geoDecoding({
+                        lat: data?.ride?.pickupLocation?.latitude,
+                        lng: data?.ride?.pickupLocation?.longitude,
+                    });
+                    const address2 = await geoDecoding({
+                        lat: data?.ride?.dropoffLocation?.latitude,
+                        lng: data?.ride?.dropoffLocation?.longitude,
+                    });
+                    if (isMounted) {
+                        console.log("Decoded Address:", address);
+                        if (address) {
+                            setPickUpAddress(address as string);
+                        }
+                        if(address2){
+                            setDropOffAddress(address2 as string);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Geocoding failed:", err);
+                }
+            }
+        };
+
+        fetchAddress();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isLoaded, loadError, data]);
 
     return (
         <AdminRootLayout>
-            <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
+            <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll select-none'>
                 <Link to={constant.ROUTING_URLS.PAYMENTS}>
                     <Button variant="outline" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft /> Back</Button>
                 </Link>
@@ -54,37 +103,21 @@ const ViewPaymentPage = () => {
                         </div>
                     </div>
                 </Header>
-                <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+                {isFetching ? <Spinner/> : (<Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
                     <CardHeader className="w-full  flex items-center justify-between">
                         <div className="w-full h-full space-y-6">
                             <div className="flex items-center justify-between">
                                 <div>
 
-                                    <h4 className="font-semibold text-xl text-[#000000]">Payment Id: TRXPAY000111</h4>
-                                    <h5 className="text-[#5A5A5A] font-semibold">Created on: 03-21-2025  at 05:30 PM</h5>
+                                    <h4 className="font-semibold text-xl text-[#000000]">Payment Id: {data?.payment?.id}</h4>
+                                    <h5 className="text-[#5A5A5A] font-semibold">Created on: {formatDate(data?.payment?.createdAt || "", 'dd-MM-yyyy hh:mm a')}</h5>
                                 </div>
-                                <DropdownMenu >
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}>
-                                            {selectedStatus.label}
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
-
-                                    )} align="start">
-                                        <DropdownMenuGroup>
-                                            {newStatus.map(option => (
-                                                <DropdownMenuItem
-                                                    key={option.value}
-                                                    className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF] ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                                                    onClick={() => setSelectedStatus(option)}
+                                
+                                                <div
+                                                    className={`flex items-center justify-between px-4 py-2 rounded ${newStatus.find(option=>option.value === (data?.payment?.status ?? "paymentDone"))?.css}`}
                                                 >
-                                                    {option.label}
-                                                </DropdownMenuItem>
-                                            ))}
-                                        </DropdownMenuGroup>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
+                                                    {data?.payment?.paymentStatus ?? "Payment Done"}
+                                                </div>
                             </div>
                         </div>
 
@@ -95,57 +128,58 @@ const ViewPaymentPage = () => {
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Name:</Label>
-                                <span className="text-[#3A3A3A] font-medium">{data?.user.firstName} {data?.user.lastName}</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.payment?.userDetails?.firstName} {data?.payment?.userDetails?.lastName}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Email:</Label>
-                                <span className="text-[#3A3A3A] font-medium">name@email.com</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.payment?.userDetails?.email}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">phone:</Label>
-                                <span className="text-[#3A3A3A] font-medium">+1-424-231-6798</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.payment?.userDetails?.phoneNumber}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Booking ID:</Label>
-                                <span className="text-[#3A3A3A] font-medium">AA57329144</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.payment?.bookingId}</span>
                             </div>
                             <hr className="w-full h-[1px] bg-[#EEEEEE]" />
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
 
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Car Name::</Label>
-                                <span className="text-[#3A3A3A] font-medium">Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or Similar.</span>
+                                <span className="text-[#3A3A3A] font-medium">{data?.ride?.carName}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
-                                <Link to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", data.affiliate)}`} className='underline'><span className="text-[#3A3A3A] font-medium">David Thompson</span>
+                                <Link to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", data?.ride?.chauffeurId || "")}`} className='underline'><span className="text-[#3A3A3A] font-medium">{data?.ride?.chauffeurName}</span>
                                 </Link>
                             </div>
                             <hr className="w-full h-[1px] bg-[#EEEEEE]" />
                             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Ride</h6>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Status:</Label>
-                                <span className={`text-[#3A3A3A] font-medium ${getStatusColor("Completed")} px-2 py-0.5 rounded`}>Completed</span>
+                                <span className={`text-[#3A3A3A] font-medium ${getStatusColor("Completed")} px-2 py-0.5 rounded`}>{data?.ride?.status}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">type:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Airport Transfer</span>
+                                <span className="text-[#3A3A3A] font-medium capitalize">{data?.ride?.rideType}</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">From:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Houston Airport Marriott at George Bush Intercontinental, John F Kennedy Boulevard, Houston, TX, USA</span>
+                                <span className="text-[#3A3A3A] font-medium">{loadError ? "Error map api loading" : (!pickUpAddress ? "Error fetching address": pickUpAddress) }</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">To:</Label>
-                                <span className="text-[#3A3A3A] font-medium">Royal Caribbean International-Cruise Terminal 2, Harborside Drive, Galveston, TX, USA</span>
+                                <span className="text-[#3A3A3A] font-medium">{loadError ? "Error map api loading" : (!dropOffAddress ? "Error fetching address": dropOffAddress) }</span>
                             </div>
                             <div className="flex items-center gap-6">
                                 <Label className="min-w-[153px] text-sm font-semibold capitalize">Total Price:</Label>
-                                <span className="text-[#3A3A3A] font-medium">$1879</span>
+                                <span className="text-[#3A3A3A] font-medium">${data?.payment?.amount}</span>
                             </div>
                         </div>
                     </CardContent>
-                </Card>
+                </Card>)}
+                
             </div>
         </AdminRootLayout>
     )

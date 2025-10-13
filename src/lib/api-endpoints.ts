@@ -7,9 +7,9 @@
  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'https://apilimo.qalbit.in/admin-service/api/v1';
  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'https://apilimo.qalbit.in/booking-service/api/v1';
 
-//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.10:3000/api/v1';
-//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.10:3001/api/v1';
-//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.10:3002/api/v1';
+//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.8:3000/api/v1';
+//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.8:3001/api/v1';
+//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.8:3002/api/v1';
 
 
 export const API_ENDPOINTS = {
@@ -61,6 +61,7 @@ export const API_ENDPOINTS = {
 
   // Payments
   GET_ALL_PAYMENTS: `${BASE_URL1}/payments`,
+  GET_PAYMENT_BY_ID: `${BASE_URL1}/payments/:id`,
 
   // Refund
   GET_ALL_REFUND: `${BASE_URL1}/payments`,
@@ -74,8 +75,8 @@ export const API_ENDPOINTS = {
 
   // Staff member 
   GET_ALL_STAFF_MEMBER: `${BASE_URL1}/staff-members`,
-  CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member`,
-  EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
+  CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:regionId`,
+  EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id/:regionId`,
   DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
   
   // Testimonials
@@ -132,4 +133,8 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${BASE_URL2}/media/media/${id}`,
     GET_STATS: `${BASE_URL2}/media/stats`,
   },
+  // Roles
+  ROLES:{
+    GET_ALL: `${BASE_URL}/role/all`,
+  }
 };

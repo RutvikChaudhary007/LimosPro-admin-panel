@@ -1,9 +1,9 @@
-
+// @ts-nocheck
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 
-type TArg = {page?: number, limit: number, status: "refunded" | "completed" | "pending" | "failed" | "" };
+type TArg = {page?: number, limit?: number, status: "refunded" | "completed" | "pending" | "failed" | "" };
 export const getAllPayments = async ({limit, page, status}:TArg) => {
   const params: Record<string, unknown> = {};
   if(limit) params.limit = limit;
@@ -28,3 +28,23 @@ const useFetchAllPayments = ({page, limit, status}:TArg) =>
   });
 
 export default useFetchAllPayments;
+
+
+export const getPaymentById = async ({ id }:{id:string}) => {
+  
+  
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_PAYMENT_BY_ID.replace(':id', id)}`,);
+    // console.log("response:",response)
+  
+    return response.data.data;
+  };
+
+export const useFetchPaymentById = ({ id }:{id:string}) =>
+  useQuery({
+    queryKey: ['PaymentById', {id}],
+    queryFn: () => getPaymentById({id}),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
