@@ -17,10 +17,10 @@ type TArg = {page?: number, limit: number,  };
 export const getAllStaffMember = async ({limit, page}:TArg) => {
   const params: Record<string, unknown> = {};
   console.log(limit,page)
-//   if(limit) params.limit = limit;
-//   if(page){
-//     params.page = page
-//   }
+  if(limit) params.limit = limit;
+  if(page){
+    params.page = page
+  }
     try {
       const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`,{params});
       // console.log("response:",response)

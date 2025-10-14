@@ -11,7 +11,7 @@ import isFieldDisabled from "@/utils/disableFormField";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import useFetchAllRegions from "@/api/getAllRegion.api";
-import useFetchAllRoles from "@/api/role.api";
+import useFetchAllStaffRoles from "@/api/role.api";
 
 const formSchema = z.object({
     firstName: z.string().min(2, {
@@ -35,9 +35,9 @@ const formSchema = z.object({
 });
 
 const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaffMemberForm) => {
-    //TODO: need to change it to permission id
+    
 const {data:regionsData,isFetching:isFetchingRegions} = useFetchAllRegions({DateRange:{}});
-const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllRoles();
+const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllStaffRoles();
     const transformInitialData = (data?: z.infer<typeof formSchema>) => {
 
         if (!data) return undefined;

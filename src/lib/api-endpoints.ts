@@ -149,5 +149,6 @@ export const API_ENDPOINTS = {
   // Roles
   ROLES:{
     GET_ALL: `${BASE_URL}/role/all`,
+    GET_ALL_STAFF_ROLE: `${BASE_URL}/role/staff`,
   }
 };
