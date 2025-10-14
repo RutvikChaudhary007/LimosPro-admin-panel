@@ -198,7 +198,7 @@ const StaffMemberPage = () => {
                 <PaginationItem>
                   <PaginationPrevious
                     href="#"
-                    onClick={prevPage}
+                    onClick={()=>handlePageChange(currentPage - 1)}
                     className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
@@ -208,7 +208,7 @@ const StaffMemberPage = () => {
                 <PaginationItem>
                   <PaginationNext
                     href="#"
-                    onClick={nextPage}
+                    onClick={()=>handlePageChange(currentPage + 1)}
                     className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
