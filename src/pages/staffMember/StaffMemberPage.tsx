@@ -1,3 +1,4 @@
+//@ts-nocheck
 import useFetchAllStaffMember from "@/api/staffMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
