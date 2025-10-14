@@ -8,6 +8,7 @@ import adminAxiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import { useQuery } from "@tanstack/react-query";
 import type { TIpWhiteListForm } from "@/components/ipWhiteList/IpWhiteListForm";
+import { AxiosError } from "axios";
 
 /**
  * #############################################
@@ -45,8 +46,15 @@ export default useFetchALLIPWhiteLists;
  */
 
 export const getIPWhiteListById = async (id: string) => {
-  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_IP_WHITE_LIST_BY_ID.replace(':id', id));    
-  return response.data?.data;
+  try {
+    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_IP_WHITE_LIST_BY_ID.replace(':id', id));    
+    return response.data?.data;
+  } catch (error) {
+    if(error instanceof AxiosError && error?.status === 400){
+      return []
+    }
+    throw error;
+  }
 };
 
 export const useFetchIPWhiteListById = (id: string) => {
@@ -98,6 +106,22 @@ export const editIPWhiteListById = async ({id, data}:{id: string, data: TIpWhite
  */
 export const deleteIPWhiteListById = async (id: string) => {
   const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_IP_WHITE_LIST.replace(':id', id));
+     
+  return response.data;
+};
+
+/**
+ * #############################################
+ *  Bulk Delete IP White List By ID
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const bulkDeleteIPWhiteListById = async (ids: string[]) => {
+  const data = {
+    ipsIds: ids
+  }
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_IP_WHITE_LIST,data);
      
   return response.data;
 };

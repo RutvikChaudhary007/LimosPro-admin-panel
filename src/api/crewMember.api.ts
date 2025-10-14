@@ -1,8 +1,9 @@
-
+// @ts-nocheck
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 import type { TCrewMemberForm } from "@/components/crewMember/crewMemberForm";
+import { AxiosError } from "axios";
 
 type TArg = {page?: number, limit: number,  };
 /**
@@ -16,10 +17,18 @@ export const getAllCrewMember = async ({limit, page}:TArg) => {
   if(page){
     params.page = page
   }
+   try {
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`,{params});
     // console.log("response:",response)
   
     return response.data.data;
+   } catch (error) {
+    if(error instanceof AxiosError&& error?.status === 400)
+    {
+      return [];
+    }
+    throw error;
+   }
   };
 
 const useFetchAllCrewMember = ({page, limit}:TArg) =>
@@ -43,6 +52,21 @@ export default useFetchAllCrewMember;
 
 export const deleteCrewMember = async ({id}:{id:string}) => {
   const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_CREW_MEMBER.replace(":id",id));
+    
+  return response.data;
+};
+
+/**
+ * @description: bulk delete crew member
+ * @param {id}
+ * @return {*}
+ */
+
+export const bulkDeleteCrewMember = async (ids:string[]) => {
+  const data = {
+    "crewMemberIds": ids
+  }
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_CREW_MEMBER,data);
     
   return response.data;
 };

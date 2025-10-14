@@ -8,6 +8,7 @@ import adminAxiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import { useQuery } from "@tanstack/react-query";
 import type { TFaqForm } from "@/components/faq/FaqForm";
+import { AxiosError } from "axios";
 
 /**
  * #############################################
@@ -16,13 +17,21 @@ import type { TFaqForm } from "@/components/faq/FaqForm";
  * @returns response data
  */
 export const getAllFAQs = async (limit:number) => {
-  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_FAQ, {
-    params: {
-      limit,
+  try {
+    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_FAQ, {
+      params: {
+        limit,
+      }
+    });
+       
+    return response.data?.data;
+  } catch (error) {
+    if(error instanceof AxiosError && error?.status === 400)
+    {
+      return [];
     }
-  });
-     
-  return response.data?.data;
+    throw error;
+  }
 };
 
 const useFetchALLFAQs = (limit:number) => {
@@ -98,6 +107,22 @@ export const editFAQById = async ({id, data}:{id: string, data: TFaqForm}) => {
  */
 export const deleteFAQById = async (id: string) => {
   const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_FAQ.replace(':id', id));
+     
+  return response.data;
+};
+
+/**
+ * #############################################
+ * Bulk Delete FAQ By ID
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const bulkDeleteFAQById = async (ids: string[]) => {
+  const data = {
+    faqsIds: ids
+  }
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_FAQ,data);
      
   return response.data;
 };

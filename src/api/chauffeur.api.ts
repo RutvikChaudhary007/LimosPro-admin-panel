@@ -3,6 +3,7 @@ import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
 import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
+import { AxiosError } from "axios";
 
 /**
  * #############################################
@@ -13,10 +14,19 @@ import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
  */
 
 export const getAllChauffeur = async () => {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CHAUFFEUR}`);
-    // console.log("response:",response)
-  
-    return response.data.data;
+    try {
+      const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CHAUFFEUR}`);
+      // console.log("response:",response)
+    
+      return response.data.data;
+      
+    } catch (error) {
+      if (error instanceof AxiosError && error?.status === 400) {
+      // Treat 400 as "no data" instead of an actual error
+        return [];
+      }
+    throw error; 
+    }
   };
 
 const useFetchAllChauffeur = () =>
@@ -25,7 +35,7 @@ const useFetchAllChauffeur = () =>
     queryFn: () => getAllChauffeur(),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
-    retry: false,
+    retry: false,    
     // keepPreviousData: true, // for pagination
   });
 
@@ -99,5 +109,20 @@ export const editChauffeur = async ({data,id}:{data:TChauffeurForm,id:string| un
 export const deleteChauffeur = async (id:string) => {
   const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(':id', id));
     
+  return response.data;
+};
+
+/**
+ * #############################################
+ *  Bulk Delete Chauffeur
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const bulkDeleteChauffeur = async (ids: string[]) => {
+  const data = {
+    chauffeurIds:  ids ,
+  };
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_CHAFFEUR, data,);
   return response.data;
 };

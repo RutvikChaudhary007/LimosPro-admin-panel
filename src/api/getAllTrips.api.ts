@@ -2,13 +2,21 @@
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from "axios";
 
 export const getAllTrips = async () => {
  const params = {};
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_TRIPS}`,{params});
-    // console.log("response:",response)
-  
-    return response.data.data;
+    try {
+      const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_TRIPS}`,{params});
+      // console.log("response:",response)
+    
+      return response.data.data;
+    } catch (error) {
+      if(error instanceof AxiosError&& error?.status === 400){
+        return [];
+      }
+      throw error;
+    }
   };
 
 const useFetchAllTrips = () =>

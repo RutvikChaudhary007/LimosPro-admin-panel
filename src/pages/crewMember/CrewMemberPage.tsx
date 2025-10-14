@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchAllCrewMember from "@/api/crewMember.api";
 import { Spinner } from "@/components/Spinner";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { getCrewMember, type TCrewMember } from "@/components/table/column";
@@ -25,54 +26,55 @@ const showOptions = [
 ];
 
 
-const tableData: TCrewMember [] = [
-  { id: "1", name: "Chris Johnson", designation: "USA Regional Sales Manager", email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "2", name: "Ovi Smith", designation: "Administrative Assistant", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "3", name: "June Parker", designation: "Quality Assurance Officer", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "4", name: "Casey Walker", designation: "Booking Agent", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "5", name: "Jordon Lee", designation: "Driver Relations Manager", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "6", name: "Taylor Morgan", designation: "Fleet Supervisor", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "7", name: "Sam Patel", designation: "Dispatcher", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "8", name: "Chris Johnson", designation: "Sales Representative", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "9", name: "Ovi Smith", designation: "Operations Manager", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "10", name: "June Parker", designation: "Sales Representative", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "11", name: "Casey Walker", designation: "Dispatcher", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "12", name: "Jordon Lee", designation: "Fleet Supervisor", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "13", name: "Taylor Morgan", designation: "Driver Relations Manager", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "14", name: "Sam Patel", designation: "Booking Agent", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "15", name: "Chris Johnson", designation: "Quality Assurance Officer", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "16", name: "Ovi Smith", designation: "Administrative Assistant", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "17", name: "June Parker", designation: "Booking Agent", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "18", name: "Casey Walker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "19", name: "Jordon Lee", designation: "", email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "20", name: "Taylor Morgan", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "21", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "22", name: "Chris Johnson", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "23", name: "Ovi Smith", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "24", name: "June Parker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "25", name: "Casey Walker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "26", name: "Jordon Lee", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "27", name: "Taylor Morgan", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "28", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "29", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "30", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "31", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "32", name: "Chris Johnson", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "33", name: "Ovi Smith", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "34", name: "June Parker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "35", name: "Casey Walker", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "36", name: "Jordon Lee", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "37", name: "Taylor Morgan", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "38", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
-  { id: "39", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "40", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
-  { id: "41", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798",},
+// const tableData: TCrewMember [] = [
+//   { id: "1", name: "Chris Johnson", designation: "USA Regional Sales Manager", email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "2", name: "Ovi Smith", designation: "Administrative Assistant", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "3", name: "June Parker", designation: "Quality Assurance Officer", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "4", name: "Casey Walker", designation: "Booking Agent", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "5", name: "Jordon Lee", designation: "Driver Relations Manager", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "6", name: "Taylor Morgan", designation: "Fleet Supervisor", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "7", name: "Sam Patel", designation: "Dispatcher", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "8", name: "Chris Johnson", designation: "Sales Representative", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "9", name: "Ovi Smith", designation: "Operations Manager", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "10", name: "June Parker", designation: "Sales Representative", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "11", name: "Casey Walker", designation: "Dispatcher", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "12", name: "Jordon Lee", designation: "Fleet Supervisor", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "13", name: "Taylor Morgan", designation: "Driver Relations Manager", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "14", name: "Sam Patel", designation: "Booking Agent", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "15", name: "Chris Johnson", designation: "Quality Assurance Officer", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "16", name: "Ovi Smith", designation: "Administrative Assistant", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "17", name: "June Parker", designation: "Booking Agent", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "18", name: "Casey Walker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "19", name: "Jordon Lee", designation: "", email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "20", name: "Taylor Morgan", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "21", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "22", name: "Chris Johnson", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "23", name: "Ovi Smith", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "24", name: "June Parker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "25", name: "Casey Walker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "26", name: "Jordon Lee", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "27", name: "Taylor Morgan", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "28", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "29", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "30", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "31", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "32", name: "Chris Johnson", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "33", name: "Ovi Smith", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "34", name: "June Parker", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "35", name: "Casey Walker", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "36", name: "Jordon Lee", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "37", name: "Taylor Morgan", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "38", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798", },
+//   { id: "39", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "40", name: "Sam Patel", designation: "", email: "name@email.com", phone: "+1-624-231-6798",},
+//   { id: "41", name: "Sam Patel", designation: "",email: "name@email.com", phone: "+1-624-231-6798",},
   
-];
+// ];
 
 
 const CrewMemberPage = () => {
   const naviagte = useNavigate();
+  const [tableRef, setTableRef] = useState<any>(null);
    const [newPage, setNewPage] = useState(1);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TCrewMember[]>(tableData);
@@ -84,6 +86,7 @@ const CrewMemberPage = () => {
       naviagte(constant.ROUTING_URLS.EDIT_CREW_MEMBERS.replace(":id",id));
      }, []);
      const deleteCrewMember = queries.useDeleteCrewMemberMutation();
+     const bulkDeleteCrewMember = queries.useBulkDeleteCrewMemberMutation();
 
     const handleDelete = (id: string) => {
       try {
@@ -225,20 +228,7 @@ const CrewMemberPage = () => {
             </DropdownMenu>
             <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
               <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-              <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                onClick={() => {
-                  setData((prev) =>
-                    prev.filter((row,i) => !rowSelection[i])
-                  );
-                //   console.log("data:", data);
-                //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-                <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-              </Button>
+              <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteCrewMember} refetch={refetch} setRowSelection={setRowSelection} title="Crew Members" descTitle="crew members"/>
               </span>
               <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
                 value={searchValue}
@@ -247,6 +237,7 @@ const CrewMemberPage = () => {
           </div>
           {isFetching? (<Spinner/>):(
             <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+            onTableReady={setTableRef}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />
@@ -254,7 +245,7 @@ const CrewMemberPage = () => {
           
   
           {/* Pagination */}
-          {tableData.length > 0 && calculatedTotalPages > 1 && (
+          {totalPages > 0 && calculatedTotalPages > 1 && (
             <Pagination className="justify-end mt-5 cursor-pointer">
               <PaginationContent>
                 <PaginationItem>

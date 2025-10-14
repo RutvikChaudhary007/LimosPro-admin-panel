@@ -1,4 +1,5 @@
 import useFetchAllTestimonials from "@/api/testimonial.api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -12,7 +13,7 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Plus,  } from "lucide-react";
 import { useCallback, useEffect,  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ const showOptions = [
 
 const TestimonialPage = () => {
     const navigate = useNavigate();
+    const [tableRef, setTableRef] = useState<any>(null);
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TTestimonial[]>(tableData);
@@ -42,6 +44,7 @@ const TestimonialPage = () => {
         navigate(constant.ROUTING_URLS.EDIT_TESTIMONIALS.replace(":id",id))
      }, []);
      const deleteTestimonial = queries.useDeleteTestimonialMutation()
+     const bulkDeleteTestimonial = queries.useBulkDeleteTestimonialMutation()
     const handleDelete =  (id: string) => {
       try {
         toastPromise(deleteTestimonial.mutateAsync(id),{
@@ -65,7 +68,7 @@ const TestimonialPage = () => {
     const columns =  getTestimonial(handleEdit, handleDelete);
   
     const [searchValue, setSearchValue] = useState("");
-    const [rowSelection, setRowSelection] = useState<object>({});
+    const [rowSelection, setRowSelection] = useState({});
     // Number of pages based on filtered data
     const calculatedTotalPages = Math.max(1, totalPages);
   
@@ -183,23 +186,7 @@ const TestimonialPage = () => {
               <span className={`${Object.keys(rowSelection).filter((k) =>
             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
                  rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-              <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                onClick={() => {
-                  // setData((prev) =>
-
-                  //   prev.filter((row,i) => !rowSelection[i])
-                  // );
-                //   console.log("data:", data);
-                //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-                <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-              </Button>
+              <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteTestimonial} refetch={refetch} setRowSelection={setRowSelection} title="Testimonials" descTitle="testimonials"/>
               </span>
               <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
                 value={searchValue}
@@ -208,8 +195,7 @@ const TestimonialPage = () => {
           </div>
        {isFetching ? (<Spinner/>):(
         <DataTable columns={columns} data={currentItems} 
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-
+            onTableReady={setTableRef}
           rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}

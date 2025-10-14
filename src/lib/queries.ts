@@ -1,27 +1,28 @@
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import { useMutation, type RefetchOptions, type QueryObserverResult } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { deletefleet } from "@/api/deleteFleet.api";
-import { deleteAffiliate } from "@/api/deleteAffiliate.api";
+import { bulkDeletefleet, deletefleet } from "@/api/deleteFleet.api";
+import { bulkDeleteAffiliate, deleteAffiliate } from "@/api/deleteAffiliate.api";
 import { login } from "@/api/login.api";
 import { useNavigate } from "react-router-dom";
 import { constant } from "./constant";
-import { deleteUser } from "@/api/deleteUser.api";
-import { createChauffeur, editChauffeur } from "@/api/chauffeur.api";
+import { bulkDeleteUser, deleteUser } from "@/api/deleteUser.api";
+import { bulkDeleteChauffeur, createChauffeur, editChauffeur } from "@/api/chauffeur.api";
 import type { IUserFormData } from "@/types/user.type";
 import { updateUser } from "@/api/updateUserById.api";
 import { createAffiliate } from "@/api/createAffiliate.api";
-import { createStaffMember, deleteStaffMember, editStaffMember } from "@/api/staffMember.api";
-import { createCrewMember, deleteCrewMember, editCrewMember } from "@/api/crewMember.api";
+import { bulkDeleteStaffMember, createStaffMember, deleteStaffMember, editStaffMember } from "@/api/staffMember.api";
+import { bulkDeleteCrewMember, createCrewMember, deleteCrewMember, editCrewMember } from "@/api/crewMember.api";
 import { editAffiliate } from "@/api/editAffiliate.api";
 import { deleteChauffeur } from "@/api/chauffeur.api";
-import { createTestimonial, deleteTestimonial, editTestimonial } from "@/api/testimonial.api";
+import { bulkDeleteTestimonial, createTestimonial, deleteTestimonial, editTestimonial } from "@/api/testimonial.api";
 import { createFleet } from "@/api/createFleet.api";
-import { createNews, deleteNewsById, editNewsById } from "@/api/news.api";
-import { createPartner, deletePartnerById, editPartnerById } from "@/api/ourPartners.api";
-import { createFAQ, deleteFAQById, editFAQById } from "@/api/faq.api";
-import { createIPWhiteList, deleteIPWhiteListById, editIPWhiteListById } from "@/api/ipWhiteList.api";
+import { bulkDeleteNewsById, createNews, deleteNewsById, editNewsById } from "@/api/news.api";
+import { bulkDeletePartnerById, createPartner, deletePartnerById, editPartnerById } from "@/api/ourPartners.api";
+import { bulkDeleteFAQById, createFAQ, deleteFAQById, editFAQById } from "@/api/faq.api";
+import { bulkDeleteIPWhiteListById, createIPWhiteList, deleteIPWhiteListById, editIPWhiteListById } from "@/api/ipWhiteList.api";
 import { editFleetById } from "@/api/editFleetById.api";
+import { bulkDeleteTrips } from "@/api/deleteTrips.api";
 
 
 
@@ -158,6 +159,27 @@ const useDeletefleetMutation = (refetch: TRefetch)=> useMutation({
     }
   });
 
+const useBulkDeletefleetMutation = ()=> useMutation({
+    mutationFn: bulkDeletefleet,
+    onSuccess: (res)=>res,
+    onError: (err: unknown)=>{
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err && typeof err === 'object' && 'isAxiosError' in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+      }
+      
+      // Don't show toast for rate limiting
+      if (errorMessage.includes("429")) return;
+      // toast({
+      //   title: "Delete fleet failed",
+      //   description: errorMessage,
+      //   variant: "destructive",
+      // });
+    }
+  });
+
 
   /**
    * ######################### 
@@ -242,6 +264,23 @@ const useEditAffiliateMutation = ()=> {
     },
   });
 
+  const useBulkDeleteAffiliateMutation = () => useMutation({
+    mutationFn: bulkDeleteAffiliate,
+    onSuccess: (res) => res,
+    onError: (err: unknown) => {
+      // normalize Axios error
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        throw new Error(
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred"
+        ); // 🔹 important: throw
+      }
+      throw new Error("An unexpected error occurred"); // 🔹 throw
+    },
+  });
+
 /**
  * ##########################
  * User queries
@@ -272,6 +311,25 @@ const useUpdateUserMutation = ()=>{
 
 const useDeleteUserMutation = ()=>useMutation({
   mutationFn: deleteUser,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+      );
+    }
+    throw new Error("An unexpected error occurred");
+  
+    }
+})
+
+const useBulkDeleteUserMutation = ()=>useMutation({
+  mutationFn: bulkDeleteUser,
   onSuccess: (data)=>{
     return data
   },
@@ -362,6 +420,25 @@ const useDeleteChauffeurMutation = ()=>useMutation({
     },
   });
 
+const useBulkDeleteChauffeurMutation = ()=>useMutation({
+  mutationFn: bulkDeleteChauffeur,
+  onSuccess: (response, variables) => {
+    console.log("variables:",variables);
+    return response;
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+  });
+
 
 /**
  * #################################################
@@ -428,6 +505,25 @@ const useDeleteCrewMemberMutation = ()=>useMutation({
       throw new Error("An unexpected error occurred");
     },
 })
+
+const useBulkDeleteCrewMemberMutation = ()=>useMutation({
+  mutationFn: bulkDeleteCrewMember,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
 /**
  * ###################################################
  * Staff Member
@@ -484,6 +580,24 @@ const useUpdateStaffMemberMutation = ()=>{
 
 const useDeleteStaffMemberMutation = ()=>useMutation({
   mutationFn: deleteStaffMember,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useBulkDeleteStaffMemberMutation = ()=>useMutation({
+  mutationFn: bulkDeleteStaffMember,
   onSuccess: (data)=>{
     return data
   },
@@ -567,6 +681,29 @@ const useDeleteTestimonialMutation = ()=>useMutation({
 
 /**
  * ###################################################
+ * Bulk Delete Testimonial
+ * ###################################################
+ */
+const useBulkDeleteTestimonialMutation = ()=>useMutation({
+  mutationFn: bulkDeleteTestimonial,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+/**
+ * ###################################################
  * News
  * ###################################################
  */
@@ -609,6 +746,24 @@ const useEditNewsMutation = ()=>useMutation({
 
 const useDeleteNewsMutation = ()=>useMutation({
   mutationFn: deleteNewsById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useBulkDeleteNewsMutation = ()=>useMutation({
+  mutationFn: bulkDeleteNewsById,
   onSuccess: (data)=>{
     return data
   },
@@ -669,6 +824,24 @@ const useEditOurPartnerMutation = ()=>useMutation({
 
 const useDeleteOurPartnerMutation = ()=>useMutation({
   mutationFn: deletePartnerById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useBulkDeleteOurPartnerMutation = ()=>useMutation({
+  mutationFn: bulkDeletePartnerById,
   onSuccess: (data)=>{
     return data
   },
@@ -746,6 +919,24 @@ const useDeleteFaqMutation = ()=>useMutation({
     },
 })
 
+const useBulkDeleteFaqMutation = ()=>useMutation({
+  mutationFn: bulkDeleteFAQById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
 /**
  * ###################################################
  * IP White List
@@ -806,6 +997,50 @@ const useDeleteIPWhiteListMutation = ()=>useMutation({
     },
 })
 
+const useBulkDeleteIPWhiteListMutation = ()=>useMutation({
+  mutationFn: bulkDeleteIPWhiteListById,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+
+/**
+ * #####################################
+ * Trips
+ * #####################################
+ * @returns 
+ */
+
+const useBulkDeleteTripsMutation = ()=>useMutation({
+  mutationFn: bulkDeleteTrips,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
 
 
 export default {
@@ -815,43 +1050,56 @@ export default {
     useCreatefleetMutation,
     useEditfleetMutation,
     useDeletefleetMutation,
+    useBulkDeletefleetMutation,
     // User
     useUpdateUserMutation,
     useDeleteUserMutation,
+    useBulkDeleteUserMutation,
     // Affiliate
     useCreateAffiliateMutation,
     useEditAffiliateMutation,
     useDeleteAffiliateMutation,
+    useBulkDeleteAffiliateMutation,
     // Chauffeur
     useCreateChauffeurMutation,
     useEditChauffeurMutation,
     useDeleteChauffeurMutation,
+    useBulkDeleteChauffeurMutation,
     // Crew Member
     useCreateCrewMemberMutation,
     useUpdateCrewMemberMutation,
     useDeleteCrewMemberMutation,
+    useBulkDeleteCrewMemberMutation,
     // Staff Member
     useCreateStaffMemberMutation,
     useDeleteStaffMemberMutation,
     useUpdateStaffMemberMutation,
+    useBulkDeleteStaffMemberMutation,
     // Testimonial
     useCreateTestimonialMutation,
     useEditTestimonialMutation,
     useDeleteTestimonialMutation,
+    useBulkDeleteTestimonialMutation,
     // News
     useCreateNewsMutation,
     useEditNewsMutation,
     useDeleteNewsMutation,
+    useBulkDeleteNewsMutation,
     // Our Partner
     useCreateOurPartnerMutation,
     useEditOurPartnerMutation,
     useDeleteOurPartnerMutation,
+    useBulkDeleteOurPartnerMutation,
     // FAQ
     useCreateFaqMutation,
     useEditFaqMutation,
     useDeleteFaqMutation,
+    useBulkDeleteFaqMutation,
     // IP White List
     useCreateIPWhiteListMutation,
     useEditIPWhiteListMutation,
     useDeleteIPWhiteListMutation,
+    useBulkDeleteIPWhiteListMutation,
+    // Trips
+    useBulkDeleteTripsMutation,
 }

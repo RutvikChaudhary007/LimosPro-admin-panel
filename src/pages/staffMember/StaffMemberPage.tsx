@@ -1,4 +1,5 @@
 import useFetchAllStaffMember from "@/api/staffMember.api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -12,7 +13,7 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus,  } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -36,6 +37,7 @@ import { toast } from "sonner";
 const StaffMemberPage = () => {
    const navigate = useNavigate();
   // const [perPage] = useState(10);
+  const [tableRef, setTableRef] = useState<any>(null);
    const [newPage, setNewPage] = useState(1);
     // const [data, setData] = useState<TStaffMember[]>(tableData);
         const {data,refetch, isFetching} = useFetchAllStaffMember({page: newPage, limit: 10, })
@@ -49,6 +51,7 @@ const StaffMemberPage = () => {
      }, []);
     const handleAccess = useCallback((id: string) => { console.log("Access:", id) }, []);
     const deleteStaffMember = queries.useDeleteStaffMemberMutation();
+    const bulkDeleteStaffMember = queries.useBulkDeleteStaffMemberMutation();
     const handleDelete = useCallback((id: string) => {
       try {
         toastPromise(deleteStaffMember.mutateAsync({id}),{
@@ -176,28 +179,13 @@ const StaffMemberPage = () => {
 
 // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-              <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                onClick={() => {
-                  // setData((prev:unknown) =>
-
-                    // prev.filter((row,i) => !rowSelection[i])
-                  // );
-                //   console.log("data:", data);
-                //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-                <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-              </Button>
+              <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteStaffMember} refetch={refetch} setRowSelection={setRowSelection} title="Staff Members" descTitle="staff members"/>
               </span>
               
           </div>
           </div>
           {isFetching? <Spinner/> : (<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+            onTableReady={setTableRef}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />

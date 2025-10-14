@@ -1,5 +1,6 @@
 // @ts-nocheck
 import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -284,6 +285,7 @@ const tableData: TIpWhiteList[] = [
 ];
 const IpWhiteListPage = () => {
  const navigate = useNavigate();
+ const [tableRef, setTableRef] = useState<any>(null);
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TIpWhiteList[]>(tableData);
@@ -298,6 +300,7 @@ const IpWhiteListPage = () => {
         navigate(constant.ROUTING_URLS.EDIT_IP_WHITE_LIST.replace(":id",id))
      };
      const deleteIPWhiteListMutation = queries.useDeleteIPWhiteListMutation();
+     const bulkDeleteIPWhiteListMutation = queries.useBulkDeleteIPWhiteListMutation();
     const handleDelete = (id: string) => {
       try {
         toastPromise(deleteIPWhiteListMutation.mutateAsync(id),{
@@ -437,20 +440,7 @@ const IpWhiteListPage = () => {
             </DropdownMenu>
             <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
               <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-              <Button variant={"secondary"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                onClick={() => {
-                  setData((prev) =>
-                    prev.filter((row,i) => !rowSelection[i])
-                  );
-                //   console.log("data:", data);
-                //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-                <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-              </Button>
+                <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteIPWhiteListMutation} refetch={refetch} setRowSelection={setRowSelection} title="Ip WhiteLists" descTitle="ip whiteLists"/>
               </span>
               <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
                 value={searchValue}
@@ -458,6 +448,7 @@ const IpWhiteListPage = () => {
             </div>
           </div>
        {isFetching ? <Spinner/> :(  <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+       onTableReady={setTableRef}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />)} 

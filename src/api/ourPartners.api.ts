@@ -7,6 +7,7 @@
 import adminAxiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 /**
  * #############################################
@@ -19,9 +20,17 @@ export const getAllPartners = async (limit:number) => {
   if(limit){
     params.limit = limit;
   }
-  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_PARTNERS, {params})
-     
-  return response.data?.data;
+  try {
+    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_PARTNERS, {params})
+       
+    return response.data?.data;
+  } catch (error) {
+    if(error instanceof AxiosError && error?.status === 400)
+    {
+      return [];
+    }
+    throw error;
+  }
 };
 
 const useFetchALLPartners = (limit:number) => {
@@ -101,6 +110,22 @@ export const editPartnerById = async ({id, data}:{id: string, data: FormData}) =
  */
 export const deletePartnerById = async (id: string) => {
   const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_PARTNER.replace(':id', id));
+     
+  return response.data;
+};
+
+/**
+ * #############################################
+ *  Bulk Delete Partner By ID
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const bulkDeletePartnerById = async (ids: string[]) => {
+  const data = {
+    partnersIds: ids
+  }
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_PARTNER, data);
      
   return response.data;
 };

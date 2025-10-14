@@ -6,3 +6,13 @@ export const deleteAffiliate = async (id:string) => {
     
   return response.data;
 };
+
+export const bulkDeleteAffiliate = async (ids:string[]) => {
+  const data = {
+    affiliateIds: ids,
+  };
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_AFFILIATE,data);
+    
+  return response.data;
+};
+

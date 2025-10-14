@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
   CREATE_AFFILIATE: `${BASE_URL1}/affiliate`,
   UPDATE_AFFILIATE: `${BASE_URL1}/affiliate/:id`,
   DELETE_AFFILIATE: `${BASE_URL1}/affiliate/:id`,
+  BULK_DELETE_AFFILIATE: `${BASE_URL1}/affiliates/bulk-delete`,
   
   // Fleets
   GET_ALL_FLEETS: `${BASE_URL1}/vehicles`,
@@ -30,6 +31,7 @@ export const API_ENDPOINTS = {
   EDIT_FLEET_BY_ID: `${BASE_URL1}/vehicle/:id`,
   CREATE_FLEET: `${BASE_URL1}/vehicle`,
   DELETE_FLEET: `${BASE_URL1}/vehicle/:id`,
+  BULK_DELETE_FLEET: `${BASE_URL1}/vehicles/bulk-delete`,
   
   // Booking
   GET_ALL_BOOKINGS: `${BASE_URL2}/bookings`,
@@ -41,6 +43,8 @@ export const API_ENDPOINTS = {
   CREATE_CHAFFEUR: `${BASE_URL1}/chauffeur`,
   EDIT_CHAFFEUR: `${BASE_URL1}/chauffeur/:id`,
   DELETE_CHAFFEUR: `${BASE_URL1}/chauffeur/:id`,
+  BULK_DELETE_CHAFFEUR: `${BASE_URL1}/chauffeurs/bulk-delete`,
+
 
   //Users
   USER_PROFILE :`${BASE_URL}/user/profile`,
@@ -48,6 +52,7 @@ export const API_ENDPOINTS = {
   GET_USERS_BY_ID: `${BASE_URL1}/user/:id`,
   UPDATE_USER_BY_ID: `${BASE_URL1}/user/ban/:id`,
   DELETE_USERS: `${BASE_URL1}/user/:id`,
+  BULK_DELETE_USERS: `${BASE_URL1}/users/bulk-delete`,
 
   // Accounts
   RESET_PASSWORD:`${BASE_URL}/auth/reset-password`,
@@ -55,6 +60,7 @@ export const API_ENDPOINTS = {
   // Trips
   GET_ALL_TRIPS:  `${BASE_URL}/trips`,
   GET_TRIP_BY_ID:  `${BASE_URL2}/trip/:id`,
+  BULK_DELETE_TRIPS:  `${BASE_URL2}/trips/bulk-delete`,
 
   // Regions
   GET_ALL_REGIONS: `${BASE_URL1}/regions`,
@@ -72,12 +78,14 @@ export const API_ENDPOINTS = {
   CREATE_CREW_MEMBER: `${BASE_URL1}/crewMember`,
   EDIT_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
   DELETE_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
+  BULK_DELETE_CREW_MEMBER: `${BASE_URL1}/crewMembers/bulk-delete`,
 
   // Staff member 
   GET_ALL_STAFF_MEMBER: `${BASE_URL1}/staff-members`,
   CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:regionId`,
   EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id/:regionId`,
   DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
+  BULK_DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-members/bulk-delete`,
   
   // Testimonials
   GET_ALL_TESTIMONIALS: `${BASE_URL1}/testimonials`,
@@ -85,6 +93,7 @@ export const API_ENDPOINTS = {
   CREATE_TESTIMONIAL: `${BASE_URL1}/testimonials`,
   EDIT_TESTIMONIAL: `${BASE_URL1}/testimonials/:id`,
   DELETE_TESTIMONIAL: `${BASE_URL1}/testimonials/:id`,
+  BULK_DELETE_TESTIMONIAL: `${BASE_URL1}/testimonials/bulk-delete`,
 
   // FAQS
   GET_ALL_FAQ: `${BASE_URL1}/faqs`,
@@ -92,6 +101,7 @@ export const API_ENDPOINTS = {
   CREATE_FAQ: `${BASE_URL1}/faqs`,
   EDIT_FAQ: `${BASE_URL1}/faqs/:id`,
   DELETE_FAQ: `${BASE_URL1}/faqs/:id`,
+  BULK_DELETE_FAQ: `${BASE_URL1}/faqs/bulk-delete`,
   
   // Our Partners
   GET_ALL_PARTNERS: `${BASE_URL1}/partners`,
@@ -99,6 +109,7 @@ export const API_ENDPOINTS = {
   CREATE_PARTNER: `${BASE_URL1}/partners`,
   EDIT_PARTNER: `${BASE_URL1}/partners/:id`,
   DELETE_PARTNER: `${BASE_URL1}/partners/:id`,
+  BULK_DELETE_PARTNER: `${BASE_URL1}/partners/bulk-delete`,
 
   // News
   GET_ALL_NEWS: `${BASE_URL1}/news`,
@@ -106,6 +117,7 @@ export const API_ENDPOINTS = {
   CREATE_NEWS: `${BASE_URL1}/news`,
   EDIT_NEWS: `${BASE_URL1}/news/:id`,
   DELETE_NEWS: `${BASE_URL1}/news/:id`,
+  BULK_DELETE_NEWS: `${BASE_URL1}/news/bulk-delete`,
 
   // IPWhiteList
   GET_ALL_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist`,
@@ -113,6 +125,7 @@ export const API_ENDPOINTS = {
   CREATE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist`,
   EDIT_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist/:id`,
   DELETE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist/:id`,
+  BULK_DELETE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelists/bulk-delete`,
 
   // Content Management APIs (Admin Service)
   BLOG: {

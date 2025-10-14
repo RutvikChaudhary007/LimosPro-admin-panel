@@ -13,10 +13,11 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from '@/hooks/use-pagination';
 import { toastPromise} from '@/hooks/use-toast';
 import { constant } from '@/lib/constant';
-import { ChevronDown, Trash2 } from 'lucide-react';
+import { ChevronDown,  } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import queries from '@/lib/queries';
+import BulkDeleteBtn from '@/components/bulkDeleteBtn/BulkDeleteBtn';
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -144,6 +145,7 @@ function UsersPage() {
     return { startDate: start, endDate: selectedTime.value ? end : undefined };
   }, [selectedTime]);
 
+  const [tableRef, setTableRef] = useState<any>(null);
   const {data, refetch, isFetching} = UsefetchAllUsers({DateRange:{startDate,endDate}});
   
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
@@ -156,6 +158,7 @@ function UsersPage() {
     navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id",id));
    };
 const deleteUserMutation = queries.useDeleteUserMutation();
+const bulkDeleteUserMutation = queries.useBulkDeleteUserMutation();
     const handleDelete = async (id: string) => {
       toastPromise(await deleteUserMutation.mutateAsync(id),{
         loading: "Loading...",
@@ -315,19 +318,7 @@ const deleteUserMutation = queries.useDeleteUserMutation();
             <span className={`${Object.keys(rowSelection).filter((k) => 
               rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
               
-            <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            
-            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-              onClick={() => {
-                
-                // setData((prev) =>prev.filter((_,i) => !rowSelection[i])
-                // );
-                setRowSelection({});
-              }}
-            >
-              <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-              <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-            </Button>
+            <BulkDeleteBtn refetch={refetch} bulkDeleteMutation={bulkDeleteUserMutation} title='Users' descTitle='users' rowSelection={rowSelection} setRowSelection={setRowSelection} tableRef={tableRef}  />
             </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
             value={searchValue}
@@ -336,12 +327,12 @@ const deleteUserMutation = queries.useDeleteUserMutation();
           </div>
         </div>
         {isFetching?(<Spinner/>):(<DataTable columns={columns} data={currentItems}
-
-rowSelection={rowSelection}
- onRowSelectionChange={setRowSelection}
- globalFilter={searchValue}
- onGlobalFilterChange={setSearchValue} />
-)}
+        onTableReady={setTableRef}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
+        globalFilter={searchValue}
+        onGlobalFilterChange={setSearchValue} />
+        )}
          
         {/* Pagination */}
         {data?.users?.length > 0 && calculatedTotalPages > 1 && (

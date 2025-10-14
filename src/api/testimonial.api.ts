@@ -1,6 +1,7 @@
 import adminAxiosInstance from "@/utils/axiosInstance";
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from "axios";
 
 
 /**
@@ -18,10 +19,17 @@ export const getAllTestimonials = async (limit:number) => {
     params.limit = limit;
   }
 
-    const response = await adminAxiosInstance.get(`${API_ENDPOINTS.GET_ALL_TESTIMONIALS}`,{params});
-    // console.log("response:",response)
-  
-    return response.data.data;
+    try {
+      const response = await adminAxiosInstance.get(`${API_ENDPOINTS.GET_ALL_TESTIMONIALS}`,{params});
+      // console.log("response:",response)
+    
+      return response.data.data;
+    } catch (error) {
+      if(error instanceof AxiosError && error?.status === 400){
+        return [];
+      }
+      throw error;
+    }
   };
 
 const useFetchAllTestimonials = (limit:number) =>
@@ -111,6 +119,22 @@ export const editTestimonial = async ({data,id}:{data:TFormData,id:string| undef
  */
 export const deleteTestimonial = async (id:string) => {
   const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_TESTIMONIAL.replace(':id', id));
+    
+  return response.data;
+};
+
+/**
+ * #############################################
+ *  Bulk Delete Testimonial
+ * ##############################################
+ * @param data 
+ * @returns response data
+ */
+export const bulkDeleteTestimonial = async (ids:string[]) => {
+  const data = {
+    testimonialIds: ids
+  }
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_TESTIMONIAL,data);
     
   return response.data;
 };

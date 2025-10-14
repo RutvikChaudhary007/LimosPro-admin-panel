@@ -1,6 +1,7 @@
  
 import UsefetchAllAffiliate from '@/api/getAllAffiliate.api';
 import { Spinner } from '@/components/Spinner';
+import BulkDeleteBtn from '@/components/bulkDeleteBtn/BulkDeleteBtn';
 import AdminRootLayout from '@/components/layouts/AdminRootLayout'
 import Header from '@/components/layouts/Header';
 import { getAffiliate, getStatusColor, type TAffiliate } from '@/components/table/column';
@@ -17,9 +18,11 @@ import queries from '@/lib/queries';
 // import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
 // import { useMutation } from '@tanstack/react-query';
 // import type { AxiosError } from 'axios';
-import { ChevronDown, Plus, Trash2 } from 'lucide-react';
+import { ChevronDown, Plus,  } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -35,294 +38,294 @@ const showTime = [
   { label: 'Yearly', value: 'yearly' },
 ]
 
-const tableData: TAffiliate[] = [
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968b",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968c",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968e",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968f",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968g",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968h",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968i",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968j",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968k",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968l",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968m",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-    {   
-        id: "ba5227db-7a3f-45f5-945c-e9d5ef01968n",
-        userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
-        isChauffer: true,
-        companyName: "bhoraniya enterprice",
-        taxId: "tax-husain",
-        entityType: "safe",
-        businessEmail: "akbar.bhoraniya@qalbit.com",
-        businessContactNumber: "1234567890",
-        businessAddress: "272 Water Street, New York, NY 10038, United States of America",
-        businessLocation: {
-            latitude: 18.530802513337985,
-            longitude: 73.85830250715696
-        },
-        commissionRate: "23.00",
-        documents: [],
-        stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
-        stripeAccountStatus: "inPogress",
-        status: "pending",
-        createdAt: "2025-07-15T12:55:37.323Z",
-        updatedAt: "2025-07-15T12:55:37.323Z"
-    },
-]
+// const tableData: TAffiliate[] = [
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968b",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968c",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968e",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968f",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968g",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968h",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968i",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968j",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968k",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968l",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968m",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+//     {   
+//         id: "ba5227db-7a3f-45f5-945c-e9d5ef01968n",
+//         userId: "41811d39-6655-4007-b0d8-ee9b8136f85d",
+//         isChauffer: true,
+//         companyName: "bhoraniya enterprice",
+//         taxId: "tax-husain",
+//         entityType: "safe",
+//         businessEmail: "akbar.bhoraniya@qalbit.com",
+//         businessContactNumber: "1234567890",
+//         businessAddress: "272 Water Street, New York, NY 10038, United States of America",
+//         businessLocation: {
+//             latitude: 18.530802513337985,
+//             longitude: 73.85830250715696
+//         },
+//         commissionRate: "23.00",
+//         documents: [],
+//         stripeAccountId: "acct_1Rl8OPQK72ufJtl5",
+//         stripeAccountStatus: "inPogress",
+//         status: "pending",
+//         createdAt: "2025-07-15T12:55:37.323Z",
+//         updatedAt: "2025-07-15T12:55:37.323Z"
+//     },
+// ]
 function AffiliatePage() {
   const navigate = useNavigate();
     const perPage = 10;
@@ -388,6 +391,7 @@ const { startDate, endDate } = useMemo(() => {
 
 const [newPage, setNewPage] = useState<number>(1);
   const {data: FetchData, refetch, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
+  const [tableRef, setTableRef] = useState<any>(null);
   // const queryClient = useQueryClient();
   // useEffect(() => {
   //   queryClient.prefetchQuery(fetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage+1}));
@@ -411,6 +415,7 @@ if(currentItems){
   };
 
   const deleteAffiliateMutation = queries.useDeleteAffiliateMutation(refetch)
+  const bulkDeleteAffiliateMutation = queries.useBulkDeleteAffiliateMutation()
   const handleEdit = (id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id",id));
    };
@@ -420,13 +425,18 @@ if(currentItems){
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
      toastPromise(deleteAffiliateMutation.mutateAsync(id), {
-        loading: "Deleting...",
-        success: "Affiliate deleted successfully!",
-        error: (e) => (e instanceof Error ? (e.message) : "Failed to delete affiliate"),
+        loading: "Deleting Affiliate...",
+        success: "Yeah! Affiliate deleted successfully!",
+        error: (e) => (e instanceof Error ? (e.message) : "Opps! Failed to delete affiliate"),
       });
     } catch (error) {
       // Error handling is done in onError callback
       console.error('Affiliate delete error:', error);
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("Opps! An unknown error occurred.");
+      }
     }
     };
   const columns = getAffiliate(handleView,handleEdit, handleDelete);
@@ -577,17 +587,7 @@ if(currentItems){
           </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
             <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-            <Button variant={"outline"} className={`p-2.5 w-[137px] h-full rounded flex items-center justify-evenly   bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0`}
-            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-              onClick={() => {
-                // setData((prev) => prev.filter((_, i) => !rowSelection[i])
-                // );
-                setRowSelection({});
-              }}
-            >
-              <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-              <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-            </Button>
+           <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteAffiliateMutation} refetch={refetch} setRowSelection={setRowSelection} title='Affiliates' descTitle='affiliates'/>
             </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
             value={searchValue}
@@ -597,6 +597,7 @@ if(currentItems){
         </div>
         {isFetching ? (<Spinner/>):(
           <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+          onTableReady={setTableRef}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
@@ -604,7 +605,7 @@ if(currentItems){
         
         
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
+        {totalPages > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>

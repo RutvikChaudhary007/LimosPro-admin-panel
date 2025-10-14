@@ -11,12 +11,13 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
-import { useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+// import { useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, Plus,  } from "lucide-react";
+import {  useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import queries from "@/lib/queries";
 import { Spinner } from "@/components/Spinner";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 const showTime = [
   { label: 'All Time', value: '' },
   { label: 'Weekly', value: 'weekly' },
@@ -270,6 +271,7 @@ function FleetPage() {
   const navigate = useNavigate();
     const perPage = 10;
 
+  const [tableRef, setTableRef] = useState<any>(null);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
     // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
@@ -333,10 +335,10 @@ function FleetPage() {
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
 
-  const queryClient = useQueryClient();
-  useEffect(() => {
+  // const queryClient = useQueryClient();
+  // useEffect(() => {
   //   queryClient.prefetchQuery(UsefetchAllFleets({DateRange: {startDate,endDate}, page: currentPage + 1}));
-  }, [queryClient, currentPage, startDate, endDate]);
+  // }, [queryClient, currentPage, startDate, endDate]);
 
 
 
@@ -347,6 +349,7 @@ function FleetPage() {
     navigate(constant.ROUTING_URLS.EDIT_FLEET.replace(":id",id));
    };
    const deleteMutation = queries.useDeletefleetMutation(refetch);
+   const bulkDeleteFleetsMutation = queries.useBulkDeletefleetMutation();
     const handleDelete = async(id: string) => {
       try {
         toastPromise(deleteMutation.mutateAsync(id),{
@@ -480,17 +483,7 @@ function FleetPage() {
           </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
             <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-            <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-              onClick={() => {
-                setData((prev) =>prev.filter((row,i) => !rowSelection[i])
-                );
-                setRowSelection({});
-              }}
-            >
-              <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-              <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-            </Button>
+            <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteFleetsMutation} refetch={refetch} setRowSelection={setRowSelection} title="Fleets" descTitle="fleets"/>
             </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
             value={searchValue}
@@ -499,6 +492,7 @@ function FleetPage() {
           </div>
         </div>
         {isPending ? (<Spinner/>):(<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+            onTableReady={setTableRef}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />)}

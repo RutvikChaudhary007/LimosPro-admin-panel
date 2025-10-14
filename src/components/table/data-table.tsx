@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -24,6 +24,7 @@ interface DataTableProps<TData, TValue> {
   onRowSelectionChange?: (updater: Record<string, boolean>) => void;
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
+  onTableReady?: (table: any) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   onRowSelectionChange,
   globalFilter,
   onGlobalFilterChange,
+  onTableReady,
 }: DataTableProps<TData, TValue>) {
      const [internalSelection, setInternalSelection] = useState({});
 
@@ -53,6 +55,9 @@ export function DataTable<TData, TValue>({
     enableRowSelection: true,
   })
 
+  useEffect(() => {
+  if (onTableReady) onTableReady(table);
+}, [table, onTableReady]);
   return (
     <div className="mt-5 rounded-[6px] border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
       <Table className="min-w-full w-full">

@@ -6,3 +6,12 @@ export const deleteUser = async (id:string) => {
     
   return response.data;
 };
+
+export const bulkDeleteUser = async (ids:string[]) => {
+  const data = {
+    userIds: ids
+  }
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_USERS,data);
+    
+  return response.data;
+};

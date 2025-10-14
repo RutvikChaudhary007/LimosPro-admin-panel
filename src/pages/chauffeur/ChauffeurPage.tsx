@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchAllChauffeur from "@/api/chauffeur.api";
 import { Spinner } from "@/components/Spinner";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { getChauffeur, getStatusColor, type TChauffeur } from "@/components/table/column";
@@ -261,6 +262,7 @@ function ChauffeurPage() {
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
   const {data,refetch, isFetching} = useFetchAllChauffeur();
+  const [tableRef, setTableRef] = useState<any>(null);
   // console.log("fetchedData:",data)
 
   /**
@@ -277,11 +279,12 @@ function ChauffeurPage() {
   const handleEdit = (id: string) => { console.log("Edit:", id) 
     navigate(constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id",id));
   };
-  const deleteAffiliateMutation = queries.useDeleteChauffeurMutation();
+  const deleteChauffeurMutation = queries.useDeleteChauffeurMutation();
+  const bulkDeleteChauffeurMutation = queries.useBulkDeleteChauffeurMutation();
   const handleDelete = (id: string) => {
     console.log("id",id)
     try {
-      toastPromise(deleteAffiliateMutation.mutateAsync(id),{
+      toastPromise(deleteChauffeurMutation.mutateAsync(id),{
         loading: "Deleting chauffeur...",
         success: (res)=>{
           if(res) refetch();
@@ -451,17 +454,7 @@ function ChauffeurPage() {
           </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
             <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-            <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-              onClick={() => {
-                setData((prev) =>prev.filter((row,i) => !rowSelection[i])
-                );
-                setRowSelection({});
-              }}
-            >
-              <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-              <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-            </Button>
+            <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteChauffeurMutation} refetch={refetch} setRowSelection={setRowSelection} title="Chauffeurs" descTitle="chauffeur"/>
             </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
             value={searchValue}
@@ -472,6 +465,7 @@ function ChauffeurPage() {
         {isFetching? (<Spinner/>): (
           <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
+          onTableReady={setTableRef}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />
         )}

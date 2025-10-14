@@ -2,6 +2,7 @@
 import axiosInstance from '@/utils/axiosInstance';
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 
 type TArg = {page?: number, limit: number,  };
@@ -20,10 +21,17 @@ export const getAllStaffMember = async ({limit, page}:TArg) => {
 //   if(page){
 //     params.page = page
 //   }
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`,{params});
-    // console.log("response:",response)
-  
-    return response.data.data;
+    try {
+      const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`,{params});
+      // console.log("response:",response)
+    
+      return response.data.data;
+    } catch (error) {
+      if(error instanceof AxiosError && error?.status === 400){
+        return [];
+      }
+      throw error;
+    }
   };
 
 const useFetchAllStaffMember = ({page, limit}:TArg) =>
@@ -80,6 +88,21 @@ export const editStaffMember = async ({id,regionId, data}:{id:string,regionId:st
 
 export const deleteStaffMember = async ({id}:{id:string}) => {
   const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_STAFF_MEMBER.replace(":id",id));
+    
+  return response.data;
+};
+
+/**
+ * @description: bulk delete staff member
+ * @param {id}
+ * @return {*}
+ */
+
+export const bulkDeleteStaffMember = async (ids:string[]) => {
+  const data = {
+    staffMemberIds:  ids,
+  };
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_STAFF_MEMBER,data);
     
   return response.data;
 };

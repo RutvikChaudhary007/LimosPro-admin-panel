@@ -1,5 +1,6 @@
 // @ts-nocheck
 import useFetchALLFAQs from "@/api/faq.api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -41,6 +42,7 @@ const showOptions = [
 const FaqsPage = () => {
  const navigate = useNavigate();
  const {toast} = useToast()
+ const [tableRef, setTableRef] = useState<any>(null);
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TFaqs[]>(tableData);
@@ -54,6 +56,7 @@ const FaqsPage = () => {
         navigate(constant.ROUTING_URLS.EDIT_FAQ.replace(":id",id))
      };
      const deleteFaq = queries.useDeleteFaqMutation();
+     const bulkDeleteFaq = queries.useBulkDeleteFaqMutation();
     const handleDelete =  (id: string) => {
       try{
         toastPromise(deleteFaq.mutateAsync(id),{
@@ -199,20 +202,7 @@ const FaqsPage = () => {
             </DropdownMenu>
             <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
               <span className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-              <Button variant={"secondary"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-                // onClick={() => {
-                //   setData((prev) =>
-                //     prev.filter((row,i) => !rowSelection[i])
-                //   );
-                //   console.log("data:", data);
-                //   console.log("rowSelection:", rowSelection);
-                //   setRowSelection({});
-                // }}
-              >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-                <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-              </Button>
+              <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteFaq} refetch={refetch} setRowSelection={setRowSelection} title="Faqs" descTitle="faqs"/>
               </span>
               <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]"
                 value={searchValue}
@@ -220,6 +210,7 @@ const FaqsPage = () => {
             </div>
           </div>
          {isFetching? (<Spinner/>):( <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+         onTableReady={setTableRef}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue} />

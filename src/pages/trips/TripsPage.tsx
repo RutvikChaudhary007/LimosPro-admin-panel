@@ -1,4 +1,5 @@
 import useFetchAllTrips from "@/api/getAllTrips.api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -10,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
-import { ChevronDown, Trash2 } from "lucide-react";
+import queries from "@/lib/queries";
+import { ChevronDown,  } from "lucide-react";
 import {   useState, type JSX } from "react"
 import {  useNavigate } from "react-router-dom";
 
@@ -57,9 +59,10 @@ const showStatus = [
 function TripsPage():JSX.Element {
   const navigate = useNavigate();
   const perPage = 10;
+  const [tableRef, setTableRef] = useState<any>(null);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   // const [data, setData] = useState<TTrips[]>(tableData);
-  const {data, isFetching} = useFetchAllTrips();
+  const {data, refetch, isFetching} = useFetchAllTrips();
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
@@ -74,6 +77,8 @@ function TripsPage():JSX.Element {
   const columns = getTrips(handleView,handleMap);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
+
+  const bulkDeleteTripsMutation = queries.useBulkDeleteTripsMutation();
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -192,21 +197,7 @@ function TripsPage():JSX.Element {
             <span className={`${Object.keys(rowSelection).filter((k) =>
             // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
                rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
-            <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-
-            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
-              onClick={() => {
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-
-                setData((prev) =>prev.filter((_,i) => !rowSelection[i])
-                );
-                setRowSelection({});
-              }}
-            >
-              <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-              <Trash2 size={14} className="text-[#959595] cursor-pointer" />
-            </Button>
+            <BulkDeleteBtn rowSelection={rowSelection} setRowSelection={setRowSelection} bulkDeleteMutation={bulkDeleteTripsMutation} refetch={refetch} tableRef={tableRef} />
             </span>
             <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none"><Input type="search" placeholder="search" className="text-[#959595]" 
             value={searchValue}
@@ -215,6 +206,7 @@ function TripsPage():JSX.Element {
           </div>
         </div>
         {isFetching ? <Spinner /> : (<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+          onTableReady={setTableRef}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
           onGlobalFilterChange={setSearchValue} />)}

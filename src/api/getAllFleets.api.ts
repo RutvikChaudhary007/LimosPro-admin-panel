@@ -2,6 +2,7 @@
 import {API_ENDPOINTS} from "../lib/api-endpoints"
 import axiosInstance from '@/utils/axiosInstance';
 import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from "axios";
 
 type DateRange = { startDate ?: Date | undefined; endDate ?: Date | undefined };
 export const getAllFleets = async (DateRange: DateRange, page?: number) => {
@@ -15,10 +16,18 @@ export const getAllFleets = async (DateRange: DateRange, page?: number) => {
   if(page){
     params.page = page
   }
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_FLEETS}`,{params});
-    // console.log("response:",response)
-  
-    return response.data.data;
+   try {
+     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_FLEETS}`,{params});
+     // console.log("response:",response)
+   
+     return response.data.data;
+   } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      // Treat 400 as "no data" instead of an actual error
+        return [];
+      }
+    throw error;
+   }
   };
 
 const useFetchAllFleets = ({DateRange,page}:{DateRange:DateRange, page?: number, }) =>

@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import Icons from "../common/Icons";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export type TDashboardBooking = {
   id: string;
@@ -184,13 +185,37 @@ export function getRegionAdminColumns(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Regional Admin</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this regional admin? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          
         </div>
       ),
       enableSorting: false,
@@ -303,13 +328,39 @@ export function getAffiliate(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+           <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Affiliate</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this affiliate? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+           
+          
         </div>
       ),
       enableSorting: false,
@@ -432,13 +483,45 @@ export function getChauffeur(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="outline"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Chauffeur</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this chauffeur? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
         </div>
       ),
       enableSorting: false,
@@ -520,13 +603,44 @@ export function getUsers(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete User</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this user? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="outline"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -714,13 +828,44 @@ export function getFleets(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Fleet</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this fleet? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="outline"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -1131,14 +1276,44 @@ export function getCrewMember(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
-        
+          </Button> */}
+        <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete crew member</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this crew member? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
         </div>
       ),
       enableSorting: false,
@@ -1219,13 +1394,44 @@ export function getStaffMember(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Staff Member</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this staff member? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1364,13 +1570,44 @@ export function getTestimonial(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Testimonial</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this testimonial? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1439,13 +1676,44 @@ export function getOurPartner(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Our Partner</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this our partner? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1502,13 +1770,45 @@ export function getNews(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete News</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this news? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1641,13 +1941,44 @@ export function getIpWhiteList(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Ip White List</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this ip white-list? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1707,13 +2038,44 @@ export function getFaqs(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Faq</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this faq? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1768,13 +2130,44 @@ cell: ({row})=>(<Label className={cn("flex items-center rounded bg-[#D9D9D9] px-
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Chauffeur Availability</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this chauffeur availability? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1820,13 +2213,44 @@ export function getHomeContent(
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Home</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this home? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
@@ -1878,13 +2302,44 @@ cell: ({row})=>(<Label className={cn("flex items-center rounded bg-[#D9D9D9] px-
           >
             <Edit className="text-[#5A5A5A]" />
           </Button>
-          <Button
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline"  className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
+                <Trash2 className="text-[#5A5A5A]" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
+              <DialogHeader>
+                <DialogTitle>Delete Content</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this content? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                <strong>Are you absolutely sure?</strong> This action cannot be undone.
+              </p>
+            </div>
+                  <DialogFooter className="mt-6">
+                   
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive" 
+                   
+                  >
+                    Confirm Delete
+                  </Button>
+                  </DialogFooter>
+                
+            </DialogContent>
+          </Dialog>
+          {/* <Button
             onClick={() => onDelete(row.original.id)}
             variant="secondary"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
             <Trash2 className="text-[#5A5A5A]" />
-          </Button>
+          </Button> */}
         
         </div>
       ),
