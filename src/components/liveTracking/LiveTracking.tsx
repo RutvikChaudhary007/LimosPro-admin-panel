@@ -315,18 +315,40 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
         origin: pickPosition,
         destination: dropPosition,
         travelMode: window.google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: false,
+        avoidTolls: false,
       },
       (result, status) => {
-        if (status === "OK" && result?.routes?.[0]?.overview_path) {
-          const path = result.routes[0].overview_path.map((p) => ({
-            lat: p.lat(),
-            lng: p.lng(),
-          }));
-          setRoutePath(path);
+        if (status === "OK" && result?.routes?.[0]?.legs) {
+          const route = result.routes[0];
+          const fullPath: LatLng[] = [];
+
+          // collect detailed step-by-step path
+          route.legs.forEach((leg) => {
+            leg.steps.forEach((step) => {
+              if (step.path) {
+                step.path.forEach((p) => {
+                  fullPath.push({ lat: p.lat(), lng: p.lng() });
+                });
+              }
+            });
+          });
+
+          setRoutePath(fullPath);
         } else {
           console.error("Error fetching directions", result);
-          setRoutePath([pickPosition, dropPosition]); // fallback
+          setRoutePath([pickPosition, dropPosition]); // fallback to straight line
         }
+        // if (status === "OK" && result?.routes?.[0]?.overview_path) {
+        //   const path = result.routes[0].overview_path.map((p) => ({
+        //     lat: p.lat(),
+        //     lng: p.lng(),
+        //   }));
+        //   setRoutePath(path);
+        // } else {
+        //   console.error("Error fetching directions", result);
+        //   setRoutePath([pickPosition, dropPosition]); // fallback
+        // }
       }
     );
   }, [isLoaded, pickPosition, dropPosition]);
