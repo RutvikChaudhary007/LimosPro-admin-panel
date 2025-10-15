@@ -1,5 +1,6 @@
 import UsefetchAffiliateById from "@/api/getAffiliateById.api"
 import { Spinner } from "@/components/Spinner"
+import { ErrorCard } from "@/components/common/ErrorCard"
 import PageTitle from "@/components/common/PageTitle"
 import Header from "@/components/layouts/Header"
 import { getStatusColor } from "@/components/table/column"
@@ -46,7 +47,7 @@ const ViewAffiliatePage = () => {
     });
 
     // console.log("id:",id)
-    const {data,isFetching} = UsefetchAffiliateById({id});
+    const {data,isFetching, isError, refetch} = UsefetchAffiliateById({id});
      // Initialize Places Autocomplete
     useEffect(() => {
         let isMounted = true;
@@ -92,7 +93,7 @@ const ViewAffiliatePage = () => {
                             </div>
                         </div>
     ));
-
+if(isError) return (<ErrorCard refetch={refetch}/>)
     // for (let i = 1; i <= 4; i++) {
     //     docJsx.push (
     //         <div key={i} className="flex items-center gap-6">

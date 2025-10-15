@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchALLFAQs from "@/api/faq.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -47,8 +48,8 @@ const FaqsPage = () => {
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TFaqs[]>(tableData);
-   const {data, refetch, isFetching} = useFetchALLFAQs(perPage);
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFaqs>(data?.items, 1, perPage, data?.pagination);
+   const {data, refetch, isFetching, isError} = useFetchALLFAQs(perPage);
+    const { currentPage,  setPage, totalPages, currentItems } = usePagination<TFaqs>(data?.items, 1, perPage, data?.pagination);
   
     useEffect(() => {
       setPerPage(selected.value);
@@ -163,6 +164,7 @@ const FaqsPage = () => {
   
       return items;
     };
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("Faq")} />

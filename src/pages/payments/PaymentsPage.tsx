@@ -2,6 +2,7 @@
 
 import useFetchAllPayments from '@/api/payment.api';
 import { Spinner } from '@/components/Spinner';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import PageTitle from '@/components/common/PageTitle';
 import Header from '@/components/layouts/Header';
 import { getPayments, getStatusColor, type TPayments } from '@/components/table/column';
@@ -59,8 +60,8 @@ const PaymentsPage = () => {
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
   // const [data, setData] = useState<TPayments[]>(tableData);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data, 1, perPage);
-  const {data, isFetching} = useFetchAllPayments({page: newPage, limit: selectedOption.value, status: selectedStatus.value});
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data?.payments, newPage, selectedOption.value, data?.pagination);
+  const {data, isFetching, isError, refetch} = useFetchAllPayments({page: newPage, limit: selectedOption.value, status: selectedStatus.value});
+  const { currentPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data?.payments, newPage, selectedOption.value, data?.pagination);
 
 
   
@@ -150,6 +151,7 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
 
     return items;
   };
+  if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
     <PageTitle title={generatePageTitle("Payments")} />

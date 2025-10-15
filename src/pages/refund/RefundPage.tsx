@@ -1,5 +1,6 @@
 import useFetchAllRefund from '@/api/getAllRefund.api';
 import { Spinner } from '@/components/Spinner';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import PageTitle from '@/components/common/PageTitle';
 import Header from '@/components/layouts/Header';
 import { getRefund, getStatusColor, type TRefund } from '@/components/table/column';
@@ -49,7 +50,7 @@ const RefundPage = () => {
   const [newPage, setNewPage] = useState(1);
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
   // const [data] = useState<TRefund[]>(tableData);
-  const {data,isFetching} = useFetchAllRefund({page: newPage, limit: selectedOption.value, });
+  const {data,isFetching, isError, refetch} = useFetchAllRefund({page: newPage, limit: selectedOption.value, });
   const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRefund>(data?.payments,newPage , selectedOption.value);
 
 
@@ -136,6 +137,7 @@ const handleView = useCallback((id: string) => { console.log("view:", id)
 
     return items;
   };
+  if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
     <PageTitle title={generatePageTitle("Refund")} />

@@ -1,4 +1,5 @@
 import { useFetchPaymentById } from '@/api/payment.api';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import Header from '@/components/layouts/Header';
 import { Spinner } from '@/components/Spinner';
 import { getStatusColor } from '@/components/table/column';
@@ -50,7 +51,7 @@ const ViewPaymentPage = () => {
         googleMapsApiKey: googleMapsApiKey || "",
         libraries: libraries as Libraries,
     });
-    const { data, isFetching } = useFetchPaymentById({ id: id! });
+    const { data, isFetching, isError, refetch } = useFetchPaymentById({ id: id! });
       // Initialize Places Autocomplete
     useEffect(() => {
         let isMounted = true;
@@ -87,7 +88,7 @@ const ViewPaymentPage = () => {
             isMounted = false;
         };
     }, [isLoaded, loadError, data]);
-
+if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
         <>
             <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll select-none'>

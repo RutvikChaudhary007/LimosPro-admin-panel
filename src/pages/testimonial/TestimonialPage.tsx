@@ -1,5 +1,6 @@
 import useFetchAllTestimonials from "@/api/testimonial.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -34,9 +35,9 @@ const TestimonialPage = () => {
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TTestimonial[]>(tableData);
-    const {data, refetch, isFetching} = useFetchAllTestimonials(perPage);
+    const {data, refetch, isFetching, isError} = useFetchAllTestimonials(perPage);
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTestimonial>(data?.testimonials, 1, perPage, data?.pagination);
+    const { currentPage, setPage, totalPages, currentItems } = usePagination<TTestimonial>(data?.testimonials, 1, perPage, data?.pagination);
   
     useEffect(() => {
       setPerPage(selected.value);
@@ -145,6 +146,7 @@ const TestimonialPage = () => {
   
       return items;
     };
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("Testimonial")} />
@@ -210,7 +212,7 @@ const TestimonialPage = () => {
                 <PaginationItem>
                   <PaginationPrevious
                     href={"?page="+currentPage}
-                    onClick={prevPage}
+                    onClick={()=>handlePageChange(currentPage-1)}
                     className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
@@ -220,7 +222,7 @@ const TestimonialPage = () => {
                 <PaginationItem>
                   <PaginationNext
                     href={"?page="+currentPage}
-                    onClick={nextPage}
+                    onClick={()=>handlePageChange(currentPage+1)}
                     className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>

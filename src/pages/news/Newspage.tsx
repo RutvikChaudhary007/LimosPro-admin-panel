@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchALLNews from "@/api/news.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -55,8 +56,8 @@ const [tableRef, setTableRef] = useState<any>(null);
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TNews[]>(tableData);
-  const {data, refetch, isFetching} = useFetchALLNews();
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TNews>(data?.items, 1, perPage, data?.pagination);
+  const {data, refetch, isFetching, isError} = useFetchALLNews();
+    const { currentPage, setPage, totalPages, currentItems } = usePagination<TNews>(data?.items, 1, perPage, data?.pagination);
     // console.log("currentItems:", currentItems);
   
     useEffect(() => {
@@ -164,6 +165,8 @@ const [tableRef, setTableRef] = useState<any>(null);
   
       return items;
     };
+
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("News")} />

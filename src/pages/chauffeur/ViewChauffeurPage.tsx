@@ -1,5 +1,6 @@
 import {useFetchChauffeurById} from "@/api/chauffeur.api";
 import { Spinner } from "@/components/Spinner";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import Header from "@/components/layouts/Header";
 import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
@@ -79,7 +80,7 @@ const ViewChauffeurPage = () => {
     const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [isaddress, setAddress] = useState<string | undefined>(undefined);
-    const { data, isFetching } = useFetchChauffeurById({ id: id! });
+    const { data, isFetching, isError,refetch } = useFetchChauffeurById({ id: id! });
     // Load Google Maps script
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: googleMapsApiKey || "",
@@ -131,6 +132,8 @@ const ViewChauffeurPage = () => {
             </div>
         </div>
     ));
+
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
         <>
             <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>

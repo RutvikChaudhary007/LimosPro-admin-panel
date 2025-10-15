@@ -19,6 +19,7 @@ import { Spinner } from "@/components/Spinner";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { generatePageTitle } from "@/utils/seo";
 import PageTitle from "@/components/common/PageTitle";
+import { ErrorCard } from "@/components/common/ErrorCard";
 const showTime = [
   { label: 'All Time', value: '' },
   { label: 'Weekly', value: 'weekly' },
@@ -332,8 +333,8 @@ function FleetPage() {
   }, [selectedTime]);
   
   // const [data, setData] = useState<TFleet[]>(tableData);
-  const {data, refetch, isPending} = UsefetchAllFleets({DateRange: {startDate,endDate}});
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
+  const {data, refetch, isPending, isError} = UsefetchAllFleets({DateRange: {startDate,endDate}});
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
 
   // const queryClient = useQueryClient();
@@ -442,6 +443,7 @@ function FleetPage() {
 
     return items;
   };
+  if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
     <PageTitle title={generatePageTitle("Fleet")} />

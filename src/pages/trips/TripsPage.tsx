@@ -1,5 +1,6 @@
 import useFetchAllTrips from "@/api/getAllTrips.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -63,7 +64,7 @@ function TripsPage():JSX.Element {
   const [tableRef, setTableRef] = useState<any>(null);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   // const [data, setData] = useState<TTrips[]>(tableData);
-  const {data, refetch, isFetching} = useFetchAllTrips();
+  const {data, refetch, isFetching, isError} = useFetchAllTrips();
   const { currentPage,  setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
@@ -156,7 +157,7 @@ function TripsPage():JSX.Element {
 
     return items;
   };
-
+if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
     <PageTitle title={generatePageTitle("Trips")} />

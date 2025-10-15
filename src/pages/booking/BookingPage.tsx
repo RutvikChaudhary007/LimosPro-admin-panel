@@ -1,6 +1,7 @@
 // @ts-nocheck
 import UsefetchAllBookings from '@/api/getAllBookings.api';
 import { Spinner } from '@/components/Spinner';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import PageTitle from '@/components/common/PageTitle';
 import { Calendar28 } from '@/components/date/DateRange';
 import Header from '@/components/layouts/Header';
@@ -116,7 +117,7 @@ function BookingPage() {
         to: undefined,
     });
     // const [data, setData] = useState<TBooking[]>(tableData);
-    const {data,  isFetching} = UsefetchAllBookings({DateRange: dateRange, page: newPage})
+    const {data,  isFetching, isError, refetch} = UsefetchAllBookings({DateRange: dateRange, page: newPage})
 
     useEffect(()=>{
         if(data){
@@ -279,7 +280,7 @@ function BookingPage() {
 
         return items;
     };
-
+if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
         <>
         <PageTitle title={generatePageTitle("Booking")} />

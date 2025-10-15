@@ -1,6 +1,7 @@
 //@ts-nocheck
 import useFetchUserById from "@/api/getUserById.api";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -38,8 +39,8 @@ const ViewUserPage = () => {
     const {id} = useParams();
     // const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
 
-    const {data} = useFetchUserById({id});
-    
+    const {data, isError, refetch, isFetching} = useFetchUserById({id});
+    if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
         <>
             <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
@@ -54,7 +55,7 @@ const ViewUserPage = () => {
                         </div>
                     </div>
                 </Header>
-                <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+                {isFetching ? <Spinner/> :(<Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
                     <Suspense fallback={<h1 className="text-2xl">Loading...</h1>}>
                     <CardHeader className="w-full h-[55px] flex items-center justify-between">
                         <div className="w-full h-full">
@@ -112,7 +113,8 @@ const ViewUserPage = () => {
                         </div>
                     </CardContent>
                     </Suspense>
-                </Card>
+                </Card>)}
+                
             </div>
         </>
   )

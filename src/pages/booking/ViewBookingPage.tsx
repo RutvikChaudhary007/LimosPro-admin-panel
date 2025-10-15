@@ -1,5 +1,6 @@
 import UsefetchBookingById from '@/api/getBookingById.api'
 import { Spinner } from '@/components/Spinner'
+import { ErrorCard } from '@/components/common/ErrorCard'
 import Header from '@/components/layouts/Header'
 import { getStatusColor } from '@/components/table/column'
 import { Button } from '@/components/ui/button'
@@ -68,7 +69,7 @@ const ViewBookingPage = () => {
     const {id} = useParams();
     const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
     const [Locations, setLocations] = useState<{pickUpAddress:string,dropOffAddress:string}>({pickUpAddress:"",dropOffAddress:""});
-    const {data, isFetching } = UsefetchBookingById({id});
+    const {data, isFetching, isError, refetch } = UsefetchBookingById({id});
     // Load Google Maps script
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: googleMapsApiKey || "",
@@ -111,7 +112,7 @@ const ViewBookingPage = () => {
             isMounted = false;
         };
     }, [isLoaded, loadError, data]);
-
+if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>

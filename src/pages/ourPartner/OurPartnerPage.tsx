@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchALLPartners from "@/api/ourPartners.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -67,8 +68,8 @@ const OurPartnerPage = () => {
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TOurPartner[]>(tableData);
-  const {data, refetch, isFetching} = useFetchALLPartners();
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TOurPartner>(data?.items, 1, perPage, data?.pagination);
+  const {data, refetch, isFetching, isError} = useFetchALLPartners();
+    const { currentPage, setPage, totalPages, currentItems } = usePagination<TOurPartner>(data?.items, 1, perPage, data?.pagination);
   
     useEffect(() => {
       setPerPage(selected.value);
@@ -174,6 +175,8 @@ const OurPartnerPage = () => {
   
       return items;
     };
+
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("Our Partner")} />

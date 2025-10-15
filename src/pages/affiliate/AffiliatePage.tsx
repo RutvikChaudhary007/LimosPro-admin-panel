@@ -2,6 +2,7 @@
 import UsefetchAllAffiliate from '@/api/getAllAffiliate.api';
 import { Spinner } from '@/components/Spinner';
 import BulkDeleteBtn from '@/components/bulkDeleteBtn/BulkDeleteBtn';
+import { ErrorCard } from '@/components/common/ErrorCard';
 import PageTitle from '@/components/common/PageTitle';
 import Header from '@/components/layouts/Header';
 import { getAffiliate, getStatusColor, type TAffiliate } from '@/components/table/column';
@@ -19,7 +20,7 @@ import { generatePageTitle } from '@/utils/seo';
 // import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
 // import { useMutation } from '@tanstack/react-query';
 // import type { AxiosError } from 'axios';
-import { ChevronDown, Plus,  } from 'lucide-react';
+import {ChevronDown, Plus,  } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -391,7 +392,7 @@ const { startDate, endDate } = useMemo(() => {
 
 
 const [newPage, setNewPage] = useState<number>(1);
-  const {data: FetchData, refetch, isFetching, } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
+  const {data: FetchData, refetch, isFetching, isError } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
   const [tableRef, setTableRef] = useState<any>(null);
   // const queryClient = useQueryClient();
   // useEffect(() => {
@@ -522,6 +523,7 @@ if(currentItems){
     return items;
   };
 // if(isFetching) return (<p>Loading...</p>)
+if(isError) return (<ErrorCard refetch={refetch}/>)
   return (
     <>
     <PageTitle title={generatePageTitle("Affiliate")} />

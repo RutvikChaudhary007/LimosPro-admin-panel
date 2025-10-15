@@ -1,6 +1,7 @@
 //@ts-nocheck
 import useFetchAllStaffMember from "@/api/staffMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -42,10 +43,10 @@ const StaffMemberPage = () => {
   const [tableRef, setTableRef] = useState<any>(null);
    const [newPage, setNewPage] = useState(1);
     // const [data, setData] = useState<TStaffMember[]>(tableData);
-        const {data,refetch, isFetching} = useFetchAllStaffMember({page: newPage, limit: 10, })
+        const {data,refetch, isFetching, isError} = useFetchAllStaffMember({page: newPage, limit: 10, })
 
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(data?.staffMembers, newPage, 10, data?.pagination);
+    const { currentPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(data?.staffMembers, newPage, 10, data?.pagination);
   
     
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
@@ -154,6 +155,7 @@ const StaffMemberPage = () => {
   
       return items;
     };
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("Staff Member")} />

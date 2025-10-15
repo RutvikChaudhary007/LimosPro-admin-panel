@@ -2,6 +2,7 @@
 import useFetchAllChauffeur from "@/api/chauffeur.api";
 import { Spinner } from "@/components/Spinner";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { getChauffeur, getStatusColor, type TChauffeur } from "@/components/table/column";
@@ -262,7 +263,7 @@ function ChauffeurPage() {
     const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const {data,refetch, isFetching} = useFetchAllChauffeur();
+  const {data,refetch, isFetching, isError} = useFetchAllChauffeur();
   const [tableRef, setTableRef] = useState<any>(null);
   // console.log("fetchedData:",data)
 
@@ -315,7 +316,7 @@ function ChauffeurPage() {
   /**
    * Below is for real data
    */
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs || [], newPage, perPage, data?.pagination);
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TChauffeur>(data?.chauffeurs || [], newPage, perPage, data?.pagination);
   
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -393,6 +394,7 @@ function ChauffeurPage() {
 
     return items;
   };
+  if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
     <PageTitle title={generatePageTitle("Chauffeur")} />

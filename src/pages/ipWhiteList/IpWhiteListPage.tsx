@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
@@ -290,9 +291,9 @@ const IpWhiteListPage = () => {
    const [perPage, setPerPage] = useState(10);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TIpWhiteList[]>(tableData);
-    const {data , refetch, isFetching} = useFetchALLIPWhiteLists(perPage);
+    const {data , refetch, isFetching, isError} = useFetchALLIPWhiteLists(perPage);
   
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TIpWhiteList>(data?.items, 1, perPage, data?.pagination);
+    const { currentPage,  setPage, totalPages, currentItems } = usePagination<TIpWhiteList>(data?.items, 1, perPage, data?.pagination);
   // console.log("tableData:",tableData.length)
     useEffect(() => {
       setPerPage(selected.value);
@@ -401,6 +402,8 @@ const IpWhiteListPage = () => {
   
       return items;
     };
+
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("Ip WhiteList")} />

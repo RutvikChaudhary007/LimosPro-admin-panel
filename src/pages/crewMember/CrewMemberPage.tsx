@@ -2,6 +2,7 @@
 import useFetchAllCrewMember from "@/api/crewMember.api";
 import { Spinner } from "@/components/Spinner";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { getCrewMember, type TCrewMember } from "@/components/table/column";
@@ -79,8 +80,8 @@ const CrewMemberPage = () => {
    const [newPage, setNewPage] = useState(1);
     const [selected, setSelected] = useState(showOptions[0]);
     // const [data, setData] = useState<TCrewMember[]>(tableData);
-  const {data,refetch, isFetching} = useFetchAllCrewMember({page: newPage, limit: 10});
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TCrewMember>(data?.crewMembers || [], newPage, selected.value, data?.pagination);
+  const {data,refetch, isFetching, isError} = useFetchAllCrewMember({page: newPage, limit: 10});
+    const { currentPage,  setPage, totalPages, currentItems } = usePagination<TCrewMember>(data?.crewMembers || [], newPage, selected.value, data?.pagination);
   
     
     const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
@@ -189,6 +190,7 @@ const CrewMemberPage = () => {
   
       return items;
     };
+    if(isError) return (<ErrorCard refetch={refetch}/>);
     return (
       <>
       <PageTitle title={generatePageTitle("Crew Member")} />

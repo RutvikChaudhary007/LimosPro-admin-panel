@@ -19,6 +19,7 @@ import queries from '@/lib/queries';
 import BulkDeleteBtn from '@/components/bulkDeleteBtn/BulkDeleteBtn';
 import { generatePageTitle } from '@/utils/seo';
 import PageTitle from '@/components/common/PageTitle';
+import { ErrorCard } from '@/components/common/ErrorCard';
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -147,7 +148,7 @@ function UsersPage() {
   }, [selectedTime]);
 
   const [tableRef, setTableRef] = useState<any>(null);
-  const {data, refetch, isFetching} = UsefetchAllUsers({DateRange:{startDate,endDate}});
+  const {data, refetch, isFetching, isError} = UsefetchAllUsers({DateRange:{startDate,endDate}});
   
   const { currentPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
 
@@ -254,6 +255,7 @@ const bulkDeleteUserMutation = queries.useBulkDeleteUserMutation();
 
     return items;
   };
+  if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
     <PageTitle title={generatePageTitle("Users")} />

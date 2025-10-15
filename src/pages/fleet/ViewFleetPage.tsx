@@ -1,5 +1,6 @@
 import useFetchFleetById from "@/api/getFleetById.api";
 import { Spinner } from "@/components/Spinner";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -28,7 +29,8 @@ import { Link, useParams } from "react-router-dom";
 // }
 const ViewFleetPage = () => {
   const { id } = useParams();
-  const { data, isFetching } = useFetchFleetById({ id: id! });
+  const { data, isFetching,isError, refetch } = useFetchFleetById({ id: id! });
+  if(isError) return (<ErrorCard refetch={refetch}/>);
   return (
     <>
       <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
