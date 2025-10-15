@@ -148,7 +148,7 @@ function DashboardPage() {
                       <ChevronDown className="text-[#959595]"/>
                     </div>
                   </div>
-                <div className="w-full h-full overflow-y-auto">
+                <div className="w-full h-full overflow-y-auto custom-scrollbar-style">
                   <DataTable columns={columns} data={tableData} />
                   
                 </div>  

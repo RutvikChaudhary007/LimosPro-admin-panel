@@ -7,3 +7,10 @@
   background-color: #dc2626 !important; /* A solid red */
   color: white !important;
 }
+
+.custom-scrollbar-style{
+  scrollbar-width: none;
+}
+.custom-scrollbar-style::-webkit-scrollbar {
+  display: none;
+}

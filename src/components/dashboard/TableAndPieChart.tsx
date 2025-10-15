@@ -126,7 +126,7 @@ function TableAndPieChart() {
         <DataTable columns={columns} data={data} />
       </div>
       {/* pie */}
-      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-y-auto">
+      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-y-auto custom-scrollbar-style">
         <div className="min-w-full">
           <div className="p-4">Fleet Availability & Demand Ratio</div>
           <hr className="min-w-full border-[#D9D9D9] p-0 pb-0" />
