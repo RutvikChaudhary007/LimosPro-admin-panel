@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Plus, Search, Filter } from 'lucide-react';
-import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import BlogPostCard from '@/components/contentManagement/BlogPostCard';
 import { blogService } from '@/api/contentServices.api';
 import type { BlogPost, BlogQueryParams } from '@/types/content';
@@ -121,7 +120,7 @@ const BlogPostsPage: React.FC = () => {
   };
 
   return (
-    <AdminRootLayout>
+    <>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -310,7 +309,7 @@ const BlogPostsPage: React.FC = () => {
           </div>
         )}
       </div>
-    </AdminRootLayout>
+    </>
   );
 };
 

@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Save, ArrowLeft, Plus, X, Loader } from 'lucide-react';
-import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import ImageUpload from '@/components/ui/image-upload';
 import MultipleImageUpload from '@/components/ui/multiple-image-upload';
 import { blogService } from '@/api/contentServices.api';
@@ -168,20 +167,20 @@ const EditBlogPostPage: React.FC = () => {
 
   if (fetchLoading) {
     return (
-      <AdminRootLayout>
+      <>
         <div className="p-6 flex items-center justify-center min-h-96">
           <div className="text-center">
             <Loader className="h-8 w-8 animate-spin mx-auto mb-4" />
             <p>Loading blog post...</p>
           </div>
         </div>
-      </AdminRootLayout>
+      </>
     );
   }
 
   if (!blogPost) {
     return (
-      <AdminRootLayout>
+      <>
         <div className="p-6">
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -192,12 +191,12 @@ const EditBlogPostPage: React.FC = () => {
             </Button>
           </div>
         </div>
-      </AdminRootLayout>
+      </>
     );
   }
 
   return (
-    <AdminRootLayout>
+    <>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -458,7 +457,7 @@ const EditBlogPostPage: React.FC = () => {
           </div>
         </form>
       </div>
-    </AdminRootLayout>
+    </>
   );
 };
 

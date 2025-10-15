@@ -1,6 +1,5 @@
 import useFetchFleetById from "@/api/getFleetById.api";
 import { Spinner } from "@/components/Spinner";
-import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -31,7 +30,7 @@ const ViewFleetPage = () => {
   const { id } = useParams();
   const { data, isFetching } = useFetchFleetById({ id: id! });
   return (
-    <AdminRootLayout>
+    <>
       <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
         <Link to={constant.ROUTING_URLS.FLEETS}>
           <Button
@@ -166,7 +165,7 @@ const ViewFleetPage = () => {
           </Card>
         )}
       </div>
-    </AdminRootLayout>
+    </>
   );
 };
 

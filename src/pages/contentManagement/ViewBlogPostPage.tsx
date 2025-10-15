@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, Calendar, Eye, User } from 'lucide-react';
-import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import { blogService } from '@/api/contentServices.api';
 import type { BlogPost } from '@/types/content';
 import { constant } from '@/lib/constant';
@@ -49,7 +48,7 @@ const ViewBlogPostPage: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminRootLayout>
+      <>
         <div className="p-6 space-y-6">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
@@ -60,13 +59,13 @@ const ViewBlogPostPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </AdminRootLayout>
+      </>
     );
   }
 
   if (!blogPost) {
     return (
-      <AdminRootLayout>
+      <>
         <div className="p-6 space-y-6">
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -81,12 +80,12 @@ const ViewBlogPostPage: React.FC = () => {
             </Button>
           </div>
         </div>
-      </AdminRootLayout>
+      </>
     );
   }
 
   return (
-    <AdminRootLayout>
+    <>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -253,7 +252,7 @@ const ViewBlogPostPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </AdminRootLayout>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 // @ts-nocheck
-import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import {  ChevronDown, Dot, TrendingDown, TrendingUp } from "lucide-react";
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, } from "recharts";
@@ -63,7 +62,7 @@ function DashboardPage() {
   ];
   const columns = getDashboardColumns()
   return (
-    <AdminRootLayout >
+    <>
       <div className="py-6 px-10 h-full">
         <Header className="p-4 h-[86px]">
           <div className="w-full h-[54px]">
@@ -162,7 +161,7 @@ function DashboardPage() {
           </div>
         </main>
       </div>
-    </AdminRootLayout>
+    </>
 
   )
 }

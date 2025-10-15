@@ -1,7 +1,6 @@
 //@ts-nocheck
 import useFetchAllStaffMember from "@/api/staffMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
-import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
@@ -154,7 +153,7 @@ const StaffMemberPage = () => {
       return items;
     };
     return (
-      <AdminRootLayout>
+      <>
         <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
           <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="w-full h-full flex items-center justify-between">
@@ -177,8 +176,6 @@ const StaffMemberPage = () => {
             
             <div className="w-[369px] h-[39px] flex items-center justify-end gap-3">
               <span 
-
-// @ts-expect-error: We are intentionally assigning a number to a string type for testing.
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0?"cursor-no-drop":"cursor-pointer"}`}>
               <BulkDeleteBtn rowSelection={rowSelection} tableRef={tableRef} bulkDeleteMutation={bulkDeleteStaffMember} refetch={refetch} setRowSelection={setRowSelection} title="Staff Members" descTitle="staff members"/>
               </span>
@@ -217,7 +214,7 @@ const StaffMemberPage = () => {
             </Pagination>
           )}
         </div>
-      </AdminRootLayout>
+      </>
     )
 }
 

@@ -1,5 +1,4 @@
 import ContentManagementForm from "@/components/contentManagement/ContentManagementForm";
-import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
@@ -12,7 +11,7 @@ import { Link } from "react-router-dom";
 const CreateContent: React.FC = () => {
   
   return (
-   <AdminRootLayout>
+   <>
      <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
             <Link to={constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES}>
       <Button variant="outline" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft/> Back</Button>
@@ -31,7 +30,7 @@ const CreateContent: React.FC = () => {
         type="Add Page"
         />
       </div>
-   </AdminRootLayout>
+   </>
   );
 };
 

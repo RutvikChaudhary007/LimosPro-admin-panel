@@ -1,24 +1,24 @@
 // @ts-nocheck
-import { useEffect, useState, type ReactNode } from 'react';
-import { Toaster } from '@/components/ui/sonner';
+import { useEffect, useState, } from 'react';
 import Sidebar from './Sidebar';
 import useLoading from '@/stores/useLoading';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { Outlet } from "react-router-dom";
 
-interface AdminLayoutProps {
-    children: ReactNode;
-}
+// interface AdminLayoutProps {
+//     children: ReactNode;
+// }
 
-const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+const AdminRootLayout: React.FC<AdminLayoutProps> = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const getPageTitle = () => {
-        const path = location.pathname;
-        if (path === "/dashboard") return "Dashboard";
-        if (path.startsWith("/campaigns")) return "Campaigns";
+    // const getPageTitle = () => {
+    //     const path = location.pathname;
+    //     if (path === "/dashboard") return "Dashboard";
+    //     if (path.startsWith("/campaigns")) return "Campaigns";
 
-        return "Dashboard";
-    };
+    //     return "Dashboard";
+    // };
     const { isLoading } = useLoading();
     useEffect(() => {
         if (isLoading) {
@@ -63,7 +63,7 @@ const AdminRootLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                     <Navbar />
                     <hr className="w-full bg-[#E7E7E7]" />
 
-                    {children}
+                    <Outlet/>
                     {/* Footer */}
                     <Footer />
                 </div>

@@ -1,7 +1,6 @@
 // @ts-nocheck
 import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
-import AdminRootLayout from "@/components/layouts/AdminRootLayout";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
 import { getIpWhiteList, type TIpWhiteList } from "@/components/table/column";
@@ -401,7 +400,7 @@ const IpWhiteListPage = () => {
       return items;
     };
     return (
-      <AdminRootLayout>
+      <>
         <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
           <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="w-full h-full flex items-center justify-between">
@@ -477,7 +476,7 @@ const IpWhiteListPage = () => {
             </Pagination>
           )}
         </div>
-      </AdminRootLayout>
+      </>
     )
 }
 

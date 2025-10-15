@@ -70,6 +70,7 @@ const ProtectedRoute = lazy(() => import("./utils/ProtectedRoute"));
 const SeoPage = lazy(() => import("./pages/contentManagment/SeoPage"));
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+const AdminRootLayout = lazy(() => import("./components/layouts/AdminRootLayout"));
 const ErrorBoundary = lazy(() => import("./components/ErrorBoundary"));
 const BlogPostsPage = lazy(() => import("./pages/contentManagement/BlogPostsPage"));
 const EditBlogPostPage = lazy(() => import("./pages/contentManagement/EditBlogPostPage"));
@@ -89,80 +90,81 @@ function App() {
       <Routes >
         
           <Route  path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<AdminLoginPage/>} />
-
            {/* Protected wrapper */}
           <Route element={<ProtectedRoute />}>
-          <Route index path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
-          <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_REGION} element={<EditRegionPage />} />
-          <Route path={constant.ROUTING_URLS.REGION_ADMIN} element={<RegionAdminPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_REGION_ADMIN} element={<EditRegionAdmin />} />
-          <Route path={constant.ROUTING_URLS.CREATE_REGION_ADMIN} element={<AddRegionAdmin />} />
-          <Route path={constant.ROUTING_URLS.AFFILIATE} element={<AffiliatePage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_AFFILIATE} element={<CreateAffiliatePage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_AFFILIATE} element={<EditAffiliatePage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_AFFILIATE} element={<ViewAffiliatePage />} />
-          <Route path={constant.ROUTING_URLS.CHAUFFEUR} element={<ChauffeurPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_CHAUFFEUR} element={<CreateChauffeurPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_CHAUFFEUR} element={<EditChauffeurPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_CHAUFFEUR} element={<ViewChauffeurPage />} />
-          <Route path={constant.ROUTING_URLS.BOOKING} element={<BookingPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_BOOKING} element={<ViewBookingPage />} />
-          <Route path={constant.ROUTING_URLS.USERS} element={<UsersPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_USERS} element={<CreateUserPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_USERS} element={<EditUserPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_USERS} element={<ViewUserPage />} />
-          <Route path={constant.ROUTING_URLS.FLEETS} element={<FleetPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_FLEET} element={<EditFleetPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_FLEET} element={<ViewFleetPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
-          <Route path={constant.ROUTING_URLS.TRIPS} element={<TripsPage />} />
-          <Route path={constant.ROUTING_URLS.TRIPS_MAP} element={<TripMapPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_TRIPS} element={<ViewTripsPage />} />
-          {/* <Route path={constant.ROUTING_URLS.NOTIFICATION} element={<NotificationPage />} /> */}
-          <Route path={constant.ROUTING_URLS.PAYMENTS} element={<PaymentsPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_PAYMENTS} element={<ViewPaymentPage />} />
-          <Route path={constant.ROUTING_URLS.REFUND} element={<RefundPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_REFUND} element={<ViewRefundPage />} />
-          <Route path={constant.ROUTING_URLS.REFUND_REQUEST} element={<RefundRequestPage />} />
-          <Route path={constant.ROUTING_URLS.CREW_MEMBERS} element={<CrewMemberPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_CREW_MEMBERS} element={<CreateCrewMemberPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_CREW_MEMBERS} element={<EditCrewMemberPage />} />
-          <Route path={constant.ROUTING_URLS.STAFF_MEMBERS} element={<StaffMemberPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_STAFF_MEMBERS} element={<CreateStaffMemberPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_STAFF_MEMBERS} element={<EditStaffMemberPage />} />
-          <Route path={constant.ROUTING_URLS.CONTACT_REQUESTS} element={<ContactRequestsPage />} />
-          <Route path={constant.ROUTING_URLS.TESTIMONIALS} element={<TestimonialPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_TESTIMONIALS} element={<CreateTestimonailPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_TESTIMONIALS} element={<EditTestimonailPage />} />
-          <Route path={constant.ROUTING_URLS.OUR_PARTNERS} element={<OurPartnerPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_OUR_PARTNERS} element={<CreateOurPartnerPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_OUR_PARTNERS} element={<EditOurPartnerPage />} />
-          <Route path={constant.ROUTING_URLS.NEWS} element={<Newspage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_NEWS} element={<CreateNewsPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_NEWS} element={<EditNewsPage />} />
-          <Route path={constant.ROUTING_URLS.SETTINGS} element={<SettingsPage />} />
-          <Route path={constant.ROUTING_URLS.IP_WHITE_LIST} element={<IpWhiteListPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_IP_WHITE_LIST} element={<CreateIpWhiteListPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_IP_WHITE_LIST} element={<EditIpWhiteListPage />} />
-          <Route path={constant.ROUTING_URLS.FAQ} element={<FaqsPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_FAQ} element={<CreateFaqPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_FAQ} element={<EditFaqPage />} />
-          <Route path={constant.ROUTING_URLS.REPORTS} element={<ReportPage />} />
-           {/* Content Management Routes */}
-          <Route path={constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES} element={<ContentManagement />} />
-          <Route path={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT} element={<CreateContent />} />
-          <Route path={constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT} element={<EditContent />} />
-          <Route path={constant.ROUTING_URLS.BLOG_POSTS} element={<BlogPostsPage />} />
-          <Route path={constant.ROUTING_URLS.CREATE_BLOG_POST} element={<CreateBlogPostPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_BLOG_POST} element={<EditBlogPostPage />} />
-          <Route path={constant.ROUTING_URLS.VIEW_BLOG_POST} element={<ViewBlogPostPage />} />
-          <Route path={constant.ROUTING_URLS.SEO} element={<SeoPage />} />
-          {/* <Route path={constant.ROUTING_URLS.CREATE_SEO} element={<SeoPage />} />
-          <Route path={constant.ROUTING_URLS.EDIT_SEO} element={<SeoPage />} /> */}
+            <Route element={<AdminRootLayout />}>
+            <Route index path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
+            <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_REGION} element={<EditRegionPage />} />
+            <Route path={constant.ROUTING_URLS.REGION_ADMIN} element={<RegionAdminPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_REGION_ADMIN} element={<EditRegionAdmin />} />
+            <Route path={constant.ROUTING_URLS.CREATE_REGION_ADMIN} element={<AddRegionAdmin />} />
+            <Route path={constant.ROUTING_URLS.AFFILIATE} element={<AffiliatePage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_AFFILIATE} element={<CreateAffiliatePage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_AFFILIATE} element={<EditAffiliatePage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_AFFILIATE} element={<ViewAffiliatePage />} />
+            <Route path={constant.ROUTING_URLS.CHAUFFEUR} element={<ChauffeurPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_CHAUFFEUR} element={<CreateChauffeurPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_CHAUFFEUR} element={<EditChauffeurPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_CHAUFFEUR} element={<ViewChauffeurPage />} />
+            <Route path={constant.ROUTING_URLS.BOOKING} element={<BookingPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_BOOKING} element={<ViewBookingPage />} />
+            <Route path={constant.ROUTING_URLS.USERS} element={<UsersPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_USERS} element={<CreateUserPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_USERS} element={<EditUserPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_USERS} element={<ViewUserPage />} />
+            <Route path={constant.ROUTING_URLS.FLEETS} element={<FleetPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_FLEET} element={<EditFleetPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_FLEET} element={<ViewFleetPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_FLEET} element={<CreateFleetPage />} />
+            <Route path={constant.ROUTING_URLS.TRIPS} element={<TripsPage />} />
+            <Route path={constant.ROUTING_URLS.TRIPS_MAP} element={<TripMapPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_TRIPS} element={<ViewTripsPage />} />
+            {/* <Route path={constant.ROUTING_URLS.NOTIFICATION} element={<NotificationPage />} /> */}
+            <Route path={constant.ROUTING_URLS.PAYMENTS} element={<PaymentsPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_PAYMENTS} element={<ViewPaymentPage />} />
+            <Route path={constant.ROUTING_URLS.REFUND} element={<RefundPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_REFUND} element={<ViewRefundPage />} />
+            <Route path={constant.ROUTING_URLS.REFUND_REQUEST} element={<RefundRequestPage />} />
+            <Route path={constant.ROUTING_URLS.CREW_MEMBERS} element={<CrewMemberPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_CREW_MEMBERS} element={<CreateCrewMemberPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_CREW_MEMBERS} element={<EditCrewMemberPage />} />
+            <Route path={constant.ROUTING_URLS.STAFF_MEMBERS} element={<StaffMemberPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_STAFF_MEMBERS} element={<CreateStaffMemberPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_STAFF_MEMBERS} element={<EditStaffMemberPage />} />
+            <Route path={constant.ROUTING_URLS.CONTACT_REQUESTS} element={<ContactRequestsPage />} />
+            <Route path={constant.ROUTING_URLS.TESTIMONIALS} element={<TestimonialPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_TESTIMONIALS} element={<CreateTestimonailPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_TESTIMONIALS} element={<EditTestimonailPage />} />
+            <Route path={constant.ROUTING_URLS.OUR_PARTNERS} element={<OurPartnerPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_OUR_PARTNERS} element={<CreateOurPartnerPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_OUR_PARTNERS} element={<EditOurPartnerPage />} />
+            <Route path={constant.ROUTING_URLS.NEWS} element={<Newspage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_NEWS} element={<CreateNewsPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_NEWS} element={<EditNewsPage />} />
+            <Route path={constant.ROUTING_URLS.SETTINGS} element={<SettingsPage />} />
+            <Route path={constant.ROUTING_URLS.IP_WHITE_LIST} element={<IpWhiteListPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_IP_WHITE_LIST} element={<CreateIpWhiteListPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_IP_WHITE_LIST} element={<EditIpWhiteListPage />} />
+            <Route path={constant.ROUTING_URLS.FAQ} element={<FaqsPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_FAQ} element={<CreateFaqPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_FAQ} element={<EditFaqPage />} />
+            <Route path={constant.ROUTING_URLS.REPORTS} element={<ReportPage />} />
+            {/* Content Management Routes */}
+            <Route path={constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES} element={<ContentManagement />} />
+            <Route path={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT} element={<CreateContent />} />
+            <Route path={constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT} element={<EditContent />} />
+            <Route path={constant.ROUTING_URLS.BLOG_POSTS} element={<BlogPostsPage />} />
+            <Route path={constant.ROUTING_URLS.CREATE_BLOG_POST} element={<CreateBlogPostPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_BLOG_POST} element={<EditBlogPostPage />} />
+            <Route path={constant.ROUTING_URLS.VIEW_BLOG_POST} element={<ViewBlogPostPage />} />
+            <Route path={constant.ROUTING_URLS.SEO} element={<SeoPage />} />
+            {/* <Route path={constant.ROUTING_URLS.CREATE_SEO} element={<SeoPage />} />
+            <Route path={constant.ROUTING_URLS.EDIT_SEO} element={<SeoPage />} /> */}
           </Route>
+         </Route>
       </Routes>
       </ErrorBoundary>
       </QueryClientProvider>

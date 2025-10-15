@@ -1,7 +1,6 @@
 // @ts-nocheck
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
-import AdminRootLayout from "@/components/layouts/AdminRootLayout"
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -86,7 +85,7 @@ function EditAffiliatePage() {
   
     if(isFetching) return (<p>Loading...</p>);
   return (
-    <AdminRootLayout>
+    <>
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
             <Link to={constant.ROUTING_URLS.AFFILIATE}>
       <Button variant="outline" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft /> Back</Button>
@@ -106,7 +105,7 @@ function EditAffiliatePage() {
        type={"Edit Affiliate"}
       />
       </div>
-    </AdminRootLayout>
+    </>
   )
 }
 

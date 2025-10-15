@@ -1,5 +1,4 @@
 import { useFetchPaymentById } from '@/api/payment.api';
-import AdminRootLayout from '@/components/layouts/AdminRootLayout';
 import Header from '@/components/layouts/Header';
 import { Spinner } from '@/components/Spinner';
 import { getStatusColor } from '@/components/table/column';
@@ -90,7 +89,7 @@ const ViewPaymentPage = () => {
     }, [isLoaded, loadError, data]);
 
     return (
-        <AdminRootLayout>
+        <>
             <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll select-none'>
                 <Link to={constant.ROUTING_URLS.PAYMENTS}>
                     <Button variant="outline" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft /> Back</Button>
@@ -181,7 +180,7 @@ const ViewPaymentPage = () => {
                 </Card>)}
                 
             </div>
-        </AdminRootLayout>
+        </>
     )
 }
 

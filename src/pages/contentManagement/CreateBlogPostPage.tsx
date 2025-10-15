@@ -17,7 +17,6 @@ import {
 } from '../../components/ui/select';
 import { Badge } from '../../components/ui/badge';
 import { Save, ArrowLeft, Plus, X } from 'lucide-react';
-import AdminRootLayout from '../../components/layouts/AdminRootLayout';
 import ImageUpload from '../../components/ui/image-upload';
 import MultipleImageUpload from '../../components/ui/multiple-image-upload';
 import { blogService } from '../../api/contentServices.api';
@@ -137,7 +136,7 @@ const CreateBlogPostPage: React.FC = () => {
   };
 
   return (
-    <AdminRootLayout>
+    <>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -398,7 +397,7 @@ const CreateBlogPostPage: React.FC = () => {
           </div>
         </form>
       </div>
-    </AdminRootLayout>
+    </>
   );
 };
 
