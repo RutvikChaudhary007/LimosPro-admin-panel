@@ -1,11 +1,13 @@
 // import { createAffiliate } from "@/api/createAffiliate";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
+import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { IAffiliate } from "@/types/affiliate.type";
+import { generatePageTitle } from "@/utils/seo";
 // import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 // import { useMutation } from "@tanstack/react-query";
 // import type { AxiosError } from "axios";
@@ -36,6 +38,7 @@ function CreateAffiliatePage() {
   }
   return (
     <>
+    <PageTitle title={generatePageTitle("Affiliate")} />
       <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
             <Link to={constant.ROUTING_URLS.AFFILIATE}>
       <Button variant="outline" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft/> Back</Button>

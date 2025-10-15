@@ -17,6 +17,8 @@ import { useMemo, useState } from 'react';
 import {  useNavigate } from 'react-router-dom';
 import queries from '@/lib/queries';
 import BulkDeleteBtn from '@/components/bulkDeleteBtn/BulkDeleteBtn';
+import { generatePageTitle } from '@/utils/seo';
+import PageTitle from '@/components/common/PageTitle';
 
 const showStatus = [
   { label: 'Active', value: 'active' },
@@ -254,6 +256,7 @@ const bulkDeleteUserMutation = queries.useBulkDeleteUserMutation();
   };
   return (
     <>
+    <PageTitle title={generatePageTitle("Users")} />
       <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
           <div className="w-full h-full flex items-center justify-between">
@@ -340,7 +343,7 @@ const bulkDeleteUserMutation = queries.useBulkDeleteUserMutation();
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  onClick={prevPage}
+                  onClick={()=>handlePageChange(currentPage - 1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
@@ -350,7 +353,7 @@ const bulkDeleteUserMutation = queries.useBulkDeleteUserMutation();
               <PaginationItem>
                 <PaginationNext
                   href="#"
-                  onClick={nextPage}
+                  onClick={()=>handlePageChange(currentPage + 1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>

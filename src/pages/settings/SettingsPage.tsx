@@ -1,7 +1,9 @@
+import PageTitle from '@/components/common/PageTitle';
 import Header from '@/components/layouts/Header';
 import SettingForm, { type TSettingForm } from '@/components/settings/SettingForm'
 import { Button } from '@/components/ui/button';
 import { constant } from '@/lib/constant';
+import { generatePageTitle } from '@/utils/seo';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +12,7 @@ const SettingsPage = () => {
     
   return (
     <>
+    <PageTitle title={generatePageTitle("Settings")} />
         <div className='px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll'>
             <Link to={constant.ROUTING_URLS.OUR_PARTNERS}>
       <Button variant="secondary" className='py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]'><ArrowLeft/> Back</Button>

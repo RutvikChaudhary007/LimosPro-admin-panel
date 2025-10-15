@@ -7,6 +7,8 @@ import { Doughnut } from "react-chartjs-2";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Chart as ChartJS, ArcElement, Tooltip as chartJsToolTip, Legend } from "chart.js";
 import WorldMap from "@/components/worldmap/WorldMap";
+import { generatePageTitle } from "@/utils/seo";
+import PageTitle from "@/components/common/PageTitle";
 
 
 const showOptions = [
@@ -82,6 +84,7 @@ const ReportPage = () => {
     }
     return (
         <>
+        <PageTitle title={generatePageTitle("Report")} />
             <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
                 <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                     <div className="w-full h-full flex items-center justify-between">

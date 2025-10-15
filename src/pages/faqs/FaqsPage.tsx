@@ -1,6 +1,7 @@
 // @ts-nocheck
 import useFetchALLFAQs from "@/api/faq.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
 import { getFaqs, type TFaqs } from "@/components/table/column";
@@ -13,6 +14,7 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise, useToast } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { generatePageTitle } from "@/utils/seo";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -163,6 +165,7 @@ const FaqsPage = () => {
     };
     return (
       <>
+      <PageTitle title={generatePageTitle("Faq")} />
         <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
           <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="w-full h-full flex items-center justify-between">
@@ -221,7 +224,7 @@ const FaqsPage = () => {
                 <PaginationItem>
                   <PaginationPrevious
                     href={"?page="+currentPage}
-                    onClick={prevPage}
+                    onClick={()=>handlePageChange(currentPage-1)}
                     className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
@@ -231,7 +234,7 @@ const FaqsPage = () => {
                 <PaginationItem>
                   <PaginationNext
                     href={"?page="+currentPage}
-                    onClick={nextPage}
+                    onClick={()=>handlePageChange(currentPage+1)}
                     className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>

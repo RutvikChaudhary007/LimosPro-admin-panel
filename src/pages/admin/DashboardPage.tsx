@@ -9,6 +9,8 @@ import TableAndPieChart from "@/components/dashboard/TableAndPieChart";
 import { getDashboardColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import PageTitle from "@/components/common/PageTitle";
+import { generatePageTitle } from "@/utils/seo";
 // interface Point { month: string; earnings: number; }
 
 const data = [
@@ -63,6 +65,7 @@ function DashboardPage() {
   const columns = getDashboardColumns()
   return (
     <>
+    <PageTitle title={generatePageTitle("Dashboard")} />
       <div className="py-6 px-10 h-full">
         <Header className="p-4 h-[86px]">
           <div className="w-full h-[54px]">

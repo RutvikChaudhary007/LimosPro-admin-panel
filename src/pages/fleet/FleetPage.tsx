@@ -17,6 +17,8 @@ import { Link, useNavigate } from "react-router-dom";
 import queries from "@/lib/queries";
 import { Spinner } from "@/components/Spinner";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import { generatePageTitle } from "@/utils/seo";
+import PageTitle from "@/components/common/PageTitle";
 const showTime = [
   { label: 'All Time', value: '' },
   { label: 'Weekly', value: 'weekly' },
@@ -442,6 +444,7 @@ function FleetPage() {
   };
   return (
     <>
+    <PageTitle title={generatePageTitle("Fleet")} />
       <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
           <div className="w-full h-full flex items-center justify-between">
@@ -503,7 +506,7 @@ function FleetPage() {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  onClick={prevPage}
+                  onClick={()=>handlePageChange(currentPage-1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
@@ -513,7 +516,7 @@ function FleetPage() {
               <PaginationItem>
                 <PaginationNext
                   href="#"
-                  onClick={nextPage}
+                  onClick={()=>handlePageChange(currentPage+1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>

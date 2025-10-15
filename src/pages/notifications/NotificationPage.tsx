@@ -263,7 +263,7 @@ function NotificationPage():JSX.Element {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  onClick={prevPage}
+                  onClick={()=>handlePageChange(currentPage-1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
@@ -273,7 +273,7 @@ function NotificationPage():JSX.Element {
               <PaginationItem>
                 <PaginationNext
                   href="#"
-                  onClick={nextPage}
+                  onClick={()=>handlePageChange(currentPage+1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>

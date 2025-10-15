@@ -1,5 +1,6 @@
 import useFetchAllTestimonials from "@/api/testimonial.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
+import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
 import { getTestimonial, type TTestimonial } from "@/components/table/column";
@@ -12,6 +13,7 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { generatePageTitle } from "@/utils/seo";
 import { ChevronDown, Plus,  } from "lucide-react";
 import { useCallback, useEffect,  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -145,6 +147,7 @@ const TestimonialPage = () => {
     };
     return (
       <>
+      <PageTitle title={generatePageTitle("Testimonial")} />
         <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
           <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
             <div className="w-full h-full flex items-center justify-between">

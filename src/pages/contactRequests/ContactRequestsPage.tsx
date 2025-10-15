@@ -1,4 +1,5 @@
 // @ts-nocheck
+import PageTitle from "@/components/common/PageTitle";
 import ReplyFC from "@/components/ContactRequests/ReplyFC";
 import Header from "@/components/layouts/Header";
 import { getContactRequest, type TContactRequest } from "@/components/table/column";
@@ -12,6 +13,7 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { Textarea } from "@/components/ui/textarea";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
+import { generatePageTitle } from "@/utils/seo";
 import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, Plus, Reply, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -170,6 +172,7 @@ const ContactRequestsPage = () => {
   };
   return (
     <>
+    <PageTitle title={generatePageTitle("Contact Request")} />
       <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
           <div className="w-full h-full flex items-center justify-between">
@@ -258,7 +261,7 @@ const ContactRequestsPage = () => {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  onClick={prevPage}
+                  onClick={()=>handlePageChange(currentPage-1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
@@ -268,7 +271,7 @@ const ContactRequestsPage = () => {
               <PaginationItem>
                 <PaginationNext
                   href="#"
-                  onClick={nextPage}
+                  onClick={()=>handlePageChange(currentPage+1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>

@@ -21,6 +21,8 @@ import { constant } from "@/lib/constant";
 // import { useMutation } from "@tanstack/react-query";
 import {  toastPromise, useToast } from "@/hooks/use-toast";
 import queries from "@/lib/queries";
+import PageTitle from "@/components/common/PageTitle";
+import { generatePageTitle } from "@/utils/seo";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -92,6 +94,8 @@ function AdminLoginPage() {
     }
   };
   return (
+    <>
+    <PageTitle title={generatePageTitle("Login")} />
     <div className="flex items-center justify-center h-screen min-h-screen ">
       
       <div className="w-[597px] h-[618px] min-w-[597px] min-h-[618px] flex flex-col gap-[63px] shadow-lg shadow-[#F1F1F1] rounded-[6px]">
@@ -201,6 +205,7 @@ function AdminLoginPage() {
         </Form>
       </div>
     </div>
+    </>
   );
 }
 

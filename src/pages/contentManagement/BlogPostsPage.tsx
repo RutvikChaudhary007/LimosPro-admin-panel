@@ -17,6 +17,8 @@ import { blogService } from '@/api/contentServices.api';
 import type { BlogPost, BlogQueryParams } from '@/types/content';
 import { constant } from '@/lib/constant';
 import { toast } from 'sonner';
+import { generatePageTitle } from '@/utils/seo';
+import PageTitle from '@/components/common/PageTitle';
 
 const BlogPostsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -121,6 +123,7 @@ const BlogPostsPage: React.FC = () => {
 
   return (
     <>
+    <PageTitle title={generatePageTitle("BlogPosts")} />
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
