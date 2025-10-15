@@ -149,7 +149,7 @@ function UsersPage() {
   const [tableRef, setTableRef] = useState<any>(null);
   const {data, refetch, isFetching} = UsefetchAllUsers({DateRange:{startDate,endDate}});
   
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
+  const { currentPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
 
   const handleView = (id: string) => { console.log("view:", id)
     navigate(constant.ROUTING_URLS.VIEW_USERS.replace(":id",id));

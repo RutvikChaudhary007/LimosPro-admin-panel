@@ -50,7 +50,7 @@ const RefundPage = () => {
     const [selectedOption, setSelectedOption] = useState(showOptions[0]);
   // const [data] = useState<TRefund[]>(tableData);
   const {data,isFetching} = useFetchAllRefund({page: newPage, limit: selectedOption.value, });
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRefund>(data?.payments,newPage , selectedOption.value);
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRefund>(data?.payments,newPage , selectedOption.value);
 
 
   

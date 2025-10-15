@@ -399,7 +399,7 @@ const [newPage, setNewPage] = useState<number>(1);
   // }, [queryClient, newPage]);
 
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(FetchData?.affiliates, newPage, perPage, FetchData?.pagination);
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TAffiliate>(FetchData?.affiliates, newPage, perPage, FetchData?.pagination);
 useEffect(()=>{
   if(currentPage){
     setNewPage(currentPage)

@@ -64,7 +64,7 @@ function TripsPage():JSX.Element {
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   // const [data, setData] = useState<TTrips[]>(tableData);
   const {data, refetch, isFetching} = useFetchAllTrips();
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
 

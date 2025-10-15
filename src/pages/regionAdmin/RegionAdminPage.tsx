@@ -46,7 +46,7 @@ function RegionAdminPage() {
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
   const [data, setData] = useState<TRegionAdmin[]>(tableData);
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(data, 1, perPage);
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(data, 1, perPage);
 
   useEffect(() => {
     setPerPage(selected.value);

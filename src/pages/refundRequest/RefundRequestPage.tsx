@@ -87,7 +87,7 @@ const RefundRequestPage = () => {
       },
       chauffeur: "jdkfsalds"
     });
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TRefundRequest>(data, 1, perPage);
+    const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRefundRequest>(data, 1, perPage);
 
 
   
