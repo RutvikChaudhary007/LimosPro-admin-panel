@@ -7,30 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { constant } from '@/lib/constant';
+import { env } from '@/utils/env';
 import { geoDecoding } from '@/utils/googleMaps';
 import { useLoadScript, type Libraries } from '@react-google-maps/api';
 import { formatDate } from 'date-fns';
 import { ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
-
-// const data = {
-//     id: "e3848306-8768-478e-987e-f6e85fa5959e",
-//     userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
-//     user: {
-//         firstName: "John",
-//         lastName: "Doe",
-//         email: "name@email.com",
-//         gender: "female",
-//         dateOfBirth: "20-08-2000"
-//     },
-//     phone: "+1-424-231-6798",
-//     affiliate: "NoahAnderson",
-//     description: "Sedan Car 4 Doors. Clean In and out. 2 Rows of Seats. Fit for up to 3 Adults with 2 Check-In Bags, and 1 Carry-On Bag.",
-//     status: "Active",
-//     createdAt: "2025-05-05T12:19:41.972Z",
-//     updatedAt: "2025-05-05T12:19:41.972Z",
-// }
 
 const newStatus = [
     { label: "Payment Done", css: 'bg-[#444444] text-white', value: "paymentDone" },
@@ -42,7 +25,7 @@ const newStatus = [
 const libraries = ["places", "geocoding"];
 const ViewPaymentPage = () => {
     const {id} = useParams();
-     const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+     const [googleMapsApiKey] = useState<string | null>(env!.VITE_GOOGLE_MAP_KEY);
     const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(undefined);
     const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(undefined);
 

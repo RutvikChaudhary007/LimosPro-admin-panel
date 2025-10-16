@@ -3,9 +3,11 @@
 //  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
 //  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
 
- export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'https://apilimo.qalbit.in/user-service/api/v1';
- export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'https://apilimo.qalbit.in/admin-service/api/v1';
- export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'https://apilimo.qalbit.in/booking-service/api/v1';
+import { env } from "@/utils/env";
+
+ export const BASE_URL  = env?.VITE_API_BASE_URL;
+ export const BASE_URL1  = env?.VITE_API_BASE_URL2;
+ export const BASE_URL2  = env?.VITE_API_BASE_URL3;
 
 //  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.8:3000/api/v1';
 //  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.8:3001/api/v1';

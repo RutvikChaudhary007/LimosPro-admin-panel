@@ -13,65 +13,14 @@ import queries from "@/lib/queries"
 import { toastPromise, useToast } from "@/hooks/use-toast"
 import { useFetchChauffeurById } from "@/api/chauffeur.api"
 import type { TCrewMemberForm } from "@/components/crewMember/crewMemberForm"
+import { env } from "@/utils/env"
 
-// const initialData: TChauffeurForm = {
-//     id: "e3848306-8768-478e-987e-f6e85fa5959e",
-//     userId: "b587ee6a-e6e3-4c65-9e11-78dfb77d038d",
-//     affiliateId: "e621b9aa-b4d9-4722-a21f-9e21efd3a768",
-//     panNumber: "chauffeur_pan_1",
-//     licenseNumber: "license_number_1",
-//     vehicleId: "f14fd6ec-2490-46d6-affe-495f384d46ab",
-//     user: {
-//           firstName: "akbarbbdf",
-//           lastName: "Bhoraniyabbdf",
-//           email: "akbar.bhoranbbiydfa@qalbit.com"
-//       },
-//     documents: [
-//       {
-//         fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1746447580301-seller3.png",
-//         originalName: "seller3.png",
-//         mimetype: "image/png",
-//         size: 406576
-//       }
-//     ],
-//     availability: true,
-//     location: {
-//       latitude: 28.6139,
-//       longitude: 77.209
-//     },
-//     status: "Active",
-//     rating: "5.00",
-//     createdAt: "2025-05-05T12:19:41.972Z",
-//     updatedAt: "2025-05-05T12:19:41.972Z",
-//     vehicle: {
-//       id: "f14fd6ec-2490-46d6-affe-495f384d46ab",
-//       affiliateId: "ee23cf74-f063-4f45-ad59-524df3fb8716",
-//       plateNumber: "123459",
-//       brand: "Miss",
-//       model: "2017",
-//       year: 2025,
-//       color: "red",
-//       capacity: 4,
-//       vehicleType: "Executive Sedan Fit for 3 Passengers",
-//       documents: [
-//         {
-//           fileUrl: "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1746453402600-resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf",
-//           originalName: "resume_sample_student8ea47e04a8fe67e6b7acff0000376a3b.pdf",
-//           mimetype: "application/pdf",
-//           size: 120009
-//         }
-//       ],
-//       createdAt: "2025-05-05T12:12:03.865Z",
-//       updatedAt: "2025-05-05T12:12:03.865Z",
-//       deletedAt: null
-//     }
-//     }
 
     const libraries = ["places", "geocoding"];
 const EditChauffeurPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const googleMapsApiKey = useMemo(() => import.meta.env.VITE_GOOGLE_MAP_KEY as string, []);
+  const googleMapsApiKey = useMemo(() => env.VITE_GOOGLE_MAP_KEY as string, []);
   // const [data, setData] = useState(initialData);
   // const isFetching = false;
   const { data, isFetching } = useFetchChauffeurById({ id: id! });

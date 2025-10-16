@@ -208,6 +208,7 @@ import {
   InfoWindow,  
 } from "@react-google-maps/api";
 import { geoDecoding } from "@/utils/googleMaps";
+import { env } from "@/utils/env";
 
 const containerStyle: React.CSSProperties = { width: "100%", height: "100%" };
 
@@ -218,7 +219,7 @@ const mapStyle = [
   { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
 ];
 
-const APIKEY = import.meta.env.VITE_GOOGLE_MAP_KEY;
+const APIKEY = env?.VITE_GOOGLE_MAP_KEY;
 const libraries: ("geometry" | "places" | "geocoding")[] = ["geometry", "places","geocoding"];
 
 interface LatLng {

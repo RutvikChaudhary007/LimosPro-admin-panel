@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { constant } from '@/lib/constant'
+import { env } from '@/utils/env'
 import { geoDecoding } from '@/utils/googleMaps'
 import { useLoadScript, type Libraries } from '@react-google-maps/api'
 import { formatDate } from 'date-fns'
@@ -67,7 +68,7 @@ import { Link, useParams } from 'react-router-dom'
 const libraries = ["places", "geocoding"];
 const ViewBookingPage = () => {
     const {id} = useParams();
-    const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+    const [googleMapsApiKey] = useState<string | null>(env!.VITE_GOOGLE_MAP_KEY);
     const [Locations, setLocations] = useState<{pickUpAddress:string,dropOffAddress:string}>({pickUpAddress:"",dropOffAddress:""});
     const {data, isFetching, isError, refetch } = UsefetchBookingById({id});
     // Load Google Maps script

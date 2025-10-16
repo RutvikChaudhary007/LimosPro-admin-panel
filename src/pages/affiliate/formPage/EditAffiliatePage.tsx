@@ -8,6 +8,7 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { IAffiliate } from "@/types/affiliate.type";
+import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
 import { useLoadScript, type Libraries } from "@react-google-maps/api";
@@ -22,7 +23,7 @@ function EditAffiliatePage() {
   const { id } = useParams(); 
   const navigate = useNavigate();
   // console.log("id:",id)
-   const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+   const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
     const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
     // Load Google Maps script
     const { isLoaded, loadError } = useLoadScript({

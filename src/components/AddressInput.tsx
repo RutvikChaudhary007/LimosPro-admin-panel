@@ -8,6 +8,7 @@ import {  AlertCircle } from "lucide-react";
 import { initializeGooglePlacesAutocomplete } from "@/utils/googleMaps";
 // import { Toaster} from "@/hooks/use-toast";
 import type { ControllerRenderProps } from "react-hook-form";
+import { env } from "@/utils/env";
 
 interface AddressFields {
   address: string;
@@ -40,7 +41,7 @@ const AddressInput = ({
   ...props
 }: AddressInputProps) => {
   const addressInputRef = useRef<HTMLInputElement>(null);
-  const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+  const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
   const [addressAPIError] = useState<string | null>(null);
   const [fields, setFields] = useState<AddressFields>({
     address: "",

@@ -7,6 +7,7 @@ import {
   useJsApiLoader,
   InfoWindow,
 } from "@react-google-maps/api";
+import { env } from "@/utils/env";
 
 const containerStyle: React.CSSProperties = { width: "100%", height: "100%", userSelect: "none" };
 
@@ -17,7 +18,7 @@ const mapStyle = [
   { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
 ];
 
-const APIKEY = import.meta.env.VITE_GOOGLE_MAP_KEY;
+const APIKEY = env? env.VITE_GOOGLE_MAP_KEY : "";
 const libraries: ("geometry" | "places")[] = ["geometry", "places"];
 
 interface LatLng {

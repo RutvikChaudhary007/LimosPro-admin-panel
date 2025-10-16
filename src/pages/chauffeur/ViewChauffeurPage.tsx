@@ -9,6 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
+import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { useLoadScript, type Libraries } from "@react-google-maps/api";
 import { ArrowLeft } from "lucide-react";
@@ -77,7 +78,7 @@ const libraries = ["places", "geocoding"];
 
 const ViewChauffeurPage = () => {
     const { id } = useParams();
-    const [googleMapsApiKey] = useState<string | null>(import.meta.env.VITE_GOOGLE_MAP_KEY);
+    const [googleMapsApiKey] = useState<string | null>(env!.VITE_GOOGLE_MAP_KEY);
     const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
     const [isaddress, setAddress] = useState<string | undefined>(undefined);
     const { data, isFetching, isError,refetch } = useFetchChauffeurById({ id: id! });
