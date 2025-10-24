@@ -9,7 +9,8 @@ import { format } from 'date-fns';
 import Icons from "../common/Icons";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import MultiSelectComp from "../multiSelect/MultiSelect";
 
 export type TDashboardBooking = {
   id: string;
@@ -79,18 +80,37 @@ export function getRegionColumns(
     enableHiding: false,
   },
     { accessorKey: "regionName", header: ({ column }) => <DataTableColumnHeader column={column} title="Region Name" />,enableSorting: false, },
-    { accessorKey: "admin", header: ({ column }) => <DataTableColumnHeader column={column} title="Admin" />,enableSorting: false, },
+    // { accessorKey: "admin", header: ({ column }) => <DataTableColumnHeader column={column} title="Admin" />,enableSorting: false, },
     {
       id: "access",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
       cell: ({ row }) => (
-        <Button
+         <Dialog modal={false}>
+        <DialogTrigger asChild>
+          <Button
           variant="secondary"
-          onClick={() => onAccess(row.original.id)}
           className="cursor-pointer w-[108px] h-[33px] text-sm"
         >
           Manage Access
         </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Permissions</DialogTitle>
+            <DialogDescription>
+              Make changes for permissions.
+            </DialogDescription>
+          </DialogHeader>
+            <MultiSelectComp />
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+          <Button type="button" onClick={() => onAccess(row.original.id)}>Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+    </Dialog>
+        
       ),
       enableSorting: false,
     },
@@ -122,7 +142,7 @@ export function getRegionColumns(
 
 export type TRegionAdmin = {
   id: string;
-  regionName: string;
+  region: string;
   email: string;
 }
 
@@ -157,22 +177,8 @@ export function getRegionAdminColumns(
     enableSorting: false,
     enableHiding: false,
   },
-    { accessorKey: "regionName", header: ({ column }) => <DataTableColumnHeader column={column} title="Region Name" />,enableSorting: false, },
-    { accessorKey: "email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,enableSorting: false, },
-    {
-      id: "access",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-      cell: ({ row }) => (
-        <Button
-          variant="outline"
-          onClick={() => onAccess(row.original.id)}
-          className="cursor-pointer w-[108px] h-[33px] text-sm"
-        >
-          Manage Access
-        </Button>
-      ),
-      enableSorting: false,
-    },
+    { accessorKey: "region.regionName", header: ({ column }) => <DataTableColumnHeader column={column} title="Region Name" />,enableSorting: false, },
+    { accessorKey: "user.email", header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,enableSorting: false, },
     {
       id: "action",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
@@ -735,7 +741,12 @@ export function getBooking(
           </Button>
           <Button
             type="button"
-            onClick={() => onView(row.original.id)}
+            onClick={() => {
+              const phone = row?.original?.thirdPartyUser?.phone;
+              if (phone) {
+                window.location.href = `tel:${phone}`;
+              }
+            }}
             variant="outline"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
           >
@@ -2194,10 +2205,10 @@ export function getHomeContent(
   onDelete: (id:string)=>void,
 ): ColumnDef<THomeContent>[]{
   return [
-  { accessorKey: "content", header: ({ column }) => <DataTableColumnHeader column={column} title="Content" />,
+  { accessorKey: "content.title", header: ({ column }) => <DataTableColumnHeader column={column} title="Content Title" />,
   enableSorting: false,
   },
-  { accessorKey: "description", header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />, enableSorting: false,
+  { accessorKey: "sectionName", header: ({ column }) => <DataTableColumnHeader column={column} title="sectionName" />, enableSorting: false,
 },
   {
       id: "action",

@@ -6,7 +6,7 @@ import { AxiosError } from "axios";
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 
-export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
+export const getDashboard = async (DateRange?: DateRange, page?: number) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -32,26 +32,14 @@ try {
 }
 };
 
-const useFetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined }, page?: number }) =>
+const useFetchDashboard = ({ DateRange, page }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined }, page?: number }) =>
   useQuery({
-    queryKey: ['affiliates', DateRange, page],
-    queryFn: () => getAllAffiliate(DateRange, page),
+    queryKey: ['Dashboard', DateRange, page],
+    queryFn: () => getDashboard(DateRange, page),
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 1000 * 60 * 5,
     placeholderData: (previousData) => previousData,
-    select: (data)=>{
-      console.log("data...",data)
-    return data
-    } ,
   });
 
-// export const fetchAllAffiliate = ({ DateRange, page }: { DateRange?: { startDate: Date | undefined; endDate: Date | undefined }, page?: number }) =>
-//   queryOptions({
-//     queryKey: ['affiliate', DateRange, page],
-//     queryFn: () => getAllAffiliate(DateRange, page),
-//     refetchOnWindowFocus: false,
-//     retry: false,
-//   });
-
-export default useFetchAllAffiliate;
+export default useFetchDashboard;

@@ -5,27 +5,48 @@ import { Input } from '@/components/ui/input'
 // import { Label } from '@/components/ui/label'
 import { ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { constant } from '@/lib/constant'
+import queries from '@/lib/queries'
+import { toast } from 'sonner'
+import { toastPromise } from '@/hooks/use-toast'
 
 const formSchema = z.object({
   regionName: z.string().min(2, {
     message: "Region name must be at least 2 characters.",
   }),
-})
+});
+export type TRegion = z.infer<typeof formSchema>
 function AddRegionPage() {
+  const navigate = useNavigate();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
     defaultValues: {
       regionName: "",
     },
-  
     });
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-    await new Promise(res => setTimeout(()=>res(values), 1200)); // artificial delay to notice isSubmitting
-  // console.log("data:", values);
+    const createRegion = queries.useCreateRegionMutation();
+    async function onSubmit(values: TRegion) {
+      try {
+        toastPromise(createRegion.mutateAsync(values),{
+          loading: "Creating region...",
+          success: (res)=>{
+            if(res?.status === true) {
+              navigate(constant.ROUTING_URLS.REGION);
+            }
+            return "Yeah! Region created successfully"
+          },
+          error: (e)=>(e instanceof Error)? e.message :"Opps! Failed to create region",
+      })
+      } catch (error) {
+       if(error instanceof Error) {
+        toast.error(error.message);
+      }else {
+        toast.error("An unexpected error occurred");
+      }
+      }
   }
   return (
     <>

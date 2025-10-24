@@ -19,11 +19,17 @@ const formSchema = z.object({
     message: "Last name must be at least 2 characters.",
   }),
   email:  z.string({ message: "Email is required." }).email({ message: "Please enter a valid email address" }),
-  phone: z
-  .string({ message: "Phone no is required." })
-  .min(7, { message: "Phone number must be at least 7 digits." })
-  .max(15, { message: "Phone number can't be more than 15 digits." })
-  .regex(/^[0-9]+$/, { message: "Phone number must only contain digits." }),
+  password: z
+  .string({ message: "Password no is required." })
+    .trim()
+    .min(7, { message: "Password must be at least 7 characters." })
+    .max(25, { message: "Password can't be more than 25 characters." })
+    .regex(/[a-z]/, { message: "Password must include at least one lowercase letter." })
+    .regex(/[A-Z]/, { message: "Password must include at least one uppercase letter." })
+    .regex(/[0-9]/, { message: "Password must include at least one number." })
+    .regex(/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\;/]/, {
+      message: "Password must include at least one special character.",
+    }),
   permission: z.string().min(1, "Permission is required")
 });
 
@@ -41,7 +47,7 @@ const EditRegionAdmin = () => {
             firstName: "",
             lastName: "",
             email: "",
-            phone: "",
+            password: "",
             permission: "",
           },   
     });

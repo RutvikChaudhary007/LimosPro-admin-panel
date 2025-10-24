@@ -18,10 +18,10 @@ export const getAllCrewMember = async ({limit, page}:TArg) => {
     params.page = page
   }
    try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`,{params});
-    // console.log("response:",response)
-  
-    return response.data.data;
+     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`,{params});
+     // console.log("response:",response)
+   
+     return response.data.data;
    } catch (error) {
     if(error instanceof AxiosError&& error?.status === 400)
     {
@@ -77,6 +77,11 @@ export const bulkDeleteCrewMember = async (ids:string[]) => {
  * @return {*}
  */
 export const createCrewMember = async (data:TCrewMemberForm) => {
+  if(data?.phone){
+    data.phoneNumber = data?.phone;
+    delete data.phone
+    delete data.designation
+  }
   const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CREW_MEMBER,data, {    });
     
   return response.data;

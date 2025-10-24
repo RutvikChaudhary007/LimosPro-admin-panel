@@ -8,6 +8,7 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { IAffiliate } from "@/types/affiliate.type";
 import { generatePageTitle } from "@/utils/seo";
+import { useQueryClient } from "@tanstack/react-query";
 // import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 // import { useMutation } from "@tanstack/react-query";
 // import type { AxiosError } from "axios";
@@ -18,6 +19,7 @@ function CreateAffiliatePage() {
   // const {toast} = useToast();
   // const navigate = useNavigate();
   const createAffiliateMutation = queries.useCreateAffiliateMutation()
+  const queryClient = useQueryClient();
   const handleCreateAffiliate = async (data:IAffiliate) => {
     
       console.log("called handleCreateAffiliate",data);
@@ -28,7 +30,12 @@ function CreateAffiliatePage() {
         // await createAffiliateMutation.mutateAsync(data)
        toastPromise(createAffiliateMutation.mutateAsync(data), {
           loading: "Submitting...",
-          success: "Affiliate created successfully!",
+          success: (res)=>{
+            if(res){
+              queryClient.invalidateQueries({queryKey: ["affiliates"]})
+            }
+            return "Affiliate created successfully!"
+          },
           error: (e) => (e instanceof Error ? e.message : "Failed to create affiliate"),
         });
       } catch (error) {

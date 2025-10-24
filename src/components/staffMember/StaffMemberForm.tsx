@@ -10,8 +10,9 @@ import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import useFetchAllRegions from "@/api/getAllRegion.api";
+import useFetchAllRegions from "@/api/region.api";
 import useFetchAllStaffRoles from "@/api/role.api";
+import { useEffect } from "react";
 
 const formSchema = z.object({
     firstName: z.string().min(2, {
@@ -43,12 +44,12 @@ const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllStaffRoles();
         if (!data) return undefined;
         // console.log("edit chauffeur formdata:>",data)
         return {
-            firstName: data?.firstName,
-            lastName: data?.lastName,
-            email: data?.email,
-            password: data?.password.replace(/./g, '*') ?? "***********",
-            role: data?.role ?? "",
-            region: data?.region ?? "",
+            firstName: data?.user?.firstName,
+            lastName: data?.user?.lastName,
+            email: data?.user?.email,
+            password: data?.password?.replace(/./g, '*') ?? "***********",
+            role: data?.user?.roles.id ?? "",
+            region: data?.region?.id ?? "",
         };
     };
     const form = useForm<z.infer<typeof formSchema>>({
@@ -62,7 +63,17 @@ const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllStaffRoles();
             region: "",
         },
     });
-
+    useEffect(()=>{
+        if(rolesData?.length>0 && initialData?.user ){
+            console.log("roleFD:",rolesData)
+            console.log("initialData?.user?.roles:",initialData?.user?.roles)
+            const role = rolesData?.find(rawData => rawData?.roleName === initialData?.user?.roles)
+            form.setValue("role", role?.roleName);
+        }
+        if(initialData?.region){
+            form.setValue("region",initialData?.region?.id)
+        }
+    },[initialData,rolesData, form]);
     return (
 
         <Form {...form}>
@@ -126,7 +137,7 @@ const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllStaffRoles();
                                         <Select value={field.value}  onValueChange={(v) => {
                                         field.onChange(v);
                                        
-                                    }} defaultValue={field.value[0]}>
+                                    }} >
                                         <FormControl className="w-full min-w-full rounded">
                                             <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
                                                 <SelectValue className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select role" />
@@ -161,7 +172,7 @@ const {data:rolesData,isFetching:isFetchingRoles} = useFetchAllStaffRoles();
                                         <Select value={field.value}  onValueChange={(v) => {
                                         field.onChange(v);
                                        
-                                    }} defaultValue={field.value[0]}>
+                                    }} >
                                         <FormControl className="w-full min-w-full rounded">
                                             <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
                                                 <SelectValue className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select region" />

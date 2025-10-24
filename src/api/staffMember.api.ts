@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 
-type TArg = {page?: number, limit: number,  };
+type TArg = {id?: string, page?: number, limit?: number,  };
 
 /**
  * ###################################################
@@ -16,7 +16,7 @@ type TArg = {page?: number, limit: number,  };
  */
 export const getAllStaffMember = async ({limit, page}:TArg) => {
   const params: Record<string, unknown> = {};
-  console.log(limit,page)
+  // console.log(limit,page)
   if(limit) params.limit = limit;
   if(page){
     params.page = page
@@ -45,6 +45,39 @@ const useFetchAllStaffMember = ({page, limit}:TArg) =>
   });
 
 export default useFetchAllStaffMember;
+
+/**
+ * ###################################################
+ * Get staff member by id
+ * ###################################################
+ * @param param0 
+ * @returns 
+ */
+export const getStaffMemberById = async ({id}:TArg) => {
+  
+    try {
+      const response = await axiosInstance.get(`${API_ENDPOINTS.GET_SINGLE_STAFF_MEMBER.replace(":id", id)}`);
+      // console.log("response:",response)
+    
+      return response.data.data;
+    } catch (error) {
+      if(error instanceof AxiosError && error?.status === 400){
+        return [];
+      }
+      throw error;
+    }
+  };
+
+export const useFetchOneStaffMember = ({id}:TArg) =>
+  useQuery({
+    queryKey: ['staffMemberById', {id}],
+    queryFn: () => getStaffMemberById({id}),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
+
 
 /**
  * ###################################################

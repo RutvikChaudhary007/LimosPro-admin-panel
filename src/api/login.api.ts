@@ -6,6 +6,7 @@ export const login = async (data:{email: string, password: string,remember: bool
   const response = await axios.post(API_ENDPOINTS.LOG_IN,data, {
     headers: {
     'Content-Type': 'application/json',
+    // 'x-forwarded-for': '117.97.168.210',
     },
     });
     if(response){

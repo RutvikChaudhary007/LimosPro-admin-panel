@@ -5,14 +5,17 @@ import { Input } from '@/components/ui/input'
 // import { Label } from '@/components/ui/label'
 import { ArrowLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { constant } from '@/lib/constant'
+import queries from '@/lib/queries'
+import { toastPromise } from '@/hooks/use-toast'
+import { toast } from 'sonner'
+import { useFetchRegionById } from '@/api/region.api'
+import { Spinner } from '@/components/Spinner'
+import { useEffect } from 'react'
 
-const mockData = {
-    regionName : "south west"
-}
 
 const formSchema = z.object({
   regionName: z.string().min(2, {
@@ -20,23 +23,45 @@ const formSchema = z.object({
   }),
 })
 const EditRegionPage = () => {
-    const transformInitialData = (data?: z.infer<typeof formSchema>): z.infer<typeof formSchema> | undefined => {
-             if (!data) return undefined;
-             // console.log("edit chauffeur formdata:>",data)
-             return {
-                 regionName: data?.regionName,
-             };
-     
-         };
+  const {id} = useParams();
+  const navigate = useNavigate();
+  const {data,isFetching} = useFetchRegionById(id!)
+  
   const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-    defaultValues: transformInitialData(mockData) || {
+    defaultValues: {
       regionName: "",
     },
   
     });
+useEffect(() => {
+  if (data && data?.regionName) {
+    form.reset({
+      regionName: data.regionName,
+    });
+  }
+}, [data, form]);
+    const editRegion = queries.useEditRegionMutation()
     async function onSubmit(values: z.infer<typeof formSchema>) {
-    await new Promise(res => setTimeout(()=>res(values), 1200)); // artificial delay to notice isSubmitting
+    try {
+      toastPromise(editRegion.mutateAsync({id:id!, data: values}),{
+        loading: "Updating region...",
+        success: (res)=>{
+          if(res?.status===true){
+            navigate(constant.ROUTING_URLS.REGION)
+          }
+          return "Region updated successfully"
+        },
+        error: (e)=> (e instanceof Error)? e.message:"Opps! Error updating region",
+      });
+      
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("Opps! An unexpected error occured");
+      }
+    } // artificial delay to notice isSubmitting
   // console.log("data:", values);
   }
   return (
@@ -52,7 +77,7 @@ const EditRegionPage = () => {
             </div>
       </Header>
 
-      <div className='w-full h-[316px] bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-[34px] p-4'>
+    {isFetching? <Spinner/>:(<div className='w-full h-[316px] bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-[34px] p-4'>
         <div className='w-full text-xl font-semibold'>
             Edit Regions
         </div>
@@ -72,7 +97,7 @@ const EditRegionPage = () => {
         <Button  disabled={form.formState.isSubmitting} type='submit' variant={"outline"} className='text-[#515151] rounded text-center px-2.5 py-6 bg-[#E4E4E4] text-sm font-medium w-[124px] h-[39px] border-none cursor-pointer select-none'>{form.formState.isSubmitting ? "Saving...":"Save Region"}</Button>
             </form>
         </Form>
-      </div>
+      </div>)}
         </div>
     </>
   )

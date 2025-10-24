@@ -1,5 +1,7 @@
+import useFetchAllRegions from "@/api/region.api"
 import PageTitle from "@/components/common/PageTitle"
 import Header from "@/components/layouts/Header"
+import { Spinner } from "@/components/Spinner"
 import { getRegionColumns, type TRegion } from "@/components/table/column"
 import { DataTable } from "@/components/table/data-table"
 import { Button } from "@/components/ui/button"
@@ -8,12 +10,15 @@ import { Input } from "@/components/ui/input"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import usePagination from "@/hooks/use-pagination"
+import { toastPromise } from "@/hooks/use-toast"
 import { constant } from "@/lib/constant"
+import queries from "@/lib/queries"
 import { generatePageTitle } from "@/utils/seo"
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu"
 import { ChevronDown, Plus, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 
 const showOptions = [
@@ -82,9 +87,9 @@ function RegionDashboardPage() {
   const navigate = useNavigate();
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
-  const [data, setData] = useState<TRegion[]>(tableData);
-
-  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegion>(data, 1, perPage);
+  // const [data, setData] = useState<TRegion[]>(tableData);
+  const {data, refetch, isFetching} = useFetchAllRegions({limit:perPage})
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegion>(data?.regions, 1, perPage, data?.pagination);
 
   useEffect(() => {
     setPerPage(selected.value);
@@ -92,9 +97,24 @@ function RegionDashboardPage() {
   const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_REGION.replace(":id",id));
      }, []);
+     const deleteRegion = queries.useDeleteRegionMutation();
   const handleDelete = useCallback((id: string) => {
-    setData((prev) =>
-      prev.filter((row) => row.id !== id))
+    try {
+      toastPromise(deleteRegion.mutateAsync(id),{
+        loading: "Deleting Region...",
+        success: (res)=> {
+          if(res?.status === true )refetch();
+          return "Yeah! Region deleted successfully"
+        },
+        error: (e)=> (e instanceof Error)? e.message:"Opps! Error deleting region",
+      })
+    } catch (error) {
+      if(error instanceof Error){
+        toast.error(error.message);
+      }else{
+        toast.error("Opps! An unexpected error occured");
+      }
+    }
   }, []);
   const handleAccess = useCallback((id: string) => { console.log("manage access:", id) }, []);
   const columns = useMemo(() => getRegionColumns(handleEdit, handleDelete, handleAccess), [handleAccess, handleDelete, handleEdit])
@@ -241,10 +261,10 @@ function RegionDashboardPage() {
               onChange={(e) => setSearchValue(e.target.value)} /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+       {isFetching? <Spinner/> :( <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
+          onGlobalFilterChange={setSearchValue} />)}
 
         {/* Pagination */}
         {tableData.length > 0 && calculatedTotalPages > 1 && (

@@ -5,6 +5,7 @@ type TStaffData =
     email: string; 
     password: string; 
     role: string[]; 
+    region: string[]; 
 } | undefined
 export type TStaffMemberForm = {
     initialData?: TStaffData, 

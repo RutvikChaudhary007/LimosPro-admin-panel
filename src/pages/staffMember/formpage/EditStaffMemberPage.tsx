@@ -1,5 +1,7 @@
 //@ts-nocheck
+import { useFetchOneStaffMember } from "@/api/staffMember.api";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import StaffMemberForm from "@/components/staffMember/StaffMemberForm";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -9,21 +11,23 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
-const initialData = {
-    firstName: "John",
-    lastName: "Doe",
-    email: "name@email.com",
-    password: "password@123",
-    role: ["admin"]
-}
+// const initialData = {
+//     firstName: "John",
+//     lastName: "Doe",
+//     email: "name@email.com",
+//     password: "password@123",
+//     role: ["admin"]
+// }
 const EditStaffMemberPage = () => {
   const {id} = useParams();
   const navigate = useNavigate();
+  const {data, isFetching} = useFetchOneStaffMember({id:id as string});
   const editStaffMember = queries.useUpdateStaffMemberMutation();
    async function onSubmit(values: object) {
     try {
-      if(values?.region) delete values?.region;
-      toastPromise(editStaffMember.mutateAsync({id:id as string,regionId: data?.region as string, data: values}),{
+      // console.log("values:",values)
+      if(values?.password.includes("*")) delete values.password;
+      toastPromise(editStaffMember.mutateAsync({id:id as string,regionId: data?.region?.id as string, data: values}),{
         loading: "Updating staff member...",
         success: (res)=>{
            if(res) navigate(constant.ROUTING_URLS.STAFF_MEMBERS)
@@ -51,10 +55,10 @@ const EditStaffMemberPage = () => {
                  <h4><span className="text-[#959595] w-14 h-4">Staff Members</span>  <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Staff Members</span></h4>
              </div>
        </Header>
-    <StaffMemberForm
-    initialData={initialData}
+    {isFetching? <Spinner/>:(<StaffMemberForm
+    initialData={data}
     onSubmit={onSubmit}
-    type={"Edit Staff Members"}/>
+    type={"Edit Staff Members"}/>)}
          </div>
      </>
    )

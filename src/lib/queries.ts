@@ -23,6 +23,8 @@ import { bulkDeleteFAQById, createFAQ, deleteFAQById, editFAQById } from "@/api/
 import { bulkDeleteIPWhiteListById, createIPWhiteList, deleteIPWhiteListById, editIPWhiteListById } from "@/api/ipWhiteList.api";
 import { editFleetById } from "@/api/editFleetById.api";
 import { bulkDeleteTrips } from "@/api/deleteTrips.api";
+import { createRegion, deleteRegion, editRegion } from "@/api/region.api";
+import { createRegionAdmin, deleteRegionAdmin, editRegionAdmin } from "@/api/regionAdmin.api";
 
 
 
@@ -198,7 +200,7 @@ const useBulkDeletefleetMutation = ()=> useMutation({
       // userPermissions are automatically stored in localStorage by the login API
       
       navigate(constant.ROUTING_URLS.AFFILIATE);
-      // Navigate to dashboard
+      return response;
     },
     onError: (err: unknown) => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
@@ -1041,6 +1043,126 @@ const useBulkDeleteTripsMutation = ()=>useMutation({
     },
 })
 
+/**
+ * #####################################
+ * region
+ * #####################################
+ * @returns 
+ */
+
+const useCreateRegionMutation = ()=>useMutation({
+  mutationFn: createRegion,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useEditRegionMutation = ()=>useMutation({
+  mutationFn: editRegion,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useDeleteRegionMutation = ()=>useMutation({
+  mutationFn: deleteRegion,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+/**
+ * #####################################
+ * Region Admin
+ * #####################################
+ * @returns 
+ */
+
+const useCreateRegionAdminMutation = ()=>useMutation({
+  mutationFn: createRegionAdmin,
+  onSuccess: (data)=> data,
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useEditRegionAdminMutation = ()=>useMutation({
+  mutationFn: editRegionAdmin,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useDeleteRegionAdminMutation = ()=>useMutation({
+  mutationFn: deleteRegionAdmin,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
 
 
 export default {
@@ -1102,4 +1224,12 @@ export default {
     useBulkDeleteIPWhiteListMutation,
     // Trips
     useBulkDeleteTripsMutation,
+    // region
+    useCreateRegionMutation,
+    useEditRegionMutation,
+    useDeleteRegionMutation,
+    // region admin
+    useCreateRegionAdminMutation,
+    useEditRegionAdminMutation,
+    useDeleteRegionAdminMutation
 }

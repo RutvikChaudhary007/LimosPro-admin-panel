@@ -1,6 +1,6 @@
 // @ts-nocheck
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api"
-import useFetchAllRegions from "@/api/getAllRegion.api"
+import useFetchAllRegions from "@/api/region.api"
 import useFetchFleetById from "@/api/getFleetById.api"
 import FleetForm from "@/components/fleet/FleetForm"
 import Header from "@/components/layouts/Header"

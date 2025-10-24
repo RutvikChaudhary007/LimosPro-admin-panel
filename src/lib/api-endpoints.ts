@@ -66,6 +66,10 @@ export const API_ENDPOINTS = {
 
   // Regions
   GET_ALL_REGIONS: `${BASE_URL1}/regions`,
+  CREATE_REGION: `${BASE_URL1}/region`,
+  GET_REGION_BY_ID: `${BASE_URL1}/region/:region_id`,
+  EDIT_REGION: `${BASE_URL1}/region/:regionId`,
+  DELETE_REGION: `${BASE_URL1}/region/:regionId`,
 
   // Payments
   GET_ALL_PAYMENTS: `${BASE_URL1}/payments`,
@@ -84,6 +88,7 @@ export const API_ENDPOINTS = {
 
   // Staff member 
   GET_ALL_STAFF_MEMBER: `${BASE_URL1}/staff-members`,
+  GET_SINGLE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
   CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:regionId`,
   EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id/:regionId`,
   DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
@@ -148,9 +153,30 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${BASE_URL2}/media/media/${id}`,
     GET_STATS: `${BASE_URL2}/media/stats`,
   },
+  CONTENT_BLOCK: {
+    GET_ALL: `${BASE_URL1}/content/blocks`,
+    GET_BY_ID: `${BASE_URL1}/content/blocks/:id`,
+    CREATE: `${BASE_URL1}/content/blocks`,
+    UPDATE: `${BASE_URL1}/content/blocks/:id`,
+    DELETE: `${BASE_URL1}/content/blocks/:id`,
+    GET_STATS: `${BASE_URL1}/content/stats`,
+  },
   // Roles
   ROLES:{
     GET_ALL: `${BASE_URL}/role/all`,
     GET_ALL_STAFF_ROLE: `${BASE_URL}/role/staff`,
+  },
+  PERSMISSIONS:{
+    GET_ALL: `${BASE_URL1}/permissions`
+  },
+  REGIONAL_ADMIN:{
+    GET_ALL: `${BASE_URL1}/regional-admins`,
+    GET_ONE: `${BASE_URL1}/regional-admins`,
+    CREATE: `${BASE_URL1}/regional-admin/:regionId`,
+    EDIT: `${BASE_URL1}/regional-admins`,
+    DELETE: `${BASE_URL1}/regional-admins`,
+  },
+  DASHBOARD:{
+    GET: `${BASE_URL1}/report/dashboard`
   }
 };

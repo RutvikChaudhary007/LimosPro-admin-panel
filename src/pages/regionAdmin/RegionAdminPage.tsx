@@ -1,5 +1,7 @@
+import useFetchAllRegionAdmins from '@/api/regionAdmin.api';
 import PageTitle from '@/components/common/PageTitle';
 import Header from '@/components/layouts/Header';
+import { Spinner } from '@/components/Spinner';
 import { getRegionAdminColumns, type TRegionAdmin } from '@/components/table/column';
 import { DataTable } from '@/components/table/data-table';
 import { Button } from '@/components/ui/button';
@@ -45,8 +47,9 @@ function RegionAdminPage() {
   const navigate = useNavigate();
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
-  const [data, setData] = useState<TRegionAdmin[]>(tableData);
-  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(data, 1, perPage);
+  // const [data, setData] = useState<TRegionAdmin[]>(tableData);
+  const {data, isFetching} = useFetchAllRegionAdmins({limit:perPage});
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(data?.regionalAdmins, 1, perPage, data?.pagination);
 
   useEffect(() => {
     setPerPage(selected.value);
@@ -56,8 +59,8 @@ function RegionAdminPage() {
     navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN)
   }, []);
     const handleDelete = useCallback((id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id != id))
+      // setData((prev) =>
+      //   prev.filter((row) => row.id != id))
     }, []);
     const handleAccess = useCallback((id: string) => { console.log("manage access:", id) }, []);
   const columns = useMemo(() => getRegionAdminColumns(handleEdit, handleDelete, handleAccess),[handleEdit, handleDelete, handleAccess])
@@ -187,12 +190,8 @@ function RegionAdminPage() {
             disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
               onClick={() => {
                 
-                setData((prev) =>
-                   // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                  prev.filter((row,i) => !rowSelection[i])
-                );
-                console.log("data:", data);
-                console.log("rowSelection:", rowSelection);
+                // console.log("data:", data);
+                // console.log("rowSelection:", rowSelection);
                 setRowSelection({});
               }}
             >
@@ -206,10 +205,10 @@ function RegionAdminPage() {
             /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+       {isFetching ? <Spinner/>:(<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
+          onGlobalFilterChange={setSearchValue} />)} 
         {/* <div className="mt-5 py-4 border border-[#F1F1F1] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
           <Table className=" bg-[#FDFDFD] ">
             <TableHeader className="w-full h-[31px] bg-[#F5F5F5]">

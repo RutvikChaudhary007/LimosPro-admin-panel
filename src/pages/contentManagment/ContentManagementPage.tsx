@@ -1,4 +1,5 @@
 // @ts-nocheck
+import useFetchAllContentBlock from "@/api/contentBlock.api";
 import Header from "@/components/layouts/Header";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -43,9 +44,18 @@ const tableData: THomeContent[] = [
 const ContentManagement = () => {
   const navigate = useNavigate();
    const [perPage, setPerPage] = useState(10);
-    const [data, setData] = useState<THomeContent[]>(tableData);
+    // const [data, setData] = useState<THomeContent[]>(tableData);
+      const {data,refetch, isFetching, isError} = useFetchAllContentBlock({limit:perPage});
     const [activeBtn, setActiveBtn] = useState<string>("Home");
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(data, 1, perPage);
+    const filteredData = data?.blocks?.filter((row)=>{
+      console.log("activeBtn",row?.pageName?.toLowerCase())
+      if(activeBtn?.toLowerCase() === row?.pageName?.toLowerCase()){
+        return true;
+      }
+      return false;
+    })
+    console.log("filteredData:",filteredData)
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(filteredData, 1, perPage, data?.pagination);
   
     
     const handleEdit = (id: string) => { console.log("Edit:", id)

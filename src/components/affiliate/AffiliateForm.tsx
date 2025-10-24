@@ -720,7 +720,7 @@ const AffiliateForm: FC<AffiliateFormProps & {businessAddress?:string}> = ({ ini
                         </Button>
                     </div>
                 </Card>
-
+                        {/* <pre>{JSON.stringify(form.watch(),null,2)}</pre> */}
             </form>
         </Form>
 
