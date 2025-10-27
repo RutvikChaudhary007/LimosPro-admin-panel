@@ -25,6 +25,7 @@ import { editFleetById } from "@/api/editFleetById.api";
 import { bulkDeleteTrips } from "@/api/deleteTrips.api";
 import { createRegion, deleteRegion, editRegion } from "@/api/region.api";
 import { createRegionAdmin, deleteRegionAdmin, editRegionAdmin } from "@/api/regionAdmin.api";
+import { createContentBlock, deleteContentBlock, editContentBlock } from "@/api/contentBlock.api";
 
 
 
@@ -1163,6 +1164,65 @@ const useDeleteRegionAdminMutation = ()=>useMutation({
     },
 })
 
+/**
+ * #####################################
+ * Content Block
+ * #####################################
+ * @returns 
+ */
+
+const useCreateContentBlockMutation = ()=>useMutation({
+  mutationFn: createContentBlock,
+  onSuccess: (data)=> data,
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useEditContentBlockMutation = ()=>useMutation({
+  mutationFn: editContentBlock,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
+const useDeleteContentBlockMutation = ()=>useMutation({
+  mutationFn: deleteContentBlock,
+  onSuccess: (data)=>{
+    return data
+  },
+  onError: (err: unknown) => {
+    if (err && typeof err === "object" && "isAxiosError" in err) {
+      const axiosError = err as AxiosError<ApiErrorResponse>;
+      throw new Error(
+        axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          "An unexpected error occurred"
+        );
+      }
+      throw new Error("An unexpected error occurred");
+    },
+})
+
 
 
 export default {
@@ -1231,5 +1291,9 @@ export default {
     // region admin
     useCreateRegionAdminMutation,
     useEditRegionAdminMutation,
-    useDeleteRegionAdminMutation
+    useDeleteRegionAdminMutation,
+    // Content Block
+    useCreateContentBlockMutation,
+    useEditContentBlockMutation,
+    useDeleteContentBlockMutation,
 }

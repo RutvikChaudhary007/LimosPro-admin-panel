@@ -12,80 +12,81 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
 
-const tableData: TChauffeurAvailablility[] = [
-  {
-    id: "1",
-    firstName: "127.0.0.1",
-    lastName: "Localhost",
-    licenseNumber: "32432AS",
-    ratings: "4",
-    status: "Active"
-  },
-  {
-    id: "2",
-    firstName: "127.0.0.2",
-    lastName: "Localhost2",
-    licenseNumber: "32432AS",
-    ratings: "5",
-    status: "Active"
-  },
-];
+// const tableData: TChauffeurAvailablility[] = [
+//   {
+//     id: "1",
+//     firstName: "127.0.0.1",
+//     lastName: "Localhost",
+//     licenseNumber: "32432AS",
+//     ratings: "4",
+//     status: "Active"
+//   },
+//   {
+//     id: "2",
+//     firstName: "127.0.0.2",
+//     lastName: "Localhost2",
+//     licenseNumber: "32432AS",
+//     ratings: "5",
+//     status: "Active"
+//   },
+// ];
 type FleetStat = {
   id?: string
   name: string
   count: number
 }
 
-function TableAndPieChart() {
+function TableAndPieChart({chauffeurAvailability,fleetDistribution}:{chauffeurAvailability:chauffeurAvailability[],fleetDistribution: FleetStat}) {
   const navigate = useNavigate();
-  const [data, setData] = useState(tableData);
+  // const [data, setData] = useState(tableData);
   const handleEdit = (id: string) => {
     console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id", id))
   };
   const handleDelete = (id: string) => {
-    setData((prev) =>
-      prev.filter((row) => row.id !== id))
+    // setData((prev) =>
+    //   prev.filter((row) => row.id !== id))
   };
   const columns = getChauffeurAvailablility(handleEdit, handleDelete);
   ChartJS.register(ArcElement, Tooltip, Legend);
 
   // Fleet stats from API (fallback to static data)
-  const [fleetStats, setFleetStats] = useState<FleetStat[]>([
-    { name: 'Executive Sedan', count: 12 },
-    { name: 'Executive Large SUV.', count: 3 },
-  ])
-  const [loadingFleetStats, setLoadingFleetStats] = useState<boolean>(false)
+  // const [fleetStats, setFleetStats] = useState<FleetStat[]>(fleetDistribution?.fleetDis??[])
+  // const [fleetStats, setFleetStats] = useState<FleetStat[]>([
+  //   { name: 'Executive Sedan', count: 12 },
+  //   { name: 'Executive Large SUV.', count: 3 },
+  // ])
+  // const [loadingFleetStats, setLoadingFleetStats] = useState<boolean>(false)
 
-  useEffect(() => {
-    let isMounted = true
-    const fetchFleetStats = async () => {
-      try {
-        setLoadingFleetStats(true)
-        // Replace with your real endpoint
-        const response = await fetch('/api/dashboard/fleet-stats', { credentials: 'include' })
-        if (!response.ok) throw new Error('Failed to fetch fleet stats')
-        const json = await response.json()
-        if (isMounted && Array.isArray(json) && json.length) {
-          setFleetStats(json as FleetStat[])
-        }
-      } catch {
-        // keep fallback silently
-      } finally {
-        if (isMounted) setLoadingFleetStats(false)
-      }
-    }
-    fetchFleetStats()
-    return () => { isMounted = false }
-  }, [])
+  // useEffect(() => {
+  //   let isMounted = true
+  //   const fetchFleetStats = async () => {
+  //     try {
+  //       setLoadingFleetStats(true)
+  //       // Replace with your real endpoint
+  //       const response = await fetch('/api/dashboard/fleet-stats', { credentials: 'include' })
+  //       if (!response.ok) throw new Error('Failed to fetch fleet stats')
+  //       const json = await response.json()
+  //       if (isMounted && Array.isArray(json) && json.length) {
+  //         setFleetStats(json as FleetStat[])
+  //       }
+  //     } catch {
+  //       // keep fallback silently
+  //     } finally {
+  //       if (isMounted) setLoadingFleetStats(false)
+  //     }
+  //   }
+  //   fetchFleetStats()
+  //   return () => { isMounted = false }
+  // }, [])
 
   const topAndBottom = useMemo(() => {
-    if (!fleetStats.length) return [] as FleetStat[]
-    const most = fleetStats.reduce((a, b) => (a.count >= b.count ? a : b))
-    const least = fleetStats.reduce((a, b) => (a.count <= b.count ? a : b))
+    if (!fleetDistribution?.fleetDis?.length) return [] as FleetStat[]
+    const most = fleetDistribution?.fleetDis?.reduce((a, b) => (a.count >= b.count ? a : b))
+    const least = fleetDistribution?.fleetDis?.reduce((a, b) => (a.count <= b.count ? a : b))
     if (most === least) return [most]
     return [most, least]
-  }, [fleetStats])
+  }, [fleetDistribution?.fleetDis])
 
   const Chartdata = useMemo(() => ({
     labels: topAndBottom.length === 1 ? ["Most Requested Fleet"]:["Most Requested Fleet", "Least Requested Fleet"],
@@ -123,7 +124,7 @@ function TableAndPieChart() {
             </Button>
           </div>
         </div>
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={columns} data={chauffeurAvailability} />
       </div>
       {/* pie */}
       <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-y-auto custom-scrollbar-style">
@@ -160,19 +161,7 @@ function TableAndPieChart() {
         </div>
         <div className="px-4 w-[290px] h-[155px]">
           <div className="w-full">
-            {[{
-              fleet: "Executive Sedan",
-              price: 60,
-              duration: "Per Hour"
-            },{
-              fleet: "Executive Large SUV.",
-              price: 75,
-              duration: "Per Hour"
-            },{
-              fleet: "Business Large SUV.",
-              price: 90,
-              duration: "Per Hour"
-            }].map((content,i) =>(
+            {fleetDistribution?.fleets?.length>0 ?(fleetDistribution?.fleets?.map((content,i) =>(
               <React.Fragment key={i}>
               <div className="w-full flex justify-between items-center">
               <p className="text-[#3A3A3A] font-bold text-sm">{content.fleet}</p>
@@ -180,7 +169,7 @@ function TableAndPieChart() {
             </div>
             <hr className="w-full text-sm border mt-2.5 mb-2.5"/>
             </React.Fragment>
-            ))}
+            ))): <p>Results not found!</p>}
             
             
           </div>
@@ -188,7 +177,7 @@ function TableAndPieChart() {
             <Link to={constant.ROUTING_URLS.CREATE_FLEET}>
             <Button className="bg-[#FFFFFF]  text-[#959595] rounded" variant="secondary">Add New <Plus/></Button>
             </Link>
-            <Link to={constant.ROUTING_URLS.VIEW_FLEET}>
+            <Link to={constant.ROUTING_URLS.FLEETS}>
           <Button className="bg-[#FFFFFF]  text-[#959595] rounded" variant="secondary">View All <ArrowRight/></Button>
           </Link>
           </div>

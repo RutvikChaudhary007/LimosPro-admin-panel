@@ -19,6 +19,8 @@ export const API_ENDPOINTS = {
   SIGN_UP: `${BASE_URL}/signup`,
   LOG_IN: `${BASE_URL}/login`,
 
+  // Dashboard
+  GET_DASHBOARD_DETAILS: `${BASE_URL1}/report/dashboard`,  
   // Affiliate
   GET_ALL_AFFILIATE: `${BASE_URL1}/affiliates`,
   GET_AFFILIATE_BY_ID: `${BASE_URL1}/affiliate/:id`,

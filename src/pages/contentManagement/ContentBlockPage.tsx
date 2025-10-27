@@ -15,7 +15,7 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -26,10 +26,16 @@ const [newPage, setNewPage] = useState<number>(1);
 const [tableRef, setTableRef] = useState<any>(null);
   const {data,refetch, isFetching, isError} = useFetchAllContentBlock({limit:perPage});
   
-  
+  const tabsData = useMemo(()=>{
+    const uniqueTabs = new Set();
+    data?.blocks?.foreach((rawData)=>{
+      uniqueTabs.add(rawData?.pageName);
+    })
+    return uniqueTabs;
+  },[data])
 
   const handleEdit = (id: string) => { console.log("Edit:", id) 
-    navigate(constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id",id));
+    navigate(constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(":id",id));
   };
 //   const deleteChauffeurMutation = queries.useDeleteChauffeurMutation();
 //   const bulkDeleteChauffeurMutation = queries.useBulkDeleteChauffeurMutation();

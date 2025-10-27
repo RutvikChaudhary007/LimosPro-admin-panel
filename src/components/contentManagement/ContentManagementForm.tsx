@@ -9,52 +9,73 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import ReactQuill from 'react-quill-new';
 import 'react-quill/dist/quill.snow.css'; // or 'quill.bubble.css'
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { Label } from "../ui/label";
+// import { Plus } from "lucide-react";
+// import { Label } from "../ui/label";
+import { toast } from "sonner";
 const formSchema = z.object({
-    firstName: z.string().refine(value => value.trim() !== "", {
-        message: "First name cannot be empty or just whitespace.",
-    }).min(3, { message: "First name must be at least 3 characters" }),
-    lastName: z.string().refine(value => value.trim() !== "", {
-        message: "Last name cannot be empty or just whitespace.",
-    }).min(3, { message: "Last name must be at least 3 characters" }),
-    designation: z.string().refine(value => value.trim() !== "", {
-        message: "Designation cannot be empty or just whitespace.",
-    }).min(3, { message: "Designation must be at least 3 characters" }),
-    email: z.email(),
-    phone: z.string().refine(value => value.trim() !== "", {
-        message: "phone cannot be empty or just whitespace.",
-    }).min(8).max(32),
+    pageTitle: z.string().refine(value => value.trim() !== "", {
+        message: "Page title cannot be empty or just whitespace.",
+    }).min(3, { message: "Page title must be at least 3 characters" }),
+    metaTitle: z.string().refine(value => value.trim() !== "", {
+        message: "Meta title cannot be empty or just whitespace.",
+    }).min(3, { message: "Meta title must be at least 3 characters" }),
+    metaDescription: z.string().refine(value => value.trim() !== "", {
+        message: "Meta description cannot be empty or just whitespace.",
+    }).min(3, { message: "Meta description must be at least 3 characters" }),
+    blockType: z.string().refine(value => value.trim() !== "", {
+        message: "Block type cannot be empty or just whitespace.",
+    }).min(3, { message: "Block type must be at least 3 characters" }),
+    pageName: z.string().refine(value => value.trim() !== "", {
+        message: "Page name cannot be empty or just whitespace.",
+    }).min(3, { message: "Page name must be at least 3 characters" }),
+    sectionName: z.string().refine(value => value.trim() !== "", {
+        message: "Section name cannot be empty or just whitespace.",
+    }).min(3, { message: "Section name must be at least 3 characters" }),
+    sortOrder: z.string().regex(/^\d+$/, "Only digits are allowed")
+  .transform(Number),
+//   .transform((val:string):number => Number(val)),
+    content: z.string().refine(value => value.trim() !== "", {
+        message: "Content be empty or just whitespace.",
+    }).min(3),
 });
 
-export type TCrewMemberForm = z.infer<typeof formSchema>;
+export type TContentForm = z.infer<typeof formSchema>;
 
-const ContentManagementForm = ({ initialData, onSubmit, disabledFields, type }: { initialData?: object, onSubmit: () => void, disabledFields?: [], type: string }) => {
-    const [value, setValue] = useState('');
-    const transformInitialData = (data?: z.infer<typeof formSchema>) => {
+const ContentManagementForm = ({ initialData, onSubmit, disabledFields, type }: { initialData?: object, onSubmit: (data: TContentForm) => Promise<void>, disabledFields?: [], type: string }) => {
+    const transformInitialData = (data?: TContentForm) => {
 
         if (!data) return undefined;
         // console.log("edit chauffeur formdata:>",data)
         return {
-            firstName: data?.firstName,
-            lastName: data?.lastName,
-            designation: data?.designation,
-            email: data?.email,
-            phone: data?.phone,
+            blockType: data?.blockType,
+            pageName: data?.pageName,
+            sectionName: data?.sectionName,
+            sortOrder: data?.sortOrder,
+            content: data?.content,
         };
     };
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<TContentForm>({
         resolver: zodResolver(formSchema),
         defaultValues: transformInitialData(initialData) || {
-            firstName: "",
-            lastName: "",
-            designation: "",
-            email: "",
-            phone: "",
-
+            metaDescription: "",
+            metaTitle: "",
+            pageTitle: "",
+            blockType: "",
+            pageName: "",
+            sectionName: "",
+            sortOrder: 0,
+            content: "",
         },
     });
+    
+    const handleFormSubmit = async(data)=>{
+        try {
+            await onSubmit(data);
+            form.reset()
+        } catch (error) {
+            toast.error(error)
+        }
+    }
     const modules = {
         toolbar: [
             [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
@@ -75,8 +96,8 @@ const ContentManagementForm = ({ initialData, onSubmit, disabledFields, type }: 
     ];
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+            <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+                <Card className="rounded  bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                     <CardHeader className="flex items-center justify-between">
                         <CardTitle>{type}</CardTitle>
                         <div className="w-[258px] flex items-center justify-between">
@@ -89,36 +110,36 @@ const ContentManagementForm = ({ initialData, onSubmit, disabledFields, type }: 
 
                         <FormField
                             control={form.control}
-                            name="firstName"
+                            name="pageTitle"
                             render={({ field }) => (
                                 <FormItem className='flex flex-col gap-3 mb-[31px] '>
                                     <FormLabel>Page Title</FormLabel>
                                     <FormControl>
-                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Frist Name' disabled={isFieldDisabled(disabledFields, "firstName")} {...field} />
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Page Title' disabled={isFieldDisabled(disabledFields, "pageTitle")} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                         <FormField
                             control={form.control}
-                            name="lastName"
+                            name="metaTitle"
                             render={({ field }) => (
                                 <FormItem className='flex flex-col gap-3 mb-[31px]  '>
                                     <FormLabel>Meta Title</FormLabel>
                                     <FormControl >
-                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Last Name' {...field} />
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Meta Title' {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                         <FormField
                             control={form.control}
-                            name="designation"
+                            name="metaDescription"
                             render={({ field }) => (
-                                <FormItem className='flex flex-col gap-3 mb-[31px] col-span-2'>
+                                <FormItem className='flex flex-col  gap-3 mb-[31px] col-span-2'>
                                     <FormLabel>Meta Description</FormLabel>
                                     <FormControl>
-                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Designation' {...field} />
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Meta Description' {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -126,40 +147,64 @@ const ContentManagementForm = ({ initialData, onSubmit, disabledFields, type }: 
                         <hr className="broder bg-black col-span-2" />
                         <FormField
                             control={form.control}
-                            name="email"
+                            name="blockType"
                             render={({ field }) => (
                                 <FormItem className='flex flex-col gap-3 mb-[31px] col-span-2'>
-                                    <FormLabel>Heading</FormLabel>
+                                    <FormLabel>Block Type</FormLabel>
                                     <FormControl>
-                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Email' {...field} />
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Block Type' {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                         <FormField
                             control={form.control}
-                            name="phone"
+                            name="pageName"
                             render={({ field }) => (
                                 <FormItem className='flex flex-col gap-3 mb-[31px] col-span-2'>
-                                    <FormLabel>Sub Heading</FormLabel>
+                                    <FormLabel>Page Name</FormLabel>
                                     <FormControl>
-                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='phone' {...field} />
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Home' {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )} />
                         <FormField
                             control={form.control}
-                            name="phone"
+                            name="sectionName"
                             render={({ field }) => (
                                 <FormItem className='flex flex-col gap-3 mb-[31px] col-span-2'>
-                                    <FormLabel>Description</FormLabel>
+                                    <FormLabel>Section Name</FormLabel>
+                                    <FormControl>
+                                        <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='sectionName' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        <FormField
+                            control={form.control}
+                            name="sortOrder"
+                            render={({ field }) => (
+                                <FormItem className='flex flex-col gap-3 mb-[31px] col-span-2'>
+                                    <FormLabel>Sort Order</FormLabel>
+                                    <FormControl>
+                                        <Input type='number' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='1' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />
+                        <FormField
+                            control={form.control}
+                            name="content"
+                            render={({ field }) => (
+                                <FormItem className='flex flex-col gap-3 mb-[60px] col-span-2'>
+                                    <FormLabel>Content</FormLabel>
                                     <FormControl>
                                         <ReactQuill
                                             className="col-span-2"
                                             theme="snow"
-                                            value={value}
-                                            onChange={setValue}
+                                            value={field.value}
+                                            onChange={field.onChange}
                                             modules={modules}
                                             formats={formats}
                                         />
@@ -167,7 +212,7 @@ const ContentManagementForm = ({ initialData, onSubmit, disabledFields, type }: 
                                     <FormMessage />
                                 </FormItem>
                             )} />
-                        <Label className="font-medium h-[22px]"><Plus className="w-5 h-5" /> <span className="">Add Field</span></Label>
+                        {/* <Label className="font-medium h-[22px]"><Plus className="w-5 h-5" /> <span className="">Add Field</span></Label> */}
                     </CardContent>
                 </Card>
 

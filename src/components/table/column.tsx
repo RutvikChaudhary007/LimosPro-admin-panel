@@ -2109,16 +2109,17 @@ export function getChauffeurAvailablility(
   onDelete: (id:string)=>void,
 ): ColumnDef<TChauffeurAvailablility>[]{
   return [
-  { accessorKey: "firstName", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-  cell: ({row})=>(<>
-  {row.original.firstName} {row.original.lastName}
-  </>), enableSorting: false,
+  { accessorKey: "name", header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+  // cell: ({row})=>(<>
+  // {row.original.firstName} {row.original.lastName}
+  // </>),
+   enableSorting: false,
   },
   { accessorKey: "licenseNumber", header: ({ column }) => <DataTableColumnHeader column={column} title="License Number" />, enableSorting: false,
 },
-{ accessorKey: "ratings", header: ({ column }) => <DataTableColumnHeader column={column} title="Ratings" />,
-cell: ({row})=>(<Label className="flex items-center rounded bg-[#D9D9D9] px-2 w-14">
-<Star className="fill-black text-sm max-h-4 max-w-4"/> <span className="text-xl">{row.original.ratings}</span>
+{ accessorKey: "rating", header: ({ column }) => <DataTableColumnHeader column={column} title="Ratings" />,
+cell: ({row})=>(<Label className="flex items-center rounded bg-[#D9D9D9] px-1 w-16">
+<Star className="fill-black text-sm max-h-4 max-w-4"/> <span className="text-xl">{row.original.rating}</span>
 </Label>), enableSorting: false,
 },
 { accessorKey: "status", header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
@@ -2232,9 +2233,9 @@ export function getHomeContent(
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()} >
               <DialogHeader>
-                <DialogTitle>Delete Home</DialogTitle>
+                <DialogTitle>Delete Content</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this home? This action cannot be undone.
+                  Are you sure you want to delete this content? This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
             <div className="py-4">

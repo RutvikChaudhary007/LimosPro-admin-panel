@@ -11,6 +11,8 @@ import { DataTable } from "@/components/table/data-table";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageTitle from "@/components/common/PageTitle";
 import { generatePageTitle } from "@/utils/seo";
+import useFetchDashboard from "@/api/dashboard.api";
+import { Spinner } from "@/components/Spinner";
 // interface Point { month: string; earnings: number; }
 
 const data = [
@@ -52,16 +54,18 @@ const CustomDot = ({cx, cy}:{cx:string, cy:string})=>{
 
 
 function DashboardPage() {
-  const tableData = [
-    {id: "1", userName: "Michael Reynolds",bookingId:"AA57329144",price: 1879, status: "Canceled", commute: "One-way"},
-    {id: "2", userName: "David Harrison",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "Two-way"},
-    {id: "3", userName: "James Thornton",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Round Trip"},
-    {id: "4", userName: "William Foster",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "One-way"},
-    {id: "5", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-    {id: "6", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-    {id: "7", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-    {id: "8", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
-  ];
+  // const tableData = [
+  //   {id: "1", userName: "Michael Reynolds",bookingId:"AA57329144",price: 1879, status: "Canceled", commute: "One-way"},
+  //   {id: "2", userName: "David Harrison",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "Two-way"},
+  //   {id: "3", userName: "James Thornton",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Round Trip"},
+  //   {id: "4", userName: "William Foster",bookingId:"AA57329144",price: 1879, status: "Completed", commute: "One-way"},
+  //   {id: "5", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+  //   {id: "6", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+  //   {id: "7", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+  //   {id: "8", userName: "Andrew Sullivan",bookingId:"AA57329144",price: 1879, status: "On Going", commute: "Hourly"},
+  // ];
+  
+  const {data, isFetching} = useFetchDashboard({});
   const columns = getDashboardColumns()
   return (
     <>
@@ -78,16 +82,16 @@ function DashboardPage() {
             </div>
           </div>
         </Header>
-        <main className="flex-1 h-full overflow-y-auto p-4 md:p-6">
+       {isFetching? <Spinner/> : (<main className="flex-1 h-full overflow-y-auto p-4 md:p-6">
           <div className="flex flex-col gap-2.5 relative">
             <div className="h-4 flex items-center justify-start">
               <Dot />
               <p className="text-xs">In This Week</p>
             </div>
             {/* cards */}
-            <Card className="h-[126px] w-full grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="p-4 w-[250px] h-full rounded-[6px] bg-linear-to-r from-[#FFFFFF] to-[#EBEBEB]">
+            <Card className="h-[140px] w-full grid gap-5 md:grid-cols-2 lg:grid-cols-4 pt-1.5 xxl:pr-6">
+              {[{Label:'Total Revenue',count:data?.totals?.totalRevenue, money: true},{Label: 'Total Bookings',count:data?.totals?.totalBookings,money: false},{Label: 'Total Affiliates',count:data?.totals?.totalAffiliates,money: false},{Label: 'Total Chauffeurs',count:data?.totals?.totalChauffeurs,money: false}].map((raw,i) => (
+                <div key={i} className="p-4 w-[250px] h-full rounded bg-linear-to-r from-[#FFFFFF] to-[#EBEBEB]">
                   <div className="w-full h-[94px] flex flex-col gap-1.5">
                     <div className="w-full h-6 relative flex items-center justify-center">
                       <div className="absolute right-0 top-0 h-6 w-[57px] bg-[#5E5E5E] rounded-[20px] text-white flex items-center justify-center gap-0.5 p-1.5">
@@ -97,9 +101,9 @@ function DashboardPage() {
                     </div>
                     <div className="w-full h-[64px]">
  <CardHeader>
-          <div>Total Revenue</div>
+          <div>{raw?.Label}</div>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            {raw?.money&& '$'}{raw?.count}
           </CardTitle>
           {/* <CardAction >
             <div className="w-[45px] h-4 text-white flex items-center justify-center gap-0.5">
@@ -122,7 +126,7 @@ function DashboardPage() {
               <div className="w-[520px] h-[355px] rounded-[6px]" >
                 <ResponsiveContainer width="100%" height={355}>
                     <LineChart
-                        data={data}
+                        data={data?.revenueByMonth}
                         margin={{ top: 15, right: 30, left: 0, bottom: 5 }}
                       >
                         <CartesianGrid vertical={false} />
@@ -152,7 +156,7 @@ function DashboardPage() {
                     </div>
                   </div>
                 <div className="w-full h-full overflow-y-auto custom-scrollbar-style">
-                  <DataTable columns={columns} data={tableData} />
+                  <DataTable columns={columns} data={data?.recentBookings} />
                   
                 </div>  
                 </div>
@@ -160,9 +164,9 @@ function DashboardPage() {
               </div>
             </div>
             {/* Table and Pie Chart */}
-            <TableAndPieChart/>
+            <TableAndPieChart chauffeurAvailability={data?.availability} fleetDistribution={{fleetDis:data?.fleetDistribution,fleets:data?.fleets}}/>
           </div>
-        </main>
+        </main>)}
       </div>
     </>
 

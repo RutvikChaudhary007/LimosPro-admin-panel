@@ -4,12 +4,15 @@ import axiosInstance from '@/utils/axiosInstance';
 import {  useQuery } from '@tanstack/react-query';
 import { AxiosError } from "axios";
 
-type TPara = { limit: number;  };
+type TPara = { limit: number; page?: number  };
 export const getAllContentBlock = async (data?: TPara) => {
   const params: Record<string, unknown> = {};
   if (data?.limit) {
     params.limit = data.limit;
-}
+  }
+  if(data?.page){
+    params.page = data.page
+  }
     const response = await axiosInstance.get(`${API_ENDPOINTS.CONTENT_BLOCK.GET_ALL}`,{params});
   
     return response.data.data;
@@ -35,7 +38,7 @@ export const getSingleContentBlock = async (id: string) => {
 
 export const useFetchContentBlockById = (id:string) =>
   useQuery({
-    queryKey: ['RegionById', {id}],
+    queryKey: ['contentBlockById', {id}],
     queryFn: () => getSingleContentBlock(id),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,

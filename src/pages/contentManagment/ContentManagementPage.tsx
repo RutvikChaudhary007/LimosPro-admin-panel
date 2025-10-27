@@ -1,69 +1,65 @@
 // @ts-nocheck
 import useFetchAllContentBlock from "@/api/contentBlock.api";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { Plus, } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const tableData: THomeContent[] = [
-    {
-        id: "1",
-        content: "Hero Section",
-        description: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip."
-    },
-    {
-        id: "2",
-        content: "Our Section",
-        description: "Special rates may apply during the events seasons and sports games in the Houston greater areas such as Houston rodeo, Christmas lights, new year's night, and big sports games."
-    },
-    {
-        id: "3",
-        content: "Cities We Serve",
-        description: "The rate is subject to change at any time without advanced announcement but it will not reflect in the reservations that are under processing or already booked."
-    },
-    {
-        id: "4",
-        content: "Customer Reviews",
-        description: "Office times: Monday – Sunday  8:00 AM – 10:00 PM."
-    },
-    {
-        id: "5",
-        content: "Our partner",
-        description: "Transportation between Houston Airports, Houston greater area, and Galveston Cruise Port, Galveston Hotels, please book online by clicking on the Houston – Galveston button at the Online Quote & Booking and start from there."
-    },
-]
 
 const ContentManagement = () => {
   const navigate = useNavigate();
-   const [perPage, setPerPage] = useState(10);
-    // const [data, setData] = useState<THomeContent[]>(tableData);
-      const {data,refetch, isFetching, isError} = useFetchAllContentBlock({limit:perPage});
+   const perPage = 10;
+   const [page, setCPage] = useState(1);
+   
+      const {data,refetch, isFetching} = useFetchAllContentBlock({limit:perPage, page});
     const [activeBtn, setActiveBtn] = useState<string>("Home");
+    const tabsData = useMemo(()=>{
+        const uniqueTabs = new Set();
+        if (data?.blocks) {
+          for (const rawData of data.blocks) {
+            uniqueTabs.add(rawData?.pageName);
+          }
+        }
+        return Array.from(uniqueTabs);
+      },[data])
     const filteredData = data?.blocks?.filter((row)=>{
-      console.log("activeBtn",row?.pageName?.toLowerCase())
+      // console.log("activeBtn",row?.pageName?.toLowerCase())
       if(activeBtn?.toLowerCase() === row?.pageName?.toLowerCase()){
         return true;
       }
-      return false;
     })
-    console.log("filteredData:",filteredData)
-    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(filteredData, 1, perPage, data?.pagination);
+    // console.log("filteredData:",filteredData)
+    const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(filteredData, page, perPage, data?.pagination);
   
-    
+    useEffect(()=>{
+      if(currentPage)
+      setCPage(currentPage)
+    },[currentPage]);
     const handleEdit = (id: string) => { console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(":id",id))
      };
+     const deleteContentMutation = queries.useDeleteContentBlockMutation();
     const handleDelete = (id: string) => {
-      setData((prev) =>
-        prev.filter((row) => row.id !== id))
+      toastPromise(deleteContentMutation.mutateAsync(id),{
+        loading: "Deleting...",
+        success: (res)=>{
+          if(res?.status === true) refetch();
+          setActiveBtn("Home")
+          return "Yeah! successfully deleted the content."
+        },
+        error: (e)=> (e instanceof Error)? e.message: "Opps! failed to delete content."
+      });
     };
     const columns =  getHomeContent(handleEdit, handleDelete);
   
@@ -145,7 +141,7 @@ const ContentManagement = () => {
       return items;
     };
   return (
-          <>
+          
             <div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
               <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
                 <div className="w-full h-full flex items-center justify-between">
@@ -170,20 +166,24 @@ const ContentManagement = () => {
                     onChange={(e) => setSearchValue(e.target.value)} /></div>
                 </div>
               </div>
-              <div className="flex items-center justify-between mt-5">
-                {["Home","About","Service","cities","Fleets", "Faqs", "Contact Us", "Blog"].map((btn,i)=>(
-                  <Button className={cn("bg-[#EEEEEE] text-[#C8C8C8] font-medium rounded hover:text-black",btn===activeBtn&& "bg-[#939393] text-white")} key={i} variant={"secondary"} onClick={()=>setActiveBtn(btn)}>
+              <div className="flex items-center justify-between mt-5 overflow-y-scroll gap-2">
+                {tabsData?.map((btn,i)=>(
+                  <Button className={cn("bg-[#EEEEEE] text-[#C8C8C8] font-medium rounded hover:text-black",btn?.toLowerCase()===activeBtn?.toLowerCase()&& "bg-[#939393] text-white")} key={i} variant={"secondary"} onClick={()=>setActiveBtn(btn)}>
                   {btn}
                 </Button>
                 ))}
               </div>
-              <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+       
+       {/* Data */}
+       
+              {isFetching? <Spinner/>:<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
                 onRowSelectionChange={setRowSelection}
                 globalFilter={searchValue}
                 onGlobalFilterChange={setSearchValue} />
-      
+              } 
+
               {/* Pagination */}
-              {tableData.length > 0 && calculatedTotalPages > 1 && (
+              {totalPages > 0 && calculatedTotalPages > 1 && (
                 <Pagination className="justify-end mt-5 cursor-pointer">
                   <PaginationContent>
                     <PaginationItem>
@@ -207,7 +207,7 @@ const ContentManagement = () => {
                 </Pagination>
               )}
             </div>
-          </>
+          
   )
 }
 

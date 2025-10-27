@@ -18,7 +18,7 @@ const CreateChauffeurPage = () => {
     const handleCreateChauffeur = async (data: TChauffeurForm)=>{
         console.log("called handle create chauffeur!",data)
         try{
-        toastPromise(await createChauffeurMutation.mutateAsync(data), {
+        toastPromise(createChauffeurMutation.mutateAsync(data), {
           loading: "Submitting...",
           success: "Chauffeur created successfully!",
           error: (e) => (e instanceof Error ? e.message : "Failed to create chauffeur"),

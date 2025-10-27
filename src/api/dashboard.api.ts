@@ -20,7 +20,7 @@ export const getDashboard = async (DateRange?: DateRange, page?: number) => {
   }
 
 try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_AFFILIATE}`, { params });
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_DASHBOARD_DETAILS}`, { params });
     console.log("response:",response.data)
     return response?.data?.data;
 } catch (error) {

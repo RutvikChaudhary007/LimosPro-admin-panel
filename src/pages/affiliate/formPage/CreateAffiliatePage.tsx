@@ -20,7 +20,7 @@ function CreateAffiliatePage() {
   // const navigate = useNavigate();
   const createAffiliateMutation = queries.useCreateAffiliateMutation()
   const queryClient = useQueryClient();
-  const handleCreateAffiliate = async (data:IAffiliate) => {
+  const handleCreateAffiliate = (data:IAffiliate) => {
     
       console.log("called handleCreateAffiliate",data);
       try {
@@ -28,7 +28,7 @@ function CreateAffiliatePage() {
         // Remove remember field before sending to API
         // await loginMutation.mutateAsync(loginData);
         // await createAffiliateMutation.mutateAsync(data)
-       toastPromise(createAffiliateMutation.mutateAsync(data), {
+      toastPromise(createAffiliateMutation.mutateAsync(data), {
           loading: "Submitting...",
           success: (res)=>{
             if(res){

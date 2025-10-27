@@ -82,7 +82,7 @@ const navigate = useNavigate();
       error: (e)=> (e instanceof Error)? e.message:"Opps! Error creating region admin",
     })
   } catch (error) {
-    if(error instanceof AxiosError){
+    if(error instanceof Error){
         toast.error(error.message)
     }else{
         toast.error("Opps! An unexpected error occured")
