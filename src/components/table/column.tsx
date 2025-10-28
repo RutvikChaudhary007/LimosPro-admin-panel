@@ -10,7 +10,8 @@ import Icons from "../common/Icons";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import MultiSelectComp from "../multiSelect/MultiSelect";
+MultiSelect";
+import AccessCell from "../regionAccess/RegionAccess";
 
 export type TDashboardBooking = {
   id: string;
@@ -49,10 +50,11 @@ export type TRegion = {
   regionName: string;
   admin: string;
 }
+
 export function getRegionColumns(
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
-  onAccess: (id: string) => void
+  onAccess: (regionId: string,permissionIds:string[]) => void,
 ): ColumnDef<TRegion>[] {
   return [
     {
@@ -84,34 +86,7 @@ export function getRegionColumns(
     {
       id: "access",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-      cell: ({ row }) => (
-         <Dialog modal={false}>
-        <DialogTrigger asChild>
-          <Button
-          variant="secondary"
-          className="cursor-pointer w-[108px] h-[33px] text-sm"
-        >
-          Manage Access
-        </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Permissions</DialogTitle>
-            <DialogDescription>
-              Make changes for permissions.
-            </DialogDescription>
-          </DialogHeader>
-            <MultiSelectComp />
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-          <Button type="button" onClick={() => onAccess(row.original.id)}>Save changes</Button>
-          </DialogFooter>
-        </DialogContent>
-    </Dialog>
-        
-      ),
+      cell: ({ row }) =><AccessCell row={row} onAccess={onAccess} />,
       enableSorting: false,
     },
     {

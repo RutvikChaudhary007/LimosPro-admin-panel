@@ -3,9 +3,9 @@ import { z } from "zod";
 
 const envSchema = z.object({
   VITE_GOOGLE_MAP_KEY: z.string(),
-  VITE_API_BASE_URL: z.url(),
-  VITE_API_BASE_URL2: z.url(),
-  VITE_API_BASE_URL3: z.url(),
+  VITE_API_USER_SERVICE_URL: z.url(),
+  VITE_API_ADMIN_SERVICE_URL: z.url(),
+  VITE_API_BOOKING_SERVICE_URL: z.url(),
 });
 
 let parsedEnv: z.infer<typeof envSchema> | null = null;

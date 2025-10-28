@@ -114,14 +114,18 @@ function TableAndPieChart({chauffeurAvailability,fleetDistribution}:{chauffeurAv
         <div className="w-full h-6 flex justify-between items-center bg-[#FDFDFD]">
           <div>Chauffeurs Availability</div>
           <div className="flex space-x-1">
-            <Button variant="secondary" className="flex justify-between rounded cursor-pointer">
+            <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
+            <Button variant="secondary" className="flex justify-between rounded cursor-pointer" >
               <span className="text-[#959595]">Add New</span>
               <Plus className="text-[#959595]" />
             </Button>
-            <Button variant="secondary" className="flex justify-between rounded cursor-pointer">
+            </Link>
+            <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
+            <Button variant="secondary" className="flex justify-between rounded cursor-pointer" >
               <span className="text-[#959595]">View All</span>
               <ArrowRight className="text-[#959595]" />
             </Button>
+            </Link>
           </div>
         </div>
         <DataTable columns={columns} data={chauffeurAvailability} />

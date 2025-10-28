@@ -1,3 +1,4 @@
+//@ts-nocheck
 import useFetchAllRegions from "@/api/region.api"
 import PageTitle from "@/components/common/PageTitle"
 import Header from "@/components/layouts/Header"
@@ -86,19 +87,25 @@ const tableData: TRegion[] = [
 function RegionDashboardPage() {
   const navigate = useNavigate();
   const [perPage, setPerPage] = useState(10);
+  const [page, setCPage] = useState(1);
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TRegion[]>(tableData);
   const {data, refetch, isFetching} = useFetchAllRegions({limit:perPage})
-  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegion>(data?.regions, 1, perPage, data?.pagination);
+  const { currentPage,  setPage, totalPages, currentItems } = usePagination<TRegion>(data?.regions, page, perPage, data?.pagination);
+
+  useEffect(()=>{
+    setCPage(currentPage);
+  },[currentPage]);
 
   useEffect(() => {
     setPerPage(selected.value);
-  }, [selected])
-  const handleEdit = useCallback((id: string) => { console.log("Edit:", id)
+  }, [selected]);
+
+  const handleEdit = (id: string) => { console.log("Edit:", id)
     navigate(constant.ROUTING_URLS.EDIT_REGION.replace(":id",id));
-     }, []);
+     };
      const deleteRegion = queries.useDeleteRegionMutation();
-  const handleDelete = useCallback((id: string) => {
+  const handleDelete = (id: string) => {
     try {
       toastPromise(deleteRegion.mutateAsync(id),{
         loading: "Deleting Region...",
@@ -115,9 +122,20 @@ function RegionDashboardPage() {
         toast.error("Opps! An unexpected error occured");
       }
     }
-  }, []);
-  const handleAccess = useCallback((id: string) => { console.log("manage access:", id) }, []);
-  const columns = useMemo(() => getRegionColumns(handleEdit, handleDelete, handleAccess), [handleAccess, handleDelete, handleEdit])
+  };
+  const editRegionMutation = queries.useEditRegionMutation()
+  const handleAccess = async(id:string,permissionIds: string[]) => { 
+    console.log("manage access:", permissionIds, "id:",id)
+  toastPromise(await editRegionMutation.mutateAsync({id,data: {permissionAccess:permissionIds}}),{
+    loading: "Updating access...",
+    success: (res)=> {
+      if(res.status===true) refetch();
+      return "Yeah! Region updated.";
+    },
+    error: (e)=> (e instanceof Error)? e.message: "Opps! Failed to update access permission."
+  })
+  };
+  const columns = getRegionColumns(handleEdit, handleDelete, handleAccess);
 
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -126,6 +144,7 @@ function RegionDashboardPage() {
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
+    setCPage(newPage)
     setPage(newPage);
     window.scrollTo(0, 0);
   };

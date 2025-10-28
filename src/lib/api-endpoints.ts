@@ -1,184 +1,185 @@
-//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
-//  export const BASE_URL  = 'http://localhost:3000/api/v1';
-//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
-//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
+//  export const USER_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
+//  export const USER_SERVICE_URL  = 'http://localhost:3000/api/v1';
+//  export const ADMIN_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
+//  export const BOOKING_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
 
 import { env } from "@/utils/env";
 
- export const BASE_URL  = env?.VITE_API_BASE_URL;
- export const BASE_URL1  = env?.VITE_API_BASE_URL2;
- export const BASE_URL2  = env?.VITE_API_BASE_URL3;
+ export const USER_SERVICE_URL  = env?.VITE_API_USER_SERVICE_URL;
+ export const ADMIN_SERVICE_URL  = env?.VITE_API_ADMIN_SERVICE_URL;
+ export const BOOKING_SERVICE_URL  = env?.VITE_API_BOOKING_SERVICE_URL;
 
-//  export const BASE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.8:3000/api/v1';
-//  export const BASE_URL1  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.8:3001/api/v1';
-//  export const BASE_URL2  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.8:3002/api/v1';
+//  export const USER_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.8:3000/api/v1';
+//  export const ADMIN_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.8:3001/api/v1';
+//  export const BOOKING_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.8:3002/api/v1';
 
 
 export const API_ENDPOINTS = {
   // Auth
-  SIGN_UP: `${BASE_URL}/signup`,
-  LOG_IN: `${BASE_URL}/login`,
+  SIGN_UP: `${USER_SERVICE_URL}/signup`,
+  LOG_IN: `${USER_SERVICE_URL}/login`,
 
   // Dashboard
-  GET_DASHBOARD_DETAILS: `${BASE_URL1}/report/dashboard`,  
+  GET_DASHBOARD_DETAILS: `${ADMIN_SERVICE_URL}/report/dashboard`,  
   // Affiliate
-  GET_ALL_AFFILIATE: `${BASE_URL1}/affiliates`,
-  GET_AFFILIATE_BY_ID: `${BASE_URL1}/affiliate/:id`,
-  CREATE_AFFILIATE: `${BASE_URL1}/affiliate`,
-  UPDATE_AFFILIATE: `${BASE_URL1}/affiliate/:id`,
-  DELETE_AFFILIATE: `${BASE_URL1}/affiliate/:id`,
-  BULK_DELETE_AFFILIATE: `${BASE_URL1}/affiliates/bulk-delete`,
+  GET_ALL_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliates`,
+  GET_AFFILIATE_BY_ID: `${ADMIN_SERVICE_URL}/affiliate/:id`,
+  CREATE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliate`,
+  UPDATE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliate/:id`,
+  DELETE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliate/:id`,
+  BULK_DELETE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliates/bulk-delete`,
   
   // Fleets
-  GET_ALL_FLEETS: `${BASE_URL1}/vehicles`,
-  GET_FLEET_BY_ID: `${BASE_URL1}/vehicle/:id`,
-  EDIT_FLEET_BY_ID: `${BASE_URL1}/vehicle/:id`,
-  CREATE_FLEET: `${BASE_URL1}/vehicle`,
-  DELETE_FLEET: `${BASE_URL1}/vehicle/:id`,
-  BULK_DELETE_FLEET: `${BASE_URL1}/vehicles/bulk-delete`,
+  GET_ALL_FLEETS: `${ADMIN_SERVICE_URL}/vehicles`,
+  GET_FLEET_BY_ID: `${ADMIN_SERVICE_URL}/vehicle/:id`,
+  EDIT_FLEET_BY_ID: `${ADMIN_SERVICE_URL}/vehicle/:id`,
+  CREATE_FLEET: `${ADMIN_SERVICE_URL}/vehicle`,
+  DELETE_FLEET: `${ADMIN_SERVICE_URL}/vehicle/:id`,
+  BULK_DELETE_FLEET: `${ADMIN_SERVICE_URL}/vehicles/bulk-delete`,
   
   // Booking
-  GET_ALL_BOOKINGS: `${BASE_URL2}/bookings`,
-  GET_BOOKING_BY_ID: `${BASE_URL2}/booking/:id`,
+  GET_ALL_BOOKINGS: `${BOOKING_SERVICE_URL}/bookings`,
+  GET_BOOKING_BY_ID: `${BOOKING_SERVICE_URL}/booking/:id`,
   
   // Chauffeur
-  GET_ALL_CHAUFFEUR: `${BASE_URL1}/chauffeurs`,
-  GET_CHAUFFEUR_BY_ID: `${BASE_URL1}/chauffeur/:id`,
-  CREATE_CHAFFEUR: `${BASE_URL1}/chauffeur`,
-  EDIT_CHAFFEUR: `${BASE_URL1}/chauffeur/:id`,
-  DELETE_CHAFFEUR: `${BASE_URL1}/chauffeur/:id`,
-  BULK_DELETE_CHAFFEUR: `${BASE_URL1}/chauffeurs/bulk-delete`,
+  GET_ALL_CHAUFFEUR: `${ADMIN_SERVICE_URL}/chauffeurs`,
+  GET_CHAUFFEUR_BY_ID: `${ADMIN_SERVICE_URL}/chauffeur/:id`,
+  CREATE_CHAFFEUR: `${ADMIN_SERVICE_URL}/chauffeur`,
+  EDIT_CHAFFEUR: `${ADMIN_SERVICE_URL}/chauffeur/:id`,
+  DELETE_CHAFFEUR: `${ADMIN_SERVICE_URL}/chauffeur/:id`,
+  BULK_DELETE_CHAFFEUR: `${ADMIN_SERVICE_URL}/chauffeurs/bulk-delete`,
 
 
   //Users
-  USER_PROFILE :`${BASE_URL}/user/profile`,
-  GET_ALL_USERS: `${BASE_URL1}/users`,
-  GET_USERS_BY_ID: `${BASE_URL1}/user/:id`,
-  UPDATE_USER_BY_ID: `${BASE_URL1}/user/ban/:id`,
-  DELETE_USERS: `${BASE_URL1}/user/:id`,
-  BULK_DELETE_USERS: `${BASE_URL1}/users/bulk-delete`,
+  USER_PROFILE :`${USER_SERVICE_URL}/user/profile`,
+  GET_ALL_USERS: `${ADMIN_SERVICE_URL}/users`,
+  GET_USERS_BY_ID: `${ADMIN_SERVICE_URL}/user/:id`,
+  UPDATE_USER_BY_ID: `${ADMIN_SERVICE_URL}/user/ban/:id`,
+  DELETE_USERS: `${ADMIN_SERVICE_URL}/user/:id`,
+  BULK_DELETE_USERS: `${ADMIN_SERVICE_URL}/users/bulk-delete`,
 
   // Accounts
-  RESET_PASSWORD:`${BASE_URL}/auth/reset-password`,
+  RESET_PASSWORD:`${USER_SERVICE_URL}/auth/reset-password`,
 
   // Trips
-  GET_ALL_TRIPS:  `${BASE_URL}/trips`,
-  GET_TRIP_BY_ID:  `${BASE_URL2}/trip/:id`,
-  BULK_DELETE_TRIPS:  `${BASE_URL2}/trips/bulk-delete`,
+  GET_ALL_TRIPS:  `${USER_SERVICE_URL}/trips`,
+  GET_TRIP_BY_ID:  `${BOOKING_SERVICE_URL}/trip/:id`,
+  BULK_DELETE_TRIPS:  `${BOOKING_SERVICE_URL}/trips/bulk-delete`,
 
   // Regions
-  GET_ALL_REGIONS: `${BASE_URL1}/regions`,
-  CREATE_REGION: `${BASE_URL1}/region`,
-  GET_REGION_BY_ID: `${BASE_URL1}/region/:region_id`,
-  EDIT_REGION: `${BASE_URL1}/region/:regionId`,
-  DELETE_REGION: `${BASE_URL1}/region/:regionId`,
+  GET_ALL_REGIONS: `${ADMIN_SERVICE_URL}/regions`,
+  CREATE_REGION: `${ADMIN_SERVICE_URL}/region`,
+  GET_REGION_BY_ID: `${ADMIN_SERVICE_URL}/region/:region_id`,
+  EDIT_REGION: `${ADMIN_SERVICE_URL}/region/:regionId`,
+  DELETE_REGION: `${ADMIN_SERVICE_URL}/region/:regionId`,
 
   // Payments
-  GET_ALL_PAYMENTS: `${BASE_URL1}/payments`,
-  GET_PAYMENT_BY_ID: `${BASE_URL1}/payments/:id`,
+  GET_ALL_PAYMENTS: `${ADMIN_SERVICE_URL}/payments`,
+  GET_PAYMENT_BY_ID: `${ADMIN_SERVICE_URL}/payments/:id`,
 
   // Refund
-  GET_ALL_REFUND: `${BASE_URL1}/payments`,
-  // VIEW_REFUND: `${BASE_URL1}/payments`,
+  GET_ALL_REFUND: `${ADMIN_SERVICE_URL}/payments`,
+  // VIEW_REFUND: `${ADMIN_SERVICE_URL}/payments`,
 
   // Crew member 
-  GET_ALL_CREW_MEMBER: `${BASE_URL1}/crewMembers`,
-  CREATE_CREW_MEMBER: `${BASE_URL1}/crewMember`,
-  EDIT_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
-  DELETE_CREW_MEMBER: `${BASE_URL1}/crewMember/:id`,
-  BULK_DELETE_CREW_MEMBER: `${BASE_URL1}/crewMembers/bulk-delete`,
+  GET_ALL_CREW_MEMBER: `${ADMIN_SERVICE_URL}/crewMembers`,
+  CREATE_CREW_MEMBER: `${ADMIN_SERVICE_URL}/crewMember`,
+  EDIT_CREW_MEMBER: `${ADMIN_SERVICE_URL}/crewMember/:id`,
+  DELETE_CREW_MEMBER: `${ADMIN_SERVICE_URL}/crewMember/:id`,
+  BULK_DELETE_CREW_MEMBER: `${ADMIN_SERVICE_URL}/crewMembers/bulk-delete`,
 
   // Staff member 
-  GET_ALL_STAFF_MEMBER: `${BASE_URL1}/staff-members`,
-  GET_SINGLE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
-  CREATE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:regionId`,
-  EDIT_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id/:regionId`,
-  DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-member/:id`,
-  BULK_DELETE_STAFF_MEMBER: `${BASE_URL1}/staff-members/bulk-delete`,
+  GET_ALL_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-members`,
+  GET_SINGLE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id`,
+  CREATE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:regionId`,
+  EDIT_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id/:regionId`,
+  DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id`,
+  BULK_DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-members/bulk-delete`,
   
   // Testimonials
-  GET_ALL_TESTIMONIALS: `${BASE_URL1}/testimonials`,
-  GET_TESTIMONIAL_BY_ID: `${BASE_URL1}/testimonials/:id`,
-  CREATE_TESTIMONIAL: `${BASE_URL1}/testimonials`,
-  EDIT_TESTIMONIAL: `${BASE_URL1}/testimonials/:id`,
-  DELETE_TESTIMONIAL: `${BASE_URL1}/testimonials/:id`,
-  BULK_DELETE_TESTIMONIAL: `${BASE_URL1}/testimonials/bulk-delete`,
+  GET_ALL_TESTIMONIALS: `${ADMIN_SERVICE_URL}/testimonials`,
+  GET_TESTIMONIAL_BY_ID: `${ADMIN_SERVICE_URL}/testimonials/:id`,
+  CREATE_TESTIMONIAL: `${ADMIN_SERVICE_URL}/testimonials`,
+  EDIT_TESTIMONIAL: `${ADMIN_SERVICE_URL}/testimonials/:id`,
+  DELETE_TESTIMONIAL: `${ADMIN_SERVICE_URL}/testimonials/:id`,
+  BULK_DELETE_TESTIMONIAL: `${ADMIN_SERVICE_URL}/testimonials/bulk-delete`,
 
   // FAQS
-  GET_ALL_FAQ: `${BASE_URL1}/faqs`,
-  GET_FAQ_BY_ID: `${BASE_URL1}/faqs/:id`,
-  CREATE_FAQ: `${BASE_URL1}/faqs`,
-  EDIT_FAQ: `${BASE_URL1}/faqs/:id`,
-  DELETE_FAQ: `${BASE_URL1}/faqs/:id`,
-  BULK_DELETE_FAQ: `${BASE_URL1}/faqs/bulk-delete`,
+  GET_ALL_FAQ: `${ADMIN_SERVICE_URL}/faqs`,
+  GET_FAQ_BY_ID: `${ADMIN_SERVICE_URL}/faqs/:id`,
+  CREATE_FAQ: `${ADMIN_SERVICE_URL}/faqs`,
+  EDIT_FAQ: `${ADMIN_SERVICE_URL}/faqs/:id`,
+  DELETE_FAQ: `${ADMIN_SERVICE_URL}/faqs/:id`,
+  BULK_DELETE_FAQ: `${ADMIN_SERVICE_URL}/faqs/bulk-delete`,
   
   // Our Partners
-  GET_ALL_PARTNERS: `${BASE_URL1}/partners`,
-  GET_PARTNER_BY_ID: `${BASE_URL1}/partners/:id`,
-  CREATE_PARTNER: `${BASE_URL1}/partners`,
-  EDIT_PARTNER: `${BASE_URL1}/partners/:id`,
-  DELETE_PARTNER: `${BASE_URL1}/partners/:id`,
-  BULK_DELETE_PARTNER: `${BASE_URL1}/partners/bulk-delete`,
+  GET_ALL_PARTNERS: `${ADMIN_SERVICE_URL}/partners`,
+  GET_PARTNER_BY_ID: `${ADMIN_SERVICE_URL}/partners/:id`,
+  CREATE_PARTNER: `${ADMIN_SERVICE_URL}/partners`,
+  EDIT_PARTNER: `${ADMIN_SERVICE_URL}/partners/:id`,
+  DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partners/:id`,
+  BULK_DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partners/bulk-delete`,
 
   // News
-  GET_ALL_NEWS: `${BASE_URL1}/news`,
-  GET_NEWS_BY_ID: `${BASE_URL1}/news/:id`,
-  CREATE_NEWS: `${BASE_URL1}/news`,
-  EDIT_NEWS: `${BASE_URL1}/news/:id`,
-  DELETE_NEWS: `${BASE_URL1}/news/:id`,
-  BULK_DELETE_NEWS: `${BASE_URL1}/news/bulk-delete`,
+  GET_ALL_NEWS: `${ADMIN_SERVICE_URL}/news`,
+  GET_NEWS_BY_ID: `${ADMIN_SERVICE_URL}/news/:id`,
+  CREATE_NEWS: `${ADMIN_SERVICE_URL}/news`,
+  EDIT_NEWS: `${ADMIN_SERVICE_URL}/news/:id`,
+  DELETE_NEWS: `${ADMIN_SERVICE_URL}/news/:id`,
+  BULK_DELETE_NEWS: `${ADMIN_SERVICE_URL}/news/bulk-delete`,
 
   // IPWhiteList
-  GET_ALL_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist`,
-  GET_IP_WHITE_LIST_BY_ID: `${BASE_URL1}/ip-whitelist/:id`,
-  CREATE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist`,
-  EDIT_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist/:id`,
-  DELETE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelist/:id`,
-  BULK_DELETE_IP_WHITE_LIST: `${BASE_URL1}/ip-whitelists/bulk-delete`,
+  GET_ALL_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelist`,
+  GET_IP_WHITE_LIST_BY_ID: `${ADMIN_SERVICE_URL}/ip-whitelist/:id`,
+  CREATE_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelist`,
+  EDIT_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelist/:id`,
+  DELETE_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelist/:id`,
+  BULK_DELETE_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelists/bulk-delete`,
 
   // Content Management APIs (Admin Service)
   BLOG: {
-    GET_ALL: `${BASE_URL1}/blog/posts`,
-    GET_BY_ID: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
-    CREATE: `${BASE_URL1}/blog/posts`,
-    UPDATE: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
-    DELETE: (id: string) => `${BASE_URL1}/blog/posts/${id}`,
-    GET_STATS: `${BASE_URL1}/blog/stats`,
+    GET_ALL: `${ADMIN_SERVICE_URL}/blog/posts`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/blog/posts/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/blog/posts`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/blog/posts/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/blog/posts/${id}`,
+    GET_STATS: `${ADMIN_SERVICE_URL}/blog/stats`,
   },
     MEDIA: {
-    GET_ALL: `${BASE_URL2}/media/media`,
-    GET_BY_ID: (id: string) => `${BASE_URL2}/media/media/${id}`,
-    GET_BY_CATEGORY: (category: string) => `${BASE_URL2}/media/category/${category}`,
-    UPLOAD: `${BASE_URL2}/media/upload`,
-    UPLOAD_MULTIPLE: `${BASE_URL2}/media/upload/multiple`,
-    UPDATE: (id: string) => `${BASE_URL2}/media/media/${id}`,
-    DELETE: (id: string) => `${BASE_URL2}/media/media/${id}`,
-    GET_STATS: `${BASE_URL2}/media/stats`,
+    GET_ALL: `${BOOKING_SERVICE_URL}/media/media`,
+    GET_BY_ID: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,
+    GET_BY_CATEGORY: (category: string) => `${BOOKING_SERVICE_URL}/media/category/${category}`,
+    UPLOAD: `${BOOKING_SERVICE_URL}/media/upload`,
+    UPLOAD_MULTIPLE: `${BOOKING_SERVICE_URL}/media/upload/multiple`,
+    UPDATE: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,
+    DELETE: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,
+    GET_STATS: `${BOOKING_SERVICE_URL}/media/stats`,
   },
   CONTENT_BLOCK: {
-    GET_ALL: `${BASE_URL1}/content/blocks`,
-    GET_BY_ID: `${BASE_URL1}/content/blocks/:id`,
-    CREATE: `${BASE_URL1}/content/blocks`,
-    UPDATE: `${BASE_URL1}/content/blocks/:id`,
-    DELETE: `${BASE_URL1}/content/blocks/:id`,
-    GET_STATS: `${BASE_URL1}/content/stats`,
+    GET_ALL: `${ADMIN_SERVICE_URL}/content/blocks`,
+    GET_TABS: `${ADMIN_SERVICE_URL}/content/blocks-unique`,
+    GET_BY_ID: `${ADMIN_SERVICE_URL}/content/blocks/:id`,
+    CREATE: `${ADMIN_SERVICE_URL}/content/blocks`,
+    UPDATE: `${ADMIN_SERVICE_URL}/content/blocks/:id`,
+    DELETE: `${ADMIN_SERVICE_URL}/content/blocks/:id`,
+    GET_STATS: `${ADMIN_SERVICE_URL}/content/stats`,
   },
   // Roles
   ROLES:{
-    GET_ALL: `${BASE_URL}/role/all`,
-    GET_ALL_STAFF_ROLE: `${BASE_URL}/role/staff`,
+    GET_ALL: `${USER_SERVICE_URL}/role/all`,
+    GET_ALL_STAFF_ROLE: `${USER_SERVICE_URL}/role/staff`,
   },
   PERSMISSIONS:{
-    GET_ALL: `${BASE_URL1}/permissions`
+    GET_ALL: `${ADMIN_SERVICE_URL}/permissions`
   },
   REGIONAL_ADMIN:{
-    GET_ALL: `${BASE_URL1}/regional-admins`,
-    GET_ONE: `${BASE_URL1}/regional-admins`,
-    CREATE: `${BASE_URL1}/regional-admin/:regionId`,
-    EDIT: `${BASE_URL1}/regional-admins`,
-    DELETE: `${BASE_URL1}/regional-admins`,
+    GET_ALL: `${ADMIN_SERVICE_URL}/regional-admins`,
+    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admins`,
+    CREATE: `${ADMIN_SERVICE_URL}/regional-admin/:regionId`,
+    EDIT: `${ADMIN_SERVICE_URL}/regional-admins`,
+    DELETE: `${ADMIN_SERVICE_URL}/regional-admins`,
   },
   DASHBOARD:{
-    GET: `${BASE_URL1}/report/dashboard`
+    GET: `${ADMIN_SERVICE_URL}/report/dashboard`
   }
 };

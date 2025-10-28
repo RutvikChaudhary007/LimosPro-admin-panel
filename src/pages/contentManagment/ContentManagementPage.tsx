@@ -1,5 +1,5 @@
 // @ts-nocheck
-import useFetchAllContentBlock from "@/api/contentBlock.api";
+import useFetchAllContentBlock, { useFetchPageContentBlockTab } from "@/api/contentBlock.api";
 import Header from "@/components/layouts/Header";
 import { Spinner } from "@/components/Spinner";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
@@ -22,17 +22,19 @@ const ContentManagement = () => {
    const perPage = 10;
    const [page, setCPage] = useState(1);
    
+      const {data: tabsData,isFetching: fetchingTabs} = useFetchPageContentBlockTab();
+      // console.log("tabsData:",tabsData?.pageNames)
       const {data,refetch, isFetching} = useFetchAllContentBlock({limit:perPage, page});
     const [activeBtn, setActiveBtn] = useState<string>("Home");
-    const tabsData = useMemo(()=>{
-        const uniqueTabs = new Set();
-        if (data?.blocks) {
-          for (const rawData of data.blocks) {
-            uniqueTabs.add(rawData?.pageName);
-          }
-        }
-        return Array.from(uniqueTabs);
-      },[data])
+    // const tabsData = useMemo(()=>{
+    //     const uniqueTabs = new Set();
+    //     if (data?.blocks) {
+    //       for (const rawData of data.blocks) {
+    //         uniqueTabs.add(rawData?.pageName);
+    //       }
+    //     }
+    //     return Array.from(uniqueTabs);
+    //   },[data])
     const filteredData = data?.blocks?.filter((row)=>{
       // console.log("activeBtn",row?.pageName?.toLowerCase())
       if(activeBtn?.toLowerCase() === row?.pageName?.toLowerCase()){
@@ -46,7 +48,8 @@ const ContentManagement = () => {
       if(currentPage)
       setCPage(currentPage)
     },[currentPage]);
-    const handleEdit = (id: string) => { console.log("Edit:", id)
+    const handleEdit = (id: string) => { 
+      // console.log("Edit:", id)
         navigate(constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(":id",id))
      };
      const deleteContentMutation = queries.useDeleteContentBlockMutation();
@@ -167,7 +170,7 @@ const ContentManagement = () => {
                 </div>
               </div>
               <div className="flex items-center justify-between mt-5 overflow-y-scroll gap-2">
-                {tabsData?.map((btn,i)=>(
+                {!fetchingTabs && tabsData?.pageNames?.length > 1 && tabsData?.pageNames?.map((btn,i)=>(
                   <Button className={cn("bg-[#EEEEEE] text-[#C8C8C8] font-medium rounded hover:text-black",btn?.toLowerCase()===activeBtn?.toLowerCase()&& "bg-[#939393] text-white")} key={i} variant={"secondary"} onClick={()=>setActiveBtn(btn)}>
                   {btn}
                 </Button>

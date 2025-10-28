@@ -5,6 +5,22 @@ import {  useQuery } from '@tanstack/react-query';
 import { AxiosError } from "axios";
 
 type TPara = { limit: number; page?: number  };
+export const getPageContentBlockTab = async () => {
+    const response = await axiosInstance.get(`${API_ENDPOINTS.CONTENT_BLOCK.GET_TABS}`);
+  
+    return response.data.data;
+  };
+
+export const useFetchPageContentBlockTab = ( ) =>
+  useQuery({
+    queryKey: ['ContentTab'],
+    queryFn: () => getPageContentBlockTab(),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
+
 export const getAllContentBlock = async (data?: TPara) => {
   const params: Record<string, unknown> = {};
   if (data?.limit) {
