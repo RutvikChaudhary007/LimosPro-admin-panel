@@ -1,9 +1,9 @@
 // utils/axiosInstance.js
 import axios from 'axios';
-import { BASE_URL } from '@/lib/api-endpoints';
+import { USER_SERVICE_URL } from '@/lib/api-endpoints';
 
 const adminAxiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: USER_SERVICE_URL,
 });
 
 
@@ -37,7 +37,7 @@ async function refreshAccessToken(): Promise<string> {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) throw new Error('No refresh token');
 
-  const url = `${BASE_URL}/refresh-token`;
+  const url = `${USER_SERVICE_URL}/refresh-token`;
   const { data } = await axios.post(url, { refreshToken });
   const newAccessToken = data?.data?.accessToken || data?.accessToken;
   const newRefreshToken = data?.data?.refreshToken || data?.refreshToken;

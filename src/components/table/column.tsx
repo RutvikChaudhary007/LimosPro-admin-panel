@@ -10,7 +10,6 @@ import Icons from "../common/Icons";
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-MultiSelect";
 import AccessCell from "../regionAccess/RegionAccess";
 
 export type TDashboardBooking = {

@@ -181,5 +181,10 @@ export const API_ENDPOINTS = {
   },
   DASHBOARD:{
     GET: `${ADMIN_SERVICE_URL}/report/dashboard`
-  }
+  },
+  CONTACT_REQUEST:{
+    GET_ALL: `${ADMIN_SERVICE_URL}/contact-requests`,
+    GET_BY_ID: `${ADMIN_SERVICE_URL}/contact-requests/:id`,
+    CREATE: `${ADMIN_SERVICE_URL}/contact-requests`,
+  },
 };
