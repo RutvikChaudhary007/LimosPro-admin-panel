@@ -1,0 +1,4 @@
+# Husky v9+ commit-msg hook
+echo "🔎 Checking commit message format..."
+
+bunx commitlint --edit "$1"
