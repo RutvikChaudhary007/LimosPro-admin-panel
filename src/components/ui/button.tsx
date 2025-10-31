@@ -46,6 +46,7 @@ const buttonVariants = cva(
         lg: "font-montserrat [&_svg:not([class*='size-'])]:size-6",
         xl: "[&_svg:not([class*='size-'])]:size-7",
         menu: "[&_svg:not([class*='size-'])]:size-6",
+        icon: "[&_svg:not([class*='size-'])]:size-5",
       },
 
       // spacing and layout

@@ -1,6 +1,8 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { TrendingUp } from "lucide-react"
+import { Badge } from "./badge"
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -32,7 +34,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-[100%] font-semibold tracking-[0]", className)}
+      className={cn("leading-none font-semibold", className)}
       {...props}
     />
   )
@@ -72,4 +74,69 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
+function MetricCard({
+  title = "Total Revenue",
+  value = "$0.00",
+  percentage = "0%",
+  icon = <TrendingUp />,
+  bgClass = "bg-base-blue-cream",
+  wrapperClass = "",
+  headerClass = "",
+  actionClass = "",
+  badgeClass = "",
+  contentClass = "",
+  titleClass = "",
+  valueClass = "",
+}: {
+  title?: string
+  value?: string
+  percentage?: string
+  icon?: React.ReactNode
+  bgClass?: string
+  wrapperClass?: string
+  headerClass?: string
+  actionClass?: string
+  badgeClass?: string
+  contentClass?: string
+  titleClass?: string
+  valueClass?: string
+}) {
+  return (
+    <Card
+      className={`border-base-primary @container/card w-full gap-1.5 rounded ${bgClass} pt-2.5 shadow-none ${wrapperClass}`}
+    >
+      <CardHeader className={`px-2.5 ${headerClass}`}>
+        <CardAction className={actionClass}>
+          <Badge className={badgeClass}>
+            {icon}
+            <span>{percentage}</span>
+          </Badge>
+        </CardAction>
+      </CardHeader>
+
+      <CardContent className={`space-y-1 ${contentClass}`}>
+        <p
+          className={`font-quicksand text-base leading-[100%] font-medium tracking-[0] text-black ${titleClass}`}
+        >
+          {title}
+        </p>
+        <h4
+          className={`font-montserrat text-2xl leading-[100%] font-bold tracking-[0] text-black ${valueClass}`}
+        >
+          {value}
+        </h4>
+      </CardContent>
+    </Card>
+  )
+}
+
+export {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  MetricCard,
+}

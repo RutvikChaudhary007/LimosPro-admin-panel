@@ -63,7 +63,12 @@
 
   --color-base-light-gray: var(--base-light-gray);
 
+  --color-base-background-light: var(--base-background-light);
+
+  --background-image-base-blue-cream: var(--base-blue-cream);
+
   /* Font Families */
+  --font-family: var(--font-family);
   --font-montserrat: var(--font-montserrat);
   --font-quicksand: var(--font-quicksand);
 }
@@ -93,7 +98,7 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: var(--base-white);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -114,18 +119,16 @@
   --base-secondary-dark: #996925;
 
   --base-gray: #b6b6b6;
-
   --base-white: #ffffff;
-
   --base-black: #404040;
-
   --base-danger: #d50000;
-
   --base-success: #08a100;
-
   --base-warning: #eaa000;
-
   --base-light-gray: #f5f5f5;
+
+  /* Base [Custom] Background Palette */
+  --base-background-light: #fefefe;
+  --base-blue-cream:  linear-gradient(90deg, #E4F3FF 0%, #FFF8EF 100%);
 }
 
 .dark {
