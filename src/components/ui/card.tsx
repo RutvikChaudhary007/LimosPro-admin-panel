@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { TrendingUp } from "lucide-react"
+import { IconTrendingUp } from "@tabler/icons-react"
 import { Badge } from "./badge"
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
@@ -78,7 +78,7 @@ function MetricCard({
   title = "Total Revenue",
   value = "$0.00",
   percentage = "0%",
-  icon = <TrendingUp />,
+  icon = <IconTrendingUp />,
   bgClass = "bg-base-blue-cream",
   wrapperClass = "",
   headerClass = "",

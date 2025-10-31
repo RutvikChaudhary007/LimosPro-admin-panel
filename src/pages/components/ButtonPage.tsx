@@ -1,6 +1,7 @@
 // import ChevronDown from "@/assets/buttonIcons/ic-chevron-down.svg?react";
 import { Button } from "@/components/ui/button"
-import { ChevronDown, House } from "lucide-react"
+import { IconHome } from "@tabler/icons-react"
+import { ChevronDown } from "lucide-react"
 
 function ButtonPage() {
   return (
@@ -617,29 +618,29 @@ function ButtonPage() {
           <p className="text-base font-medium">Menu Item</p>
           <div className="flex justify-between">
             <Button variant="menuItem" size="menu" spacing="menu">
-              <House />
+              <IconHome />
               Dashboard
             </Button>
             <Button variant="menuItem" size="menu" spacing="menu" data-state="active">
-              <House />
+              <IconHome />
               Dashboard
             </Button>
             <Button variant="menuItem" size="menu" spacing="menu" data-group-state="active">
-              <House />
+              <IconHome />
               Dashboard
             </Button>
           </div>
           <div className="flex justify-between">
             <Button variant="menuItem" size="menu" spacing="menuChild">
-              {/* <House/> */}
+              {/* <IconHome/> */}
               Dashboard
             </Button>
             <Button variant="menuItem" size="menu" spacing="menuChild" data-state="active">
-              {/* <House/> */}
+              {/* <IconHome/> */}
               Dashboard
             </Button>
             <Button variant="menuItem" size="menu" spacing="menuChild" data-group-state="active">
-              {/* <House/> */}
+              {/* <IconHome/> */}
               Dashboard
             </Button>
           </div>

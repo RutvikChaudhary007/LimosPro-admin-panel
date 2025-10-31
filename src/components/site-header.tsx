@@ -1,7 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Bell, CircleUserRound, Languages, Mail, Search } from "lucide-react"
+import { IconBell, IconLanguage, IconMail, IconSearch } from "@tabler/icons-react"
+import { NavUser } from "./nav-user"
+
+const user = {
+  name: "Alaadin",
+  email: "alaadin@example.com",
+  avatar: "/avatars/alaadin.jpg",
+}
 
 export function SiteHeader() {
   return (
@@ -12,30 +19,27 @@ export function SiteHeader() {
           <InputGroup>
             <InputGroupInput placeholder="Search for Bookings, Fleets, Chauffeurs..." />
             <InputGroupAddon>
-              <Search />
+              <IconSearch />
             </InputGroupAddon>
           </InputGroup>
         </div>
         <div className="ml-auto flex items-center gap-6 sm:gap-2 md:gap-2 lg:gap-4">
           <div className="hidden sm:block">
             <Button variant="outlineNavBtnPrimary" size="xl" spacing="lg">
-              <Languages />
+              <IconLanguage />
               <span>English</span>
             </Button>
           </div>
           <div className="hidden gap-2 md:flex">
             <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
-              <Mail />
+              <IconMail />
             </Button>
             <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
-              <Bell />
+              <IconBell />
             </Button>
           </div>
           <div className="">
-            <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
-              <CircleUserRound />
-              <h1>Alaadin</h1>
-            </Button>
+            <NavUser user={user} />
           </div>
         </div>
       </div>
