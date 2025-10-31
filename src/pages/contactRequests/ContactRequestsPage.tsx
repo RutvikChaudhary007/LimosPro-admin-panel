@@ -1,11 +1,13 @@
 // @ts-nocheck
+import useFetchAllContactRequest from "@/api/contactRequest.api";
 import PageTitle from "@/components/common/PageTitle";
 import ReplyFC from "@/components/ContactRequests/ReplyFC";
+import ViewModal from "@/components/ContactRequests/ViewModal";
 import Header from "@/components/layouts/Header";
+import { Spinner } from "@/components/Spinner";
 import { getContactRequest, type TContactRequest } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,10 +77,12 @@ const ContactRequestsPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isModal,setIsModal] = useState(false);
   const [perPage, setPerPage] = useState(10);
+  const [msgId, setMsgId] = useState<string|null>(null);
   const [selected, setSelected] = useState(showOptions[0]);
-  const [data, setData] = useState<TContactRequest[]>(tableData);
+  const {data,isFetching} = useFetchAllContactRequest();
+  // const [data, setData] = useState<TContactRequest[]>(tableData);
 
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TContactRequest>(data, 1, perPage);
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TContactRequest>(data?.contactRequests, 1, perPage, data?.pagination);
 
   useEffect(() => {
     setPerPage(selected.value);
@@ -86,6 +90,7 @@ const ContactRequestsPage = () => {
   const handleView = useCallback((id: string) => {
     console.log("view:", id);
     setIsOpen(true);
+    setMsgId(id);
   }, []);
   const handleEmail = useCallback((id: string) => {
     console.log("Email:", id);
@@ -209,9 +214,9 @@ const ContactRequestsPage = () => {
               <Button variant={"outline"} className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
-                  setData((prev) =>
-                    prev.filter((row, i) => !rowSelection[i])
-                  );
+                  // setData((prev) =>
+                  //   prev.filter((row, i) => !rowSelection[i])
+                  // );
                   //   console.log("data:", data);
                   //   console.log("rowSelection:", rowSelection);
                   setRowSelection({});
@@ -226,36 +231,23 @@ const ContactRequestsPage = () => {
               onChange={(e) => setSearchValue(e.target.value)} /></div>
           </div>
         </div>
-        <DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
+      {isFetching? <Spinner/>:(<DataTable columns={columns} data={currentItems} rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue} />
+          onGlobalFilterChange={setSearchValue} />)}  
 
         {/* View Dialog */}
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-
-          <DialogContent className="overflow-y-scroll min-w-[640px] max-h-screen">
-            <DialogHeader >
-              <div className="w-full h-full space-y-6 ">
-                <div className="flex items-center justify-between">
-                  <DialogTitle className="space-y-3">
-                    <h4 className="font-semibold text-xl text-[#000000]">name@email.com</h4>
-                    <h5 className="text-[#5A5A5A] font-semibold">+1-424-133-7698</h5>
-                  </DialogTitle>
-
-                </div>
-              </div>
-
-            </DialogHeader>
-
-            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-                {htmlContent()}
-          </DialogContent>
-        </Dialog>
+        {msgId && (
+          <ViewModal 
+            id={msgId} 
+            open={isOpen} 
+            onOpenChange={setIsOpen} 
+          />
+        )}
         {/* View Dialog */}
           <ReplyFC isModal={isModal} setIsModal={setIsModal}/>
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
+        {totalPages > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>
@@ -285,32 +277,5 @@ const ContactRequestsPage = () => {
 
 export default ContactRequestsPage;
 
-const htmlContent = () => {
-  return (<div className="w-full h-full space-y-4">
-    <div className="flex items-center gap-6">
-      <div className="text-[#3A3A3A] font-medium flex flex-col space-y-10"><span>Hi,
-        </span>
 
-       <span> Are you looking to boost your business with a custom mobile app? At Hoff & Mazor, we specialize in creating innovative and user-friendly apps tailored to your unique needs.</span>
-<span>
-        Benefits of choosing us:
-        1. Customized solutions
-        2. User-friendly design
-        3. Timely delivery
-        4. Ongoing support
-        </span>
-<span>
-        Don't miss out on the opportunity to stand out from the competition. Contact us today for a consultation!
-</span>
-       <span> Best regards,</span>
-
-<span>
-        John Smith
-        Hoff & Mazor
-        john@hoffnmazordeveloper.com
-</span>
-        Respond with stop to optout.</div>
-    </div>
-    </div>)
-}
 
