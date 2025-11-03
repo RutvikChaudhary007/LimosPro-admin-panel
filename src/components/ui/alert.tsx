@@ -20,15 +20,15 @@ const alertVariants = cva(
         warning:
           "bg-base-warning/20 border-base-warning text-base-warning [&>svg]:text-base-warning *:data-[slot=alert-description]:text-base-warning/90",
         solidPrimary:
-          "bg-base-primary text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
+          "bg-base-primary border-base-primary text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
         solidSecondary:
-          "bg-base-secondary text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
+          "bg-base-secondary border-base-secondary text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
         solidSuccess:
-          "bg-base-success text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
+          "bg-base-success border-base-success text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
         solidDanger:
-          "bg-base-danger text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
+          "bg-base-danger border-base-danger text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
         solidWarning:
-          "bg-base-warning text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
+          "bg-base-warning border-base-warning text-base-white [&>svg]:text-base-white *:data-[slot=alert-description]:text-base-white/90",
         destructive:
           "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
       },

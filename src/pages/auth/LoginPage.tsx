@@ -1,0 +1,46 @@
+import { LoginForm } from "@/components/login-form"
+import { Alert, AlertTitle } from "@/components/ui/alert"
+import { BadgeCheck } from "lucide-react"
+
+export default function LoginPage() {
+  return (
+    <div className="grid min-h-[calc(100svh-66px)] lg:grid-cols-2">
+      <div className="bg-base-background-light flex flex-1 items-center justify-center">
+        <div className="bg-base-white shadow-base-light w-full max-w-[480px] rounded-[12px] p-8 py-8">
+          <LoginForm />
+        </div>
+      </div>
+      <div className="bg-muted relative hidden lg:block">
+        <img
+          src="../../../src/assets/auth/login-form-bg.png"
+          alt="Background Image"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-[376px] flex-col justify-center">
+          <div className="mb-6 size-20">
+            <img
+              src="../../../src/assets/logo/limospro-logo.png"
+              alt="Image"
+              className="size-full object-cover"
+            />
+          </div>
+          <div className="text-base-white font-montserrat space-y-4 leading-[100%] font-bold tracking-normal">
+            <h4 className="text-3xl">Introducing Limospro™ Fleet System</h4>
+            <p className="text-lg">
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+              has been the industry&apos;s standard dummy text ever since the 1500s.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="absolute right-10 bottom-10 z-10 max-w-[416px]">
+        <Alert variant="solidSuccess" className="shadow-base-light">
+          <BadgeCheck />
+          <AlertTitle>
+            Thank you for using Limospro. We will redirect you in few seconds.
+          </AlertTitle>
+        </Alert>
+      </div>
+    </div>
+  )
+}

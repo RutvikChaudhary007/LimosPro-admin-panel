@@ -1,16 +1,27 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import AuthLayout from "./components/layout/AuthLayout"
+import Layout from "./components/layout/Layout"
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage"
+import LoginPage from "./pages/auth/LoginPage"
+import RegisterPage from "./pages/auth/RegisterPage"
 import AlertPage from "./pages/components/AlertPage"
 import BadgePage from "./pages/components/BadgePage"
 import ButtonPage from "./pages/components/ButtonPage"
 import CardPage from "./pages/components/CardPage"
 import TextFieldPage from "./pages/components/TextFieldPage"
 import Dashboard from "./pages/dashboard/Dashboard"
-import Layout from "./pages/layout/Layout"
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="auth">
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          </Route>
+        </Route>
         <Route element={<Layout />}>
           <Route index />
           <Route path="dashboard" element={<Dashboard />} />

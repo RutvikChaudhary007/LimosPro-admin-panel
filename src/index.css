@@ -67,6 +67,8 @@
 
   --background-image-base-blue-cream: var(--base-blue-cream);
 
+  --shadow-base-light: var(--base-shadow-light);
+
   /* Font Families */
   --font-family: var(--font-family);
   --font-montserrat: var(--font-montserrat);
@@ -129,6 +131,7 @@
   /* Base [Custom] Background Palette */
   --base-background-light: #fefefe;
   --base-blue-cream:  linear-gradient(90deg, #E4F3FF 0%, #FFF8EF 100%);
+  --base-shadow-light: 0px 0px 20px 0px #0000000D;
 }
 
 .dark {

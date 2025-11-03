@@ -1,4 +1,4 @@
-import { user } from "@/components/app-sidebar"
+import { user } from "@/components/layout/partials/app-sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 function UserProfile() {

@@ -1,4 +1,4 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
+import { ChartAreaInteractive } from "@/components/layout/partials/chart-area-interactive"
 import { SectionCards } from "@/pages/dashboard/partials/section-cards"
 import UserProfile from "./partials/user-profile"
 // import { DataTable } from "@/components/data-table"

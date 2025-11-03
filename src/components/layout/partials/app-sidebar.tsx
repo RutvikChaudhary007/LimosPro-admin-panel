@@ -26,9 +26,9 @@ import {
 import * as React from "react"
 import { Link } from "react-router-dom"
 
-import { NavDocuments } from "@/components/nav-documents"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
+import { NavDocuments } from "@/components/layout/partials/nav-documents"
+import { NavMain } from "@/components/layout/partials/nav-main"
+import { NavSecondary } from "@/components/layout/partials/nav-secondary"
 import {
   Sidebar,
   SidebarContent,
