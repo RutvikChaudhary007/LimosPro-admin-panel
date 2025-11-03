@@ -1,19 +1,24 @@
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-// import { DataTable } from "@/components/data-table"
 import { SectionCards } from "@/pages/dashboard/partials/section-cards"
+import UserProfile from "./partials/user-profile"
+// import { DataTable } from "@/components/data-table"
 // import data from "./partials/data.json"
 
 export default function Dashboard() {
   return (
-    <div className="bg-base-background-light flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
-        <div className="flex flex-col gap-4 py-4 md:gap-8 md:py-8">
-          <SectionCards />
-          <div className="px-4 lg:px-8">
-            <ChartAreaInteractive />
-          </div>
-          {/* <DataTable data={data} /> */}
-        </div>
+    <div className="bg-base-background-light @container/main h-full">
+      <div className="flex flex-1 flex-col gap-4 py-4 md:gap-8 md:py-8">
+        {/* User Profile */}
+        <UserProfile />
+
+        {/* Cards */}
+        <SectionCards />
+
+        {/* Charts */}
+        <ChartAreaInteractive />
+
+        {/* Table */}
+        {/* <DataTable data={data} /> */}
       </div>
     </div>
   )

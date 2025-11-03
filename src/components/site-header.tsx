@@ -2,13 +2,8 @@ import { Button } from "@/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { IconBell, IconLanguage, IconMail, IconSearch } from "@tabler/icons-react"
+import { user } from "./app-sidebar"
 import { NavUser } from "./nav-user"
-
-const user = {
-  name: "Alaadin",
-  email: "alaadin@example.com",
-  avatar: "/avatars/alaadin.jpg",
-}
 
 export function SiteHeader() {
   return (

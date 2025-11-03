@@ -34,7 +34,7 @@ export function NavUser({
       <DropdownMenuTrigger asChild>
         <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
           <IconUserCircle />
-          <h1>{user.name}</h1>
+          <span>{user.name}</span>
         </Button>
       </DropdownMenuTrigger>
 

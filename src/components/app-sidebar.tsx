@@ -1,13 +1,27 @@
 import {
+  IconAffiliate,
+  IconCalendarCheck,
+  IconCar,
   IconChartBar,
+  IconCreditCard,
   IconDatabase,
   IconFileWord,
+  IconHeartHandshake,
   IconHelp,
   IconHome,
-  IconListDetails,
+  IconMail,
+  IconNews,
   IconReport,
+  IconRoute,
   IconSearch,
   IconSettings,
+  IconShield,
+  IconStar,
+  IconTruck,
+  IconUser,
+  IconUserCog,
+  IconUserPin,
+  IconUsers,
 } from "@tabler/icons-react"
 import * as React from "react"
 import { Link } from "react-router-dom"
@@ -26,6 +40,13 @@ import {
 } from "@/components/ui/sidebar"
 
 const data = {
+  user: [
+    {
+      name: "Alaadin",
+      email: "alaadin@example.com",
+      avatar: "/avatars/alaadin.jpg",
+    },
+  ],
   navMain: [
     {
       title: "Dashboard",
@@ -34,19 +55,108 @@ const data = {
       isActive: true,
     },
     {
-      title: "Lifecycle",
+      title: "Region Management",
       url: "#",
-      icon: IconListDetails,
+      icon: IconUserPin,
       items: [
-        { title: "History", url: "#" },
-        { title: "Starred", url: "#" },
-        { title: "Settings", url: "#" },
+        { title: "Regions", url: "/region-management/regions" },
+        { title: "Region Admins", url: "/region-management/region-admins" },
       ],
     },
     {
-      title: "Analytics",
+      title: "Affiliate",
+      url: "/affiliate",
+      icon: IconAffiliate,
+    },
+    {
+      title: "Chauffeur",
+      url: "/chauffeur",
+      icon: IconCar,
+    },
+    {
+      title: "Bookings",
+      url: "/bookings",
+      icon: IconCalendarCheck,
+    },
+    {
+      title: "Users",
+      url: "/users",
+      icon: IconUsers,
+    },
+    {
+      title: "Fleets",
+      url: "/fleets",
+      icon: IconTruck,
+    },
+    {
+      title: "Trips",
+      url: "/trips",
+      icon: IconRoute,
+    },
+    {
+      title: "Payments",
+      url: "/payments",
+      icon: IconCreditCard,
+    },
+    {
+      title: "Reports",
+      url: "/reports",
+      icon: IconReport,
+    },
+    {
+      title: "Content Management",
       url: "#",
       icon: IconChartBar,
+      items: [
+        { title: "Blogs", url: "/content-management/blogs" },
+        { title: "Pages", url: "/content-management/pages" },
+        { title: "Seo", url: "/content-management/seo" },
+      ],
+    },
+    {
+      title: "Crew Members",
+      url: "/crew-members",
+      icon: IconUserCog,
+    },
+    {
+      title: "Staff Members",
+      url: "/staff-members",
+      icon: IconUser,
+    },
+    {
+      title: "Contact Requests",
+      url: "/contact-requests",
+      icon: IconMail,
+    },
+    {
+      title: "Testimonials",
+      url: "/testimonials",
+      icon: IconStar,
+    },
+    {
+      title: "News",
+      url: "/news",
+      icon: IconNews,
+    },
+    {
+      title: "FAQs",
+      url: "/faqs",
+      icon: IconHelp,
+    },
+    {
+      title: "IP White List",
+      url: "/ip-whitelist",
+      icon: IconShield,
+    },
+    {
+      title: "Our Partners",
+      url: "/our-partners",
+      icon: IconHeartHandshake,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: IconSettings,
     },
   ],
   documents: [
@@ -113,3 +223,5 @@ export function AppSidebar({
     </Sidebar>
   )
 }
+
+export const user = data.user[0]

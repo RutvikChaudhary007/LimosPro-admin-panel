@@ -12,8 +12,17 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route path="dashboard" element={<Dashboard />} />
           <Route index />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="region-management">
+            <Route path="regions" />
+            <Route path="region-admins" />
+          </Route>
+          <Route path="content-management">
+            <Route path="blogs" />
+            <Route path="pages" />
+            <Route path="seo" />
+          </Route>
         </Route>
         <Route path="components">
           <Route path="button-page" element={<ButtonPage />} />
