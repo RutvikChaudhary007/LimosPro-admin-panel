@@ -1,6 +1,6 @@
 "use client"
 
-import { IconDots, IconFolder, IconShare3, IconTrash, type Icon } from "@tabler/icons-react"
+import { IconDots, IconFolder, IconShare3, IconTrash } from "@tabler/icons-react"
 
 import {
   DropdownMenu,
@@ -26,7 +26,7 @@ export function NavDocuments({
   items: {
     name: string
     url: string
-    icon: Icon
+    icon: React.ComponentType<{ className?: string }>
   }[]
 }) {
   const { isMobile } = useSidebar()
@@ -39,7 +39,7 @@ export function NavDocuments({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <Link to={item.url}>
-                <item.icon />
+                {item.icon && <item.icon />}
                 <span>{item.name}</span>
               </Link>
             </SidebarMenuButton>

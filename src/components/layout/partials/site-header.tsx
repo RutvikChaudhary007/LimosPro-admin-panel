@@ -1,10 +1,12 @@
+import IconBell from "@/assets/Icons/ic-bell.svg?react"
+import IconMail from "@/assets/Icons/ic-mail.svg?react"
+import IconSearch from "@/assets/Icons/ic-search.svg?react"
+import IconLanguage from "@/assets/Icons/ic-translate.svg?react"
 import { Button } from "@/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { IconBell, IconLanguage, IconMail, IconSearch } from "@tabler/icons-react"
 import { user } from "./app-sidebar"
 import { NavUser } from "./nav-user"
-
 export function SiteHeader() {
   return (
     <header className="bg-base-background-light sticky top-0 z-40 flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">

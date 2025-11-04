@@ -53,7 +53,7 @@ function InputGroup({ className, variant, ...props }: InputGroupProps) {
 
 // --- ADDON ---
 const inputGroupAddonVariants = cva(
-  "text-base-gray flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none transition-colors [&>svg:not([class*='size-'])]:size-6 group-data-[disabled=true]/input-group:opacity-50",
+  "text-base-gray flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none transition-colors [&_svg]:**:stroke-current [&>svg:not([class*='size-'])]:size-6 group-data-[disabled=true]/input-group:opacity-50",
   {
     variants: {
       align: {
@@ -140,7 +140,7 @@ function InputGroupText({
   return (
     <span
       className={cn(
-        "text-base-gray flex items-center gap-2 text-sm transition-colors [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+        "text-base-gray flex items-center gap-2 text-sm transition-colors [&_svg]:pointer-events-none [&_svg]:**:stroke-current [&_svg:not([class*='size-'])]:size-4",
         variant === "primary"
           ? "group-focus-within/input-group:text-base-primary"
           : "group-focus-within/input-group:text-base-secondary",

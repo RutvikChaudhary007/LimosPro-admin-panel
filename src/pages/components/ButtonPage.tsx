@@ -1,7 +1,6 @@
-// import ChevronDown from "@/assets/buttonIcons/ic-chevron-down.svg?react";
+import IconHome from "@/assets/Icons/dashboard.svg?react"
+import IconChevronDown from "@/assets/Icons/ic-chevron-down.svg?react"
 import { Button } from "@/components/ui/button"
-import { IconHome } from "@tabler/icons-react"
-import { ChevronDown } from "lucide-react"
 
 function ButtonPage() {
   return (
@@ -32,21 +31,21 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button>
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -56,17 +55,17 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button>
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -78,17 +77,17 @@ function ButtonPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Button>
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button size="sm" spacing="sm">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button size="lg" spacing="xl">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -118,21 +117,21 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="secondary">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="secondary" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="secondary" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -142,17 +141,17 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="secondary">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="secondary" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="secondary" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -164,17 +163,17 @@ function ButtonPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="secondary">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="secondary" size="sm" spacing="sm">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="secondary" size="lg" spacing="xl">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -206,21 +205,21 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlinePrimary">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlinePrimary" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlinePrimary" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -230,17 +229,17 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlinePrimary">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="outlinePrimary" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="outlinePrimary" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -252,17 +251,17 @@ function ButtonPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlinePrimary">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlinePrimary" size="sm" spacing="sm">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlinePrimary" size="lg" spacing="xl">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -292,21 +291,21 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineSecondary">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineSecondary" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineSecondary" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -316,17 +315,17 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineSecondary">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="outlineSecondary" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="outlineSecondary" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -338,17 +337,17 @@ function ButtonPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineSecondary">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineSecondary" size="sm" spacing="sm">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineSecondary" size="lg" spacing="xl">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -380,21 +379,21 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="black">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="black" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="black" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -404,17 +403,17 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="black">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="black" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="black" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -426,17 +425,17 @@ function ButtonPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="black">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="black" size="sm" spacing="sm">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="black" size="lg" spacing="xl">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -466,21 +465,21 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineBlack">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineBlack" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineBlack" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -490,17 +489,17 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineBlack">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="outlineBlack" size="sm" spacing="sm">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
 
               <Button variant="outlineBlack" size="lg" spacing="xl">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -512,17 +511,17 @@ function ButtonPage() {
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineBlack">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineBlack" size="sm" spacing="sm">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
 
               <Button variant="outlineBlack" size="lg" spacing="xl">
                 <span>Button Text</span>
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -536,7 +535,7 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineNavBtnPrimary" size="xl" spacing="lg">
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -547,7 +546,7 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineNavBtnSecondary" size="xl" spacing="lg">
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -557,7 +556,7 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
-                <ChevronDown />
+                <IconChevronDown />
               </Button>
             </div>
           </div>
@@ -569,7 +568,7 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineNavBtnPrimary" size="xl" spacing="lg">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -581,7 +580,7 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineNavBtnSecondary" size="xl" spacing="lg">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>
@@ -592,7 +591,7 @@ function ButtonPage() {
 
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
-                <ChevronDown />
+                <IconChevronDown />
                 <span>Button Text</span>
               </Button>
             </div>

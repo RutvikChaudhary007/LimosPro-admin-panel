@@ -1,27 +1,41 @@
+// import IconAffiliate from "@/assets/Icons/affiliate.svg?react"
+import IconBooking from "@/assets/Icons/booking.svg?react"
+// import IconChauffeur from "@/assets/Icons/chauffeur.svg?react"
+// import IconCMS from "@/assets/Icons/cms.svg?react"
+// import IconContactRequests from "@/assets/Icons/contact-requests.svg?react"
+import IconCrew from "@/assets/Icons/crew.svg?react"
+import IconHome from "@/assets/Icons/dashboard.svg?react"
+// import IconFaq from "@/assets/Icons/faq.svg?react"
+// import IconFleet from "@/assets/Icons/fleet.svg?react"
+// import IconIp from "@/assets/Icons/ip.svg?react"
+// import IconNews from "@/assets/Icons/news.svg?react"
+// import IconPartners from "@/assets/Icons/partners.svg?react"
+import IconPayments from "@/assets/Icons/payments.svg?react"
+import IconRegion from "@/assets/Icons/region.svg?react"
+// import IconReports from "@/assets/Icons/reports.svg?react"
+import IconSettings from "@/assets/Icons/settings.svg?react"
+// import IconStaff from "@/assets/Icons/staff.svg?react"
+// import IconTestimonial from "@/assets/Icons/testimonial.svg?react"
+// import IconTrips from "@/assets/Icons/trips.svg?react"
+import IconUsers from "@/assets/Icons/users.svg?react"
+
 import {
   IconAffiliate,
-  IconCalendarCheck,
   IconCar,
   IconChartBar,
-  IconCreditCard,
   IconDatabase,
   IconFileWord,
   IconHeartHandshake,
   IconHelp,
-  IconHome,
   IconMail,
   IconNews,
   IconReport,
   IconRoute,
   IconSearch,
-  IconSettings,
   IconShield,
   IconStar,
   IconTruck,
   IconUser,
-  IconUserCog,
-  IconUserPin,
-  IconUsers,
 } from "@tabler/icons-react"
 import * as React from "react"
 import { Link } from "react-router-dom"
@@ -57,7 +71,7 @@ const data = {
     {
       title: "Region Management",
       url: "#",
-      icon: IconUserPin,
+      icon: IconRegion,
       items: [
         { title: "Regions", url: "/region-management/regions" },
         { title: "Region Admins", url: "/region-management/region-admins" },
@@ -76,7 +90,7 @@ const data = {
     {
       title: "Bookings",
       url: "/bookings",
-      icon: IconCalendarCheck,
+      icon: IconBooking,
     },
     {
       title: "Users",
@@ -96,7 +110,7 @@ const data = {
     {
       title: "Payments",
       url: "/payments",
-      icon: IconCreditCard,
+      icon: IconPayments,
     },
     {
       title: "Reports",
@@ -116,7 +130,7 @@ const data = {
     {
       title: "Crew Members",
       url: "/crew-members",
-      icon: IconUserCog,
+      icon: IconCrew,
     },
     {
       title: "Staff Members",
@@ -191,12 +205,12 @@ export function AppSidebar({
             >
               <Link to="/" className="flex max-w-fit items-center gap-2">
                 <img
-                  src="../src/assets/logo/limospro-icon.png"
+                  src="/logo/limospro-icon.png"
                   alt="LimosProIcon"
                   className="size-10 group-data-[collapsible=icon]:size-8"
                 />
                 <img
-                  src="../src/assets/logo/limospro-text.png"
+                  src="/logo/limospro-text.png"
                   alt="LimosProText"
                   className="h-[26px] w-[95px] group-data-[collapsible=icon]:hidden"
                 />
@@ -214,8 +228,8 @@ export function AppSidebar({
       </SidebarContent>
 
       {/* Footer */}
-      <SidebarFooter className="bg-transparent group-data-[collapsible=icon]:hidden">
-        <div className="font-quicksand space-y-1 py-2 text-center text-base leading-[100%] tracking-[0]">
+      <SidebarFooter className="overflow-hidden bg-transparent py-2 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:p-0">
+        <div className="font-quicksand space-y-1 text-center text-base leading-[100%] tracking-[0]">
           <div className="font-bold text-black">Limospro™</div>
           <div className="text-base-black font-medium">Version: 1.0.0</div>
         </div>

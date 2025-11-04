@@ -1,12 +1,7 @@
-import {
-  IconBell,
-  IconCreditCard,
-  IconLanguage,
-  IconLogout,
-  IconMail,
-  IconUserCircle,
-} from "@tabler/icons-react"
-
+import IconBell from "@/assets/Icons/ic-bell.svg?react"
+import IconMail from "@/assets/Icons/ic-mail.svg?react"
+import IconLanguage from "@/assets/Icons/ic-translate.svg?react"
+import IconUserCircle from "@/assets/Icons/ic-user-circle.svg?react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -17,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { IconCreditCard, IconLogout } from "@tabler/icons-react"
 import { Button } from "../../ui/button"
 
 export function NavUser({

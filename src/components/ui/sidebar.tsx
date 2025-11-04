@@ -4,6 +4,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
+import IconMenu from "@/assets/Icons/ic-menu-alt.svg?react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -18,7 +19,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
-import { IconMenuDeep } from "@tabler/icons-react"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -210,7 +210,7 @@ function Sidebar({
       <div
         data-slot="sidebar-gap"
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
+          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-300 ease-linear",
           "group-data-[collapsible=offcanvas]:w-0",
           "group-data-[side=right]:rotate-180",
           variant === "floating" || variant === "inset"
@@ -221,7 +221,7 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         className={cn(
-          "border-r-base-light-gray fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) border-r transition-[left,right,width] duration-200 ease-linear lg:flex",
+          "border-r-base-light-gray fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) border-r transition-[left,right,width] duration-300 ease-linear lg:flex",
           side === "left"
             ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
             : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -262,7 +262,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       }}
       {...props}
     >
-      <IconMenuDeep className="rotate-y-180" />
+      <IconMenu />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -454,7 +454,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left font-quicksand font-bold text-base leading-[100%] tracking-[0] text-base-black outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-base-primary/10 hover:text-base-black focus-visible:ring-2 active:bg-base-primary active:text-base-white disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-base-primary data-[active=true]:text-base-white data-[state=open]:bg-base-primary/15 data-[state=open]:text-base-black data-[state=open]:border-base-primary data-[state=open]:hover:bg-base-primary/10 data-[state=open]:hover:text-base-black group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-1! [&>span:last-child]:truncate [&_svg:not([class*='size-'])]:[&>svg]:size-6 [&>svg]:shrink-0 data-[child-active=true]:bg-base-primary/20 data-[child-active=true]:text-base-primary!",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left font-quicksand font-bold text-base leading-[100%] tracking-[0] text-base-black outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-base-primary/10 hover:text-base-black focus-visible:ring-2 active:bg-base-primary active:text-base-white disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-base-primary data-[active=true]:text-base-white data-[state=open]:bg-base-primary/15 data-[state=open]:text-base-black data-[state=open]:border-base-primary data-[state=open]:hover:bg-base-primary/10 data-[state=open]:hover:text-base-black group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-1! [&>span:last-child]:truncate [&_svg:not([class*='size-'])]:[&>svg]:size-6 [&>svg]:size-6 [&_svg]:**:stroke-current [&>svg]:shrink-0 data-[child-active=true]:bg-base-primary/20 data-[child-active=true]:text-base-primary!",
   {
     variants: {
       variant: {

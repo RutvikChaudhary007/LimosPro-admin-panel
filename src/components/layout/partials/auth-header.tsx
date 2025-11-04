@@ -27,7 +27,7 @@ export function AuthHeader() {
         {/* Logo */}
         <Link to="/" className="h-[50px] w-[161px] cursor-pointer">
           <img
-            src="../src/assets/logo/limospro-full-logo-dark.png"
+            src="/logo/limospro-full-logo-dark.png"
             alt="LimosProLogo"
             className="object-cover"
           />
