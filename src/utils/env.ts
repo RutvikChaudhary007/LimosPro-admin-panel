@@ -12,6 +12,7 @@ let envError: string | null = null
 
 try {
   parsedEnv = envSchema.parse(import.meta.env)
+  console.log("ENV FROM VERCEL:", import.meta.env)
 } catch (err) {
   if (err instanceof z.ZodError) {
     // console.error("err:",JSON.parse(err.message)?.map(e => `${e.path.join(".")}: ${e.message}`)?.join("\n"))
@@ -27,4 +28,6 @@ try {
 }
 
 export const env = parsedEnv
+console.log("ENV parsedEnv:", parsedEnv)
+
 export const envValidationError = envError
