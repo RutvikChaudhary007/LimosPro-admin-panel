@@ -10,36 +10,74 @@ import { cn } from "@/lib/utils"
 import {
   IconBrandFacebookFilled,
   IconBrandGoogleFilled,
+  IconEye,
   IconEyeOff,
   IconLock,
   IconMail,
 } from "@tabler/icons-react"
-import { BadgeCheck } from "lucide-react"
+// import { BadgeCheck } from "lucide-react"
 import { Link } from "react-router-dom"
-import { Alert, AlertTitle } from "./ui/alert"
+// import { Alert, AlertTitle } from "./ui/alert"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 
-export function LoginForm({ className, ...props }: React.ComponentProps<"form">) {
+const loginSchema = z.object({
+  email: z.email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+  // remember: z.boolean().default(false).optional(),
+})
+
+export type LoginFormValues = z.infer<typeof loginSchema>
+
+interface LoginFormProps extends Omit<React.ComponentProps<"form">, "onSubmit"> {
+  onSubmit: (data: LoginFormValues) => void // this is our custom handler
+  loading: boolean
+}
+
+export function LoginForm({ className, onSubmit, loading, ...props }: LoginFormProps) {
+  const [showPassword, setShowPassword] = useState(false)
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      // remember: false,
+      password: "",
+      email: localStorage.getItem("Email") || "",
+    },
+  })
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <FieldGroup>
-        <Alert variant="success">
+        {/* <Alert variant="success">
           <BadgeCheck />
           <AlertTitle>We have emailed you a link to reset your password!</AlertTitle>
-        </Alert>
+        </Alert> */}
 
         <div className="text-left">
           <h1 className="text-base-black font-montserrat text-3xl leading-[100%] font-bold tracking-[0]">
             Login to your account
           </h1>
         </div>
+
         <Field>
           <FieldLabel htmlFor="email" className="text-base-primary gap-0">
             Email Address
             <span className="text-base-danger ml-1">*</span>
           </FieldLabel>
           <InputGroup>
-            <InputGroupInput id="email" type="email" placeholder="Email Address" required />
+            <InputGroupInput
+              id="email"
+              type="email"
+              placeholder="Email Address"
+              required
+              {...form.register("email")}
+            />
             <InputGroupAddon>
               <IconMail />
             </InputGroupAddon>
@@ -51,17 +89,27 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"form">)
             <span className="text-base-danger ml-1">*</span>
           </FieldLabel>
           <InputGroup>
-            <InputGroupInput id="password" type="password" placeholder="Password" required />
+            <InputGroupInput
+              id="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              required
+              {...form.register("password")}
+            />
             <InputGroupAddon>
               <IconLock />
             </InputGroupAddon>
-            <InputGroupAddon align="inline-end">
-              <IconEyeOff />
+            <InputGroupAddon
+              align="inline-end"
+              className="cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <IconEye /> : <IconEyeOff />}
             </InputGroupAddon>
           </InputGroup>
         </Field>
         <Field>
-          <Button type="submit">Log In</Button>
+          <Button type="submit">{loading ? "Submitting..." : "Log In"}</Button>
         </Field>
         <FieldSeparator></FieldSeparator>
         <Field className="gap-4">

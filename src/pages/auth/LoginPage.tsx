@@ -1,13 +1,52 @@
-import { LoginForm } from "@/components/login-form"
+import { LoginForm, type LoginFormValues } from "@/components/login-form"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import { BadgeCheck } from "lucide-react"
+import { useEffect, useState } from "react"
+import queries from "@/lib/queries"
+import { useNavigate } from "react-router-dom"
+import { constant } from "@/lib/constant"
 
 export default function LoginPage() {
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Check if user is already logged in (must not navigate during render)
+  useEffect(() => {
+    const role = localStorage.getItem("role")
+    if (role && ["Super Admin", "SEO Agent", "Affiliate"].includes(role)) {
+      navigate(constant.ROUTING_URLS.DASHBOARD)
+    }
+  }, [navigate])
+
+  const loginMutation = queries.useLoginMutation()
+  const onSubmit = async (data: LoginFormValues) => {
+    setLoading(true)
+    setError(null)
+    setSuccess(false)
+    try {
+      const response = await loginMutation.mutateAsync(data)
+      if (response?.status === true) {
+        setSuccess(response.status)
+        navigate(constant.ROUTING_URLS.DASHBOARD)
+      }
+      console.log("response:", response)
+    } catch (error) {
+      // Error handling is done in onError callback
+      if (error instanceof Error) {
+        setError(error.message)
+        // console.error('Login error:', error?.message);
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <div className="grid min-h-[calc(100svh-66px)] lg:grid-cols-2">
       <div className="bg-base-background-light flex flex-1 items-center justify-center">
         <div className="bg-base-white shadow-base-light w-full max-w-[480px] rounded-[12px] p-8 py-8">
-          <LoginForm />
+          <LoginForm onSubmit={onSubmit} loading={loading} />
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
@@ -30,12 +69,14 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="absolute right-10 bottom-10 z-10 max-w-[416px]">
-        <Alert variant="solidSuccess" className="shadow-base-light">
-          <BadgeCheck />
-          <AlertTitle>
-            Thank you for using Limospro. We will redirect you in few seconds.
-          </AlertTitle>
-        </Alert>
+        {(success || error) && (
+          <Alert variant={success ? "solidSuccess" : "solidDanger"} className="shadow-base-light">
+            <BadgeCheck />
+            <AlertTitle>
+              {error ? error : "Thank you for using Limospro. We will redirect you in few seconds."}
+            </AlertTitle>
+          </Alert>
+        )}
       </div>
     </div>
   )

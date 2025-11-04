@@ -5,21 +5,14 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import * as React from "react"
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
-const lineChartData = [
-  { month: "Jan", revenue: 20 },
-  { month: "Feb", revenue: 5 },
-  { month: "Mar", revenue: 31 },
-  { month: "Apr", revenue: 48 },
-  { month: "May", revenue: 2 },
-  { month: "Jun", revenue: 22 },
-  { month: "Jul", revenue: 0 },
-  { month: "Aug", revenue: 26 },
-  { month: "Sep", revenue: 3 },
-  { month: "Oct", revenue: 2 },
-  { month: "Nov", revenue: 3 },
-  { month: "Dec", revenue: 6 },
-]
-export function ChartAreaInteractive() {
+type TData = {
+  month: string
+  revenue: number
+}
+type TProps = {
+  data: TData[]
+}
+export function ChartAreaInteractive({ data }: TProps) {
   const isMobile = useIsMobile()
   const [, setTimeRange] = React.useState("90d")
 
@@ -39,7 +32,7 @@ export function ChartAreaInteractive() {
         <CardContent className="px-6 py-0">
           <div className="h-[200px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineChartData} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+              <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
                 <XAxis dataKey="month" />
                 <YAxis domain={[0, "dataMax"]} />
                 <Tooltip />

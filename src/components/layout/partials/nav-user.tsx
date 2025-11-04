@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { IconCreditCard, IconLogout } from "@tabler/icons-react"
 import { Button } from "../../ui/button"
+import { useNavigate } from "react-router-dom"
+import { constant } from "@/lib/constant"
 
 export function NavUser({
   user,
@@ -24,6 +26,7 @@ export function NavUser({
     avatar: string
   }
 }) {
+  const navigate = useNavigate()
   return (
     <DropdownMenu>
       {/* 👇 Your custom button becomes the trigger */}
@@ -81,7 +84,12 @@ export function NavUser({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            localStorage.clear()
+            navigate(`/auth/${constant.ROUTING_URLS.ADMIN_LOGIN}`)
+          }}
+        >
           <IconLogout />
           Log out
         </DropdownMenuItem>

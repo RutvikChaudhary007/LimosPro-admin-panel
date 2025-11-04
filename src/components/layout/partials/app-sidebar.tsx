@@ -52,6 +52,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { constant } from "@/lib/constant"
 
 const data = {
   user: [
@@ -64,7 +65,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: constant.ROUTING_URLS.DASHBOARD,
       icon: IconHome,
       isActive: true,
     },
@@ -73,48 +74,48 @@ const data = {
       url: "#",
       icon: IconRegion,
       items: [
-        { title: "Regions", url: "/region-management/regions" },
-        { title: "Region Admins", url: "/region-management/region-admins" },
+        { title: "Regions", url: constant.ROUTING_URLS.REGION },
+        { title: "Region Admins", url: constant.ROUTING_URLS.REGION_ADMIN },
       ],
     },
     {
       title: "Affiliate",
-      url: "/affiliate",
+      url: constant.ROUTING_URLS.AFFILIATE,
       icon: IconAffiliate,
     },
     {
       title: "Chauffeur",
-      url: "/chauffeur",
+      url: constant.ROUTING_URLS.CHAUFFEUR,
       icon: IconCar,
     },
     {
       title: "Bookings",
-      url: "/bookings",
+      url: constant.ROUTING_URLS.BOOKING,
       icon: IconBooking,
     },
     {
       title: "Users",
-      url: "/users",
+      url: constant.ROUTING_URLS.USERS,
       icon: IconUsers,
     },
     {
       title: "Fleets",
-      url: "/fleets",
+      url: constant.ROUTING_URLS.FLEETS,
       icon: IconTruck,
     },
     {
       title: "Trips",
-      url: "/trips",
+      url: constant.ROUTING_URLS.TRIPS,
       icon: IconRoute,
     },
     {
       title: "Payments",
-      url: "/payments",
+      url: constant.ROUTING_URLS.PAYMENTS,
       icon: IconPayments,
     },
     {
       title: "Reports",
-      url: "/reports",
+      url: constant.ROUTING_URLS.REPORTS,
       icon: IconReport,
     },
     {
@@ -122,54 +123,54 @@ const data = {
       url: "#",
       icon: IconChartBar,
       items: [
-        { title: "Blogs", url: "/content-management/blogs" },
-        { title: "Pages", url: "/content-management/pages" },
-        { title: "Seo", url: "/content-management/seo" },
+        { title: "Blogs", url: constant.ROUTING_URLS.BLOG_POSTS },
+        { title: "Pages", url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES },
+        { title: "Seo", url: constant.ROUTING_URLS.SEO },
       ],
     },
     {
       title: "Crew Members",
-      url: "/crew-members",
+      url: constant.ROUTING_URLS.CREW_MEMBERS,
       icon: IconCrew,
     },
     {
       title: "Staff Members",
-      url: "/staff-members",
+      url: constant.ROUTING_URLS.STAFF_MEMBERS,
       icon: IconUser,
     },
     {
       title: "Contact Requests",
-      url: "/contact-requests",
+      url: constant.ROUTING_URLS.CONTACT_REQUESTS,
       icon: IconMail,
     },
     {
       title: "Testimonials",
-      url: "/testimonials",
+      url: constant.ROUTING_URLS.TESTIMONIALS,
       icon: IconStar,
     },
     {
       title: "News",
-      url: "/news",
+      url: constant.ROUTING_URLS.NEWS,
       icon: IconNews,
     },
     {
       title: "FAQs",
-      url: "/faqs",
+      url: constant.ROUTING_URLS.FAQ,
       icon: IconHelp,
     },
     {
       title: "IP White List",
-      url: "/ip-whitelist",
+      url: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: IconShield,
     },
     {
       title: "Our Partners",
-      url: "/our-partners",
+      url: constant.ROUTING_URLS.OUR_PARTNERS,
       icon: IconHeartHandshake,
     },
     {
       title: "Settings",
-      url: "/settings",
+      url: constant.ROUTING_URLS.SETTINGS,
       icon: IconSettings,
     },
   ],
