@@ -44,8 +44,8 @@ export const constant = {
     EDIT_REGION: "/region-management/region/edit/:id",
     // Region Admin Management URLS
     REGION_ADMIN: "/region-management/regions/admins",
-    CREATE_REGION_ADMIN: "/region-management/admin/create-region-admin",
-    EDIT_REGION_ADMIN: "/region-management/admin/edit-region-admin/:id",
+    CREATE_REGION_ADMIN: "/region-management/create-region-admin",
+    EDIT_REGION_ADMIN: "/region-management/edit-region-admin/:id",
     // Chauffeur URLS
     CHAUFFEUR: "/chauffeur",
     CREATE_CHAUFFEUR: "/chauffeur/create",
