@@ -7,11 +7,12 @@ export function AuthHeader() {
   let text = ""
   let href = ""
 
-  if (location.pathname === "/auth/login") {
-    message = "Don’t have an account?"
-    text = "Sign Up"
-    href = "/auth/register"
-  } else if (location.pathname === "/auth/register") {
+  // if (location.pathname === "/auth/login") {
+  //   message = "Don’t have an account?"
+  //   text = "Sign Up"
+  //   href = "/auth/register"
+  // } else
+     if (location.pathname === "/auth/register") {
     message = "Already have an account?"
     text = "Login"
     href = "/auth/login"

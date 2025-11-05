@@ -111,8 +111,8 @@ export function LoginForm({ className, onSubmit, loading, ...props }: LoginFormP
         <Field>
           <Button type="submit">{loading ? "Submitting..." : "Log In"}</Button>
         </Field>
-        <FieldSeparator></FieldSeparator>
-        <Field className="gap-4">
+        {/* <FieldSeparator></FieldSeparator> */}
+        {/* <Field className="gap-4">
           <Button variant="outlinePrimary">
             <IconBrandGoogleFilled />
             <span>Sign in with Google</span>
@@ -121,20 +121,20 @@ export function LoginForm({ className, onSubmit, loading, ...props }: LoginFormP
             <IconBrandFacebookFilled />
             <span>Sign in with Facebook</span>
           </Button>
-        </Field>
+        </Field> */}
         <Field className="gap-6">
           <FieldDescription className="text-base-black font-quicksand text-left text-base leading-[100%] font-bold">
             <Link to="/auth/forgot-password" className="no-underline!">
               Forgot Password?
             </Link>
           </FieldDescription>
-          <FieldSeparator></FieldSeparator>
+          {/* <FieldSeparator></FieldSeparator>
           <FieldDescription className="text-base-black font-quicksand text-left text-base leading-[100%] font-medium">
             Don&apos;t have an account?{" "}
             <Link to="/auth/register" className="font-bold no-underline!">
               Sign up
             </Link>
-          </FieldDescription>
+          </FieldDescription> */}
         </Field>
       </FieldGroup>
     </form>
