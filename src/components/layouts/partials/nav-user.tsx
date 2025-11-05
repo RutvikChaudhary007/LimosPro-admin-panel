@@ -81,7 +81,7 @@ export function NavUser({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={()=>localStorage.clear()}>
           <IconLogout />
           Log out
         </DropdownMenuItem>
