@@ -4,12 +4,12 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
+  // FieldSeparator,
 } from "@/components/ui/field"
 import { cn } from "@/lib/utils"
 import {
-  IconBrandFacebookFilled,
-  IconBrandGoogleFilled,
+  // IconBrandFacebookFilled,
+  // IconBrandGoogleFilled,
   IconEye,
   IconEyeOff,
   IconLock,
