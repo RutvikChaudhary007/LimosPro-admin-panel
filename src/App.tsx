@@ -72,7 +72,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { envValidationError } from "./utils/env";
 import Layout from "./components/layouts/Layout";
-// const AdminRootLayout = lazy(() => import("./components/layouts/AdminRootLayout"));
+const AuthLayout = lazy(() => import("./components/layouts/AuthLayout"));
 const ErrorBoundary = lazy(() => import("./components/ErrorBoundary"));
 const BlogPostsPage = lazy(() => import("./pages/contentManagement/BlogPostsPage"));
 const EditBlogPostPage = lazy(() => import("./pages/contentManagement/EditBlogPostPage"));
@@ -102,8 +102,9 @@ function App() {
       <QueryClientProvider client={queryClient}>
       <ErrorBoundary>      
       <Routes >
-        
+        <Route element={<AuthLayout/>}>
           <Route  path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<LoginPage/>} />
+        </Route>
            {/* Protected wrapper */}
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
