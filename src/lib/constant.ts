@@ -7,7 +7,7 @@ export const constant = {
         EDIT_AFFILIATE : "/edit-affiliate/:id",
         VIEW_AFFILIATE : "/view-affiliate/:id",
         // Admin URLS
-        ADMIN_LOGIN: "/cms/login",
+        ADMIN_LOGIN: "/auth/login",
         // Common URLS
         DASHBOARD: "/dashboard",
         REPORTS: "/reports",
