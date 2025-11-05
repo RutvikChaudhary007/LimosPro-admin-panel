@@ -69,14 +69,15 @@ function AdminLoginPage() {
         localStorage.removeItem("remember");
       }
       // await loginMutation.mutateAsync(loginData);
-     toastPromise(loginMutation.mutateAsync({...loginData,remember}), {
+     toastPromise(loginMutation.mutateAsync({...loginData}), {
         loading: "Logging in...",
         success: () => {
-          const staySignedInMessage = data.remember
-            ? "You will stay signed in"
-            : "You will be logged out after session expires";
+          // const staySignedInMessage = data.remember
+          //   ? "You will stay signed in"
+          //   : "You will be logged out after session expires";
   
-          return `Welcome back! ${staySignedInMessage}`;
+          // return `Welcome back! ${staySignedInMessage}`;
+          return `Welcome back! `;
         },
         error: (e) => {
           // normalized in onError above

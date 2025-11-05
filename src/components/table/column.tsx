@@ -116,7 +116,8 @@ export function getRegionColumns(
 
 export type TRegionAdmin = {
   id: string;
-  region: string;
+  region?: string;
+  regionName?: string;
   email: string;
 }
 

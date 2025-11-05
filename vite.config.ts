@@ -1,7 +1,9 @@
 import path from "path"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from 'vite'
+import svgr from "vite-plugin-svgr"
 import react from '@vitejs/plugin-react'
+
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,7 +13,11 @@ export default defineConfig({
   preview: {
     port: 8080,
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(),svgr({
+      svgrOptions: {
+        icon: true, // scales SVG to 1em size
+      },
+    }),],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

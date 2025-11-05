@@ -59,6 +59,7 @@ function RegionAdminPage() {
     navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN)
   }, []);
     const handleDelete = useCallback((id: string) => {
+      console.log(id)
       // setData((prev) =>
       //   prev.filter((row) => row.id != id))
     }, []);

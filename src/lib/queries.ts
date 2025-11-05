@@ -32,63 +32,36 @@ import { createContentBlock, deleteContentBlock, editContentBlock } from "@/api/
 type TRefetch= (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>
 
 // Auth
-const useLoginMutation = ()=> {
-  const navigate = useNavigate()
-  return useMutation({
-  mutationFn: login,
-  onSuccess: (response, variables: {email: string, password: string,remember: boolean | undefined}) => {
-    
-    // You can still do things like storing localStorage, navigating, etc.
-    const userData = response?.data;
-    const userRole = userData?.roles;
+const useLoginMutation = () =>
+  useMutation({
+    mutationFn: login,
+    onSuccess: (response) => {
+      // You can still do things like storing localStorage, navigating, etc.
+      const userData = response?.data
+      const userRole = userData?.roles
 
-    if (variables?.remember) {
-      localStorage.setItem("remember", "true");
-    } else {
-      localStorage.removeItem("remember");
-    }
+      // reject unauthorized role
+      if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
+        //  return Promise.reject(new Error("Unauthorized user"));
+        throw new Error("Unauthorized user")
+      }
 
-    // reject unauthorized role
-    if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
-      //  return Promise.reject(new Error("Unauthorized user"));
-      throw new Error("Unauthorized user");
-    }
-
-    navigate(constant.ROUTING_URLS.DASHBOARD);
-
-    return response; // let caller decide success toast message
-  },
-  onError: (err: unknown) => {
-    if (err && typeof err === "object" && "isAxiosError" in err) {
-      const axiosError = err as AxiosError<ApiErrorResponse>;
-      throw new Error(
-        axiosError.response?.data?.message ||
-          axiosError.response?.data?.error ||
-          "An unexpected error occurred"
-      );
-    }else if(err instanceof Error){
-      throw err;
-    }
-    throw new Error("An unexpected error occurred");
-  
-    // let errorMessage = 'An unexpected error occurred';
-    
-    // if (err && typeof err === 'object' && 'isAxiosError' in err) {
-    //   const axiosError = err as AxiosError<ApiErrorResponse>;
-    //   errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
-    // }
-    
-    // // Don't show toast for rate limiting
-    // if (errorMessage.includes("429")) return;
-    // return errorMessage
-    // toast({
-    //   title: "Login Failed",
-    //   description: errorMessage,
-    //   variant: "destructive",
-    // });
-  }
-});
-}
+      return response // let caller decide success toast message
+    },
+    onError: (err: unknown) => {
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>
+        throw new Error(
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred"
+        )
+      } else if (err instanceof Error) {
+        throw err
+      }
+      throw new Error("An unexpected error occurred")
+    },
+  })
 
 /**
  * ##########################################

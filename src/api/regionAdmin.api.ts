@@ -46,11 +46,15 @@ export const useFetchRegionAdminById = (id:string) =>
   });
 
 
-export const createRegionAdmin = async(data: TRegionAdmin)=>{
+export const createRegionAdmin = async(data: Partial<TRegionAdmin>)=>{
     try {
       console.log("data:",data)
+      if(data?.region){
         const response = await axiosInstance.post(`${API_ENDPOINTS.REGIONAL_ADMIN.CREATE?.replace(":regionId",data?.region)}`,data)
         return response.data
+      }else{
+        throw new Error("Region id is missing.")
+      }
     } catch (error) {
         if(error instanceof AxiosError){
           console.error(error.message || "Opps! An unkown error occured")

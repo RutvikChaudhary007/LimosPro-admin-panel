@@ -70,7 +70,7 @@ export const useFetchContactRequestById = ({ id }: { id: string }) =>
  * @returns response data
  */
 export const createChauffeur = async (data:object) => {
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_CHAFFEUR,data, {
+  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CHAFFEUR,data, {
     headers: {
     'Content-Type': 'multipart/form-data',
     },
@@ -86,9 +86,9 @@ export const createChauffeur = async (data:object) => {
  * @param data 
  * @returns response data
  */
-export const editChauffeur = async ({data,id}:{data:TChauffeurForm,id:string| undefined}) => {
+export const editChauffeur = async ({data,id}:{data:unknown,id:string| undefined}) => {
   // console.log("edit chauffeur..:",data)
-  const response = await adminAxiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(':id', id!),data, {
+  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(':id', id!),data, {
     headers: {
     'Content-Type': 'multipart/form-data',
     },
@@ -105,7 +105,7 @@ export const editChauffeur = async ({data,id}:{data:TChauffeurForm,id:string| un
  * @returns response data
  */
 export const deleteChauffeur = async (id:string) => {
-  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(':id', id));
+  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(':id', id));
     
   return response.data;
 };
@@ -121,6 +121,6 @@ export const bulkDeleteChauffeur = async (ids: string[]) => {
   const data = {
     chauffeurIds:  ids ,
   };
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_CHAFFEUR, data,);
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_CHAFFEUR, data,);
   return response.data;
 };

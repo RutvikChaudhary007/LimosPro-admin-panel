@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import { TooltipProvider } from "./components/ui/tooltip";
 import { lazy } from "react";
-const AdminLoginPage = lazy(() => import("./pages/admin/AdminLoginPage"));
-const DashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
+const DashboardPage = lazy(() => import("./pages/dashboard/Dashboard"));
 const RegionDashboardPage = lazy(() => import("./pages/region/RegionDashboardPage"));
 const AddRegionPage = lazy(() => import("./pages/region/formpage/AddRegionPage"));
 const RegionAdminPage = lazy(() => import("./pages/regionAdmin/RegionAdminPage"));
@@ -71,7 +71,8 @@ const SeoPage = lazy(() => import("./pages/contentManagment/SeoPage"));
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { envValidationError } from "./utils/env";
-const AdminRootLayout = lazy(() => import("./components/layouts/AdminRootLayout"));
+import Layout from "./components/layouts/Layout";
+// const AdminRootLayout = lazy(() => import("./components/layouts/AdminRootLayout"));
 const ErrorBoundary = lazy(() => import("./components/ErrorBoundary"));
 const BlogPostsPage = lazy(() => import("./pages/contentManagement/BlogPostsPage"));
 const EditBlogPostPage = lazy(() => import("./pages/contentManagement/EditBlogPostPage"));
@@ -102,10 +103,10 @@ function App() {
       <ErrorBoundary>      
       <Routes >
         
-          <Route  path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<AdminLoginPage/>} />
+          <Route  path={constant.ROUTING_URLS.ADMIN_LOGIN} element={<LoginPage/>} />
            {/* Protected wrapper */}
           <Route element={<ProtectedRoute />}>
-            <Route element={<AdminRootLayout />}>
+            <Route element={<Layout />}>
             <Route index path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
             <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
             <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />

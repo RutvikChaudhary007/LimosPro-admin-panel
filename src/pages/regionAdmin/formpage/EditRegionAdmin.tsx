@@ -116,13 +116,13 @@ const EditRegionAdmin = () => {
                             />
                             <FormField
                                 control={form.control}
-                                name="phone"
+                                name="password"
                                 render={({field}) => (
                                     <FormItem className='flex flex-col gap-3 mb-[31px]'>
-                                        <FormLabel className='text-black text-sm'>Phone</FormLabel>
+                                        <FormLabel className='text-black text-sm'>Password</FormLabel>
                                         <FormControl>
                                             <Input type='tel' className='
-                                            bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Phone' {...field} />
+                                            bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='Password' {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

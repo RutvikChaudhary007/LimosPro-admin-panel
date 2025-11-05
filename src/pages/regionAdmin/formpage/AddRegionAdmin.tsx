@@ -27,7 +27,6 @@ import useFetchAllRegions from "@/api/region.api";
 import { Spinner } from "@/components/Spinner";
 import queries from "@/lib/queries";
 import { toastPromise } from "@/hooks/use-toast";
-import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -214,7 +213,7 @@ const navigate = useNavigate();
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="col-span-2 col-start-1">
-                            {regionData && regionData?.regions?.map(region=>(<SelectItem key={region?.id} value={region?.id}>{region.regionName}</SelectItem>))}
+                            {regionData && regionData?.regions?.map((region:{id:string, regionName: string})=>(<SelectItem key={region?.id} value={region?.id}>{region.regionName}</SelectItem>))}
                         </SelectContent>
                       </Select>
                     )}

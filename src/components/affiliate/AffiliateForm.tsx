@@ -102,7 +102,7 @@ const formSchema = z.object({
 type TAffiliateForm = z.infer<typeof formSchema>;
 interface AffiliateFormProps {
     initialData?: TAffiliateForm;
-    onSubmit: (data: IAffiliate) => Promise<unknown>;
+    onSubmit: (data: IAffiliate) => void;
     disabledFields?: string[];
     type: string;
 }
@@ -113,9 +113,7 @@ const showStatus = [
     { label: "Rejected", value: "rejected" },
 ];
 
-const showEntity = [
-    { label: "Active", value: "active" },
-]
+
 
 interface IAddressObj {
     zip: string;

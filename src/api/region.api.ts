@@ -5,7 +5,7 @@ import axiosInstance from '@/utils/axiosInstance';
 import {  useQuery } from '@tanstack/react-query';
 import { AxiosError } from "axios";
 
-type TPara = { limit: number;  };
+type TPara = { limit?: number;  };
 export const getAllRegions = async (data?: TPara) => {
   const params: Record<string, unknown> = {};
   if (data?.limit) {

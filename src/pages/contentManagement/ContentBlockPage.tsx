@@ -1,3 +1,4 @@
+//@ts-nocheck
 import useFetchAllContentBlock from "@/api/contentBlock.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";

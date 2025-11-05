@@ -105,7 +105,7 @@ const { startDate, endDate } = useMemo(() => {
 
 const [newPage, setNewPage] = useState<number>(1);
   const {data: FetchData, refetch, isFetching, isError } = UsefetchAllAffiliate({DateRange:{startDate,endDate}, page :newPage});  
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [tableRef, setTableRef] = useState<unknown>(null);
   const queryClient = useQueryClient();
   useEffect(() => {
     if(FetchData?.pagination?.hasNextPage === true ){
@@ -249,7 +249,7 @@ if(isError) return (<ErrorCard refetch={refetch}/>)
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Affiliate</h2>
-              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Affiliate</span></h4>
+              <h4> <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span> <span className="text-xs text-[#3A3A3A] w-full max-w-[50px] h-4">/ Affiliate</span></h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
               <Plus className="text-[#515151]" />
@@ -263,7 +263,7 @@ if(isError) return (<ErrorCard refetch={refetch}/>)
           <div className="flex items-center gap-3">
           <DropdownMenu >
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}>
+              <Button variant="outlineBlack" className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}>
                 {selectedStatus.label} <ChevronDown className="ml-2" />
               </Button>
             </DropdownMenuTrigger>
