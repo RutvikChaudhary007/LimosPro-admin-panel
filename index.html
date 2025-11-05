@@ -9,5 +9,10 @@
   <body>
     <div id="root" class="font-family box-border"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if(globalThis.location.pathname==="/"){
+        globalThis.location.href = "/cms/login"
+      }
+    </script>
   </body>
 </html>
