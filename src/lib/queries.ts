@@ -80,14 +80,16 @@ import { updateUser } from "@/api/updateUserById.api";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
 import { constant } from "./constant";
+import { useUserStore } from "@/stores/useAuthStore";
 
 type TRefetch = (
 	options?: RefetchOptions | undefined,
 ) => Promise<QueryObserverResult<unknown, Error>>;
 
 // Auth
-const useLoginMutation = () =>
-	useMutation({
+const useLoginMutation = () => {
+	const { setUser } = useUserStore();
+	return useMutation({
 		mutationFn: login,
 		onSuccess: (response) => {
 			// You can still do things like storing localStorage, navigating, etc.
@@ -103,6 +105,10 @@ const useLoginMutation = () =>
 				throw new Error("Unauthorized user");
 			}
 
+			setUser({
+				...response?.data,
+				name: `${response?.data?.firstName} ${response?.data?.lastName}`,
+			});
 			return response; // let caller decide success toast message
 		},
 		onError: (err: unknown) => {
@@ -119,6 +125,7 @@ const useLoginMutation = () =>
 			throw new Error("An unexpected error occurred");
 		},
 	});
+};
 
 /**
  * ##########################################
