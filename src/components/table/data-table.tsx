@@ -1,12 +1,5 @@
 // @ts-nocheck
-import {
-	type ColumnDef,
-	flexRender,
-	getCoreRowModel,
-	getFilteredRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+
 import {
 	Table,
 	TableBody,
@@ -15,6 +8,14 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import {
+	type ColumnDef,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { useEffect, useState } from "react";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -60,8 +61,8 @@ export function DataTable<TData, TValue>({
 		if (onTableReady) onTableReady(table);
 	}, [table, onTableReady]);
 	return (
-		<div className="mt-5 rounded-[6px] border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-			<Table className="min-w-full w-full">
+		<div className="rounded border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-auto">
+			<Table className="">
 				<TableHeader className="bg-[#F5F5F5] ">
 					{table?.getHeaderGroups()?.map((headerGroup) => (
 						<TableRow key={headerGroup.id}>

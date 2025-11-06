@@ -1,6 +1,3 @@
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import useFetchAllRegionAdmins from "@/api/regionAdmin.api";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
@@ -11,6 +8,9 @@ import {
 } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
+import { ChevronDown, Plus, Search, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 // import { Checkbox } from '@/components/ui/checkbox';
 import {
 	DropdownMenu,
@@ -19,7 +19,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
+} from "@/components/ui/input-group";
 import {
 	Pagination,
 	PaginationContent,
@@ -176,8 +180,8 @@ function RegionAdminPage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Region Admin")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
-				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+			<div className="p-6 space-y-6 lg:p-8 lg:space-y-8">
+				<Header className="p-4 bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>
 							<h2 className="font-medium text-xl text-black">
@@ -185,24 +189,15 @@ function RegionAdminPage() {
 							</h2>
 							<h4>
 								{" "}
-								<span className="text-[#959595] w-[116px] h-4">
-									Region Management
-								</span>{" "}
-								<span className="text-xs text-[#3A3A3A] w-[50px] h-4">
-									/ Region Admins
-								</span>
+								<span className="text-[#959595]">Region Management</span>{" "}
+								<span className="text-xs text-[#3A3A3A">/ Region Admins</span>
 							</h4>
 						</div>
 						<Link to={constant.ROUTING_URLS.CREATE_REGION_ADMIN}>
 							{" "}
-							<Button
-								variant={"secondary"}
-								className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-							>
-								<Plus className="text-[#515151]" />
-								<span className="text-[#515151] font-medium text-sm">
-									Add Regional Admin
-								</span>
+							<Button>
+								<Plus />
+								<span>Add Regional Admin</span>
 							</Button>
 						</Link>
 					</div>
@@ -211,11 +206,8 @@ function RegionAdminPage() {
 				<div className="flex justify-between">
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button
-								variant="outline"
-								className="w-56 h-10 flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] bg-[#FDFDFD] cursor-pointer"
-							>
-								{selected.label} <ChevronDown className="ml-2" />
+							<Button>
+								{selected.label} <ChevronDown />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent
@@ -229,13 +221,13 @@ function RegionAdminPage() {
 										className="flex items-center justify-between hover:bg-[#F1F1F1]"
 										onClick={() => setSelected(option)}
 									>
-										{option.label} <ChevronDown className="ml-2" />
+										{option.label} <ChevronDown />
 									</DropdownMenuItem>
 								))}
 							</DropdownMenuGroup>
 						</DropdownMenuContent>
 					</DropdownMenu>
-					<div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+					<div className="w-[369px] flex items-center justify-between gap-3">
 						<span
 							className={`${
 								Object.keys(rowSelection).filter((k) => rowSelection[k])
@@ -245,8 +237,7 @@ function RegionAdminPage() {
 							}`}
 						>
 							<Button
-								variant={"outline"}
-								className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+								variant={"outlineBlack"}
 								disabled={
 									Object.keys(rowSelection).filter((k) => rowSelection[k])
 										.length === 0
@@ -257,20 +248,22 @@ function RegionAdminPage() {
 									setRowSelection({});
 								}}
 							>
-								<span className="text-[#959595] text-sm w-[93px] h-[19px]">
-									Delete
-								</span>
-								<Trash2 size={14} className="text-[#959595] cursor-pointer" />
+								<span>Delete</span>
+								<Trash2 />
 							</Button>
 						</span>
-						<div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-							<Input
-								type="search"
-								placeholder="search"
-								className="text-[#959595]"
-								value={searchValue}
-								onChange={(e) => setSearchValue(e.target.value)}
-							/>
+						<div className="">
+							<InputGroup>
+								<InputGroupInput
+									type="search"
+									placeholder="search"
+									value={searchValue}
+									onChange={(e) => setSearchValue(e.target.value)}
+								/>
+								<InputGroupAddon>
+									<Search />
+								</InputGroupAddon>
+							</InputGroup>
 						</div>
 					</div>
 				</div>

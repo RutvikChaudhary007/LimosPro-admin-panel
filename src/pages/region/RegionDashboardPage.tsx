@@ -1,10 +1,5 @@
 //@ts-nocheck
 
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import useFetchAllRegions from "@/api/region.api";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
@@ -18,7 +13,11 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
+} from "@/components/ui/input-group";
 import {
 	Pagination,
 	PaginationContent,
@@ -28,6 +27,11 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { ChevronDown, Plus, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
@@ -244,33 +248,24 @@ function RegionDashboardPage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Region")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
-				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
+				<Header className="p-4 bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>
 							<h2 className="font-medium text-xl text-black">
 								Region Management
 							</h2>
 							<h4>
-								<span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-								<span className="text-[#959595] w-[116px] h-4">
-									/ Region Management
-								</span>{" "}
-								<span className="text-xs text-[#3A3A3A] w-[50px] h-4">
-									/ Regions
-								</span>
+								<span className="text-[#959595]">LIMOSPRO</span>{" "}
+								<span className="text-[#959595]">/ Region Management</span>{" "}
+								<span className="text-xs text-[#3A3A3A]">/ Regions</span>
 							</h4>
 						</div>
 						<Link to={constant.ROUTING_URLS.CREATE_REGION}>
 							{" "}
-							<Button
-								variant="secondary"
-								className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-							>
-								<Plus className="text-[#515151]" />
-								<span className="text-[#515151] font-medium text-sm">
-									Add Regions
-								</span>
+							<Button>
+								<Plus />
+								<span>Add Regions</span>
 							</Button>
 						</Link>
 					</div>
@@ -279,11 +274,8 @@ function RegionDashboardPage() {
 				<div className="flex justify-between">
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
-							<Button
-								variant="outline"
-								className="w-56 h-10 flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] bg-[#FDFDFD] cursor-pointer"
-							>
-								{selected.label} <ChevronDown className="ml-2" />
+							<Button>
+								{selected.label} <ChevronDown />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent
@@ -316,8 +308,7 @@ function RegionDashboardPage() {
 							}`}
 						>
 							<Button
-								variant={"outline"}
-								className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+								variant={"outlineBlack"}
 								// @ts-expect-error: We are intentionally assigning a number to a string type for testing.
 								disabled={
 									Object.keys(rowSelection).filter((k) => rowSelection[k])
@@ -333,20 +324,22 @@ function RegionDashboardPage() {
 									setRowSelection({});
 								}}
 							>
-								<span className="text-[#959595] text-sm w-[93px] h-[19px]">
-									Delete
-								</span>
-								<Trash2 size={14} className="text-[#959595] cursor-pointer" />
+								<span>Delete</span>
+								<Trash2 />
 							</Button>
 						</span>
-						<div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-							<Input
-								type="search"
-								placeholder="search"
-								className="text-[#959595]"
-								value={searchValue}
-								onChange={(e) => setSearchValue(e.target.value)}
-							/>
+						<div className="">
+							<InputGroup>
+								<InputGroupInput
+									type="search"
+									placeholder="search"
+									value={searchValue}
+									onChange={(e) => setSearchValue(e.target.value)}
+								/>
+								<InputGroupAddon>
+									<Search />
+								</InputGroupAddon>
+							</InputGroup>
 						</div>
 					</div>
 				</div>

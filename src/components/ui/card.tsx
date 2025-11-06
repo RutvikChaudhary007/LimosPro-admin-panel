@@ -1,6 +1,6 @@
-import type * as React from "react";
 import IconTrendingUp from "@/assets/Icons/ic-arrow-trending-up.svg?react";
 import { cn } from "@/lib/utils";
+import type * as React from "react";
 import { Badge } from "./badge";
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
@@ -111,7 +111,7 @@ function MetricCard({
 }) {
 	return (
 		<Card
-			className={`border-base-primary @container/card w-full gap-1.5 rounded ${bgClass} pt-2.5 shadow-none ${wrapperClass}`}
+			className={`border-base-primary @container/card w-full gap-1.5 rounded ${bgClass} pt-2.5 shadow-none min-h-[125px] ${wrapperClass}`}
 		>
 			<CardHeader className={`px-2.5 ${headerClass}`}>
 				<CardAction className={actionClass}>

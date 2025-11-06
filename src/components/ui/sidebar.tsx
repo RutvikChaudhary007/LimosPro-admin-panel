@@ -308,8 +308,8 @@ function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
 		<main
 			data-slot="sidebar-inset"
 			className={cn(
-				"bg-background relative flex w-full flex-1 flex-col",
-				"md:peer-data-[variant=inset]:m-0 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0",
+				"bg-background relative flex w-full flex-1 flex-col min-w-0 overflow-hidden max-h-screen min-h-screen",
+				"lg:peer-data-[variant=inset]:m-0 lg:peer-data-[variant=inset]:ml-0 peer-data-[variant=inset]:rounded-none lg:peer-data-[variant=inset]:shadow-sm lg:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-0",
 				className,
 			)}
 			{...props}
