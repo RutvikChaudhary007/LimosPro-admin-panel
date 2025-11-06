@@ -1,9 +1,5 @@
 //@ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import useFetchAllFleets from "@/api/getAllFleets.api";
 import {
@@ -16,6 +12,10 @@ import {
 } from "@/components/ui/form";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type FC, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import AddressInput from "../AddressInput";
 // import { geoDecoding } from "@/utils/googleMaps"
 // import { useLoadScript } from "@react-google-maps/api";
