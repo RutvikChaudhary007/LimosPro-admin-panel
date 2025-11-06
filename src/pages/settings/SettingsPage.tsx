@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import SettingForm, {
 	type TSettingForm,
 } from "@/components/settings/SettingForm";

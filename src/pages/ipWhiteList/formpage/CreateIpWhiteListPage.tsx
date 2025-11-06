@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import IpWhiteListForm, {
 	type TIpWhiteListForm,
 } from "@/components/ipWhiteList/IpWhiteListForm";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";

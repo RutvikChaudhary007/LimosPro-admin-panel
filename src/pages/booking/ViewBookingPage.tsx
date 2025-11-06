@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import UsefetchBookingById from "@/api/getBookingById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";

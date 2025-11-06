@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchAllRegions from "@/api/region.api";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { getRegionColumns, type TRegion } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";

@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import OurPartnerForm, {
 	type TOurPartnerForm,
 } from "@/components/OurPartner/OurPartnerForm";

@@ -7,7 +7,7 @@ import UsefetchAllBookings from "@/api/getAllBookings.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import {
 	formatDate,

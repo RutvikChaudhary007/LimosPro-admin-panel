@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { TFaqForm } from "@/components/faq/FaqForm";
 import FaqForm from "@/components/faq/FaqForm";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import type { TFaqs } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
 import { toastPromise, useToast } from "@/hooks/use-toast";

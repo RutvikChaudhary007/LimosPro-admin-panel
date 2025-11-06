@@ -4,7 +4,7 @@ import { MessageSquareMore, Phone, Route, Send } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetchTripById from "@/api/getTripById.api";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import LiveTracking from "@/components/liveTracking/LiveTracking";
 import { Spinner } from "@/components/Spinner";
 import { Label } from "@/components/ui/label";

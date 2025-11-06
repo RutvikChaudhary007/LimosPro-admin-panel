@@ -8,7 +8,7 @@ import useFetchAllStaffMember from "@/api/staffMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";

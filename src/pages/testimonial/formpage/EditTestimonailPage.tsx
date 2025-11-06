@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchTestimonialById } from "@/api/testimonial.api";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import TestimonialForm from "@/components/testimonail/TestimonialForm";
 import { Button } from "@/components/ui/button";

@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";

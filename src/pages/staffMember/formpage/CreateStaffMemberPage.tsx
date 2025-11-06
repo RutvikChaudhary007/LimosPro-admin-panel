@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import StaffMemberForm from "@/components/staffMember/StaffMemberForm";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";

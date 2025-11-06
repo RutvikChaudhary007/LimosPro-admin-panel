@@ -8,7 +8,7 @@ import UsefetchAllUsers from "@/api/getAllUser.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/Header";
+import BreadCramb from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import {
 	getStatusColor,
@@ -54,56 +54,6 @@ const showTime = [
 	{ label: "Yearly", value: "yearly" },
 ];
 
-// const tableData: TUsers[] = [
-//     {
-//             id: "a4067b19-271d-4352-90dc-458f5fa97da3",
-//             firstName: "NoahAnderson",
-//             lastName: "",
-//             email: "testuser@qalbit.com",
-//             phoneNumber: "+1-424-231-3438",
-//             dateOfBirth: "",
-//             gender: "male",
-//             status: "active",
-//             paymentMethod: "creditCard",
-//             profilePicture: "",
-//             social: "",
-//             createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-//             updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-//             deletedAt: ""
-//         },
-//     {
-//             id: "b4067b19-271d-4352-90dc-458f5fa97da3",
-//             firstName: "Charlotte_Brown",
-//             lastName: "",
-//             email: "testuser2@qalbit.com",
-//             phoneNumber: "+1-424-133-7698",
-//             dateOfBirth: "",
-//             gender: "male",
-//             status: "banned",
-//             paymentMethod: "creditCard",
-//             profilePicture: "",
-//             social: "",
-//             createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-//             updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-//             deletedAt: ""
-//         },
-//     {
-//             id: "c4067b19-271d-4352-90dc-458f5fa97da4",
-//             firstName: "Liam_Wilson99",
-//             lastName: "",
-//             email: "testuser3@qalbit.com",
-//             phoneNumber: "+1-424-041-6798",
-//             dateOfBirth: "",
-//             gender: "male",
-//             status: "inactive",
-//             paymentMethod: "creditCard",
-//             profilePicture: "",
-//             social: "",
-//             createdAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-//             updatedAt: "Tue Jul 15 2025 18:11:52 GMT+0530 (India Standard Time)",
-//             deletedAt: ""
-//         },
-// ]
 function UsersPage() {
 	const navigate = useNavigate();
 	const perPage = 10;
@@ -284,7 +234,7 @@ function UsersPage() {
 		<>
 			<PageTitle title={generatePageTitle("Users")} />
 			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
-				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+				<BreadCramb className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>
 							<h2 className="font-medium text-xl text-black">User</h2>
@@ -304,7 +254,7 @@ function UsersPage() {
             </Button>
             </Link> */}
 					</div>
-				</Header>
+				</BreadCramb>
 
 				<div className="flex justify-between gap-2.5">
 					<div className="flex items-center gap-3">

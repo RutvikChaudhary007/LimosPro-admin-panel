@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useFetchAllContentBlock, {
 	useFetchPageContentBlockTab,
 } from "@/api/contentBlock.api";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";

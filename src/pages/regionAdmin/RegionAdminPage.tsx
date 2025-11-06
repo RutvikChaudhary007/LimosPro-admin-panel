@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useFetchAllRegionAdmins from "@/api/regionAdmin.api";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import {
 	getRegionAdminColumns,

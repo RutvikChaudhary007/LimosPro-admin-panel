@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ContentManagementForm, {
 	type TContentForm,
 } from "@/components/contentManagement/ContentManagementForm";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";

@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchOneStaffMember } from "@/api/staffMember.api";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import StaffMemberForm from "@/components/staffMember/StaffMemberForm";
 import { Button } from "@/components/ui/button";

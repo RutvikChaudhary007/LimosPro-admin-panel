@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetchUserById from "@/api/getUserById.api";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";

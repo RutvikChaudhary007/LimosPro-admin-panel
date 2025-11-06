@@ -6,7 +6,7 @@ import { useFetchContentBlockById } from "@/api/contentBlock.api";
 import ContentManagementForm, {
 	type TContentForm,
 } from "@/components/contentManagement/ContentManagementForm";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";

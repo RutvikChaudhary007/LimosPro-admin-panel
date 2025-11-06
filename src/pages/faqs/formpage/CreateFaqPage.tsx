@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { TFaqForm } from "@/components/faq/FaqForm";
 import FaqForm from "@/components/faq/FaqForm";
-import Header from "@/components/layouts/Header";
+import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
