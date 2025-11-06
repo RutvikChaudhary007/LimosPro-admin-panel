@@ -1,7 +1,16 @@
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { lazy } from "react";
+import Layout from "./components/layouts/Layout";
 import { TooltipProvider } from "./components/ui/tooltip";
+import AlertPage from "./pages/components/AlertPage";
+import BadgePage from "./pages/components/BadgePage";
+import ButtonPage from "./pages/components/ButtonPage";
+import CardPage from "./pages/components/CardPage";
+import TextFieldPage from "./pages/components/TextFieldPage";
+import { envValidationError } from "./utils/env";
 
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 const DashboardPage = lazy(() => import("./pages/dashboard/Dashboard"));
@@ -34,6 +43,7 @@ const ViewAffiliatePage = lazy(
 );
 
 import { constant } from "./lib/constant";
+import FileUploadPage from "./pages/components/FileUploadPage";
 
 const EditChauffeurPage = lazy(
 	() => import("./pages/chauffeur/formPage/EditChauffeurPage"),
@@ -139,12 +149,6 @@ const EditCrewMemberPage = lazy(
 // import AdminProtectedRoute from "./utils/AdminProtectedRoute";
 const ProtectedRoute = lazy(() => import("./utils/ProtectedRoute"));
 const SeoPage = lazy(() => import("./pages/contentManagment/SeoPage"));
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import Layout from "./components/layouts/Layout";
-import { envValidationError } from "./utils/env";
-
 const AuthLayout = lazy(() => import("./components/layouts/AuthLayout"));
 const ErrorBoundary = lazy(() => import("./components/ErrorBoundary"));
 const BlogPostsPage = lazy(
@@ -463,6 +467,15 @@ function App() {
 									{/* <Route path={constant.ROUTING_URLS.CREATE_SEO} element={<SeoPage />} />
             <Route path={constant.ROUTING_URLS.EDIT_SEO} element={<SeoPage />} /> */}
 								</Route>
+							</Route>
+							{/* Components */}
+							<Route path="components">
+								<Route path="button" element={<ButtonPage />} />
+								<Route path="text-field" element={<TextFieldPage />} />
+								<Route path="badge" element={<BadgePage />} />
+								<Route path="alert" element={<AlertPage />} />
+								<Route path="card" element={<CardPage />} />
+								<Route path="file" element={<FileUploadPage />} />
 							</Route>
 						</Routes>
 					</ErrorBoundary>
