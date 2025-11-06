@@ -1,5 +1,7 @@
+# Husky v9+ pre-commit hook
+echo "🚀 Running lint-staged..."
 
+# Run lint + prettier only on staged files
+bunx lint-staged
 
-# Run Biome on staged files
-# bun check:fix --staged
-bun format --staged
+echo "👌 All check passed."
