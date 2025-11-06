@@ -1,9 +1,5 @@
 // @ts-nocheck
 
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import useFetchAllChauffeur from "@/api/chauffeur.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -39,6 +35,10 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
+import { ChevronDown, Plus } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showStatus = [
 	{ label: "Active", value: "active" },
@@ -430,7 +430,7 @@ function ChauffeurPage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Chauffeur")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

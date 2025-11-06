@@ -1,6 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import Header from "@/components/layouts/BreadCramb";
 import TestimonialForm from "@/components/testimonail/TestimonialForm";
 import { Button } from "@/components/ui/button";
@@ -8,6 +5,9 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { TTestimonialFormData } from "@/types/testimonial.type";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const CreateTestimonailPage = () => {
 	const navigate = useNavigate();
@@ -45,7 +45,7 @@ const CreateTestimonailPage = () => {
 
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.TESTIMONIALS}>
 					<Button
 						variant="secondary"

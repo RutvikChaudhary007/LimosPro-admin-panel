@@ -1,10 +1,10 @@
-import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import { useFetchNewsById } from "@/api/news.api";
 import Header from "@/components/layouts/BreadCramb";
 import NewsForm, { type TNewsForm } from "@/components/news/NewsForm";
 import { Spinner } from "@/components/Spinner";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 // import type { TNews } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -44,7 +44,7 @@ const EditNewsPage = () => {
 
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.NEWS}>
 					<Button
 						variant="secondary"

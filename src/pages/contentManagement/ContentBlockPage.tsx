@@ -1,9 +1,5 @@
 //@ts-nocheck
 
-import { Plus } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import useFetchAllContentBlock from "@/api/contentBlock.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -26,8 +22,11 @@ import {
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
-import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 function ContentBlockPage() {
 	const navigate = useNavigate();
@@ -172,7 +171,7 @@ function ContentBlockPage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("ContentBlock")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

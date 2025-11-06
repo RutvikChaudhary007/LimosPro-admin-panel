@@ -1,6 +1,3 @@
-import { ChevronDown, Download } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import {
@@ -23,6 +20,9 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ChevronDown, Download } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 // import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from "@/components/ui/label";
 import {
@@ -199,7 +199,7 @@ const RefundRequestPage = () => {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Refund Request")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

@@ -1,8 +1,3 @@
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { formatDate } from "date-fns";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import UsefetchBookingById from "@/api/getBookingById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import Header from "@/components/layouts/BreadCramb";
@@ -14,6 +9,11 @@ import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { formatDate } from "date-fns";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 // const data = {
 //     id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -123,7 +123,7 @@ const ViewBookingPage = () => {
 	if (isError) return <ErrorCard refetch={refetch} />;
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.BOOKING}>
 					<Button
 						variant="outline"

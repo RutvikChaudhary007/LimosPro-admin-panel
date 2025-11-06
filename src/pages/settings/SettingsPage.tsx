@@ -1,5 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import SettingForm, {
@@ -8,6 +6,8 @@ import SettingForm, {
 import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const SettingsPage = () => {
 	const handleSubmit = (data: TSettingForm): Promise<void> =>
@@ -18,7 +18,7 @@ const SettingsPage = () => {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Settings")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.OUR_PARTNERS}>
 					<Button
 						variant="secondary"

@@ -1,5 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import useFetchAllRegions from "@/api/region.api";
 import FleetForm from "@/components/fleet/FleetForm";
@@ -9,6 +7,8 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { TFleetData } from "@/types/fleet.type";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
 const CreateFleetPage = () => {
 	const navigate = useNavigate();
@@ -36,7 +36,7 @@ const CreateFleetPage = () => {
 	};
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.FLEETS}>
 					<Button
 						variant="outline"

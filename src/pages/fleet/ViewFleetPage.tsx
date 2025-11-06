@@ -1,11 +1,11 @@
-import { ArrowLeft } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
 import useFetchFleetById from "@/api/getFleetById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 // import { DropdownMenu, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
@@ -33,7 +33,7 @@ const ViewFleetPage = () => {
 	if (isError) return <ErrorCard refetch={refetch} />;
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.FLEETS}>
 					<Button
 						variant="outline"

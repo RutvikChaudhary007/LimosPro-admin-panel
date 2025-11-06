@@ -1,10 +1,10 @@
 // import { createChauffeur } from "@/api/createChauffeur"
 
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 // import type { ApiErrorResponse } from "@/types/global/ErrorResponse"
 // import { useMutation } from "@tanstack/react-query"
 // import type { AxiosError } from "axios"
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import ChauffeurForm, {
 	type TChauffeurForm,
 } from "@/components/chauffeur/ChauffeurForm";
@@ -33,7 +33,7 @@ const CreateChauffeurPage = () => {
 	};
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.CHAUFFEUR}>
 					<Button
 						variant="outline"

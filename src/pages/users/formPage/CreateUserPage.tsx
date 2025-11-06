@@ -1,10 +1,10 @@
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import UserForm from "@/components/user/UserForm";
 import { constant } from "@/lib/constant";
 import type { IUserFormData } from "@/types/user.type";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CreateUserPage = () => {
 	const handleCreateUser = async (data: IUserFormData) => {
@@ -14,7 +14,7 @@ const CreateUserPage = () => {
 	};
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.USERS}>
 					<Button
 						variant="outline"

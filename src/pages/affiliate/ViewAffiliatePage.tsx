@@ -1,7 +1,3 @@
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -23,6 +19,10 @@ import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 // const data = {
 //     id: 1,
@@ -138,7 +138,7 @@ const ViewAffiliatePage = () => {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Affiliate")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.AFFILIATE}>
 					<Button
 						variant="outline"

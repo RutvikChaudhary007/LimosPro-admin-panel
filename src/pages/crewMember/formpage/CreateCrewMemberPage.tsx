@@ -1,5 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import CrewMemberForm, {
 	type TCrewMemberForm,
 } from "@/components/crewMember/crewMemberForm";
@@ -8,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const CreateCrewMemberPage = () => {
 	const createCrewMemberMutation = queries.useCreateCrewMemberMutation();
@@ -27,7 +27,7 @@ const CreateCrewMemberPage = () => {
 
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.CREW_MEMBERS}>
 					<Button
 						variant="outline"

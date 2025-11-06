@@ -1,10 +1,5 @@
 // @ts-nocheck
 
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import PageTitle from "@/components/common/PageTitle";
@@ -13,10 +8,14 @@ import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import type { IAffiliate } from "@/types/affiliate.type";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const libraries = ["places", "geocoding"];
 
@@ -93,7 +92,7 @@ function EditAffiliatePage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Affiliate")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.AFFILIATE}>
 					<Button
 						variant="outline"

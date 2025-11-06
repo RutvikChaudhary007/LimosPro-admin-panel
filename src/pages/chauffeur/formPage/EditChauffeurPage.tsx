@@ -1,9 +1,5 @@
 // @ts-nocheck
 
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFetchChauffeurById } from "@/api/chauffeur.api";
 import ChauffeurForm from "@/components/chauffeur/ChauffeurForm";
 import type { TCrewMemberForm } from "@/components/crewMember/crewMemberForm";
@@ -15,6 +11,10 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const libraries = ["places", "geocoding"];
 const EditChauffeurPage = () => {
@@ -130,7 +130,7 @@ const EditChauffeurPage = () => {
 
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.CHAUFFEUR}>
 					<Button
 						variant="outline"

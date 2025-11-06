@@ -112,7 +112,7 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx,json,md,css}": [
-			"bunx biome check --write"
+			"bunx biome format --write"
 		]
 	}
 }

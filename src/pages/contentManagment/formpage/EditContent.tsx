@@ -1,7 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import type React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import { useFetchContentBlockById } from "@/api/contentBlock.api";
 import ContentManagementForm, {
 	type TContentForm,
@@ -12,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { ArrowLeft } from "lucide-react";
+import type React from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const EditContent: React.FC = () => {
 	const { id } = useParams();
@@ -36,7 +36,7 @@ const EditContent: React.FC = () => {
 	};
 	if (isError) toast.error("Opps! failed to fetch the content.");
 	return (
-		<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+		<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 			<Link to={constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES}>
 				<Button
 					variant="outline"

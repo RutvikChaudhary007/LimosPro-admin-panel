@@ -1,3 +1,15 @@
+import PageTitle from "@/components/common/PageTitle";
+import Header from "@/components/layouts/BreadCramb";
+import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import WorldMap from "@/components/worldmap/WorldMap";
+import { generatePageTitle } from "@/utils/seo";
 import {
 	ArcElement,
 	Chart as ChartJS,
@@ -16,18 +28,6 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
-import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import WorldMap from "@/components/worldmap/WorldMap";
-import { generatePageTitle } from "@/utils/seo";
 
 const showOptions = [
 	{ value: "monthly", label: "Monthly" },
@@ -120,7 +120,7 @@ const ReportPage = () => {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Report")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

@@ -1,8 +1,5 @@
 // @ts-nocheck
 
-import { ChevronDown, Download } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useFetchAllPayments from "@/api/payment.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -34,6 +31,9 @@ import {
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
+import { ChevronDown, Download } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const showStatus = [
 	{ label: "Select Status", value: "" },
@@ -189,7 +189,7 @@ const PaymentsPage = () => {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Payments")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

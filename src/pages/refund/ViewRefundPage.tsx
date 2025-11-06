@@ -1,6 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
 import Header from "@/components/layouts/BreadCramb";
 import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
@@ -15,6 +12,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
+import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const data = {
 	id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -70,7 +70,7 @@ const ViewRefundPage = () => {
 
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.REFUND}>
 					<Button
 						variant="secondary"

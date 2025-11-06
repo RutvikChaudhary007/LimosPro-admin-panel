@@ -1,6 +1,3 @@
-import { ArrowLeft } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import { useFetchTestimonialById } from "@/api/testimonial.api";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
@@ -10,6 +7,9 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { TTestimonialFormData } from "@/types/testimonial.type";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const EditTestimonailPage = () => {
 	const { id } = useParams();
@@ -51,7 +51,7 @@ const EditTestimonailPage = () => {
 	};
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.TESTIMONIALS}>
 					<Button
 						variant="secondary"

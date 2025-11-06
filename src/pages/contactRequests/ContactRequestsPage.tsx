@@ -1,13 +1,9 @@
 // @ts-nocheck
 
-import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
-import { ChevronDown, Plus, Reply, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import useFetchAllContactRequest from "@/api/contactRequest.api";
+import PageTitle from "@/components/common/PageTitle";
 import ReplyFC from "@/components/ContactRequests/ReplyFC";
 import ViewModal from "@/components/ContactRequests/ViewModal";
-import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import {
@@ -23,7 +19,6 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
 	Pagination,
 	PaginationContent,
@@ -33,10 +28,11 @@ import {
 	PaginationNext,
 	PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Textarea } from "@/components/ui/textarea";
 import usePagination from "@/hooks/use-pagination";
-import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
+import { DropdownMenu } from "@radix-ui/react-dropdown-menu";
+import { ChevronDown, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const showOptions = [
 	{ value: 10, label: "Show 10" },
@@ -450,7 +446,7 @@ const ContactRequestsPage = () => {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Contact Request")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

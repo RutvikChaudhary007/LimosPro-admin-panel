@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 // import { deleteUser } from '@/api/deleteUser';
 
-import { ChevronDown } from "lucide-react";
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import UsefetchAllUsers from "@/api/getAllUser.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -39,6 +36,9 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
+import { ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const showStatus = [
 	{ label: "Active", value: "active" },
@@ -233,7 +233,7 @@ function UsersPage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Users")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<BreadCramb className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div>

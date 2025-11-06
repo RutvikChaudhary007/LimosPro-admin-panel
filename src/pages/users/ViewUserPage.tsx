@@ -1,8 +1,5 @@
 //@ts-nocheck
 
-import { ArrowLeft } from "lucide-react";
-import { Suspense } from "react";
-import { Link, useParams } from "react-router-dom";
 import useFetchUserById from "@/api/getUserById.api";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
@@ -11,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
+import { ArrowLeft } from "lucide-react";
+import { Suspense } from "react";
+import { Link, useParams } from "react-router-dom";
 
 // const data = {
 //     id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -44,7 +44,7 @@ const ViewUserPage = () => {
 	if (isError) return <ErrorCard refetch={refetch} />;
 	return (
 		<>
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-y-scroll">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Link to={constant.ROUTING_URLS.USERS}>
 					<Button
 						variant="outline"

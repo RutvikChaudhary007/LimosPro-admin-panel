@@ -1,8 +1,5 @@
 // @ts-nocheck
 
-import { ChevronDown, Download } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import UsefetchAllBookings from "@/api/getAllBookings.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -36,6 +33,9 @@ import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { exportToCsv } from "@/utils/export";
 import { generatePageTitle } from "@/utils/seo";
+import { ChevronDown, Download } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const showStatus = [
 	{ label: "Mark As", value: "" },
@@ -316,7 +316,7 @@ function BookingPage() {
 	return (
 		<>
 			<PageTitle title={generatePageTitle("Booking")} />
-			<div className="px-10 py-6 h-[calc(100vh-146px)] overflow-auto">
+			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
 				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 					<div className="w-full h-full flex items-center justify-between">
 						<div className="w-[416px] h-[47px]">
