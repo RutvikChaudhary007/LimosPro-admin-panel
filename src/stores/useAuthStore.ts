@@ -1,51 +1,40 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-// import Cookies from 'js-cookie';
-
-interface User {
+type User = {
 	id: string;
-	first_name: string;
-	profile: string;
-	last_name: string;
+	name: string;
+	accessToken: string;
+	firstName: string;
+	lastName: string;
 	email: string;
-	company_name: string;
-}
+	role?: string;
+	permissions: string;
+	refreshToken: string;
+};
 
-interface AuthState {
+type UserStore = {
 	user: User | null;
 	isLoggedIn: boolean;
-	token: string | null;
-	setUser: (user: User, token: string) => void;
-	logout: () => void;
-}
+	setUser: (user: User | null) => void;
+};
 
-const useAuthStore = create<AuthState>()(
+export const useUserStore = create<UserStore>()(
 	persist(
-		(set) => {
-			return {
-				user: null,
-				isLoggedIn: false,
-				token: null,
-				setUser: (user, token) => {
-					// console.log('user',user)
-					if (user) {
-						// Cookies.set('token', token, { path: '/', expires: 7 });
-						// localStorage.setItem('user', JSON.stringify(user));
-						set({ user, isLoggedIn: true, token });
-					}
-				},
-				logout: () => {
-					set({ user: null, isLoggedIn: false, token: null });
-					localStorage.clear();
-					window.location.href = "/login";
-				},
-			};
-		},
+		(set) => ({
+			user: null,
+			isLoggedIn: false,
+
+			setUser: (user) => {
+				console.log("zustand:", user);
+				set({
+					user: user,
+					isLoggedIn: !!user,
+				});
+			},
+		}),
 		{
-			name: "auth-store", // key used in localStorage
+			name: "user-store",
 		},
 	),
 );
-
-export default useAuthStore;
