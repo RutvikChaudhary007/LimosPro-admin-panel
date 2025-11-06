@@ -1,0 +1,5 @@
+
+
+# Run Biome on staged files
+# bun check:fix --staged
+bun format --staged

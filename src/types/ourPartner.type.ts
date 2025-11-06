@@ -6,9 +6,9 @@ import type { TOurPartnerForm } from "@/components/OurPartner/OurPartnerForm";
 //     photo: File | null,
 // }
 
-export interface IOurPartnerFormProps  {
-    initialData?: TOurPartnerForm, 
-    onSubmit: (data:TOurPartnerForm)=> Promise<void>, 
-    disabledFields?: string[], 
-    type: string,
+export interface IOurPartnerFormProps {
+	initialData?: TOurPartnerForm;
+	onSubmit: (data: TOurPartnerForm) => Promise<void>;
+	disabledFields?: string[];
+	type: string;
 }

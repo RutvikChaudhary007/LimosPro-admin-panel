@@ -1,34 +1,53 @@
 import { useFetchContactRequestById } from "@/api/contactRequest.api";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Spinner } from "../Spinner";
-function ViewModal({id, open, onOpenChange}:{id:string, open: boolean, onOpenChange: (open: boolean) => void}) {
-    const {data,isFetching} = useFetchContactRequestById({id});
-    
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
 
-        {isFetching? <Spinner/>:(<DialogContent className="overflow-y-scroll min-w-[640px] max-h-screen">
-            <DialogHeader >
-              <div className="w-full h-full space-y-6 ">
-                <div className="flex items-center justify-between">
-                  <DialogTitle className="space-y-3">
-                    <h4 className="font-semibold text-xl text-[#000000]">{data?.email}</h4>
-                    <h5 className="text-[#5A5A5A] font-semibold">{data?.phone}</h5>
-                  </DialogTitle>
+function ViewModal({
+	id,
+	open,
+	onOpenChange,
+}: {
+	id: string;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+}) {
+	const { data, isFetching } = useFetchContactRequestById({ id });
 
-                </div>
-              </div>
+	return (
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			{isFetching ? (
+				<Spinner />
+			) : (
+				<DialogContent className="overflow-y-scroll min-w-[640px] max-h-screen">
+					<DialogHeader>
+						<div className="w-full h-full space-y-6 ">
+							<div className="flex items-center justify-between">
+								<DialogTitle className="space-y-3">
+									<h4 className="font-semibold text-xl text-[#000000]">
+										{data?.email}
+									</h4>
+									<h5 className="text-[#5A5A5A] font-semibold">
+										{data?.phone}
+									</h5>
+								</DialogTitle>
+							</div>
+						</div>
+					</DialogHeader>
 
-            </DialogHeader>
-
-            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-                {data?.message}
-          </DialogContent>)}  
-        </Dialog>
-  )
+					<hr className="w-full h-[1px] bg-[#EEEEEE]" />
+					{data?.message}
+				</DialogContent>
+			)}
+		</Dialog>
+	);
 }
 
-export default ViewModal
+export default ViewModal;
 
 // const htmlContent = () => {
 //   return (<div className="w-full h-full space-y-4">

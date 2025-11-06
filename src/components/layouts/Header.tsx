@@ -1,17 +1,12 @@
 import type { ReactNode } from "react";
 
 interface IHeaderProps {
-  children: ReactNode;
-  className: string;
+	children: ReactNode;
+	className: string;
 }
 
-const Header: React.FC<IHeaderProps> = ({children, ...props}) => {
-  
-  return (
-    <header {...props}>
-      {children}
-    </header>
-  );
+const Header: React.FC<IHeaderProps> = ({ children, ...props }) => {
+	return <header {...props}>{children}</header>;
 };
 
 export default Header;

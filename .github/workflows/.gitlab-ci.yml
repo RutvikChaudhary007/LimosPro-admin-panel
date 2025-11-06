@@ -1,0 +1,20 @@
+# Define pipeline stages
+stages:
+  - quality
+
+# Lint job configuration: runs code quality checks using Biome
+lint:
+    image:
+      name: ghcr.io/biomejs/biome:latest  # Use the latest Biome Docker image
+      entrypoint: [""]                    # This is required for the image to work in GitLab CI
+    stage: quality                        # Run in the quality stage
+    script:
+        - biome ci --reporter=gitlab --colors=off > /tmp/code-quality.json
+        - cp /tmp/code-quality.json code-quality.json
+    artifacts:
+      reports:
+        codequality:
+          - code-quality.json    # Collect the code quality report artifact
+    rules:
+        - if: $CI_COMMIT_BRANCH    # Run job for commits on branches
+        - if: $CI_MERGE_REQUEST_ID # Run job for merge requests

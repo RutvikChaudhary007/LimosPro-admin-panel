@@ -1,22 +1,27 @@
 import { useEffect } from "react";
-import {  Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+
 // import useAdminAuthStore from "@/store/useAdminAuthStore";
 
 function AdminProtectedRoute() {
-    const navigate = useNavigate()
-//    const {token , user} = useAdminAuthStore(); // Implement your authentication check here
-   
-const userRole = localStorage.getItem("role");
-console.log(userRole)
-useEffect(()=>{
-        if(!userRole || !["Super Admin","SEO Agent","Affiliate"].includes(userRole)){
-            console.log("login..")
-        navigate("/cms/login")
-    }
+	const navigate = useNavigate();
+	//    const {token , user} = useAdminAuthStore(); // Implement your authentication check here
 
-    },[])
-return userRole && ["Super Admin","SEO Agent","Affiliate"].includes(userRole)  && (<Outlet/>) ;
-  
+	const userRole = localStorage.getItem("role");
+	console.log(userRole);
+	useEffect(() => {
+		if (
+			!userRole ||
+			!["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)
+		) {
+			console.log("login..");
+			navigate("/cms/login");
+		}
+	}, []);
+	return (
+		userRole &&
+		["Super Admin", "SEO Agent", "Affiliate"].includes(userRole) && <Outlet />
+	);
 }
 
 export default AdminProtectedRoute;

@@ -1,5 +1,5 @@
 export type TRegion = {
-  id: string;
-  coordinates: [number, number]; // Tuple type
-  bookings: number;
+	id: string;
+	coordinates: [number, number]; // Tuple type
+	bookings: number;
 };
