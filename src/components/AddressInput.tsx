@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { env } from "@/utils/env";
 import { initializeGooglePlacesAutocomplete } from "@/utils/googleMaps";
+import { toast } from "sonner";
 
 interface AddressFields {
 	address: string;
@@ -55,7 +56,6 @@ const AddressInput = ({
 			longitude: null,
 		},
 	});
-	const [setIsManualInput] = useState(false);
 
 	// Update parent when fields change
 	useEffect(() => {
@@ -97,7 +97,6 @@ const AddressInput = ({
 				(address: string, updateAddress: object) => {
 					onChange(address);
 					onUpdate(updateAddress);
-					setIsManualInput(false);
 				},
 				(update: Partial<AddressFields>, formatted: string) => {
 					const merged = { ...fields, ...update };
@@ -110,11 +109,9 @@ const AddressInput = ({
 						!!merged.country?.trim();
 
 					if (!isValid) {
-						Toaster({
-							title: "Incomplete address",
-							description:
-								"Please provide a full address with street number, route name, city, state, zip, and country.",
-						});
+						toast.error(
+							"Please provide a full address with street number, route name, city, state, zip, and country.",
+						);
 						onValidityChange(false);
 						return;
 					}
@@ -123,7 +120,6 @@ const AddressInput = ({
 
 					onChange(formatted);
 					onValidityChange(true);
-					setIsManualInput(false);
 				},
 			);
 		}
@@ -134,14 +130,6 @@ const AddressInput = ({
 			}
 		};
 	}, [isLoaded, loadError]);
-
-	const handleManualFieldChange = (
-		field: keyof AddressFields,
-		value: string,
-	) => {
-		setFields((prev) => ({ ...prev, [field]: value }));
-		setIsManualInput(true);
-	};
 
 	if (loadError) {
 		return (
@@ -178,7 +166,6 @@ const AddressInput = ({
 			value={value}
 			onChange={(e) => {
 				onChange(e.target.value);
-				setIsManualInput(true);
 			}}
 			ref={addressInputRef}
 			className="pr-10 rounded placeholder:text-[#E6E6E6] font-medium"
