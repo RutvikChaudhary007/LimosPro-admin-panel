@@ -10,7 +10,7 @@ export default function Layout() {
 				{
 					"--sidebar-width": "calc(var(--spacing) * 75)", // 300px
 					"--header-height": "calc(var(--spacing) * 22)", // 88px
-					"--footer-height": "calc(var(--spacing) * 17)", // 68px
+					"--footer-height": "calc(var(--spacing) * 13)", // 52px
 				} as React.CSSProperties
 			}
 		>
