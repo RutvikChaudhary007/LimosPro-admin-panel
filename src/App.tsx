@@ -45,6 +45,7 @@ const ViewAffiliatePage = lazy(
 import { constant } from "./lib/constant";
 import FileUploadPage from "./pages/components/FileUploadPage";
 import { SelectOptionPage } from "./pages/components/SelectOptionPage";
+import { SwitchPage } from "./pages/components/SwitchPage";
 
 const EditChauffeurPage = lazy(
 	() => import("./pages/chauffeur/formPage/EditChauffeurPage"),
@@ -478,6 +479,7 @@ function App() {
 								<Route path="card" element={<CardPage />} />
 								<Route path="file" element={<FileUploadPage />} />
 								<Route path="select-option" element={<SelectOptionPage />} />
+								<Route path="switch" element={<SwitchPage />} />
 							</Route>
 						</Routes>
 					</ErrorBoundary>
