@@ -6,15 +6,38 @@ import { useRef, useState } from "react";
 
 // IMAGE ONLY UPLOAD
 const uploadBoxVariants = cva(
-	"border w-[200px] h-[200px] border-dashed rounded flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer font-quicksand bg-base-white",
+	"border w-[200px] h-[200px] border-dashed rounded flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer font-quicksand bg-base-white border-base-gray",
 	{
 		variants: {
+			variant: {
+				primary: "text-base-primary",
+				secondary: "text-base-secondary",
+				dark: "text-base-black",
+			},
 			drag: {
-				true: "border-base-primary bg-base-primary/10",
-				false: "border-base-gray bg-base-white",
+				true: "",
+				false: "",
 			},
 		},
+		compoundVariants: [
+			{
+				variant: "primary",
+				drag: true,
+				className: "border-base-primary bg-base-primary/10",
+			},
+			{
+				variant: "secondary",
+				drag: true,
+				className: "border-base-secondary bg-base-secondary/10",
+			},
+			{
+				variant: "dark",
+				drag: true,
+				className: "border-base-black bg-base-black/10",
+			},
+		],
 		defaultVariants: {
+			variant: "primary",
 			drag: false,
 		},
 	},
@@ -31,6 +54,7 @@ interface ImagesUploadProps extends VariantProps<typeof uploadBoxVariants> {
 type FileWithPreview = File & { preview?: string };
 
 export default function ImagesUpload({
+	variant,
 	multiple = true,
 	maxSize = 10,
 	accept = "image/*",
@@ -72,11 +96,11 @@ export default function ImagesUpload({
 		<div className="w-full font-quicksand">
 			<p className="font-bold text-base text-base-black mb-2">{title}</p>
 
-			<div className="flex gap-4 flex-wrap">
+			<div className="flex flex-wrap items-start gap-4">
 				{/* Upload Box */}
 				<button
 					type="button"
-					className={cn(uploadBoxVariants({ drag: dragOver }))}
+					className={cn(uploadBoxVariants({ variant, drag: dragOver }), "mr-2")}
 					onClick={() => inputRef.current?.click()}
 					onDragOver={(e) => {
 						e.preventDefault();
@@ -89,7 +113,7 @@ export default function ImagesUpload({
 						addFiles(e.dataTransfer.files);
 					}}
 				>
-					<Plus className="size-10 text-base-primary" />
+					<Plus className="size-10" />
 					<input
 						ref={inputRef}
 						type="file"
@@ -102,7 +126,6 @@ export default function ImagesUpload({
 						}}
 					/>
 				</button>
-
 				{/* Thumbnails */}
 				{files.map((f) => (
 					<div

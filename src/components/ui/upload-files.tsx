@@ -10,25 +10,42 @@ import { FieldSeparator } from "./field";
 /* VARIANTS (same pattern as Input) */
 /* ------------------------------------------------------------------ */
 const uploadBoxVariants = cva(
-	"border w-full border-dashed rounded p-10 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer font-quicksand bg-base-white",
+	"border w-full border-dashed rounded p-10 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer font-quicksand bg-base-white border-base-gray [&_svg]:**:stroke-current ",
 	{
 		variants: {
 			variant: {
-				primary: "focus:border-base-primary border-base-gray",
-				secondary: "focus:border-base-secondary border-base-gray",
+				primary: "text-base-primary",
+				secondary: "text-base-secondary",
+				dark: "text-base-black",
 			},
 			drag: {
-				true: "border-base-primary bg-base-white",
-				false: "border-base-gray bg-base-white",
+				true: "",
+				false: "",
 			},
 		},
+		compoundVariants: [
+			{
+				variant: "primary",
+				drag: true,
+				className: "border-base-primary",
+			},
+			{
+				variant: "secondary",
+				drag: true,
+				className: "border-base-secondary",
+			},
+			{
+				variant: "dark",
+				drag: true,
+				className: "border-base-black",
+			},
+		],
 		defaultVariants: {
 			variant: "primary",
 			drag: false,
 		},
 	},
 );
-
 interface FilesUploadProps extends VariantProps<typeof uploadBoxVariants> {
 	uploadUrl?: string;
 	multiple?: boolean;
@@ -131,7 +148,7 @@ export default function FilesUpload({
 					["Enter", " "].includes(e.key) && inputRef.current?.click()
 				}
 			>
-				<IconFilesUpload className="size-10 mb-2" />
+				<IconFilesUpload className="size-10 mb-2 transition" />
 				<p className="font-bold text-[12px] text-base-black">
 					Drag your file(s) to start uploading
 				</p>
@@ -143,7 +160,15 @@ export default function FilesUpload({
 				</div>
 
 				<Button
-					variant="outlinePrimary"
+					variant={
+						variant === "primary"
+							? "outlinePrimary"
+							: variant === "secondary"
+								? "outlineSecondary"
+								: variant === "dark"
+									? "outlineBlack"
+									: "outlinePrimary"
+					}
 					className="h-9 p-2"
 					size="xl"
 					spacing="sm"
