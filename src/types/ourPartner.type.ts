@@ -7,8 +7,8 @@ import type { TOurPartnerForm } from "@/components/OurPartner/OurPartnerForm";
 // }
 
 export interface IOurPartnerFormProps {
-	initialData?: TOurPartnerForm;
-	onSubmit: (data: TOurPartnerForm) => Promise<void>;
-	disabledFields?: string[];
-	type: string;
+  initialData?: TOurPartnerForm;
+  onSubmit: (data: TOurPartnerForm) => Promise<void>;
+  disabledFields?: string[];
+  type: string;
 }

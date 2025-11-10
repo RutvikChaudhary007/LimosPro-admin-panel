@@ -20,112 +20,105 @@ import { toast } from "sonner";
 const libraries = ["places", "geocoding"];
 
 function EditAffiliatePage() {
-	const { id } = useParams();
-	const navigate = useNavigate();
-	// console.log("id:",id)
-	const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
-	const [businessAddress, setBusinessAddress] = useState<string | undefined>(
-		undefined,
-	);
-	// Load Google Maps script
-	const { isLoaded, loadError } = useLoadScript({
-		googleMapsApiKey: googleMapsApiKey || "",
-		libraries: libraries as Libraries,
-	});
+  const { id } = useParams();
+  const navigate = useNavigate();
+  // console.log("id:",id)
+  const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
+  const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
+  // Load Google Maps script
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: googleMapsApiKey || "",
+    libraries: libraries as Libraries,
+  });
 
-	const { data, isFetching, error } = UsefetchAffiliateById({ id });
-	// Initialize Places Autocomplete
-	useEffect(() => {
-		let isMounted = true;
+  const { data, isFetching, error } = UsefetchAffiliateById({ id });
+  // Initialize Places Autocomplete
+  useEffect(() => {
+    let isMounted = true;
 
-		const fetchAddress = async () => {
-			if (isLoaded && data && !loadError) {
-				try {
-					const address = await geoDecoding({
-						lat: data?.businessLocation?.latitude,
-						lng: data?.businessLocation?.longitude,
-					});
-					if (isMounted) {
-						console.log("Decoded Address:", address);
-						if (address) {
-							setBusinessAddress(address as string);
-						}
-					}
-				} catch (err) {
-					console.error("Geocoding failed:", err);
-				}
-			}
-		};
+    const fetchAddress = async () => {
+      if (isLoaded && data && !loadError) {
+        try {
+          const address = await geoDecoding({
+            lat: data?.businessLocation?.latitude,
+            lng: data?.businessLocation?.longitude,
+          });
+          if (isMounted) {
+            console.log("Decoded Address:", address);
+            if (address) {
+              setBusinessAddress(address as string);
+            }
+          }
+        } catch (err) {
+          console.error("Geocoding failed:", err);
+        }
+      }
+    };
 
-		fetchAddress();
+    fetchAddress();
 
-		return () => {
-			isMounted = false;
-		};
-	}, [isLoaded, loadError, data]);
-	const editAffiliateMutation = queries.useEditAffiliateMutation();
-	const handleEditAffiliate = async (data: unknown) => {
-		// console.log("called handleCreateAffiliate")
-		try {
-			toastPromise(editAffiliateMutation.mutateAsync({ data, id }), {
-				loading: "Updating affiliate...",
-				success: (res) => {
-					if (res) navigate(constant.ROUTING_URLS.AFFILIATE);
-					return "Yeah! Affiliate updated successfully";
-				},
-				error: (e) =>
-					e instanceof Error ? e.message : "Opps! failed to update affiliate.",
-			});
-		} catch (error) {
-			if (error instanceof Error) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unexpected error occurred");
-			}
-		}
-		// return await new Promise((res)=>{
-		//   setTimeout(()=>res(console.log("promise:",data)),5000);
-		// });
-	};
+    return () => {
+      isMounted = false;
+    };
+  }, [isLoaded, loadError, data]);
+  const editAffiliateMutation = queries.useEditAffiliateMutation();
+  const handleEditAffiliate = async (data: unknown) => {
+    // console.log("called handleCreateAffiliate")
+    try {
+      toastPromise(editAffiliateMutation.mutateAsync({ data, id }), {
+        loading: "Updating affiliate...",
+        success: (res) => {
+          if (res) navigate(constant.ROUTING_URLS.AFFILIATE);
+          return "Yeah! Affiliate updated successfully";
+        },
+        error: (e) => (e instanceof Error ? e.message : "Opps! failed to update affiliate."),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+    // return await new Promise((res)=>{
+    //   setTimeout(()=>res(console.log("promise:",data)),5000);
+    // });
+  };
 
-	if (isFetching) return <p>Loading...</p>;
-	return (
-		<>
-			<PageTitle title={generatePageTitle("Affiliate")} />
-			<div className="p-6 space-y-6 md:p-8 md:space-y-8">
-				<Link to={constant.ROUTING_URLS.AFFILIATE}>
-					<Button
-						variant="outline"
-						className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
-					>
-						<ArrowLeft /> Back
-					</Button>
-				</Link>
-				<Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5">
-					<div className="w-full h-full flex items-center justify-between">
-						<div>
-							<h2 className="font-medium text-xl text-black">Affiliate</h2>
-							<h4>
-								{" "}
-								<span className="text-[#959595] w-[116px] h-4 text-xs">
-									LIMOSPRO
-								</span>{" "}
-								<span className="text-xs text-[#3A3A3A] w-[50px] h-4">
-									/ Edit Affiliate
-								</span>
-							</h4>
-						</div>
-					</div>
-				</Header>
-				<AffiliateForm
-					onSubmit={handleEditAffiliate}
-					initialData={data}
-					businessAddress={businessAddress}
-					type={"Edit Affiliate"}
-				/>
-			</div>
-		</>
-	);
+  if (isFetching) return <p>Loading...</p>;
+  return (
+    <>
+      <PageTitle title={generatePageTitle("Affiliate")} />
+      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
+        <Link to={constant.ROUTING_URLS.AFFILIATE}>
+          <Button
+            variant="outline"
+            className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
+          >
+            <ArrowLeft /> Back
+          </Button>
+        </Link>
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5">
+          <div className="w-full h-full flex items-center justify-between">
+            <div>
+              <h2 className="font-medium text-xl text-black">Affiliate</h2>
+              <h4>
+                {" "}
+                <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
+                <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Affiliate</span>
+              </h4>
+            </div>
+          </div>
+        </Header>
+        <AffiliateForm
+          onSubmit={handleEditAffiliate}
+          initialData={data}
+          businessAddress={businessAddress}
+          type={"Edit Affiliate"}
+        />
+      </div>
+    </>
+  );
 }
 
 export default EditAffiliatePage;

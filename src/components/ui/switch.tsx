@@ -63,19 +63,14 @@ const labelVariants = cva("font-bold", {
   },
 });
 
-interface SwitchProps
-  extends React.ComponentProps<typeof SwitchPrimitive.Root>,
-    VariantProps<typeof switchVariants> {
+interface SwitchProps extends React.ComponentProps<typeof SwitchPrimitive.Root>, VariantProps<typeof switchVariants> {
   labelChecked?: string;
   labelUnchecked?: string;
   asChild?: boolean;
   size?: "md" | "lg";
 }
 
-const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitive.Root>,
-  SwitchProps
->(
+const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitive.Root>, SwitchProps>(
   (
     {
       className,
@@ -117,18 +112,14 @@ const Switch = React.forwardRef<
             className={cn(
               "block rounded-full bg-base-white transition-transform",
               thumbMap[size].size,
-              state
-                ? thumbMap[size].translate.checked
-                : thumbMap[size].translate.unchecked,
+              state ? thumbMap[size].translate.checked : thumbMap[size].translate.unchecked,
             )}
           />
         </SwitchPrimitive.Root>
 
         {/* Label */}
         {(labelChecked || labelUnchecked) && (
-          <span className={labelVariants({ variant, size })}>
-            {state ? labelChecked : labelUnchecked}
-          </span>
+          <span className={labelVariants({ variant, size })}>{state ? labelChecked : labelUnchecked}</span>
         )}
       </Wrapper>
     );

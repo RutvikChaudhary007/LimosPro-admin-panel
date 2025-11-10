@@ -16,32 +16,29 @@ import adminAxiosInstance from "@/utils/axiosInstance";
  * @returns response data
  */
 export const getAllPartners = async (limit: number) => {
-	const params: Record<string, unknown> = {};
-	if (limit) {
-		params.limit = limit;
-	}
-	try {
-		const response = await adminAxiosInstance.get(
-			API_ENDPOINTS.GET_ALL_PARTNERS,
-			{ params },
-		);
+  const params: Record<string, unknown> = {};
+  if (limit) {
+    params.limit = limit;
+  }
+  try {
+    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_PARTNERS, { params });
 
-		return response.data?.data;
-	} catch (error) {
-		if (error instanceof AxiosError && error?.status === 400) {
-			return [];
-		}
-		throw error;
-	}
+    return response.data?.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 const useFetchALLPartners = (limit: number) => {
-	return useQuery({
-		queryKey: ["partners", limit],
-		queryFn: () => getAllPartners(limit),
-		refetchOnWindowFocus: false,
-		retry: false,
-	});
+  return useQuery({
+    queryKey: ["partners", limit],
+    queryFn: () => getAllPartners(limit),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
 };
 
 export default useFetchALLPartners;
@@ -55,19 +52,17 @@ export default useFetchALLPartners;
  */
 
 export const getPartnerById = async (id: string) => {
-	const response = await adminAxiosInstance.get(
-		API_ENDPOINTS.GET_PARTNER_BY_ID.replace(":id", id),
-	);
-	return response.data?.data;
+  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_PARTNER_BY_ID.replace(":id", id));
+  return response.data?.data;
 };
 
 export const useFetchPartnerById = (id: string) => {
-	return useQuery({
-		queryKey: ["partnerById", { id }],
-		queryFn: () => getPartnerById(id),
-		refetchOnWindowFocus: false,
-		retry: false,
-	});
+  return useQuery({
+    queryKey: ["partnerById", { id }],
+    queryFn: () => getPartnerById(id),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
 };
 
 /**
@@ -78,17 +73,13 @@ export const useFetchPartnerById = (id: string) => {
  * @returns response data
  */
 export const createPartner = async (data: FormData) => {
-	const response = await adminAxiosInstance.post(
-		API_ENDPOINTS.CREATE_PARTNER,
-		data,
-		{
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		},
-	);
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_PARTNER, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-	return response.data?.data;
+  return response.data?.data;
 };
 
 /**
@@ -98,24 +89,14 @@ export const createPartner = async (data: FormData) => {
  * @param data
  * @returns response data
  */
-export const editPartnerById = async ({
-	id,
-	data,
-}: {
-	id: string;
-	data: FormData;
-}) => {
-	const response = await adminAxiosInstance.put(
-		API_ENDPOINTS.EDIT_PARTNER.replace(":id", id),
-		data,
-		{
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		},
-	);
+export const editPartnerById = async ({ id, data }: { id: string; data: FormData }) => {
+  const response = await adminAxiosInstance.put(API_ENDPOINTS.EDIT_PARTNER.replace(":id", id), data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-	return response.data?.data;
+  return response.data?.data;
 };
 
 /**
@@ -126,11 +107,9 @@ export const editPartnerById = async ({
  * @returns response data
  */
 export const deletePartnerById = async (id: string) => {
-	const response = await adminAxiosInstance.delete(
-		API_ENDPOINTS.DELETE_PARTNER.replace(":id", id),
-	);
+  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_PARTNER.replace(":id", id));
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -141,13 +120,10 @@ export const deletePartnerById = async (id: string) => {
  * @returns response data
  */
 export const bulkDeletePartnerById = async (ids: string[]) => {
-	const data = {
-		partnersIds: ids,
-	};
-	const response = await adminAxiosInstance.post(
-		API_ENDPOINTS.BULK_DELETE_PARTNER,
-		data,
-	);
+  const data = {
+    partnersIds: ids,
+  };
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_PARTNER, data);
 
-	return response.data;
+  return response.data;
 };

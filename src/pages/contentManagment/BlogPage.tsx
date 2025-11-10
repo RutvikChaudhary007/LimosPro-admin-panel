@@ -1,11 +1,11 @@
 import type React from "react";
 
 const BlogPage: React.FC = () => {
-	return (
-		<>
-			<></>
-		</>
-	);
+  return (
+    <>
+      <></>
+    </>
+  );
 };
 
 export default BlogPage;

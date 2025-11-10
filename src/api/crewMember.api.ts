@@ -13,36 +13,33 @@ type TArg = { page?: number; limit: number };
  * @return {*}
  */
 export const getAllCrewMember = async ({ limit, page }: TArg) => {
-	const params: Record<string, unknown> = {};
-	if (limit) params.limit = limit;
-	if (page) {
-		params.page = page;
-	}
-	try {
-		const response = await axiosInstance.get(
-			`${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`,
-			{ params },
-		);
-		// console.log("response:",response)
+  const params: Record<string, unknown> = {};
+  if (limit) params.limit = limit;
+  if (page) {
+    params.page = page;
+  }
+  try {
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`, { params });
+    // console.log("response:",response)
 
-		return response.data.data;
-	} catch (error) {
-		if (error instanceof AxiosError && error?.status === 400) {
-			return [];
-		}
-		throw error;
-	}
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 const useFetchAllCrewMember = ({ page, limit }: TArg) =>
-	useQuery({
-		queryKey: ["crewMember", { limit }, { page }],
-		queryFn: () => getAllCrewMember({ limit, page }),
-		refetchOnWindowFocus: false,
-		// refetchInterval: 60000,
-		retry: false,
-		// keepPreviousData: true, // for pagination
-	});
+  useQuery({
+    queryKey: ["crewMember", { limit }, { page }],
+    queryFn: () => getAllCrewMember({ limit, page }),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
 
 export default useFetchAllCrewMember;
 
@@ -53,11 +50,9 @@ export default useFetchAllCrewMember;
  */
 
 export const deleteCrewMember = async ({ id }: { id: string }) => {
-	const response = await axiosInstance.delete(
-		API_ENDPOINTS.DELETE_CREW_MEMBER.replace(":id", id),
-	);
+  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_CREW_MEMBER.replace(":id", id));
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -67,15 +62,12 @@ export const deleteCrewMember = async ({ id }: { id: string }) => {
  */
 
 export const bulkDeleteCrewMember = async (ids: string[]) => {
-	const data = {
-		crewMemberIds: ids,
-	};
-	const response = await axiosInstance.post(
-		API_ENDPOINTS.BULK_DELETE_CREW_MEMBER,
-		data,
-	);
+  const data = {
+    crewMemberIds: ids,
+  };
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_CREW_MEMBER, data);
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -84,18 +76,14 @@ export const bulkDeleteCrewMember = async (ids: string[]) => {
  * @return {*}
  */
 export const createCrewMember = async (data: TCrewMemberForm) => {
-	if (data?.phone) {
-		data.phoneNumber = data?.phone;
-		delete data.phone;
-		delete data.designation;
-	}
-	const response = await axiosInstance.post(
-		API_ENDPOINTS.CREATE_CREW_MEMBER,
-		data,
-		{},
-	);
+  if (data?.phone) {
+    data.phoneNumber = data?.phone;
+    delete data.phone;
+    delete data.designation;
+  }
+  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CREW_MEMBER, data, {});
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -103,19 +91,9 @@ export const createCrewMember = async (data: TCrewMemberForm) => {
  * @param {id}
  * @return {*}
  */
-export const editCrewMember = async ({
-	data,
-	id,
-}: {
-	data: TCrewMemberForm;
-	id: string;
-}) => {
-	console.log("iddd", id);
-	const response = await axiosInstance.patch(
-		API_ENDPOINTS.EDIT_CREW_MEMBER.replace(":id", id),
-		data,
-		{},
-	);
+export const editCrewMember = async ({ data, id }: { data: TCrewMemberForm; id: string }) => {
+  console.log("iddd", id);
+  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CREW_MEMBER.replace(":id", id), data, {});
 
-	return response.data;
+  return response.data;
 };

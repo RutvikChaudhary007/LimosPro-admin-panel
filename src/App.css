@@ -4,13 +4,13 @@
 } */
 
 .destructive {
-	background-color: #dc2626; /* A solid red */
-	color: white;
+  background-color: #dc2626; /* A solid red */
+  color: white;
 }
 
 .custom-scrollbar-style {
-	scrollbar-width: none;
+  scrollbar-width: none;
 }
 .custom-scrollbar-style::-webkit-scrollbar {
-	display: none;
+  display: none;
 }

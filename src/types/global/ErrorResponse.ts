@@ -1,4 +1,4 @@
 export type ApiErrorResponse = {
-	message: string;
-	error: string;
+  message: string;
+  error: string;
 };

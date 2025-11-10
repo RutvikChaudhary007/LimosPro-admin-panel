@@ -12,31 +12,29 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
  */
 
 export const getAllContactRequest = async () => {
-	try {
-		const response = await axiosInstance.get(
-			`${API_ENDPOINTS.CONTACT_REQUEST.CREATE}`,
-		);
-		// console.log("response:",response)
+  try {
+    const response = await axiosInstance.get(`${API_ENDPOINTS.CONTACT_REQUEST.CREATE}`);
+    // console.log("response:",response)
 
-		return response.data.data;
-	} catch (error) {
-		if (error instanceof AxiosError && error?.status === 400) {
-			// Treat 400 as "no data" instead of an actual error
-			return [];
-		}
-		throw error;
-	}
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      // Treat 400 as "no data" instead of an actual error
+      return [];
+    }
+    throw error;
+  }
 };
 
 const useFetchAllContactRequest = () =>
-	useQuery({
-		queryKey: ["contactRequest"],
-		queryFn: () => getAllContactRequest(),
-		refetchOnWindowFocus: false,
-		// refetchInterval: 60000,
-		retry: false,
-		// keepPreviousData: true, // for pagination
-	});
+  useQuery({
+    queryKey: ["contactRequest"],
+    queryFn: () => getAllContactRequest(),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
 
 export default useFetchAllContactRequest;
 
@@ -48,20 +46,18 @@ export default useFetchAllContactRequest;
  * @returns response data
  */
 const getContactRequestById = async (id: string) => {
-	const response = await axiosInstance.get(
-		`${API_ENDPOINTS.CONTACT_REQUEST.GET_BY_ID.replace(":id", id)}`,
-	);
-	//   console.log("response:",response.data)
-	return response?.data?.data;
+  const response = await axiosInstance.get(`${API_ENDPOINTS.CONTACT_REQUEST.GET_BY_ID.replace(":id", id)}`);
+  //   console.log("response:",response.data)
+  return response?.data?.data;
 };
 
 export const useFetchContactRequestById = ({ id }: { id: string }) =>
-	useQuery({
-		queryKey: ["contactRequestById", id],
-		queryFn: () => getContactRequestById(id),
-		refetchOnWindowFocus: false,
-		retry: false,
-	});
+  useQuery({
+    queryKey: ["contactRequestById", id],
+    queryFn: () => getContactRequestById(id),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
 
 /**
  * #############################################
@@ -71,17 +67,13 @@ export const useFetchContactRequestById = ({ id }: { id: string }) =>
  * @returns response data
  */
 export const createChauffeur = async (data: object) => {
-	const response = await axiosInstance.post(
-		API_ENDPOINTS.CREATE_CHAFFEUR,
-		data,
-		{
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		},
-	);
+  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CHAFFEUR, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -91,25 +83,15 @@ export const createChauffeur = async (data: object) => {
  * @param data
  * @returns response data
  */
-export const editChauffeur = async ({
-	data,
-	id,
-}: {
-	data: unknown;
-	id: string | undefined;
-}) => {
-	// console.log("edit chauffeur..:",data)
-	const response = await axiosInstance.patch(
-		API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id!),
-		data,
-		{
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		},
-	);
+export const editChauffeur = async ({ data, id }: { data: unknown; id: string | undefined }) => {
+  // console.log("edit chauffeur..:",data)
+  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id!), data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -120,11 +102,9 @@ export const editChauffeur = async ({
  * @returns response data
  */
 export const deleteChauffeur = async (id: string) => {
-	const response = await axiosInstance.delete(
-		API_ENDPOINTS.DELETE_CHAFFEUR.replace(":id", id),
-	);
+  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(":id", id));
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -135,12 +115,9 @@ export const deleteChauffeur = async (id: string) => {
  * @returns response data
  */
 export const bulkDeleteChauffeur = async (ids: string[]) => {
-	const data = {
-		chauffeurIds: ids,
-	};
-	const response = await axiosInstance.post(
-		API_ENDPOINTS.BULK_DELETE_CHAFFEUR,
-		data,
-	);
-	return response.data;
+  const data = {
+    chauffeurIds: ids,
+  };
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_CHAFFEUR, data);
+  return response.data;
 };

@@ -15,37 +15,34 @@ type TArg = { id?: string; page?: number; limit?: number };
  * @returns
  */
 export const getAllStaffMember = async ({ limit, page }: TArg) => {
-	const params: Record<string, unknown> = {};
-	// console.log(limit,page)
-	if (limit) params.limit = limit;
-	if (page) {
-		params.page = page;
-	}
-	try {
-		const response = await axiosInstance.get(
-			`${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`,
-			{ params },
-		);
-		// console.log("response:",response)
+  const params: Record<string, unknown> = {};
+  // console.log(limit,page)
+  if (limit) params.limit = limit;
+  if (page) {
+    params.page = page;
+  }
+  try {
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`, { params });
+    // console.log("response:",response)
 
-		return response.data.data;
-	} catch (error) {
-		if (error instanceof AxiosError && error?.status === 400) {
-			return [];
-		}
-		throw error;
-	}
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 const useFetchAllStaffMember = ({ page, limit }: TArg) =>
-	useQuery({
-		queryKey: ["staffMember", { limit }, { page }],
-		queryFn: () => getAllStaffMember({ limit, page }),
-		refetchOnWindowFocus: false,
-		// refetchInterval: 60000,
-		retry: false,
-		// keepPreviousData: true, // for pagination
-	});
+  useQuery({
+    queryKey: ["staffMember", { limit }, { page }],
+    queryFn: () => getAllStaffMember({ limit, page }),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
 
 export default useFetchAllStaffMember;
 
@@ -57,30 +54,28 @@ export default useFetchAllStaffMember;
  * @returns
  */
 export const getStaffMemberById = async ({ id }: TArg) => {
-	try {
-		const response = await axiosInstance.get(
-			`${API_ENDPOINTS.GET_SINGLE_STAFF_MEMBER.replace(":id", id)}`,
-		);
-		// console.log("response:",response)
+  try {
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_SINGLE_STAFF_MEMBER.replace(":id", id)}`);
+    // console.log("response:",response)
 
-		return response.data.data;
-	} catch (error) {
-		if (error instanceof AxiosError && error?.status === 400) {
-			return [];
-		}
-		throw error;
-	}
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 export const useFetchOneStaffMember = ({ id }: TArg) =>
-	useQuery({
-		queryKey: ["staffMemberById", { id }],
-		queryFn: () => getStaffMemberById({ id }),
-		refetchOnWindowFocus: false,
-		// refetchInterval: 60000,
-		retry: false,
-		// keepPreviousData: true, // for pagination
-	});
+  useQuery({
+    queryKey: ["staffMemberById", { id }],
+    queryFn: () => getStaffMemberById({ id }),
+    refetchOnWindowFocus: false,
+    // refetchInterval: 60000,
+    retry: false,
+    // keepPreviousData: true, // for pagination
+  });
 
 /**
  * ###################################################
@@ -89,20 +84,17 @@ export const useFetchOneStaffMember = ({ id }: TArg) =>
  */
 
 export const createStaffMember = async (data: object) => {
-	const params: Record<string, unknown> = {};
-	if (data?.region) {
-		params.regionId = data?.region;
-		delete data?.region;
-	}
-	const response = await axiosInstance.post(
-		API_ENDPOINTS.CREATE_STAFF_MEMBER.replace(
-			":regionId",
-			params.regionId as string,
-		),
-		data,
-	);
+  const params: Record<string, unknown> = {};
+  if (data?.region) {
+    params.regionId = data?.region;
+    delete data?.region;
+  }
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.CREATE_STAFF_MEMBER.replace(":regionId", params.regionId as string),
+    data,
+  );
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -111,28 +103,17 @@ export const createStaffMember = async (data: object) => {
  * ###################################################
  */
 
-export const editStaffMember = async ({
-	id,
-	regionId,
-	data,
-}: {
-	id: string;
-	regionId: string;
-	data: object;
-}) => {
-	if (data?.region) {
-		delete data?.region;
-	}
-	const response = await axiosInstance.patch(
-		API_ENDPOINTS.EDIT_STAFF_MEMBER.replace(":id", id as string).replace(
-			":regionId",
-			regionId as string,
-		),
-		data,
-		{},
-	);
+export const editStaffMember = async ({ id, regionId, data }: { id: string; regionId: string; data: object }) => {
+  if (data?.region) {
+    delete data?.region;
+  }
+  const response = await axiosInstance.patch(
+    API_ENDPOINTS.EDIT_STAFF_MEMBER.replace(":id", id as string).replace(":regionId", regionId as string),
+    data,
+    {},
+  );
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -142,11 +123,9 @@ export const editStaffMember = async ({
  */
 
 export const deleteStaffMember = async ({ id }: { id: string }) => {
-	const response = await axiosInstance.delete(
-		API_ENDPOINTS.DELETE_STAFF_MEMBER.replace(":id", id),
-	);
+  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_STAFF_MEMBER.replace(":id", id));
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -156,13 +135,10 @@ export const deleteStaffMember = async ({ id }: { id: string }) => {
  */
 
 export const bulkDeleteStaffMember = async (ids: string[]) => {
-	const data = {
-		staffMemberIds: ids,
-	};
-	const response = await axiosInstance.post(
-		API_ENDPOINTS.BULK_DELETE_STAFF_MEMBER,
-		data,
-	);
+  const data = {
+    staffMemberIds: ids,
+  };
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_STAFF_MEMBER, data);
 
-	return response.data;
+  return response.data;
 };

@@ -17,25 +17,22 @@ import adminAxiosInstance from "@/utils/axiosInstance";
  * @returns response data
  */
 export const getAllIPWhiteLists = async (limit: number) => {
-	const response = await adminAxiosInstance.get(
-		API_ENDPOINTS.GET_ALL_IP_WHITE_LIST,
-		{
-			params: {
-				limit,
-			},
-		},
-	);
+  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_IP_WHITE_LIST, {
+    params: {
+      limit,
+    },
+  });
 
-	return response.data?.data;
+  return response.data?.data;
 };
 
 const useFetchALLIPWhiteLists = (limit: number) => {
-	return useQuery({
-		queryKey: ["ipWhiteLists", limit],
-		queryFn: () => getAllIPWhiteLists(limit),
-		refetchOnWindowFocus: false,
-		retry: false,
-	});
+  return useQuery({
+    queryKey: ["ipWhiteLists", limit],
+    queryFn: () => getAllIPWhiteLists(limit),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
 };
 
 export default useFetchALLIPWhiteLists;
@@ -49,26 +46,24 @@ export default useFetchALLIPWhiteLists;
  */
 
 export const getIPWhiteListById = async (id: string) => {
-	try {
-		const response = await adminAxiosInstance.get(
-			API_ENDPOINTS.GET_IP_WHITE_LIST_BY_ID.replace(":id", id),
-		);
-		return response.data?.data;
-	} catch (error) {
-		if (error instanceof AxiosError && error?.status === 400) {
-			return [];
-		}
-		throw error;
-	}
+  try {
+    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_IP_WHITE_LIST_BY_ID.replace(":id", id));
+    return response.data?.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 export const useFetchIPWhiteListById = (id: string) => {
-	return useQuery({
-		queryKey: ["ipWhiteListById", { id }],
-		queryFn: () => getIPWhiteListById(id),
-		refetchOnWindowFocus: false,
-		retry: false,
-	});
+  return useQuery({
+    queryKey: ["ipWhiteListById", { id }],
+    queryFn: () => getIPWhiteListById(id),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
 };
 
 /**
@@ -79,12 +74,9 @@ export const useFetchIPWhiteListById = (id: string) => {
  * @returns response data
  */
 export const createIPWhiteList = async (data: TIpWhiteListForm) => {
-	const response = await adminAxiosInstance.post(
-		API_ENDPOINTS.CREATE_IP_WHITE_LIST,
-		data,
-	);
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_IP_WHITE_LIST, data);
 
-	return response.data?.data;
+  return response.data?.data;
 };
 
 /**
@@ -94,24 +86,14 @@ export const createIPWhiteList = async (data: TIpWhiteListForm) => {
  * @param data
  * @returns response data
  */
-export const editIPWhiteListById = async ({
-	id,
-	data,
-}: {
-	id: string;
-	data: TIpWhiteListForm;
-}) => {
-	const response = await adminAxiosInstance.put(
-		API_ENDPOINTS.EDIT_IP_WHITE_LIST.replace(":id", id),
-		data,
-		{
-			headers: {
-				"Content-Type": "application/json",
-			},
-		},
-	);
+export const editIPWhiteListById = async ({ id, data }: { id: string; data: TIpWhiteListForm }) => {
+  const response = await adminAxiosInstance.put(API_ENDPOINTS.EDIT_IP_WHITE_LIST.replace(":id", id), data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-	return response.data?.data;
+  return response.data?.data;
 };
 
 /**
@@ -122,11 +104,9 @@ export const editIPWhiteListById = async ({
  * @returns response data
  */
 export const deleteIPWhiteListById = async (id: string) => {
-	const response = await adminAxiosInstance.delete(
-		API_ENDPOINTS.DELETE_IP_WHITE_LIST.replace(":id", id),
-	);
+  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_IP_WHITE_LIST.replace(":id", id));
 
-	return response.data;
+  return response.data;
 };
 
 /**
@@ -137,13 +117,10 @@ export const deleteIPWhiteListById = async (id: string) => {
  * @returns response data
  */
 export const bulkDeleteIPWhiteListById = async (ids: string[]) => {
-	const data = {
-		ipsIds: ids,
-	};
-	const response = await adminAxiosInstance.post(
-		API_ENDPOINTS.BULK_DELETE_IP_WHITE_LIST,
-		data,
-	);
+  const data = {
+    ipsIds: ids,
+  };
+  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_IP_WHITE_LIST, data);
 
-	return response.data;
+  return response.data;
 };
