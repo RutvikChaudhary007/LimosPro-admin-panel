@@ -209,11 +209,45 @@ function SelectScrollDownButton({
   );
 }
 
+interface SelectInputItems {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface SelectInputProps {
+  variant?: "primary" | "secondary" | "dark";
+  classname?: string;
+  placeholder?: string;
+  items: SelectInputItems[];
+  setSelectedItem?: (value: string) => void;
+  value?: string;
+}
+
+function SelectInput({ variant = "primary", classname, placeholder, items, setSelectedItem, value }: SelectInputProps) {
+  return (
+    <Select value={value} onValueChange={setSelectedItem} variant={variant}>
+      <SelectTrigger className={classname} data-has-value={value ? "true" : undefined}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.value} value={item.value} disabled={item.disabled}>
+            {item.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
 // --------------------------------------------------------------
 export {
   Select,
   SelectContent,
   SelectGroup,
+  SelectInput,
   SelectItem,
   SelectLabel,
   SelectScrollDownButton,

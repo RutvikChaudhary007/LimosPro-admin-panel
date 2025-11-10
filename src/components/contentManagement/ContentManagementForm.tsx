@@ -1,15 +1,15 @@
 //@ts-nocheck
 
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import isFieldDisabled from "@/utils/disableFormField";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
+import "react-quill/dist/quill.snow.css"; // or 'quill.bubble.css'
 import z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import "react-quill/dist/quill.snow.css"; // or 'quill.bubble.css'
 // import { Plus } from "lucide-react";
 // import { Label } from "../ui/label";
 import { toast } from "sonner";
@@ -137,7 +137,7 @@ const ContentManagementForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        <Card className="rounded  bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+        <Card className="rounded  bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-light">
           <CardHeader className="flex items-center justify-between">
             <CardTitle>{type}</CardTitle>
             <div className="w-[258px] flex items-center justify-between">

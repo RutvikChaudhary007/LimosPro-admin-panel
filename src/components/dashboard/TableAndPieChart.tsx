@@ -1,16 +1,14 @@
 //@ts-nocheck
 
+import { constant } from "@/lib/constant";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { ArrowRight, Plus } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from "react-router-dom";
-import { constant } from "@/lib/constant";
-import { getChauffeurAvailablility, type TChauffeurAvailablility } from "../table/column";
+import { getChauffeurAvailablility } from "../table/column";
 import { DataTable } from "../table/data-table";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Table } from "../ui/table";
 
 // const tableData: TChauffeurAvailablility[] = [
 //   {
@@ -134,7 +132,7 @@ function TableAndPieChart({
         <DataTable columns={columns} data={chauffeurAvailability} />
       </div>
       {/* pie */}
-      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-y-auto custom-scrollbar-style">
+      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-base-light overflow-y-auto custom-scrollbar-style">
         <div className="min-w-full">
           <div className="p-4">Fleet Availability & Demand Ratio</div>
           <hr className="min-w-full border-[#D9D9D9] p-0 pb-0" />

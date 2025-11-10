@@ -1,10 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { Label } from "@/components/ui/label"
-import { ArrowLeft } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { z } from "zod";
 import useFetchAllRegions from "@/api/region.api";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
@@ -15,6 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { ArrowLeft } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -91,7 +91,7 @@ function AddRegionAdmin() {
             <ArrowLeft /> Back
           </Button>
         </Link>
-        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5">
+        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
           <div className="">
             <h2 className="font-medium text-xl text-black">Region Admins</h2>
             <h4>
@@ -102,7 +102,7 @@ function AddRegionAdmin() {
           </div>
         </Header>
 
-        <div className="w-full h-[461px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-[34px] p-4 overflow-auto">
+        <div className="w-full h-[461px] bg-[#FDFDFD] shadow-base-light flex flex-col gap-[34px] p-4 overflow-auto">
           <div className="w-full text-xl font-semibold">Create Regional Admin</div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 grid-rows-4 gap-x-5">

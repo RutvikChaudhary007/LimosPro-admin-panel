@@ -1,5 +1,5 @@
 export const Spinner = () => (
-  <div className="fixed inset-0 z-[99999] opacity-[0.8] h-full  bg-[#36454F]  flex items-center justify-center ">
-    <span className="loader "></span>
+  <div className="fixed inset-0 z-50 h-full bg-black/60 flex items-center justify-center ">
+    <span className="loader"></span>
   </div>
 );

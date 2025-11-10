@@ -294,7 +294,7 @@ function BookingPage() {
     <>
       <PageTitle title={generatePageTitle("Booking")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
           <div className="w-full h-full flex items-center justify-between">
             <div className="w-[416px] h-[47px]">
               <h2 className="font-medium text-xl text-black">Bookings</h2>

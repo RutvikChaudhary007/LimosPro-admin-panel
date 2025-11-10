@@ -1,11 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { Label } from '@/components/ui/label'
-import { ArrowLeft } from "lucide-react";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
-import { z } from "zod";
 import { useFetchRegionById } from "@/api/region.api";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
@@ -15,6 +9,12 @@ import { Input } from "@/components/ui/input";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z.object({
   regionName: z.string().min(2, {
@@ -72,7 +72,7 @@ const EditRegionPage = () => {
             <ArrowLeft /> Back
           </Button>
         </Link>
-        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5">
+        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
           <div className="">
             <h2 className="font-medium text-xl text-black">Region Management</h2>
             <h4>
@@ -86,7 +86,7 @@ const EditRegionPage = () => {
         {isFetching ? (
           <Spinner />
         ) : (
-          <div className="w-full h-[316px] bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-[34px] p-4">
+          <div className="w-full h-[316px] bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-light flex flex-col gap-[34px] p-4">
             <div className="w-full text-xl font-semibold">Edit Regions</div>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>

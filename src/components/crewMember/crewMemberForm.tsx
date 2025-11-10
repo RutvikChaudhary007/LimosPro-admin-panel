@@ -1,17 +1,17 @@
 //@ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import IntlTelInput from "intl-tel-input/react";
-import { useForm } from "react-hook-form";
-import z from "zod";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
+import { zodResolver } from "@hookform/resolvers/zod";
+import IntlTelInput from "intl-tel-input/react";
+import "intl-tel-input/styles";
+import { useForm } from "react-hook-form";
+import z from "zod";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import "intl-tel-input/styles";
 
 const formSchema = z.object({
   firstName: z
@@ -98,7 +98,7 @@ const CrewMemberForm = ({
           }
         })}
       >
-        <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+        <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-light">
           <CardHeader>
             <CardTitle>{type}</CardTitle>
           </CardHeader>

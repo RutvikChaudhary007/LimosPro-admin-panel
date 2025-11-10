@@ -7,12 +7,6 @@ import { Spinner } from "@/components/Spinner";
 import { getRegionColumns, type TRegion } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
   Pagination,
@@ -23,12 +17,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDown, Plus, Search, Trash2 } from "lucide-react";
+import { Plus, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 // import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { SelectInput } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -98,7 +92,7 @@ function RegionDashboardPage() {
   const navigate = useNavigate();
   const [perPage, setPerPage] = useState(10);
   const [page, setCPage] = useState(1);
-  const [selected, setSelected] = useState(showOptions[0]);
+  const [selected, setSelected] = useState(10);
   // const [data, setData] = useState<TRegion[]>(tableData);
   const { data, refetch, isFetching } = useFetchAllRegions({ limit: perPage });
   const { currentPage, setPage, totalPages, currentItems } = usePagination<TRegion>(
@@ -256,7 +250,7 @@ function RegionDashboardPage() {
         </Header>
 
         <div className="flex justify-between">
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>
                 {selected.label} <ChevronDown />
@@ -278,8 +272,9 @@ function RegionDashboardPage() {
                 ))}
               </DropdownMenuGroup>
             </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+          </DropdownMenu> */}
+          <SelectInput placeholder={selected} items={showOptions} value={selected} setSelectedItem={setSelected} />
+          <div className="w-[369px] flex items-center justify-between gap-3">
             <span
               className={`${
                 Object.keys(rowSelection).filter(

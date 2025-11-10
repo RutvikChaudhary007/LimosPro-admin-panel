@@ -1,6 +1,6 @@
+import type { TRegion } from "@/types/map.type";
 import { useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
-import type { TRegion } from "@/types/map.type";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -14,7 +14,7 @@ const regions: TRegion[] = [
 const WorldMap = () => {
   const [hovered, setHovered] = useState<null | string>(null);
   return (
-    <div className="w-[620px] h-fit rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4">
+    <div className="w-[620px] h-fit rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light p-4">
       <div className="relative">
         <ComposableMap projectionConfig={{ scale: 160 }}>
           <Geographies geography={geoUrl}>

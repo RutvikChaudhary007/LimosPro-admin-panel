@@ -91,7 +91,7 @@ const ReportPage = () => {
     <>
       <PageTitle title={generatePageTitle("Report")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Reports</h2>
@@ -134,7 +134,7 @@ const ReportPage = () => {
 
         {/* Graph data */}
         <div className="w-full grid grid-cols-2 gap-5">
-          <div className="w-[520px] h-[400px] rounded border inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4">
+          <div className="w-[520px] h-[400px] rounded border inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light p-4">
             <div className="w-full h-full">
               <h2 className="font-semibold text-black pb-1">Total Revenue</h2>
               <ResponsiveContainer width="100%" height={355}>
@@ -155,7 +155,7 @@ const ReportPage = () => {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="w-[520px] h-[400px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4">
+          <div className="w-[520px] h-[400px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light p-4">
             <h2 className="font-semibold text-black pb-1">Total Bookings</h2>
             <ResponsiveContainer width="100%" height={355}>
               <LineChart data={data} margin={{ top: 15, right: 30, left: 0, bottom: 5 }}>
@@ -177,7 +177,7 @@ const ReportPage = () => {
         </div>
         <div className="w-full flex gap-5 mt-5">
           {/* Doughnut data */}
-          <div className="w-[420px] h-[473px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4">
+          <div className="w-[420px] h-[473px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light p-4">
             <Doughnut
               data={Chartdata}
               options={{

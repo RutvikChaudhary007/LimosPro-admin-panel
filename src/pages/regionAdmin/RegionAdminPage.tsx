@@ -163,7 +163,7 @@ function RegionAdminPage() {
     <>
       <PageTitle title={generatePageTitle("Region Admin")} />
       <div className="p-6 space-y-6 lg:p-8 lg:space-y-8">
-        <Header className="p-4 bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+        <Header className="p-4 bg-[#FDFDFD] shadow-base-light">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Region Management</h2>
@@ -255,7 +255,7 @@ function RegionAdminPage() {
             onGlobalFilterChange={setSearchValue}
           />
         )}
-        {/* <div className="mt-5 py-4 border border-[#F1F1F1] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+        {/* <div className="mt-5 py-4 border border-[#F1F1F1] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light">
           <Table className=" bg-[#FDFDFD] ">
             <TableHeader className="w-full h-[31px] bg-[#F5F5F5]">
               <TableRow className="w-full h-full ">

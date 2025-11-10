@@ -93,7 +93,7 @@ const ViewPaymentPage = () => {
             <ArrowLeft /> Back
           </Button>
         </Link>
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Payments</h2>

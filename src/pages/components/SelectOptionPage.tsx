@@ -1,69 +1,58 @@
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SelectInput } from "@/components/ui/select";
 import { useState } from "react";
 
 export function SelectOptionPage() {
-  const [firstValue, setFirstValue] = useState("");
+  const [value, setValue] = useState("de");
   const [secondValue, setSecondValue] = useState("");
   const [thirdValue, setThirdValue] = useState("");
-
+  console.log(value);
   return (
     <div className="p-6 h-screen space-y-2">
       {/* First Select */}
-      <Select value={firstValue} onValueChange={setFirstValue}>
-        <SelectTrigger className="w-full max-w-[277px]" data-has-value={firstValue ? "true" : undefined}>
-          <SelectValue placeholder="Select Option Primary" />
-        </SelectTrigger>
-
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana" disabled>
-              Banana
-            </SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-            <SelectItem value="grapes">Grapes</SelectItem>
-            <SelectItem value="pineapple">Pineapple</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <SelectInput
+        placeholder="Select a country"
+        classname="w-full max-w-[277px]"
+        items={[
+          { value: "in", label: "India" },
+          { value: "us", label: "United States" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "de", label: "Germany" },
+          { value: "au", label: "Australia", disabled: true },
+        ]}
+        value={value}
+        setSelectedItem={setValue}
+      />
 
       {/* Second Select */}
-      <Select value={secondValue} onValueChange={setSecondValue} variant="secondary">
-        <SelectTrigger className="w-full max-w-[277px]" data-has-value={secondValue ? "true" : undefined}>
-          <SelectValue placeholder="Select Option Secondary" />
-        </SelectTrigger>
-
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana" disabled>
-              Banana
-            </SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-            <SelectItem value="grapes">Grapes</SelectItem>
-            <SelectItem value="pineapple">Pineapple</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
+      <SelectInput
+        placeholder="Select a country"
+        variant="secondary"
+        classname="w-full max-w-[277px]"
+        items={[
+          { value: "in", label: "India" },
+          { value: "us", label: "United States" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "de", label: "Germany" },
+          { value: "au", label: "Australia", disabled: true },
+        ]}
+        value={secondValue}
+        setSelectedItem={setSecondValue}
+      />
       {/* Third Select */}
-      <Select value={thirdValue} onValueChange={setThirdValue} variant="dark">
-        <SelectTrigger className="w-full max-w-[277px]" data-has-value={thirdValue ? "true" : undefined}>
-          <SelectValue placeholder="Select Option Dark" />
-        </SelectTrigger>
-
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="apple">Apple</SelectItem>
-            <SelectItem value="banana" disabled>
-              Banana
-            </SelectItem>
-            <SelectItem value="blueberry">Blueberry</SelectItem>
-            <SelectItem value="grapes">Grapes</SelectItem>
-            <SelectItem value="pineapple">Pineapple</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+      <SelectInput
+        placeholder="Select a country"
+        variant="dark"
+        classname="w-full max-w-[277px]"
+        items={[
+          { value: "in", label: "India" },
+          { value: "us", label: "United States" },
+          { value: "uk", label: "United Kingdom" },
+          { value: "de", label: "Germany" },
+          { value: "au", label: "Australia", disabled: true },
+        ]}
+        value={thirdValue}
+        setSelectedItem={setThirdValue}
+      />
     </div>
   );
 }

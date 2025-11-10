@@ -1,12 +1,12 @@
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import Header from "@/components/layouts/BreadCramb";
 import StaffMemberForm from "@/components/staffMember/StaffMemberForm";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 const CreateStaffMemberPage = () => {
   const createStaffMutation = queries.useCreateStaffMemberMutation();
@@ -37,7 +37,7 @@ const CreateStaffMemberPage = () => {
             <ArrowLeft /> Back
           </Button>
         </Link>
-        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)] mt-4 mb-5">
+        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
           <div className="">
             <h2 className="font-medium text-xl text-black">Staff Members</h2>
             <h4>

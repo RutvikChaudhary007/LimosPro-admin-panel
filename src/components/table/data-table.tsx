@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
     if (onTableReady) onTableReady(table);
   }, [table, onTableReady]);
   return (
-    <div className="rounded border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-auto">
+    <div className="rounded border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light overflow-auto">
       <Table className="">
         <TableHeader className="bg-[#F5F5F5] ">
           {table?.getHeaderGroups()?.map((headerGroup) => (
