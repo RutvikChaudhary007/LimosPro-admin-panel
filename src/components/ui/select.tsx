@@ -9,35 +9,35 @@ import { cn } from "@/lib/utils";
 // Context to share variant across Select components
 // --------------------------------------------------------------
 const SelectContext = React.createContext<{
-	variant: "primary" | "secondary" | "dark";
+  variant: "primary" | "secondary" | "dark";
 }>({
-	variant: "primary",
+  variant: "primary",
 });
 
 // --------------------------------------------------------------
 // Trigger Variants
 // --------------------------------------------------------------
 const selectTriggerVariants = cva(
-	"font-quicksand font-medium text-base border-base-gray data-placeholder:text-base-gray [&_svg]:**:stroke-current focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-transparent dark:hover:bg-transparent flex w-fit items-center justify-between gap-2 rounded border bg-transparent p-4 whitespace-nowrap transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-14 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 cursor-pointer",
-	{
-		variants: {
-			variant: {
-				primary:
-					"hover:border-base-primary data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
-				secondary:
-					"hover:border-base-secondary data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
-				dark: "hover:border-base-black data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
-			},
-			size: {
-				default: "h-14",
-				sm: "h-10 px-3 text-sm",
-			},
-		},
-		defaultVariants: {
-			variant: "primary",
-			size: "default",
-		},
-	},
+  "font-quicksand font-medium text-base border-base-gray data-placeholder:text-base-gray [&_svg]:**:stroke-current focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-transparent dark:hover:bg-transparent flex w-fit items-center justify-between gap-2 rounded border bg-transparent p-4 whitespace-nowrap transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-14 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 cursor-pointer transition-all duration-300 ease-in-out",
+  {
+    variants: {
+      variant: {
+        primary:
+          "hover:border-base-primary data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
+        secondary:
+          "hover:border-base-secondary data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
+        dark: "hover:border-base-black data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
+      },
+      size: {
+        default: "h-14",
+        sm: "h-10 px-3 text-sm",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "default",
+    },
+  },
 );
 
 type SelectTriggerVariants = VariantProps<typeof selectTriggerVariants>;
@@ -46,207 +46,207 @@ type SelectTriggerVariants = VariantProps<typeof selectTriggerVariants>;
 // Item Variants
 // --------------------------------------------------------------
 const selectItemVariants = cva(
-	"font-quicksand font-medium text-base relative flex w-full cursor-pointer items-center gap-2 p-4 select-none outline-hidden [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 border-b last:border-b-0 data-disabled:bg-base-light-gray data-disabled:text-base-gray data-disabled:cursor-not-allowed bg-base-white",
-	{
-		variants: {
-			variant: {
-				primary:
-					"text-base-black hover:bg-base-primary/10 border-b-base-primary/10 data-[state=checked]:bg-base-primary data-[state=checked]:text-base-white ",
-				secondary:
-					"text-base-black hover:bg-base-secondary/10 border-b-base-secondary/10 data-[state=checked]:bg-base-secondary data-[state=checked]:text-base-white",
-				dark: "text-base-black hover:bg-base-light-gray border-b-base-light-gray data-[state=checked]:bg-base-black data-[state=checked]:text-base-white",
-			},
-		},
-		defaultVariants: {
-			variant: "primary",
-		},
-	},
+  "font-quicksand font-medium text-base relative flex w-full cursor-pointer items-center gap-2 p-4 select-none outline-hidden [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 border-b last:border-b-0 data-disabled:bg-base-light-gray data-disabled:text-base-gray data-disabled:cursor-not-allowed bg-base-white",
+  {
+    variants: {
+      variant: {
+        primary:
+          "text-base-black hover:bg-base-primary/10 border-b-base-primary/10 data-[state=checked]:bg-base-primary data-[state=checked]:text-base-white ",
+        secondary:
+          "text-base-black hover:bg-base-secondary/10 border-b-base-secondary/10 data-[state=checked]:bg-base-secondary data-[state=checked]:text-base-white",
+        dark: "text-base-black hover:bg-base-light-gray border-b-base-light-gray data-[state=checked]:bg-base-black data-[state=checked]:text-base-white",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+    },
+  },
 );
 
 // --------------------------------------------------------------
 // Components
 // --------------------------------------------------------------
 function Select({
-	variant = "primary",
-	...props
+  variant = "primary",
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root> & {
-	variant?: "primary" | "secondary" | "dark";
+  variant?: "primary" | "secondary" | "dark";
 }) {
-	return (
-		<SelectContext.Provider value={{ variant }}>
-			<SelectPrimitive.Root data-slot="select" {...props} />
-		</SelectContext.Provider>
-	);
+  return (
+    <SelectContext.Provider value={{ variant }}>
+      <SelectPrimitive.Root data-slot="select" {...props} />
+    </SelectContext.Provider>
+  );
 }
 
 function SelectGroup(
-	props: React.ComponentProps<typeof SelectPrimitive.Group>,
+  props: React.ComponentProps<typeof SelectPrimitive.Group>,
 ) {
-	return <SelectPrimitive.Group data-slot="select-group" {...props} />;
+  return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
 function SelectValue(
-	props: React.ComponentProps<typeof SelectPrimitive.Value>,
+  props: React.ComponentProps<typeof SelectPrimitive.Value>,
 ) {
-	return <SelectPrimitive.Value data-slot="select-value" {...props} />;
+  return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
 function SelectTrigger({
-	className,
-	size,
-	children,
-	...props
+  className,
+  size,
+  children,
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> &
-	SelectTriggerVariants) {
-	const { variant } = React.useContext(SelectContext);
+  SelectTriggerVariants) {
+  const { variant } = React.useContext(SelectContext);
 
-	return (
-		<SelectPrimitive.Trigger
-			data-slot="select-trigger"
-			data-size={size}
-			className={cn(selectTriggerVariants({ size, variant }), className)}
-			{...props}
-		>
-			{children}
-			<SelectPrimitive.Icon asChild>
-				<ChevronDownIcon />
-			</SelectPrimitive.Icon>
-		</SelectPrimitive.Trigger>
-	);
+  return (
+    <SelectPrimitive.Trigger
+      data-slot="select-trigger"
+      data-size={size}
+      className={cn(selectTriggerVariants({ size, variant }), className)}
+      {...props}
+    >
+      {children}
+      <SelectPrimitive.Icon asChild>
+        <ChevronDownIcon />
+      </SelectPrimitive.Icon>
+    </SelectPrimitive.Trigger>
+  );
 }
 
 function SelectContent({
-	className,
-	children,
-	position = "popper",
-	align = "center",
-	...props
+  className,
+  children,
+  position = "popper",
+  align = "center",
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
-	return (
-		<SelectPrimitive.Portal>
-			<SelectPrimitive.Content
-				data-slot="select-content"
-				className={cn(
-					"bg-base-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded border-none shadow-sm",
-					position === "popper" &&
-						"data-[side=bottom]:translate-y-2 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-2",
-					className,
-				)}
-				position={position}
-				align={align}
-				{...props}
-			>
-				<SelectScrollUpButton />
-				<SelectPrimitive.Viewport
-					className={cn(
-						"p-0",
-						position === "popper" &&
-							"h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1",
-					)}
-				>
-					{children}
-				</SelectPrimitive.Viewport>
-				<SelectScrollDownButton />
-			</SelectPrimitive.Content>
-		</SelectPrimitive.Portal>
-	);
+  return (
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Content
+        data-slot="select-content"
+        className={cn(
+          "bg-base-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded border-none shadow-sm",
+          position === "popper" &&
+            "data-[side=bottom]:translate-y-2 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-2",
+          className,
+        )}
+        position={position}
+        align={align}
+        {...props}
+      >
+        <SelectScrollUpButton />
+        <SelectPrimitive.Viewport
+          className={cn(
+            "p-0",
+            position === "popper" &&
+              "h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1",
+          )}
+        >
+          {children}
+        </SelectPrimitive.Viewport>
+        <SelectScrollDownButton />
+      </SelectPrimitive.Content>
+    </SelectPrimitive.Portal>
+  );
 }
 
 function SelectLabel({
-	className,
-	...props
+  className,
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.Label>) {
-	return (
-		<SelectPrimitive.Label
-			data-slot="select-label"
-			className={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
-			{...props}
-		/>
-	);
+  return (
+    <SelectPrimitive.Label
+      data-slot="select-label"
+      className={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
+      {...props}
+    />
+  );
 }
 
 function SelectItem({
-	className,
-	children,
-	...props
+  className,
+  children,
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.Item>) {
-	const { variant } = React.useContext(SelectContext);
+  const { variant } = React.useContext(SelectContext);
 
-	return (
-		<SelectPrimitive.Item
-			data-slot="select-item"
-			className={cn(selectItemVariants({ variant }), className)}
-			{...props}
-		>
-			<span className="absolute right-4 flex size-3.5 items-center justify-center">
-				<SelectPrimitive.ItemIndicator>
-					<CheckIcon className="size-4" />
-				</SelectPrimitive.ItemIndicator>
-			</span>
-			<SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-		</SelectPrimitive.Item>
-	);
+  return (
+    <SelectPrimitive.Item
+      data-slot="select-item"
+      className={cn(selectItemVariants({ variant }), className)}
+      {...props}
+    >
+      <span className="opacity-0 absolute right-4 flex size-4 items-center justify-center">
+        <SelectPrimitive.ItemIndicator>
+          <CheckIcon />
+        </SelectPrimitive.ItemIndicator>
+      </span>
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+    </SelectPrimitive.Item>
+  );
 }
 
 function SelectSeparator({
-	className,
-	...props
+  className,
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.Separator>) {
-	return (
-		<SelectPrimitive.Separator
-			data-slot="select-separator"
-			className={cn("bg-border pointer-events-none -mx-1 my-1 h-px", className)}
-			{...props}
-		/>
-	);
+  return (
+    <SelectPrimitive.Separator
+      data-slot="select-separator"
+      className={cn("bg-border pointer-events-none -mx-1 my-1 h-px", className)}
+      {...props}
+    />
+  );
 }
 
 function SelectScrollUpButton({
-	className,
-	...props
+  className,
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
-	return (
-		<SelectPrimitive.ScrollUpButton
-			data-slot="select-scroll-up-button"
-			className={cn(
-				"flex cursor-default items-center justify-center py-1",
-				className,
-			)}
-			{...props}
-		>
-			<ChevronUpIcon className="size-4" />
-		</SelectPrimitive.ScrollUpButton>
-	);
+  return (
+    <SelectPrimitive.ScrollUpButton
+      data-slot="select-scroll-up-button"
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
+      {...props}
+    >
+      <ChevronUpIcon className="size-4" />
+    </SelectPrimitive.ScrollUpButton>
+  );
 }
 
 function SelectScrollDownButton({
-	className,
-	...props
+  className,
+  ...props
 }: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
-	return (
-		<SelectPrimitive.ScrollDownButton
-			data-slot="select-scroll-down-button"
-			className={cn(
-				"flex cursor-default items-center justify-center py-1",
-				className,
-			)}
-			{...props}
-		>
-			<ChevronDownIcon className="size-4" />
-		</SelectPrimitive.ScrollDownButton>
-	);
+  return (
+    <SelectPrimitive.ScrollDownButton
+      data-slot="select-scroll-down-button"
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
+      {...props}
+    >
+      <ChevronDownIcon className="size-4" />
+    </SelectPrimitive.ScrollDownButton>
+  );
 }
 
 // --------------------------------------------------------------
 export {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectScrollDownButton,
-	SelectScrollUpButton,
-	SelectSeparator,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 };
