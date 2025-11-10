@@ -140,10 +140,10 @@ export default function FilesUpload({
         onKeyDown={(e) => ["Enter", " "].includes(e.key) && inputRef.current?.click()}
       >
         <IconFilesUpload className="size-10 mb-2 transition" />
-        <p className="font-bold text-[12px] text-base-black">Drag your file(s) to start uploading</p>
+        <p className="font-bold text-xs text-base-black">Drag your file(s) to start uploading</p>
 
         <div className="w-full py-6 px-8">
-          <FieldSeparator className="flex items-center [&_[data-slot=separator]]:bg-base-gray [&_[data-slot=field-separator-content]]:px-2.5! [&_[data-slot=field-separator-content]]:font-quicksand [&_[data-slot=field-separator-content]]:font-bold [&_[data-slot=field-separator-content]]:text-[12px] [&_[data-slot=field-separator-content]]:text-base-gray [&_[data-slot=field-separator-content]]:bg-base-white">
+          <FieldSeparator className="flex items-center [&_[data-slot=separator]]:bg-base-gray [&_[data-slot=field-separator-content]]:px-2.5! [&_[data-slot=field-separator-content]]:font-quicksand [&_[data-slot=field-separator-content]]:font-bold [&_[data-slot=field-separator-content]]:text-xs [&_[data-slot=field-separator-content]]:text-base-gray [&_[data-slot=field-separator-content]]:bg-base-white">
             Or
           </FieldSeparator>
         </div>
@@ -179,7 +179,7 @@ export default function FilesUpload({
       </button>
 
       {info && (
-        <div className="flex justify-between text-[12px] text-base-gray mt-2 font-bold">
+        <div className="flex justify-between text-xs text-base-gray mt-2 font-bold">
           <span>Supported file formats: {accept}</span>
           <span>Max size: {maxSize} MB</span>
         </div>
@@ -197,7 +197,7 @@ export default function FilesUpload({
               ) : (
                 <IconFilesUpload className="size-10" />
               )}
-              <div className="text-[12px]">
+              <div className="text-xs">
                 <div className="font-bold text-base-black mb-1">{f.name}</div>
                 <div className="font-medium text-base-gray">{formatFileSize(f.size)}</div>
               </div>

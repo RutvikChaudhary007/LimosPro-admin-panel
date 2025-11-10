@@ -44,7 +44,7 @@ const accordionTrigger = cva(
 );
 
 const accordionContent = cva(
-  "font-quicksand font-medium text-[12px] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden bg-base-white text-base-black",
+  "font-quicksand font-medium text-xs data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden bg-base-white text-base-black",
   {
     variants: {
       variant: {

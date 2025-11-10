@@ -17,7 +17,7 @@ export function SectionCards({ data }: TProps) {
         title="Total Revenue"
         value={`$${data?.totalRevenue}`}
         percentage="5.2%"
-        headerClass="px-[5px]"
+        bodyClass="pr-[5px]"
         wrapperClass="border-0"
         valueClass="text-3xl"
       />
@@ -25,7 +25,7 @@ export function SectionCards({ data }: TProps) {
         title="Total Bookings"
         value={`${data?.totalBookings}`}
         percentage="5.2%"
-        headerClass="px-[5px]"
+        bodyClass="pr-[5px]"
         wrapperClass="border-0"
         valueClass="text-3xl"
       />
@@ -33,7 +33,7 @@ export function SectionCards({ data }: TProps) {
         title="Total Affiliates"
         value={`${data?.totalAffiliates}`}
         percentage="5.2%"
-        headerClass="px-[5px]"
+        bodyClass="pr-[5px]"
         wrapperClass="border-0"
         valueClass="text-3xl"
       />
@@ -41,7 +41,7 @@ export function SectionCards({ data }: TProps) {
         title="Total Chauffeurs"
         value={`${data?.totalChauffeurs}`}
         percentage="5.2%"
-        headerClass="px-[5px]"
+        bodyClass="pr-[5px]"
         wrapperClass="border-0"
         valueClass="text-3xl"
       />

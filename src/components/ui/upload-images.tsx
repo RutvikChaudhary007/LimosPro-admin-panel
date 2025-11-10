@@ -141,7 +141,7 @@ export default function ImagesUpload({
           </div>
         ))}
       </div>
-      {info && <p className="text-[12px] text-base-gray mt-2 font-bold">Max size: {maxSize} MB</p>}
+      {info && <p className="text-xs text-base-gray mt-2 font-bold">Max size: {maxSize} MB</p>}
     </div>
   );
 }
