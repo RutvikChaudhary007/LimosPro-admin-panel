@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 // import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
 // import { useMutation } from '@tanstack/react-query';
@@ -10,19 +10,11 @@ import UsefetchAllAffiliate, { getAllAffiliate } from "@/api/getAllAffiliate.api
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { getAffiliate, getStatusColor, type TAffiliate } from "@/components/table/column";
+import { getAffiliate, type TAffiliate } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -32,6 +24,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -46,24 +39,26 @@ const showStatus = [
 ];
 
 const showTime = [
-  { label: "All Time", value: "" },
+  { label: "All Time", value: "All Time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
 ];
 
 function AffiliatePage() {
+  const [{ value: statusDefaultValue }] = showStatus;
+  const [{ value: timeDefaultValue }] = showTime;
   const navigate = useNavigate();
   const perPage = 10;
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-  const [selectedTime, setSelectedTime] = useState(showTime[0]);
+  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
+  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
     const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
     let start: Date | undefined;
 
-    switch (selectedTime.value) {
+    switch (selectedTime) {
       case "weekly": {
         // last 7 days inclusive (UTC)
         start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
@@ -83,7 +78,7 @@ function AffiliatePage() {
       }
     }
 
-    return { startDate: start, endDate: selectedTime.value ? end : undefined };
+    return { startDate: start, endDate: selectedTime ? end : undefined };
   }, [selectedTime]);
 
   const [newPage, setNewPage] = useState<number>(1);
@@ -233,86 +228,32 @@ function AffiliatePage() {
     <>
       <PageTitle title={generatePageTitle("Affiliate")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 bg-[#FDFDFD] shadow-base-light">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Affiliate</h2>
-              <h4>
-                {" "}
-                <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#3A3A3A] w-full max-w-[50px] h-4">/ Affiliate</span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
-              {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Affiliate</span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="Affiliate"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Affiliate" }]}
+          action={{
+            label: "Add Affiliate",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_AFFILIATE,
+          }}
+        />
 
-        <div className="flex justify-between gap-2.5">
-          <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outlineBlack"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                >
-                  {selectedStatus.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showStatus.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                      onClick={() => setSelectedStatus(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] ${"cursor-pointer"} bg-[#FFFFFF] `}
-                >
-                  <span className="truncate max-w-[120px]">{selectedTime.label}</span>
-                  <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showTime.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF]`}
-                      onClick={() => setSelectedTime(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            {/* {rangeLabel && (
-            <span className="mt-5 text-xs text-[#6b7280]">{rangeLabel}</span>
-          )} */}
+        <div className="flex justify-between">
+          <div className="flex items-center gap-4">
+            <SelectDropDown
+              placeholder={selectedStatus}
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
+            <SelectDropDown
+              placeholder={selectedTime}
+              items={showTime}
+              value={selectedTime}
+              setSelectedItem={setSelectedTime}
+            />
           </div>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
@@ -326,14 +267,18 @@ function AffiliatePage() {
                 descTitle="affiliates"
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div className="">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>

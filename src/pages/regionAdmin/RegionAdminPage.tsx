@@ -49,9 +49,10 @@ const tableData: TRegionAdmin[] = [
 ];
 
 function RegionAdminPage() {
+  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
-  const [perPage, setPerPage] = useState(10);
-  const [selected, setSelected] = useState("10");
+  const [perPage, setPerPage] = useState(Number(optionDefaultValue));
+  const [selected, setSelected] = useState(optionDefaultValue);
   // const [data, setData] = useState<TRegionAdmin[]>(tableData);
   const { data, isFetching } = useFetchAllRegionAdmins({ limit: perPage });
   const { currentPage, setPage, totalPages, currentItems } = usePagination<TRegionAdmin>(

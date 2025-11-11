@@ -253,6 +253,18 @@ export const getStatusColor = (status: string): string => {
   }
   return "bg-[#ececeb] text-black";
 };
+export const getStatusVariant = (status: string) => {
+  const map = {
+    active: "black",
+    inactive: "white",
+    suspended: "outline",
+    completed: "destructive",
+    ongoing: "outline",
+    canceled: "white",
+  } as const;
+
+  return map[status?.toLowerCase() as keyof typeof map] || "default";
+};
 export function getAffiliate(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
@@ -313,11 +325,14 @@ export function getAffiliate(
       accessorKey: "status",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
       cell: ({ row }) => (
-        <div className="inset-shadow-2xs inset-shadow-[#EEEEEE]">
-          <Badge variant={"default"} className={`capitalize rounded ${getStatusColor(row.original.status)}`}>
-            {row.original.status}
-          </Badge>
-        </div>
+        <Badge variant={getStatusVariant(row.original.status)} className="capitalize">
+          {row.original.status}
+        </Badge>
+        // <div className="inset-shadow-2xs inset-shadow-[#EEEEEE]">
+        //   <Badge  className={`capitalize rounded ${getStatusColor(row.original.status)}`}>
+        //     {row.original.status}
+        //   </Badge>
+        // </div>
       ),
       enableSorting: false,
     },

@@ -1,9 +1,5 @@
 //@ts-nocheck
 
-import { AxiosError } from "axios";
-import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +10,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toastPromise } from "@/hooks/use-toast";
+import { AxiosError } from "axios";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 
 const BulkDeleteBtn = ({
@@ -68,12 +68,11 @@ const BulkDeleteBtn = ({
     >
       <DialogTrigger asChild>
         <Button
-          variant={"outline"}
-          className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
+          variant={"outlineBlack"}
           disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
         >
-          <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
-          <Trash2 size={14} className="text-[#959595] cursor-pointer" />
+          <span>Delete</span>
+          <Trash2 />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>

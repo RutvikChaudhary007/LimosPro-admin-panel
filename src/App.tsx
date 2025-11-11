@@ -43,7 +43,6 @@ const ViewUserPage = lazy(() => import("./pages/users/ViewUserPage"));
 const CreateFleetPage = lazy(() => import("./pages/fleet/formPage/CreateFleetPage"));
 const ViewFleetPage = lazy(() => import("./pages/fleet/ViewFleetPage"));
 const EditFleetPage = lazy(() => import("./pages/fleet/formPage/EditFleetPage"));
-// import NotificationPage from "./pages/notifications/NotificationPage";
 const ViewTripsPage = lazy(() => import("./pages/trips/ViewTripsPage"));
 const PaymentsPage = lazy(() => import("./pages/payments/PaymentsPage"));
 const ViewPaymentPage = lazy(() => import("./pages/payments/ViewPaymentPage"));
@@ -81,7 +80,6 @@ const CreateContent = lazy(() => import("./pages/contentManagment/formpage/Creat
 const EditContent = lazy(() => import("./pages/contentManagment/formpage/EditContent"));
 const CreateCrewMemberPage = lazy(() => import("./pages/crewMember/formpage/CreateCrewMemberPage"));
 const EditCrewMemberPage = lazy(() => import("./pages/crewMember/formpage/EditCrewMemberPage"));
-// import AdminProtectedRoute from "./utils/AdminProtectedRoute";
 const ProtectedRoute = lazy(() => import("./utils/ProtectedRoute"));
 const SeoPage = lazy(() => import("./pages/contentManagment/SeoPage"));
 const AuthLayout = lazy(() => import("./components/layouts/AuthLayout"));

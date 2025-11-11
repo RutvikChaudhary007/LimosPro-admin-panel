@@ -88,10 +88,11 @@ const tableData: TRegion[] = [
 ];
 
 function RegionDashboardPage() {
+  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
-  const [perPage, setPerPage] = useState("10");
+  const [perPage, setPerPage] = useState(optionDefaultValue);
   const [page, setCPage] = useState(1);
-  const [selected, setSelected] = useState("10");
+  const [selected, setSelected] = useState(optionDefaultValue);
   // const [data, setData] = useState<TRegion[]>(tableData);
   const { data, refetch, isFetching } = useFetchAllRegions({ limit: perPage });
   const { currentPage, setPage, totalPages, currentItems } = usePagination<TRegion>(
@@ -254,13 +255,9 @@ function RegionDashboardPage() {
             >
               <Button
                 variant={"outlineBlack"}
-                // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
-                  setData((prev) =>
-                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                    prev.filter((row, i) => !rowSelection[i]),
-                  );
+                  setData((prev) => prev.filter((row, i) => !rowSelection[i]));
                   console.log("data:", data);
                   console.log("rowSelection:", rowSelection);
                   setRowSelection({});
