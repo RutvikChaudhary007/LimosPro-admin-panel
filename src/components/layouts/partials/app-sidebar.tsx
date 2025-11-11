@@ -213,7 +213,7 @@ export function AppSidebar({
         return hasDynamicAccess(item.url, user?.role, user?.permissions) ? item : null; // Changed from [] to null
       })
       .filter(Boolean) as typeof data.navMain;
-  }, []);
+  }, [data.navMain]);
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header */}

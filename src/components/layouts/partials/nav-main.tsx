@@ -28,23 +28,19 @@ export function NavMain({ items }: { items: NavItem[] }) {
   const isCollapsed = state === "collapsed";
 
   // calculate active and child-active states
-  const navItems = useMemo(
-    () =>
-      items.map((item) => {
-        const isActive = location.pathname === item.url;
-        const isChildActive = item.items?.some((sub) => {
-          // console.log("1pathname:", location.pathname, "1sub url:", sub.url)
-          const pathname =
-            location.pathname.split("/").length > 3
-              ? location.pathname.split("/").slice(0, 3).join("/")
-              : location.pathname;
-          // console.log("pathname:", pathname.trim() === sub.url.trim())
-          return pathname.trim() === sub.url.trim();
-        });
-        return { ...item, isActive, isChildActive };
-      }),
-    [items],
-  );
+  const navItems = items.map((item) => {
+    const isActive = location.pathname === item.url;
+    const isChildActive = item.items?.some((sub) => {
+      // console.log("1pathname:", location.pathname, "1sub url:", sub.url)
+      const pathname =
+        location.pathname.split("/").length > 3
+          ? location.pathname.split("/").slice(0, 3).join("/")
+          : location.pathname;
+      // console.log("pathname:", pathname.trim() === sub.url.trim())
+      return pathname.trim() === sub.url.trim();
+    });
+    return { ...item, isActive, isChildActive };
+  });
 
   return (
     <SidebarGroup>
