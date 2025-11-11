@@ -1,7 +1,7 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./components/layouts/Layout";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -15,6 +15,7 @@ import FileUploadPage from "./pages/components/FileUploadPage";
 import { SelectOptionPage } from "./pages/components/SelectOptionPage";
 import { SwitchPage } from "./pages/components/SwitchPage";
 import TextFieldPage from "./pages/components/TextFieldPage";
+import NotFound from "./pages/notFound/NotFound";
 import { envValidationError } from "./utils/env";
 
 const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
@@ -118,7 +119,7 @@ function App() {
               {/* Protected wrapper */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
-                  <Route index element={<DashboardPage />} />
+                  <Route index element={<Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />} />
                   <Route path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
                   <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
                   <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />
@@ -203,6 +204,8 @@ function App() {
                 <Route path="switch" element={<SwitchPage />} />
                 <Route path="accordion" element={<AccordionPage />} />
               </Route>
+              {/* 404 Page  */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </ErrorBoundary>
         </QueryClientProvider>

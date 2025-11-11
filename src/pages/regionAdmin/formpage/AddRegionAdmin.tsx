@@ -1,18 +1,18 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-// import { Label } from "@/components/ui/label"
 import useFetchAllRegions from "@/api/region.api";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardBody, CardFooter, CardTitle } from "@/components/ui/card";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { SelectDropDown } from "@/components/ui/select";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -55,7 +55,6 @@ function AddRegionAdmin() {
       firstName: "",
       lastName: "",
       email: "",
-      // phone: "",
       region: "",
       password: "",
     },
@@ -81,146 +80,138 @@ function AddRegionAdmin() {
     }
   }
   return (
-    <>
-      <div className="px-10 py-6 h-[calc(100vh-146px)]">
-        <Link to={constant.ROUTING_URLS.REGION_ADMIN}>
-          <Button
-            variant="outline"
-            className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
-          >
-            <ArrowLeft /> Back
-          </Button>
-        </Link>
-        <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
-          <div className="">
-            <h2 className="font-medium text-xl text-black">Region Admins</h2>
-            <h4>
-              <span className="text-[#959595] w-14 h-4">Region Management</span>{" "}
-              <span className="text-[#959595] w-[116px] h-4">/ Admins</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Region Admin</span>
-            </h4>
-          </div>
-        </Header>
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8">
+      <PageHeader
+        title="Region Management"
+        breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Add Regional Admin" }]}
+        action={{
+          variant: "outlineBlack",
+          label: "Back",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.REGION_ADMIN,
+        }}
+      />
 
-        <div className="w-full  bg-[#FDFDFD] shadow-base-light flex flex-col gap-[34px] p-4 overflow-auto">
-          <div className="w-full text-xl font-semibold">Create Regional Admin</div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 grid-rows-4 gap-x-5">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-3 mb-[31px]">
-                    <FormLabel className="text-black text-sm">First Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                        placeholder="First Name"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+      <Card>
+        <CardBody>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardTitle>Create Regional Admin</CardTitle>
+
+            <div className="grid grid-cols-2 gap-4 my-4">
+              {/* First Name */}
+              <Field>
+                <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput {...field} id="firstName" type="text" placeholder="First Name" />
+                    </InputGroup>
+                  )}
+                />
+                <FieldDescription>Provide first name</FieldDescription>
+                {form.formState.errors.firstName && (
+                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.firstName.message}</p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-3 mb-[31px]">
-                    <FormLabel className="text-black text-sm">Last Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                        placeholder="Last Name"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              </Field>
+
+              {/* Last Name */}
+              <Field>
+                <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput {...field} id="lastName" type="text" placeholder="Last Name" />
+                    </InputGroup>
+                  )}
+                />
+                <FieldDescription>Provide last name</FieldDescription>
+                {form.formState.errors.lastName && (
+                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.lastName.message}</p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-3 mb-[31px]">
-                    <FormLabel className="text-black text-sm">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                        placeholder="Email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              </Field>
+
+              {/* Email */}
+              <Field>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput {...field} id="email" type="email" placeholder="Email" />
+                    </InputGroup>
+                  )}
+                />
+                <FieldDescription>Provide email address</FieldDescription>
+                {form.formState.errors.email && (
+                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.email.message}</p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-3 mb-[31px] ">
-                    <FormLabel className="text-black text-sm">Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                        placeholder="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              </Field>
+
+              {/* Password */}
+              <Field>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput {...field} id="password" type="password" placeholder="Password" />
+                    </InputGroup>
+                  )}
+                />
+                <FieldDescription>Provide login password</FieldDescription>
+                {form.formState.errors.password && (
+                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.password.message}</p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="region"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col gap-3 mb-[31px] col-span-2 col-start-1">
-                    <FormLabel className="text-black text-sm">Region</FormLabel>
-                    {regionFetching ? (
+              </Field>
+
+              {/* Region Select */}
+              <Field>
+                <FieldLabel htmlFor="region">Region</FieldLabel>
+                <Controller
+                  control={form.control}
+                  name="region"
+                  render={({ field }) => {
+                    const options =
+                      regionData?.regions?.map((r: { id: string; regionName: string }) => ({
+                        value: r.id,
+                        label: r.regionName,
+                      })) || [];
+
+                    return regionFetching ? (
                       <Spinner />
                     ) : (
-                      <Select onValueChange={field.onChange}>
-                        <FormControl className="w-full">
-                          <SelectTrigger className="min-w-full">
-                            <SelectValue placeholder="Select a verified email to display" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="col-span-2 col-start-1">
-                          {regionData &&
-                            regionData?.regions?.map((region: { id: string; regionName: string }) => (
-                              <SelectItem key={region?.id} value={region?.id}>
-                                {region.regionName}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <SelectDropDown
+                        placeholder="Select Region"
+                        items={options}
+                        value={field.value}
+                        setSelectedItem={field.onChange}
+                      />
+                    );
+                  }}
+                />
 
-              <Button
-                disabled={form.formState.isSubmitting}
-                type="submit"
-                variant={"outline"}
-                className="text-[#515151] rounded text-center px-2.5 py-6 bg-[#E4E4E4] text-sm font-medium w-[124px] h-[39px] border-none cursor-pointer col-start1 select-none"
-              >
+                <FieldDescription>Select assigned region</FieldDescription>
+                {form.formState.errors.region && (
+                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.region.message}</p>
+                )}
+              </Field>
+            </div>
+
+            <CardFooter>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Saving..." : "Save Details"}
               </Button>
-            </form>
-          </Form>
-        </div>
-      </div>
-    </>
+            </CardFooter>
+          </form>
+        </CardBody>
+      </Card>
+    </div>
   );
 }
 
