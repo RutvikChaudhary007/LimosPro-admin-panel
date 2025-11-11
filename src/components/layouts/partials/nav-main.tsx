@@ -1,4 +1,5 @@
-"use client";
+import { ChevronRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import {
@@ -11,9 +12,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useMemo } from "react";
 
 interface NavItem {
   title: string;
@@ -26,32 +25,32 @@ interface NavItem {
 export function NavMain({ items }: { items: NavItem[] }) {
   const location = useLocation();
   const { state } = useSidebar();
-  const [prevActivePath, setPrevActivePath] = useState("");
-  const [isChildActiveGlobal, setIsChildActiveGlobal] = useState(false);
   const isCollapsed = state === "collapsed";
 
   // calculate active and child-active states
-  const navItems = items.map((item) => {
-    const isActive = location.pathname === item.url;
-    const isChildActive = item.items?.some((sub) => location.pathname === sub.url);
-    if (isChildActiveGlobal && location.pathname.startsWith(prevActivePath)) {
-      return { ...item, isActive, isChildActive: true };
-    }
-    if (isChildActive) {
-      setIsChildActiveGlobal(isChildActive);
-      setPrevActivePath(location.pathname);
-    }
-    return { ...item, isActive, isChildActive };
-  });
+  const navItems = useMemo(
+    () =>
+      items.map((item) => {
+        const isActive = location.pathname === item.url;
+        const isChildActive = item.items?.some((sub) => {
+          // console.log("1pathname:", location.pathname, "1sub url:", sub.url)
+          const pathname =
+            location.pathname.split("/").length > 3
+              ? location.pathname.split("/").slice(0, 3).join("/")
+              : location.pathname;
+          // console.log("pathname:", pathname.trim() === sub.url.trim())
+          return pathname.trim() === sub.url.trim();
+        });
+        return { ...item, isActive, isChildActive };
+      }),
+    [items],
+  );
 
   return (
     <SidebarGroup>
       <SidebarMenu>
         {navItems.map((item) => {
           const hasChildren = item.items && item.items.length > 0;
-          const isSubActive = prevActivePath
-            ? item.items?.some((sub) => prevActivePath === sub.url)
-            : item.items?.some((sub) => location.pathname === sub.url);
 
           // 🌟 collapsed → show HoverCard instead of Collapsible
           if (hasChildren && isCollapsed) {
@@ -59,7 +58,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
               <SidebarMenuItem key={item.title}>
                 <HoverCard openDelay={100} closeDelay={100}>
                   <HoverCardTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} data-active={item.isActive} data-child-active={isSubActive}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      data-active={item.isActive}
+                      data-child-active={item.isChildActive}
+                    >
                       {item.icon && <item.icon />}
                     </SidebarMenuButton>
                   </HoverCardTrigger>
@@ -71,7 +74,12 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   >
                     <SidebarMenuSub className="mt-0">
                       {(item.items || []).map((subItem) => {
-                        const isSubActive = prevActivePath === subItem.url;
+                        const pathname =
+                          location?.pathname?.split("/").length > 3
+                            ? location?.pathname?.split("/")?.slice(0, 3)?.join("/")
+                            : location?.pathname;
+
+                        const isSubActive = pathname?.trim() === subItem?.url?.trim();
                         return (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton asChild data-active={isSubActive}>
@@ -95,12 +103,16 @@ export function NavMain({ items }: { items: NavItem[] }) {
               <Collapsible
                 key={item.title}
                 asChild
-                defaultOpen={item.isActive || isSubActive}
+                defaultOpen={item.isActive || item.isChildActive}
                 className="group/collapsible"
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} data-active={item.isActive} data-child-active={isSubActive}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      data-active={item.isActive}
+                      data-child-active={item.isChildActive}
+                    >
                       {item.icon && <item.icon />}
                       <span className="truncate">{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -110,7 +122,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {(item.items || []).map((subItem) => {
-                        const isSubActive = prevActivePath === subItem.url;
+                        const pathname =
+                          location?.pathname?.split("/")?.length > 3
+                            ? location?.pathname?.split("/")?.slice(0, 3)?.join("/")
+                            : location?.pathname;
+                        const isSubActive = pathname?.trim() === subItem?.url?.trim();
                         return (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton asChild data-active={isSubActive}>
