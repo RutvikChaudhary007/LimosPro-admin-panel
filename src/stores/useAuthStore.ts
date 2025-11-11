@@ -9,7 +9,7 @@ type User = {
   lastName: string;
   email: string;
   role?: string;
-  permissions: string;
+  permissions: string[];
   refreshToken: string;
 };
 

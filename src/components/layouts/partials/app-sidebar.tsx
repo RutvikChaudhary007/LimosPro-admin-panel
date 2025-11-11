@@ -1,6 +1,5 @@
 // import IconAffiliate from "@/assets/Icons/affiliate.svg?react"
 
-import IconBooking from "@/assets/Icons/booking.svg?react";
 import {
   IconAffiliate,
   IconCar,
@@ -20,7 +19,9 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import type * as React from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
+import IconBooking from "@/assets/Icons/booking.svg?react";
 // import IconChauffeur from "@/assets/Icons/chauffeur.svg?react"
 // import IconCMS from "@/assets/Icons/cms.svg?react"
 // import IconContactRequests from "@/assets/Icons/contact-requests.svg?react"
@@ -53,6 +54,136 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { constant } from "@/lib/constant";
+import { hasDynamicAccess } from "@/utils/Helper";
+import { useUserStore } from "@/stores/useAuthStore";
+
+const data = {
+  navMain: [
+    {
+      title: "Dashboard",
+      url: constant.ROUTING_URLS.DASHBOARD,
+      icon: IconHome,
+      isActive: true,
+    },
+    {
+      title: "Region Management",
+      url: "#",
+      icon: IconRegion,
+      items: [
+        { title: "Regions", url: constant.ROUTING_URLS.REGION },
+        { title: "Region Admins", url: constant.ROUTING_URLS.REGION_ADMIN },
+      ],
+    },
+    {
+      title: "Affiliate",
+      url: constant.ROUTING_URLS.AFFILIATE,
+      icon: IconAffiliate,
+    },
+    {
+      title: "Chauffeur",
+      url: constant.ROUTING_URLS.CHAUFFEUR,
+      icon: IconCar,
+    },
+    {
+      title: "Bookings",
+      url: constant.ROUTING_URLS.BOOKING,
+      icon: IconBooking,
+    },
+    {
+      title: "Users",
+      url: constant.ROUTING_URLS.USERS,
+      icon: IconUsers,
+    },
+    {
+      title: "Fleets",
+      url: constant.ROUTING_URLS.FLEETS,
+      icon: IconTruck,
+    },
+    {
+      title: "Trips",
+      url: constant.ROUTING_URLS.TRIPS,
+      icon: IconRoute,
+    },
+    {
+      title: "Payments",
+      url: constant.ROUTING_URLS.PAYMENTS,
+      icon: IconPayments,
+    },
+    {
+      title: "Reports",
+      url: constant.ROUTING_URLS.REPORTS,
+      icon: IconReport,
+    },
+    {
+      title: "Content Management",
+      url: "#",
+      icon: IconChartBar,
+      items: [
+        { title: "Blogs", url: constant.ROUTING_URLS.BLOG_POSTS },
+        {
+          title: "Pages",
+          url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
+        },
+        { title: "Seo", url: constant.ROUTING_URLS.SEO },
+      ],
+    },
+    {
+      title: "Crew Members",
+      url: constant.ROUTING_URLS.CREW_MEMBERS,
+      icon: IconCrew,
+    },
+    {
+      title: "Staff Members",
+      url: constant.ROUTING_URLS.STAFF_MEMBERS,
+      icon: IconUser,
+    },
+    {
+      title: "Contact Requests",
+      url: constant.ROUTING_URLS.CONTACT_REQUESTS,
+      icon: IconMail,
+    },
+    {
+      title: "Testimonials",
+      url: constant.ROUTING_URLS.TESTIMONIALS,
+      icon: IconStar,
+    },
+    {
+      title: "News",
+      url: constant.ROUTING_URLS.NEWS,
+      icon: IconNews,
+    },
+    {
+      title: "FAQs",
+      url: constant.ROUTING_URLS.FAQ,
+      icon: IconHelp,
+    },
+    {
+      title: "IP White List",
+      url: constant.ROUTING_URLS.IP_WHITE_LIST,
+      icon: IconShield,
+    },
+    {
+      title: "Our Partners",
+      url: constant.ROUTING_URLS.OUR_PARTNERS,
+      icon: IconHeartHandshake,
+    },
+    {
+      title: "Settings",
+      url: constant.ROUTING_URLS.SETTINGS,
+      icon: IconSettings,
+    },
+  ],
+  documents: [
+    { name: "Data Library", url: "#", icon: IconDatabase },
+    { name: "Reports", url: "#", icon: IconReport },
+    { name: "Word Assistant", url: "#", icon: IconFileWord },
+  ],
+  navSecondary: [
+    { title: "Settings", url: "#", icon: IconSettings },
+    { title: "Get Help", url: "#", icon: IconHelp },
+    { title: "Search", url: "#", icon: IconSearch },
+  ],
+};
 
 export function AppSidebar({
   showDocuments = false,
@@ -62,132 +193,27 @@ export function AppSidebar({
   showDocuments?: boolean;
   showSecondary?: boolean;
 }) {
-  const data = {
-    navMain: [
-      {
-        title: "Dashboard",
-        url: constant.ROUTING_URLS.DASHBOARD,
-        icon: IconHome,
-      },
-      {
-        title: "Region Management",
-        url: "#",
-        icon: IconRegion,
-        items: [
-          { title: "Regions", url: constant.ROUTING_URLS.REGION },
-          { title: "Regional Admins", url: constant.ROUTING_URLS.REGION_ADMIN },
-        ],
-      },
-      {
-        title: "Affiliate",
-        url: constant.ROUTING_URLS.AFFILIATE,
-        icon: IconAffiliate,
-      },
-      {
-        title: "Chauffeur",
-        url: constant.ROUTING_URLS.CHAUFFEUR,
-        icon: IconCar,
-      },
-      {
-        title: "Bookings",
-        url: constant.ROUTING_URLS.BOOKING,
-        icon: IconBooking,
-      },
-      {
-        title: "Users",
-        url: constant.ROUTING_URLS.USERS,
-        icon: IconUsers,
-      },
-      {
-        title: "Fleets",
-        url: constant.ROUTING_URLS.FLEETS,
-        icon: IconTruck,
-      },
-      {
-        title: "Trips",
-        url: constant.ROUTING_URLS.TRIPS,
-        icon: IconRoute,
-      },
-      {
-        title: "Payments",
-        url: constant.ROUTING_URLS.PAYMENTS,
-        icon: IconPayments,
-      },
-      {
-        title: "Reports",
-        url: constant.ROUTING_URLS.REPORTS,
-        icon: IconReport,
-      },
-      {
-        title: "Content Management",
-        url: "#",
-        icon: IconChartBar,
-        items: [
-          { title: "Blogs", url: constant.ROUTING_URLS.BLOG_POSTS },
-          {
-            title: "Pages",
-            url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
-          },
-          { title: "Seo", url: constant.ROUTING_URLS.SEO },
-        ],
-      },
-      {
-        title: "Crew Members",
-        url: constant.ROUTING_URLS.CREW_MEMBERS,
-        icon: IconCrew,
-      },
-      {
-        title: "Staff Members",
-        url: constant.ROUTING_URLS.STAFF_MEMBERS,
-        icon: IconUser,
-      },
-      {
-        title: "Contact Requests",
-        url: constant.ROUTING_URLS.CONTACT_REQUESTS,
-        icon: IconMail,
-      },
-      {
-        title: "Testimonials",
-        url: constant.ROUTING_URLS.TESTIMONIALS,
-        icon: IconStar,
-      },
-      {
-        title: "News",
-        url: constant.ROUTING_URLS.NEWS,
-        icon: IconNews,
-      },
-      {
-        title: "FAQs",
-        url: constant.ROUTING_URLS.FAQ,
-        icon: IconHelp,
-      },
-      {
-        title: "IP White List",
-        url: constant.ROUTING_URLS.IP_WHITE_LIST,
-        icon: IconShield,
-      },
-      {
-        title: "Our Partners",
-        url: constant.ROUTING_URLS.OUR_PARTNERS,
-        icon: IconHeartHandshake,
-      },
-      {
-        title: "Settings",
-        url: constant.ROUTING_URLS.SETTINGS,
-        icon: IconSettings,
-      },
-    ],
-    documents: [
-      { name: "Data Library", url: "#", icon: IconDatabase },
-      { name: "Reports", url: "#", icon: IconReport },
-      { name: "Word Assistant", url: "#", icon: IconFileWord },
-    ],
-    navSecondary: [
-      { title: "Settings", url: "#", icon: IconSettings },
-      { title: "Get Help", url: "#", icon: IconHelp },
-      { title: "Search", url: "#", icon: IconSearch },
-    ],
-  };
+  const { user } = useUserStore();
+  const filteredNavigation = useMemo(() => {
+    return data.navMain
+      .map((item) => {
+        // if item has children → filter children
+        if (item.items) {
+          const allowedChildren = item.items.filter((child) =>
+            hasDynamicAccess(child.url, user?.role, user?.permissions),
+          );
+          // Only keep parent if parent has a route OR children are allowed
+          if (hasDynamicAccess(item.url, user?.role, user?.permissions) || allowedChildren.length > 0) {
+            return { ...item, items: allowedChildren };
+          }
+          return null; // Changed from [] to null
+        }
+
+        // if no children → just check the parent
+        return hasDynamicAccess(item.url, user?.role, user?.permissions) ? item : null; // Changed from [] to null
+      })
+      .filter(Boolean) as typeof data.navMain;
+  }, []);
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header */}
@@ -217,7 +243,7 @@ export function AppSidebar({
 
       {/* Main Content */}
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={filteredNavigation} />
         {showDocuments && <NavDocuments items={data.documents} />}
         {showSecondary && <NavSecondary items={data.navSecondary} className="mt-auto" />}
       </SidebarContent>
