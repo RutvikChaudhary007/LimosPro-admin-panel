@@ -1,12 +1,8 @@
 // @ts-nocheck
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Edit, Eye, Mail, Phone, Reply, Star, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,6 +11,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Edit, Eye, Mail, Phone, Reply, Star, Trash2 } from "lucide-react";
 import Icons from "../common/Icons";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";
@@ -118,19 +117,11 @@ export function getRegionColumns(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button variant="outlineNavBtnBlack" size="xl" spacing="lg" onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
-          <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Trash2 className="text-[#5A5A5A]" />
+          <Button variant="outlineNavBtnBlack" size="xl" spacing="lg" onClick={() => onDelete(row.original.id)}>
+            <Trash2 />
           </Button>
         </div>
       ),
@@ -188,17 +179,13 @@ export function getRegionAdminColumns(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -339,24 +326,16 @@ export function getAffiliate(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -515,32 +494,23 @@ export function getChauffeur(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Edit />
           </Button>
 
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            variant="outlineNavBtnBlack" size="xl" spacing="lg"
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -650,24 +620,16 @@ export function getUsers(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -691,10 +653,9 @@ export function getUsers(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            variant="outlineNavBtnBlack" size="xl" spacing="lg"
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -796,8 +757,8 @@ export function getBooking(onView: (id: string) => void): ColumnDef<TBooking>[] 
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button type="button" variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-            <Mail className="text-[#5A5A5A]" />
+          <Button type="button" variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Mail />
           </Button>
           <Button
             type="button"
@@ -807,17 +768,14 @@ export function getBooking(onView: (id: string) => void): ColumnDef<TBooking>[] 
                 window.location.href = `tel:${phone}`;
               }
             }}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
           >
-            <Phone className="text-[#5A5A5A]" />
+            <Phone />
           </Button>
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
         </div>
       ),
@@ -900,24 +858,16 @@ export function getFleets(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -941,10 +891,9 @@ export function getFleets(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            variant="outlineNavBtnBlack" size="xl" spacing="lg"
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -1024,19 +973,15 @@ export function getTrips(onView: (id: string) => void, onMap: (id: string) => vo
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
           <Button
             onClick={() => onMap(row.original.id)}
             variant="outline"
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px] p-0"
           >
-            <Icons path="/Location.svg" alt="map icon" className="text-[#5A5A5A]" />
+            <Icons path="/Location.svg" alt="map icon" />
             {/* <Icons path="/mapPin.svg" alt="map icon" className="text-[#5A5A5A] w-4 h-4" /> */}
           </Button>
         </div>
@@ -1167,12 +1112,8 @@ export function getPayments(onView: (id: string) => void, onMap: (id: string) =>
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
           <Button
             onClick={() => onMap(row.original.id)}
@@ -1180,7 +1121,7 @@ export function getPayments(onView: (id: string) => void, onMap: (id: string) =>
             className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px] p-0"
             // disabled={true}
           >
-            <Icons path="/card.svg" alt="card icon" className="text-[#5A5A5A]" />
+            <Icons path="/card.svg" alt="card icon" />
             {/* <Icons path="/mapPin.svg" alt="map icon" className="text-[#5A5A5A] w-4 h-4" /> */}
           </Button>
         </div>
@@ -1252,12 +1193,8 @@ export function getRefund(onView: (id: string) => void): ColumnDef<TPayments>[] 
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Eye />
           </Button>
         </div>
       ),
@@ -1331,12 +1268,8 @@ export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefun
       header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)}>
+            <Eye />
           </Button>
         </div>
       ),
@@ -1347,10 +1280,7 @@ export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefun
       header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Status" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center ">
-          <Button
-            variant="secondary"
-            className={cn("bg-[#F1F1F1] rounded w-[103px] h-[33px]", getStatusColor(row.original.Status))}
-          >
+          <Button className={cn("bg-[#F1F1F1] rounded w-[103px] h-[33px]", getStatusColor(row.original.Status))}>
             {row.original.Status}
           </Button>
         </div>
@@ -1415,24 +1345,20 @@ export function getCrewMember(onEdit: (id: string) => void, onDelete: (id: strin
       header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -1515,15 +1441,7 @@ export function getStaffMember(
     {
       id: "access",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-      cell: ({ row }) => (
-        <Button
-          variant="secondary"
-          onClick={() => onAccess(row.original.id)}
-          className="cursor-pointer w-[108px] h-[33px] text-sm"
-        >
-          Manage Access
-        </Button>
-      ),
+      cell: ({ row }) => <Button onClick={() => onAccess(row.original.id)}>Manage Access</Button>,
       enableSorting: false,
     },
     {
@@ -1531,17 +1449,13 @@ export function getStaffMember(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -1565,10 +1479,10 @@ export function getStaffMember(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -1635,19 +1549,11 @@ export function getContactRequest(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onView(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Eye className="text-[#5A5A5A]" />
+          <Button onClick={() => onView(row.original.id)}>
+            <Eye />
           </Button>
-          <Button
-            onClick={() => onEmail(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Reply className="text-[#5A5A5A]" />
+          <Button onClick={() => onEmail(row.original.id)}>
+            <Reply />
           </Button>
         </div>
       ),
@@ -1715,17 +1621,13 @@ export function getTestimonial(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -1749,10 +1651,10 @@ export function getTestimonial(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -1817,17 +1719,13 @@ export function getOurPartner(onEdit: (id: string) => void, onDelete: (id: strin
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -1851,10 +1749,10 @@ export function getOurPartner(onEdit: (id: string) => void, onDelete: (id: strin
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -1905,18 +1803,14 @@ export function getNews(onEdit: (id: string) => void, onDelete: (id: string) => 
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -1940,10 +1834,10 @@ export function getNews(onEdit: (id: string) => void, onDelete: (id: string) => 
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -2003,19 +1897,11 @@ export function getSettings(onEdit: (id: string) => void, onDelete: (id: string)
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
-          <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Trash2 className="text-[#5A5A5A]" />
+          <Button onClick={() => onDelete(row.original.id)}>
+            <Trash2 />
           </Button>
         </div>
       ),
@@ -2075,17 +1961,13 @@ export function getIpWhiteList(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -2109,10 +1991,10 @@ export function getIpWhiteList(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -2169,17 +2051,13 @@ export function getFaqs(onEdit: (id: string) => void, onDelete: (id: string) => 
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -2203,10 +2081,10 @@ export function getFaqs(onEdit: (id: string) => void, onDelete: (id: string) => 
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -2276,17 +2154,13 @@ export function getChauffeurAvailablility(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -2310,10 +2184,8 @@ export function getChauffeurAvailablility(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Trash2 className="text-[#5A5A5A]" />
+           >
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -2359,17 +2231,13 @@ export function getHomeContent(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -2393,10 +2261,10 @@ export function getHomeContent(
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -2463,17 +2331,13 @@ export function getContent(onEdit: (id: string) => void, onDelete: (id: string) 
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
-          >
-            <Edit className="text-[#5A5A5A]" />
+          <Button onClick={() => onEdit(row.original.id)}>
+            <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]">
-                <Trash2 className="text-[#5A5A5A]" />
+              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                <Trash2 />
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
@@ -2497,10 +2361,10 @@ export function getContent(onEdit: (id: string) => void, onDelete: (id: string) 
           </Dialog>
           {/* <Button
             onClick={() => onDelete(row.original.id)}
-            variant="secondary"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]"
+            
+            
           >
-            <Trash2 className="text-[#5A5A5A]" />
+            <Trash2  />
           </Button> */}
         </div>
       ),
@@ -2568,7 +2432,7 @@ export function getContent(onEdit: (id: string) => void, onDelete: (id: string) 
 //     ),
 //     cell: ({ row }) => {
 //         const {id} = row.original;
-//         return (<div className=""><Button variant={"outline"} className="cursor-pointer w-[108px] h-[33px] text-sm">Manage Access</Button></div>);
+//         return (<div className=""><Button variant={"outline"} >Manage Access</Button></div>);
 //     },
 //     enableSorting: false,
 //     enableHiding: false,

@@ -209,22 +209,29 @@ function SelectScrollDownButton({
   );
 }
 
-interface SelectInputItems {
+interface SelectDropDownItems {
   value: string;
-  label: string;
+  label: string | number;
   disabled?: boolean;
 }
 
-interface SelectInputProps {
+interface SelectDropDownProps {
   variant?: "primary" | "secondary" | "dark";
   classname?: string;
-  placeholder?: string;
-  items: SelectInputItems[];
+  placeholder?: string | number;
+  items: SelectDropDownItems[];
   setSelectedItem?: (value: string) => void;
   value?: string;
 }
 
-function SelectInput({ variant = "primary", classname, placeholder, items, setSelectedItem, value }: SelectInputProps) {
+function SelectDropDown({
+  variant = "primary",
+  classname,
+  placeholder,
+  items,
+  setSelectedItem,
+  value,
+}: SelectDropDownProps) {
   return (
     <Select value={value} onValueChange={setSelectedItem} variant={variant}>
       <SelectTrigger className={classname} data-has-value={value ? "true" : undefined}>
@@ -246,8 +253,8 @@ function SelectInput({ variant = "primary", classname, placeholder, items, setSe
 export {
   Select,
   SelectContent,
+  SelectDropDown,
   SelectGroup,
-  SelectInput,
   SelectItem,
   SelectLabel,
   SelectScrollDownButton,

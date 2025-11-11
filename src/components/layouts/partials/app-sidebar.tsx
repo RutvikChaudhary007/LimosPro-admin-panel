@@ -1,5 +1,6 @@
 // import IconAffiliate from "@/assets/Icons/affiliate.svg?react"
 
+import IconBooking from "@/assets/Icons/booking.svg?react";
 import {
   IconAffiliate,
   IconCar,
@@ -20,7 +21,6 @@ import {
 } from "@tabler/icons-react";
 import type * as React from "react";
 import { Link } from "react-router-dom";
-import IconBooking from "@/assets/Icons/booking.svg?react";
 // import IconChauffeur from "@/assets/Icons/chauffeur.svg?react"
 // import IconCMS from "@/assets/Icons/cms.svg?react"
 // import IconContactRequests from "@/assets/Icons/contact-requests.svg?react"
@@ -68,7 +68,6 @@ export function AppSidebar({
         title: "Dashboard",
         url: constant.ROUTING_URLS.DASHBOARD,
         icon: IconHome,
-        isActive: true,
       },
       {
         title: "Region Management",
@@ -76,7 +75,7 @@ export function AppSidebar({
         icon: IconRegion,
         items: [
           { title: "Regions", url: constant.ROUTING_URLS.REGION },
-          { title: "Region Admins", url: constant.ROUTING_URLS.REGION_ADMIN },
+          { title: "Regional Admins", url: constant.ROUTING_URLS.REGION_ADMIN },
         ],
       },
       {

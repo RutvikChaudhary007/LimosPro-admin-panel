@@ -2,7 +2,7 @@
 
 import useFetchAllRegions from "@/api/region.api";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getRegionColumns, type TRegion } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -17,22 +17,21 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { SelectInput } from "@/components/ui/select";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
+import { Plus, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const showOptions = [
-  { value: 10, label: "Show 10" },
-  { value: 20, label: "Show 20" },
-  { value: 30, label: "Show 30" },
+  { value: "10", label: "Show 10" },
+  { value: "20", label: "Show 20" },
+  { value: "30", label: "Show 30" },
 ];
 
 const tableData: TRegion[] = [
@@ -90,9 +89,9 @@ const tableData: TRegion[] = [
 
 function RegionDashboardPage() {
   const navigate = useNavigate();
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState("10");
   const [page, setCPage] = useState(1);
-  const [selected, setSelected] = useState(10);
+  const [selected, setSelected] = useState("10");
   // const [data, setData] = useState<TRegion[]>(tableData);
   const { data, refetch, isFetching } = useFetchAllRegions({ limit: perPage });
   const { currentPage, setPage, totalPages, currentItems } = usePagination<TRegion>(
@@ -107,7 +106,7 @@ function RegionDashboardPage() {
   }, [currentPage]);
 
   useEffect(() => {
-    setPerPage(selected.value);
+    setPerPage(Number(selected));
   }, [selected]);
 
   const handleEdit = (id: string) => {
@@ -229,52 +228,19 @@ function RegionDashboardPage() {
     <>
       <PageTitle title={generatePageTitle("Region")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 bg-[#FDFDFD] shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Region Management</h2>
-              <h4>
-                <span className="text-[#959595]">LIMOSPRO</span>{" "}
-                <span className="text-[#959595]">/ Region Management</span>{" "}
-                <span className="text-xs text-[#3A3A3A]">/ Regions</span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_REGION}>
-              {" "}
-              <Button>
-                <Plus />
-                <span>Add Regions</span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="Region Management"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Regions" }]}
+          action={{
+            label: "Add Regions",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_REGION,
+          }}
+        />
 
         <div className="flex justify-between">
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>
-                {selected.label} <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-              align="start"
-            >
-              <DropdownMenuGroup>
-                {showOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    className="flex items-center justify-between hover:bg-[#F1F1F1]"
-                    onClick={() => setSelected(option)}
-                  >
-                    {option.label} <ChevronDown className="ml-2" />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-          <SelectInput placeholder={selected} items={showOptions} value={selected} setSelectedItem={setSelected} />
-          <div className="w-[369px] flex items-center justify-between gap-3">
+          <SelectDropDown placeholder={selected} items={showOptions} value={selected} setSelectedItem={setSelected} />
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${
                 Object.keys(rowSelection).filter(

@@ -18,9 +18,7 @@ const AccessCell = ({ row, onAccess }: { row: any; onAccess: (id: string, permis
   return (
     <Dialog modal={false}>
       <DialogTrigger asChild>
-        <Button variant="secondary" className="cursor-pointer w-[108px] h-[33px] text-sm">
-          Manage Access
-        </Button>
+        <Button variant="outlinePrimary">Manage Access</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">

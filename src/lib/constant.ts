@@ -1,5 +1,14 @@
 export const constant = {
   ROUTING_URLS: {
+    // Region Management URLs
+    REGION: "/region-management/regions",
+    CREATE_REGION: "/region-management/regions/create",
+    EDIT_REGION: "/region-management/regions/edit/:id",
+
+    // Regional Admin Management URLs
+    REGION_ADMIN: "/region-management/regional-admins",
+    CREATE_REGION_ADMIN: "/region-management/regional-admins/create",
+    EDIT_REGION_ADMIN: "/region-management/regional-admins/edit/:id",
     // Affiliate URLS
     AFFILIATE: "/affiliate",
     CREATE_AFFILIATE: "/create-affiliate",
@@ -38,14 +47,6 @@ export const constant = {
     CREATE_OUR_PARTNERS: "/our-partners/create",
     EDIT_OUR_PARTNERS: "/our-partners/edit/:id",
     SETTINGS: "/settings",
-    // Region Management URLS
-    REGION: "/region-management/regions",
-    CREATE_REGION: "/region-management/region/add",
-    EDIT_REGION: "/region-management/region/edit/:id",
-    // Region Admin Management URLS
-    REGION_ADMIN: "/region-management/regions/admins",
-    CREATE_REGION_ADMIN: "/region-management/admin/create-region-admin",
-    EDIT_REGION_ADMIN: "/region-management/admin/edit-region-admin/:id",
     // Chauffeur URLS
     CHAUFFEUR: "/chauffeur",
     CREATE_CHAUFFEUR: "/chauffeur/create",

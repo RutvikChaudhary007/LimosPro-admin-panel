@@ -118,7 +118,8 @@ function App() {
               {/* Protected wrapper */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<Layout />}>
-                  <Route index path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
+                  <Route index element={<DashboardPage />} />
+                  <Route path={constant.ROUTING_URLS.DASHBOARD} element={<DashboardPage />} />
                   <Route path={constant.ROUTING_URLS.REGION} element={<RegionDashboardPage />} />
                   <Route path={constant.ROUTING_URLS.CREATE_REGION} element={<AddRegionPage />} />
                   <Route path={constant.ROUTING_URLS.EDIT_REGION} element={<EditRegionPage />} />

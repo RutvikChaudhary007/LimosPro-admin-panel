@@ -46,14 +46,17 @@ export function DataTable<TData, TValue>({
     if (onTableReady) onTableReady(table);
   }, [table, onTableReady]);
   return (
-    <div className="rounded border border-[#F1F1F1] py-4 inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light overflow-auto">
+    <div className="rounded border border-base-light-gray shadow-base-light overflow-auto">
       <Table className="">
-        <TableHeader className="bg-[#F5F5F5] ">
+        <TableHeader className="bg-base-light-gray">
           {table?.getHeaderGroups()?.map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead className="px-4" key={header.id}>
+                  <TableHead
+                    className="py-4 font-montserrat font-semibold text-lg text-base-black leading-[100%] tracking-normal"
+                    key={header.id}
+                  >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 );
@@ -66,7 +69,10 @@ export function DataTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell className="px-4" key={cell.id}>
+                  <TableCell
+                    className="font-quicksand font-medium text-[16px] text-base-black leading-[100%] tracking-normal"
+                    key={cell.id}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -74,7 +80,7 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 px-4 text-center">
+              <TableCell colSpan={columns.length} className="text-center">
                 No results.
               </TableCell>
             </TableRow>

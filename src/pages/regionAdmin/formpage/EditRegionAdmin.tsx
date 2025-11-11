@@ -82,7 +82,7 @@ const EditRegionAdmin = () => {
           </div>
         </Header>
 
-        <div className="w-full h-[461px] bg-[#FDFDFD] shadow-base-light flex flex-col gap-[34px] p-4 overflow-auto">
+        <div className="w-full bg-[#FDFDFD] shadow-base-light flex flex-col gap-[34px] p-4 overflow-auto">
           <div className="w-full text-xl font-semibold">Edit Regional Admin</div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 grid-rows-4 gap-x-5">

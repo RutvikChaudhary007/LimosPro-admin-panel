@@ -1,4 +1,4 @@
-import { SelectInput } from "@/components/ui/select";
+import { SelectDropDown } from "@/components/ui/select";
 import { useState } from "react";
 
 export function SelectOptionPage() {
@@ -9,7 +9,7 @@ export function SelectOptionPage() {
   return (
     <div className="p-6 h-screen space-y-2">
       {/* First Select */}
-      <SelectInput
+      <SelectDropDown
         placeholder="Select a country"
         classname="w-full max-w-[277px]"
         items={[
@@ -24,7 +24,7 @@ export function SelectOptionPage() {
       />
 
       {/* Second Select */}
-      <SelectInput
+      <SelectDropDown
         placeholder="Select a country"
         variant="secondary"
         classname="w-full max-w-[277px]"
@@ -39,7 +39,7 @@ export function SelectOptionPage() {
         setSelectedItem={setSecondValue}
       />
       {/* Third Select */}
-      <SelectInput
+      <SelectDropDown
         placeholder="Select a country"
         variant="dark"
         classname="w-full max-w-[277px]"
