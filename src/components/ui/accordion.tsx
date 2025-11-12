@@ -1,8 +1,8 @@
-import { cn } from "@/lib/utils";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 // CVA definitions
 const accordionRoot = cva("shadow-base-light rounded bg-base-white overflow-hidden", {

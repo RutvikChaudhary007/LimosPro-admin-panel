@@ -1,6 +1,6 @@
+import type * as React from "react";
 import IconTrendingUp from "@/assets/Icons/ic-arrow-trending-up.svg?react";
 import { cn } from "@/lib/utils";
-import type * as React from "react";
 import { Badge } from "./badge";
 
 function Card({

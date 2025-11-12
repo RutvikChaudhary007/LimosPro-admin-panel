@@ -1,5 +1,9 @@
 //@ts-nocheck
 
+import { Plus, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchAllRegions from "@/api/region.api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -23,10 +27,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const showOptions = [
   { value: "10", label: "Show 10" },
@@ -257,7 +257,7 @@ function RegionDashboardPage() {
                 variant={"outlineBlack"}
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
-                  setData((prev) => prev.filter((row, i) => !rowSelection[i]));
+                  setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                   console.log("data:", data);
                   console.log("rowSelection:", rowSelection);
                   setRowSelection({});

@@ -5,12 +5,12 @@ import { AlertCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 // import { Toaster} from "@/hooks/use-toast";
 import type { ControllerRenderProps } from "react-hook-form";
+import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import { FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { env } from "@/utils/env";
 import { initializeGooglePlacesAutocomplete } from "@/utils/googleMaps";
-import { toast } from "sonner";
 
 interface AddressFields {
   address: string;
@@ -24,17 +24,24 @@ interface AddressFields {
   };
 }
 
-interface AddressInputProps {
+interface AddressInputProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
-  field: ControllerRenderProps;
+  field: ControllerRenderProps<T, Path<T>>;
   onChange: (value: string) => void;
-  onUpdate: (address: object) => void;
+  onUpdate: (update: IAddressObj) => void;
   onValidityChange: (isValid: boolean) => void;
 }
 
 const libraries = ["places", "geocoding"];
 
-const AddressInput = ({ value, onChange, onUpdate, onValidityChange, field, ...props }: AddressInputProps) => {
+const AddressInput = <T extends FieldValues>({
+  value,
+  onChange,
+  onUpdate,
+  onValidityChange,
+  field,
+  ...props
+}: AddressInputProps<T>) => {
   const addressInputRef = useRef<HTMLInputElement>(null);
   const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
   const [addressAPIError] = useState<string | null>(null);
@@ -67,7 +74,7 @@ const AddressInput = ({ value, onChange, onUpdate, onValidityChange, field, ...p
     // Check if all required fields are filled
     const isValid = !!fields.address && !!fields.city && !!fields.state && !!fields.zip && !!fields.country;
     onValidityChange(isValid);
-  }, [fields]);
+  }, [fields, onChange, onValidityChange]);
 
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
@@ -115,7 +122,7 @@ const AddressInput = ({ value, onChange, onUpdate, onValidityChange, field, ...p
         google.maps.event.clearInstanceListeners(autocomplete);
       }
     };
-  }, [isLoaded, loadError]);
+  }, [isLoaded, loadError, fields, onUpdate, onChange, onValidityChange]);
 
   if (loadError) {
     return (

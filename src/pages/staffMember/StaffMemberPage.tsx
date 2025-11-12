@@ -1,5 +1,9 @@
 //@ts-nocheck
 
+import { Plus } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchAllStaffMember from "@/api/staffMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -9,10 +13,6 @@ import { Spinner } from "@/components/Spinner";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 // import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
@@ -62,35 +62,41 @@ const StaffMemberPage = () => {
     data?.pagination,
   );
 
-  const handleEdit = useCallback((id: string) => {
-    console.log("Edit:", id);
-    navigate(constant.ROUTING_URLS.EDIT_STAFF_MEMBERS.replace(":id", id));
-  }, []);
+  const handleEdit = useCallback(
+    (id: string) => {
+      console.log("Edit:", id);
+      navigate(constant.ROUTING_URLS.EDIT_STAFF_MEMBERS.replace(":id", id));
+    },
+    [navigate],
+  );
   const handleAccess = useCallback((id: string) => {
     console.log("Access:", id);
   }, []);
   const deleteStaffMember = queries.useDeleteStaffMemberMutation();
   const bulkDeleteStaffMember = queries.useBulkDeleteStaffMemberMutation();
-  const handleDelete = useCallback((id: string) => {
-    try {
-      toastPromise(deleteStaffMember.mutateAsync({ id }), {
-        loading: "Deleting staff member...",
-        success: (res) => {
-          if (res) refetch();
-          return "Staff member deleted successfully";
-        },
-        error: (e) => (e instanceof Error ? e.message : "An unknown error occurred"),
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unknown error occurred");
+  const handleDelete = useCallback(
+    (id: string) => {
+      try {
+        toastPromise(deleteStaffMember.mutateAsync({ id }), {
+          loading: "Deleting staff member...",
+          success: (res) => {
+            if (res) refetch();
+            return "Staff member deleted successfully";
+          },
+          error: (e) => (e instanceof Error ? e.message : "An unknown error occurred"),
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unknown error occurred");
+        }
       }
-    }
-    // setData((prev) =>
-    //   prev.filter((row) => row.id !== id))
-  }, []);
+      // setData((prev) =>
+      //   prev.filter((row) => row.id !== id))
+    },
+    [deleteStaffMember.mutateAsync, refetch],
+  );
   const columns = useMemo(
     () => getStaffMember(handleEdit, handleAccess, handleDelete),
     [handleEdit, handleAccess, handleDelete],

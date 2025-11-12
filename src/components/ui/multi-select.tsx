@@ -238,7 +238,7 @@ export function MultiSelectContent({
           {canSearch ? (
             <CommandInput placeholder={typeof search === "object" ? search.placeholder : undefined} />
           ) : (
-            <button autoFocus className="sr-only" />
+            <button className="sr-only" />
           )}
           <CommandList>
             {canSearch && <CommandEmpty>{typeof search === "object" ? search.emptyMessage : undefined}</CommandEmpty>}

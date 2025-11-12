@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import { ChevronDown, Download } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useFetchAllPayments from "@/api/payment.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -27,9 +30,6 @@ import {
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Download } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const showStatus = [
   { label: "Select Status", value: "" },
@@ -85,14 +85,20 @@ const PaymentsPage = () => {
     data?.pagination,
   );
 
-  const handleView = useCallback((id: string) => {
-    console.log("view:", id);
-    navigate(constant.ROUTING_URLS.VIEW_PAYMENTS.replace(":id", id));
-  }, []);
-  const handleEdit = useCallback((id: string) => {
-    console.log("Edit:", id);
-    navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id", id));
-  }, []);
+  const handleView = useCallback(
+    (id: string) => {
+      console.log("view:", id);
+      navigate(constant.ROUTING_URLS.VIEW_PAYMENTS.replace(":id", id));
+    },
+    [navigate],
+  );
+  const handleEdit = useCallback(
+    (id: string) => {
+      console.log("Edit:", id);
+      navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id", id));
+    },
+    [navigate],
+  );
   const columns = useMemo(() => getPayments(handleView, handleEdit), [handleView, handleEdit]);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -253,7 +259,7 @@ const PaymentsPage = () => {
                 disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
                 onClick={() => {
                   // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                  setData((prev) => prev.filter((row, i) => !rowSelection[i]));
+                  setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                   setRowSelection({});
                 }}
               >

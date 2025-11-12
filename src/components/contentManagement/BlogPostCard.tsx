@@ -46,7 +46,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ blogPost, onEdit, onView, o
               {blogPost.tags && blogPost.tags.length > 0 && (
                 <div className="flex gap-1">
                   {blogPost.tags.slice(0, 2).map((tag, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
+                    <Badge key={`${index}-${tag}`} variant="outline" className="text-xs">
                       {tag}
                     </Badge>
                   ))}

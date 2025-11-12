@@ -1,5 +1,9 @@
 // @ts-nocheck
 
+import { ChevronDown, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -31,10 +35,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -42,7 +42,7 @@ const showOptions = [
   { value: 30, label: "Show 30" },
 ];
 
-const tableData: TIpWhiteList[] = [
+const _tableData: TIpWhiteList[] = [
   {
     id: "1",
     ip: "127.0.0.1",

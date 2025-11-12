@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import { ChevronDown, Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 // import { useQueryClient } from "@tanstack/react-query";
 import UsefetchAllFleets from "@/api/getAllFleets.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
@@ -32,9 +35,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 const showTime = [
   { label: "All Time", value: "" },

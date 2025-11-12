@@ -21,7 +21,9 @@ let refreshPromise = null as Promise<string> | null;
 const subscribers: Array<(token: string) => void> = [];
 
 function onRefreshed(token: string) {
-  subscribers.forEach((cb) => cb(token));
+  subscribers.forEach((cb) => {
+    cb(token);
+  });
   subscribers.length = 0;
 }
 

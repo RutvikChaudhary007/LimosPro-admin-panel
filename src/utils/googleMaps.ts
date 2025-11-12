@@ -36,7 +36,7 @@ export const initializeGooglePlacesAutocomplete = (
       // console.log("lat:", place.geometry?.location?.lat());
       // console.log("lng:", place.geometry?.location?.lng());
 
-      if (place && place.formatted_address) {
+      if (place?.formatted_address) {
         // console.log('Address selected:', place.formatted_address);
         const addressObject: AddressFields = {
           address: "",
@@ -121,7 +121,7 @@ export const initializeGooglePlacesAutocomplete = (
 
 export const geoDecoding = ({ lat, lng }: { lat: string; lng: string }) => {
   return new Promise((resolve, reject) => {
-    if (!(window.google && window.google.maps && window.google.maps.Geocoder)) {
+    if (!window.google?.maps?.Geocoder) {
       reject("Google Maps API not loaded");
       return;
     }

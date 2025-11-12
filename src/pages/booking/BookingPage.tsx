@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import { ChevronDown, Download } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import UsefetchAllBookings from "@/api/getAllBookings.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -29,9 +32,6 @@ import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { exportToCsv } from "@/utils/export";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Download } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const showStatus = [
   { label: "Mark As", value: "" },
@@ -185,12 +185,14 @@ function BookingPage() {
     return true;
   });
 
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TBooking>(
-    filterData,
-    newPage,
-    perPage,
-    data?.pagination,
-  );
+  const {
+    currentPage,
+    nextPage: _nextPage,
+    prevPage: _prevPage,
+    setPage,
+    totalPages,
+    currentItems,
+  } = usePagination<TBooking>(filterData, newPage, perPage, data?.pagination);
 
   // const statusCounts = useMemo(() => {
   // return countByStatus(data?.statusCounts);

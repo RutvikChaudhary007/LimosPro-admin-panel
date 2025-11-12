@@ -1,12 +1,14 @@
+import { Plus, Search, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useFetchAllRegionAdmins from "@/api/regionAdmin.api";
 import PageTitle from "@/components/common/PageTitle";
+// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getRegionAdminColumns, type TRegionAdmin } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { Plus, Search, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 // import { Checkbox } from '@/components/ui/checkbox';
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
@@ -18,8 +20,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { PageHeader } from "@/components/layouts/PageHeader";
 import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
@@ -66,10 +66,13 @@ function RegionAdminPage() {
     setPerPage(Number(selected));
   }, [selected]);
 
-  const handleEdit = useCallback((id: string) => {
-    console.log("Edit:", id);
-    navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN);
-  }, []);
+  const handleEdit = useCallback(
+    (id: string) => {
+      console.log("Edit:", id);
+      navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN);
+    },
+    [navigate],
+  );
   const handleDelete = useCallback((id: string) => {
     console.log(id);
     // setData((prev) =>

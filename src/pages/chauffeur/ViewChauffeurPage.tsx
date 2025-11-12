@@ -1,3 +1,7 @@
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useFetchChauffeurById } from "@/api/chauffeur.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import Header from "@/components/layouts/BreadCramb";
@@ -17,10 +21,6 @@ import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 
 // const data = {
 //     id: "e3848306-8768-478e-987e-f6e85fa5959e",
@@ -84,7 +84,7 @@ const libraries = ["places", "geocoding"];
 
 const ViewChauffeurPage = () => {
   const { id } = useParams();
-  const [googleMapsApiKey] = useState<string | null>(env!.VITE_GOOGLE_MAP_KEY);
+  const [googleMapsApiKey] = useState<string | null>(env?.VITE_GOOGLE_MAP_KEY ?? "");
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const [isaddress, setAddress] = useState<string | undefined>(undefined);
   const { data, isFetching, isError, refetch } = useFetchChauffeurById({
@@ -158,107 +158,105 @@ const ViewChauffeurPage = () => {
 
   if (isError) return <ErrorCard refetch={refetch} />;
   return (
-    <>
-      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
-          <Button
-            variant="outline"
-            className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
-          >
-            <ArrowLeft /> Back
-          </Button>
-        </Link>
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Chauffeur</h2>
-              <h4>
-                {" "}
-                <span className="text-[#959595] w-[116px] h-4 text-xs">Chauffeur</span>{" "}
-                <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View Chauffeur</span>
-              </h4>
-            </div>
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8">
+      <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
+        <Button
+          variant="outline"
+          className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
+        >
+          <ArrowLeft /> Back
+        </Button>
+      </Link>
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
+        <div className="w-full h-full flex items-center justify-between">
+          <div>
+            <h2 className="font-medium text-xl text-black">Chauffeur</h2>
+            <h4>
+              {" "}
+              <span className="text-[#959595] w-[116px] h-4 text-xs">Chauffeur</span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View Chauffeur</span>
+            </h4>
           </div>
-        </Header>
-        {isFetching ? (
-          <Spinner />
-        ) : (
-          <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
-            <CardHeader className="w-full h-[55px] flex items-center justify-between">
-              <div className="w-full h-full">
-                <h4 className="font-semibold text-xl text-[#000000]">
-                  {data?.userFirstName} {data?.userLastName}
-                </h4>
-                <h5 className="text-[#5A5A5A] font-semibold">
-                  Location: {loadError ? "Error map api loading" : !isaddress ? "Error fetching address" : isaddress}
-                </h5>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                  >
-                    {selectedStatus.label}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`)}
-                  align="start"
+        </div>
+      </Header>
+      {isFetching ? (
+        <Spinner />
+      ) : (
+        <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
+          <CardHeader className="w-full h-[55px] flex items-center justify-between">
+            <div className="w-full h-full">
+              <h4 className="font-semibold text-xl text-[#000000]">
+                {data?.userFirstName} {data?.userLastName}
+              </h4>
+              <h5 className="text-[#5A5A5A] font-semibold">
+                Location: {loadError ? "Error map api loading" : !isaddress ? "Error fetching address" : isaddress}
+              </h5>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
                 >
-                  <DropdownMenuGroup>
-                    {showStatus.map((option) => (
-                      <DropdownMenuItem
-                        key={option.value}
-                        className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF] ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                        onClick={() => setSelectedStatus(option)}
-                      >
-                        {option.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <div className="w-full h-[95px] space-y-4">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Contact Details</h6>
-                <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize min-w-[158px]">Email:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.userEmail}</span>
-                </div>
-                <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize min-w-[158px]">Phone:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.userPhoneNumber}</span>
-                </div>
+                  {selectedStatus.label}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`)}
+                align="start"
+              >
+                <DropdownMenuGroup>
+                  {showStatus.map((option) => (
+                    <DropdownMenuItem
+                      key={option.value}
+                      className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF] ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
+                      onClick={() => setSelectedStatus(option)}
+                    >
+                      {option.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+            <div className="w-full h-[95px] space-y-4">
+              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Contact Details</h6>
+              <div className="flex items-center gap-6">
+                <Label className="text-sm font-semibold capitalize min-w-[158px]">Email:</Label>
+                <span className="text-[#3A3A3A] font-medium">{data?.userEmail}</span>
               </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+              <div className="flex items-center gap-6">
+                <Label className="text-sm font-semibold capitalize min-w-[158px]">Phone:</Label>
+                <span className="text-[#3A3A3A] font-medium">{data?.userPhoneNumber}</span>
+              </div>
+            </div>
+            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+            <div className="w-full h-[22px] flex items-center gap-6">
+              <Label className="text-sm font-semibold capitalize min-w-[158px]">Vehicle ID:</Label>
+              <span className="text-[#3A3A3A] font-medium">{data?.vehicleId}</span>
+            </div>
+            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+            <div className="w-full  space-y-4">
               <div className="w-full h-[22px] flex items-center gap-6">
-                <Label className="text-sm font-semibold capitalize min-w-[158px]">Vehicle ID:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data?.vehicleId}</span>
+                <Label className="text-sm font-semibold capitalize w-[80px] min-w-[158px]">Pan:</Label>
+                <span className="text-[#3A3A3A] font-medium">{data?.panNumber}</span>
               </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <div className="w-full  space-y-4">
-                <div className="w-full h-[22px] flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize w-[80px] min-w-[158px]">Pan:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.panNumber}</span>
-                </div>
-                <div className="w-full h-[22px] flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize w-[80px] min-w-[158px]">License:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.licenseNumber}</span>
-                </div>
+              <div className="w-full h-[22px] flex items-center gap-6">
+                <Label className="text-sm font-semibold capitalize w-[80px] min-w-[158px]">License:</Label>
+                <span className="text-[#3A3A3A] font-medium">{data?.licenseNumber}</span>
               </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <div className="w-full h-[215px]">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Documents</h6>
-                {docJsx}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-    </>
+            </div>
+            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+            <div className="w-full h-[215px]">
+              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Documents</h6>
+              {docJsx}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 };
 

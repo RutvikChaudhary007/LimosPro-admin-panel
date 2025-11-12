@@ -1,3 +1,4 @@
+import type { Row } from "@tanstack/react-table";
 import { useState } from "react";
 import MultiSelectComp from "../multiSelect/MultiSelect";
 import { Button } from "../ui/button";
@@ -12,7 +13,11 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-const AccessCell = ({ row, onAccess }: { row: any; onAccess: (id: string, permissionIds: string[]) => void }) => {
+interface AccessCellProps<T extends { id: string; permissionAccess?: string[] }> {
+  row: Row<T>;
+  onAccess: (id: string, permissionIds: string[]) => void;
+}
+const AccessCell = <T extends { id: string; permissionAccess?: string[] }>({ row, onAccess }: AccessCellProps<T>) => {
   const [selected, setSelected] = useState<string[]>(row.original.permissionAccess || []);
 
   return (

@@ -1,13 +1,21 @@
 type TBusinessLocation = {
-  latitude: number | null | undefined;
-  longitude: number | null | undefined;
+  latitude: number | null;
+  longitude: number | null;
 };
 
-export interface IAffiliate {
+export type TAffiliate = {
+  id: string;
+  userId: string;
+  stripeAccountId: string;
+  stripeAccountStatus: string;
+  createdAt: string;
+  updatedAt: string;
+};
+export interface IAffiliate extends Partial<TAffiliate> {
   businessAddress: string;
   businessContactNumber: string;
   businessEmail: string;
-  commissionRate: number;
+  commissionRate: string;
   companyName: string;
   documents: File[];
   email: string;
@@ -17,6 +25,25 @@ export interface IAffiliate {
   lastName: string;
   businessLocation: TBusinessLocation;
   password: string;
-  status: string;
+  status?: string;
   taxId: string;
+}
+
+export interface IEditAffiliateRes extends IAffiliate {
+  user: {
+    createdAt: string;
+    dateOfBirth: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    password: string;
+    passwordLength: number;
+    paymentMethod: string;
+    phoneNumber: string;
+    profilePicture: string;
+    status: string;
+    updatedAt: string;
+  };
+  location: TBusinessLocation;
 }

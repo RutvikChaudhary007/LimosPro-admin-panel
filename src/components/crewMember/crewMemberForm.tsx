@@ -1,10 +1,10 @@
 //@ts-nocheck
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import IntlTelInput from "intl-tel-input/react";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
-import { zodResolver } from "@hookform/resolvers/zod";
-import IntlTelInput from "intl-tel-input/react";
 import "intl-tel-input/styles";
 import { useForm } from "react-hook-form";
 import z from "zod";

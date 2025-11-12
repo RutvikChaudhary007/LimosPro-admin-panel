@@ -1,14 +1,14 @@
 //@ts-nocheck
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type FC, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import useFetchAllFleets from "@/api/getAllFleets.api";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { type FC, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import AddressInput from "../AddressInput";
 // import { geoDecoding } from "@/utils/googleMaps"
 // import { useLoadScript } from "@react-google-maps/api";
@@ -175,40 +175,41 @@ interface IAddressObj {
     longitude: number | null;
   };
 }
+
+const transformInitialData = (data?: TChauffeur): TChauffeurForm | undefined => {
+  if (!data) return undefined;
+  console.log("edit chauffeur formdata:>", data);
+  return {
+    firstName: data?.userFirstName || "",
+    lastName: data?.userLastName || "",
+    email: data?.userEmail || "",
+    password: data?.password?.replaceAll(/./g, "*") || "*************",
+    businessAddress: data.businessAddress || "",
+    location: data.Address || { latitude: 0, longitude: 0 },
+    documents:
+      data.documents?.map((file) => {
+        console.log("file:", file);
+        return file;
+      }) || [],
+    status: data.status || "",
+    affiliateId: data.affiliateId || "",
+    panNumber: data.panNumber || "",
+    licenseNumber: data.licenseNumber || "",
+    vehicleId: data.vehicleId || "",
+    availability: data.availability ?? false,
+    gratuity: !Number.isNaN(Number(data.gratuity)) ? Number(data.gratuity).toString() : "0",
+  };
+};
+
 export type TChauffeurForm = z.infer<typeof formSchema>;
 const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disabledFields, type }) => {
   const { data, isFetching } = useFetchAllAffiliate({ DateRange: {} });
   const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
     DateRange: {},
   });
-  const [newAddress, setNewAddress] = useState("11 Greenwich Street, New York, NY, 10124, US");
+  const [_newAddress, setNewAddress] = useState("11 Greenwich Street, New York, NY, 10124, US");
   const [addressObj, setAddressObj] = useState<IAddressObj>();
-  const [isAddressValid, setIsAddressValid] = useState(false);
-
-  const transformInitialData = (data?: TChauffeur): TChauffeurForm | undefined => {
-    if (!data) return undefined;
-    console.log("edit chauffeur formdata:>", data);
-    return {
-      firstName: data?.userFirstName || "",
-      lastName: data?.userLastName || "",
-      email: data?.userEmail || "",
-      password: data?.password?.replaceAll(/./g, "*") || "*************",
-      businessAddress: data.businessAddress || "",
-      location: data.Address || { latitude: 0, longitude: 0 },
-      documents:
-        data.documents?.map((file) => {
-          console.log("file:", file);
-          return file;
-        }) || [],
-      status: data.status || "",
-      affiliateId: data.affiliateId || "",
-      panNumber: data.panNumber || "",
-      licenseNumber: data.licenseNumber || "",
-      vehicleId: data.vehicleId || "",
-      availability: data.availability ?? false,
-      gratuity: !isNaN(Number(data.gratuity)) ? Number(data.gratuity).toString() : 0,
-    };
-  };
+  const [_isAddressValid, setIsAddressValid] = useState(false);
 
   //   const fileRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<TChauffeurForm>({
@@ -233,7 +234,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
       form.reset(transformInitialData(initialData));
       setNewAddress(initialData.businessAddress || "");
     }
-  }, [initialData]);
+  }, [initialData, form]);
   // const documents = form.watch("documents");
   // const fileCount = documents?.length || 0;
 
@@ -277,7 +278,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
       console.error("Error:", error);
     }
   };
-  const [statusValue, setStatusValue] = useState<{
+  const [_statusValue, setStatusValue] = useState<{
     status: string;
     affiliate: string;
   }>({
@@ -663,7 +664,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                     Upload Documents:{" "}
                     {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
                       <span
-                        key={idx}
+                        key={idx - text}
                         className={idx < field.value.length ? "text-gray-700 underline" : "text-gray-300"}
                       >
                         {text}{" "}
@@ -683,7 +684,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({ initialData, onSubmit, disable
                         const newFiles = Array.from(e.target.files ?? []);
                         // Filter out File objects from current value (keep only document objects with url)
                         const existingDocs = field.value.filter(
-                          (doc: any) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl),
+                          (doc?: File | string) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl),
                         );
                         field.onChange([...existingDocs, ...newFiles]);
                       }}

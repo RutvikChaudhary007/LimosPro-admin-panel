@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import useFetchDashboard from "@/api/dashboard.api";
 import { ChartAreaInteractive } from "@/components/layouts/partials/chart-area-interactive";
 import { Spinner } from "@/components/Spinner";
@@ -9,9 +8,6 @@ import UserProfile from "./partials/user-profile";
 
 export default function Dashboard() {
   const { data, isFetching } = useFetchDashboard({});
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
   if (isFetching) return <Spinner />;
   return (
     <div className="bg-base-background-light @container/main h-full">

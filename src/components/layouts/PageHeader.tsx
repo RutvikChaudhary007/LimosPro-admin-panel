@@ -1,3 +1,5 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,8 +9,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import React from "react";
-import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Card, CardAction, CardBody, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
@@ -79,23 +79,20 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, breadcrumbs, acti
           </CardDescription>
           <CardAction>
             {/* Action Button */}
-            {action && (
-              <>
-                {action.link ? (
-                  <Link to={action.link}>
-                    <Button variant={action.variant}>
-                      {action.icon}
-                      {action.label}
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button variant={action.variant} onClick={action.onClick}>
+            {action &&
+              (action.link ? (
+                <Link to={action.link}>
+                  <Button variant={action.variant}>
                     {action.icon}
                     {action.label}
                   </Button>
-                )}
-              </>
-            )}
+                </Link>
+              ) : (
+                <Button variant={action.variant} onClick={action.onClick}>
+                  {action.icon}
+                  {action.label}
+                </Button>
+              ))}
           </CardAction>
         </CardHeader>
       </CardBody>

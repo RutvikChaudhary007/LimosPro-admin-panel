@@ -1,19 +1,12 @@
 // @ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { cn } from "@/lib/utils";
 import type { IUserFormData, TUserFormProps } from "@/types/user.type";
-import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
-import { Calendar } from "../ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 // import { useEffect, useState } from 'react';
@@ -50,7 +43,7 @@ const statusAction = [
 ];
 
 type TUserForm = z.infer<typeof formSchema>;
-const UserForm = ({ initialData, onSubmit, disabledFields, type }: TUserFormProps) => {
+const UserForm = ({ initialData, onSubmit, disabledFields: _disabledFields, type }: TUserFormProps) => {
   const transformInitialData = (data?: IUserFormData): TUserForm | undefined => {
     if (!data) return undefined;
     return {

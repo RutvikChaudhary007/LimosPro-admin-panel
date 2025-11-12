@@ -96,12 +96,7 @@ const TestimonialForm = ({ initialData, onSubmit, disabledFields, type }: ITesti
       isFeatured: data?.isFeatured || false,
     };
   };
-  useEffect(() => {
-    if (initialData?.customerImage) {
-      setPreviews(initialData?.customerImage);
-      form.setValue("photo", initialData?.customerImage);
-    }
-  }, [initialData]);
+
   const fileRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<TTestimonialForm>({
     resolver: zodResolver(formSchema),
@@ -114,6 +109,12 @@ const TestimonialForm = ({ initialData, onSubmit, disabledFields, type }: ITesti
     },
   });
 
+  useEffect(() => {
+    if (initialData?.customerImage) {
+      setPreviews(initialData?.customerImage);
+      form.setValue("photo", initialData?.customerImage);
+    }
+  }, [initialData, form.setValue]);
   const handleFormSubmit: SubmitHandler<TTestimonialFormData> = async (data: TTestimonialFormData) => {
     console.log("data:", data);
     try {

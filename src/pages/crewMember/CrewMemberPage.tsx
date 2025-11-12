@@ -1,5 +1,9 @@
 // @ts-nocheck
 
+import { ChevronDown, Plus } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchAllCrewMember from "@/api/crewMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -31,10 +35,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Plus } from "lucide-react";
-import { useCallback, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -104,10 +104,13 @@ const CrewMemberPage = () => {
     data?.pagination,
   );
 
-  const handleEdit = useCallback((id: string) => {
-    console.log("Edit:", id);
-    naviagte(constant.ROUTING_URLS.EDIT_CREW_MEMBERS.replace(":id", id));
-  }, []);
+  const handleEdit = useCallback(
+    (id: string) => {
+      console.log("Edit:", id);
+      naviagte(constant.ROUTING_URLS.EDIT_CREW_MEMBERS.replace(":id", id));
+    },
+    [naviagte],
+  );
   const deleteCrewMember = queries.useDeleteCrewMemberMutation();
   const bulkDeleteCrewMember = queries.useBulkDeleteCrewMemberMutation();
 

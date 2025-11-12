@@ -1,11 +1,11 @@
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import SettingForm, { type TSettingForm } from "@/components/settings/SettingForm";
 import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const SettingsPage = () => {
   const handleSubmit = (data: TSettingForm): Promise<void> =>

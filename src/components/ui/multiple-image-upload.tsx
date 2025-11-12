@@ -165,7 +165,12 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
             placeholder="Enter image URL"
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addUrl())}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addUrl();
+              }
+            }}
           />
           <Button type="button" onClick={addUrl} disabled={!urlInput.trim()}>
             <Plus className="h-4 w-4" />
@@ -218,7 +223,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
                 <div key={index} className="relative group">
                   <img
                     src={url}
-                    alt={`Image ${index + 1}`}
+                    alt={`Image-${index + 1}`}
                     className="w-full h-32 object-cover rounded-lg"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";

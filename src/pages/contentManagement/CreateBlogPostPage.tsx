@@ -131,234 +131,232 @@ const CreateBlogPostPage: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => navigate(constant.ROUTING_URLS.BLOG_POSTS)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Posts
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Create Blog Post</h1>
-              <p className="text-gray-600">Create a new blog post</p>
-            </div>
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" onClick={() => navigate(constant.ROUTING_URLS.BLOG_POSTS)}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Posts
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">Create Blog Post</h1>
+            <p className="text-gray-600">Create a new blog post</p>
           </div>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Basic Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      {...register("title")}
-                      onChange={handleTitleChange}
-                      placeholder="Enter blog post title"
-                      className={errors.title ? "border-red-500" : ""}
-                    />
-                    {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="slug">Slug *</Label>
-                    <Input
-                      id="slug"
-                      {...register("slug")}
-                      placeholder="blog-post-slug"
-                      className={errors.slug ? "border-red-500" : ""}
-                    />
-                    {errors.slug && <p className="text-sm text-red-600 mt-1">{errors.slug.message}</p>}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="excerpt">Excerpt</Label>
-                    <Textarea
-                      id="excerpt"
-                      {...register("excerpt")}
-                      placeholder="Brief description of the blog post"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="content">Content *</Label>
-                    <Textarea
-                      id="content"
-                      {...register("content")}
-                      placeholder="Write your blog post content here..."
-                      rows={15}
-                      className={errors.content ? "border-red-500" : ""}
-                    />
-                    {errors.content && <p className="text-sm text-red-600 mt-1">{errors.content.message}</p>}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* SEO Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>SEO Settings</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="metaTitle">Meta Title</Label>
-                    <Input id="metaTitle" {...register("metaTitle")} placeholder="SEO title for search engines" />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="metaDescription">Meta Description</Label>
-                    <Textarea
-                      id="metaDescription"
-                      {...register("metaDescription")}
-                      placeholder="Brief description for search engines"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Meta Keywords</Label>
-                    <div className="flex gap-2 mb-2">
-                      <Input
-                        value={keywordInput}
-                        onChange={(e) => setKeywordInput(e.target.value)}
-                        placeholder="Add keyword"
-                        onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addKeyword())}
-                      />
-                      <Button type="button" onClick={addKeyword}>
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {metaKeywords.map((keyword, index) => (
-                        <Badge key={index} variant="secondary">
-                          {keyword}
-                          <button type="button" onClick={() => removeKeyword(index)} className="ml-1">
-                            <X className="h-3 w-3" />
-                          </button>
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <ImageUpload
-                    label="Open Graph Image"
-                    placeholder="Enter OG image URL or upload file"
-                    value={watch("ogImage") || ""}
-                    onChange={(url) => setValue("ogImage", url)}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="title">Title *</Label>
+                  <Input
+                    id="title"
+                    {...register("title")}
+                    onChange={handleTitleChange}
+                    placeholder="Enter blog post title"
+                    className={errors.title ? "border-red-500" : ""}
                   />
-                </CardContent>
-              </Card>
-            </div>
+                  {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
+                </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Publish Settings */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Publish Settings</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="status">Status</Label>
-                    <Select onValueChange={(value) => setValue("status", value as any)} defaultValue="draft">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="published">Published</SelectItem>
-                        <SelectItem value="archived">Archived</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="author">Author</Label>
-                    <Input id="author" {...register("author")} placeholder="Author name" />
-                  </div>
-
-                  <div className="pt-4">
-                    <Button type="submit" disabled={loading} className="w-full">
-                      <Save className="mr-2 h-4 w-4" />
-                      {loading ? "Creating..." : "Create Post"}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Featured Image */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Featured Image</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ImageUpload
-                    label="Featured Image"
-                    placeholder="Enter featured image URL or upload file"
-                    value={watch("featuredImage") || ""}
-                    onChange={(url) => setValue("featuredImage", url)}
+                <div>
+                  <Label htmlFor="slug">Slug *</Label>
+                  <Input
+                    id="slug"
+                    {...register("slug")}
+                    placeholder="blog-post-slug"
+                    className={errors.slug ? "border-red-500" : ""}
                   />
-                </CardContent>
-              </Card>
+                  {errors.slug && <p className="text-sm text-red-600 mt-1">{errors.slug.message}</p>}
+                </div>
 
-              {/* Blog Images */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Blog Images</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <MultipleImageUpload
-                    label="Additional Images"
-                    value={blogImages}
-                    onChange={setBlogImages}
-                    maxImages={10}
+                <div>
+                  <Label htmlFor="excerpt">Excerpt</Label>
+                  <Textarea
+                    id="excerpt"
+                    {...register("excerpt")}
+                    placeholder="Brief description of the blog post"
+                    rows={3}
                   />
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Tags */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tags</CardTitle>
-                </CardHeader>
-                <CardContent>
+                <div>
+                  <Label htmlFor="content">Content *</Label>
+                  <Textarea
+                    id="content"
+                    {...register("content")}
+                    placeholder="Write your blog post content here..."
+                    rows={15}
+                    className={errors.content ? "border-red-500" : ""}
+                  />
+                  {errors.content && <p className="text-sm text-red-600 mt-1">{errors.content.message}</p>}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* SEO Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle>SEO Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="metaTitle">Meta Title</Label>
+                  <Input id="metaTitle" {...register("metaTitle")} placeholder="SEO title for search engines" />
+                </div>
+
+                <div>
+                  <Label htmlFor="metaDescription">Meta Description</Label>
+                  <Textarea
+                    id="metaDescription"
+                    {...register("metaDescription")}
+                    placeholder="Brief description for search engines"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label>Meta Keywords</Label>
                   <div className="flex gap-2 mb-2">
                     <Input
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      placeholder="Add tag"
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                      value={keywordInput}
+                      onChange={(e) => setKeywordInput(e.target.value)}
+                      placeholder="Add keyword"
+                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addKeyword())}
                     />
-                    <Button type="button" onClick={addTag}>
+                    <Button type="button" onClick={addKeyword}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {tags.map((tag, index) => (
+                    {metaKeywords.map((keyword, index) => (
                       <Badge key={index} variant="secondary">
-                        {tag}
-                        <button type="button" onClick={() => removeTag(index)} className="ml-1">
+                        {keyword}
+                        <button type="button" onClick={() => removeKeyword(index)} className="ml-1">
                           <X className="h-3 w-3" />
                         </button>
                       </Badge>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+
+                <ImageUpload
+                  label="Open Graph Image"
+                  placeholder="Enter OG image URL or upload file"
+                  value={watch("ogImage") || ""}
+                  onChange={(url) => setValue("ogImage", url)}
+                />
+              </CardContent>
+            </Card>
           </div>
-        </form>
-      </div>
-    </>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Publish Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Publish Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select onValueChange={(value) => setValue("status", value as any)} defaultValue="draft">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="published">Published</SelectItem>
+                      <SelectItem value="archived">Archived</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="author">Author</Label>
+                  <Input id="author" {...register("author")} placeholder="Author name" />
+                </div>
+
+                <div className="pt-4">
+                  <Button type="submit" disabled={loading} className="w-full">
+                    <Save className="mr-2 h-4 w-4" />
+                    {loading ? "Creating..." : "Create Post"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Featured Image */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Featured Image</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ImageUpload
+                  label="Featured Image"
+                  placeholder="Enter featured image URL or upload file"
+                  value={watch("featuredImage") || ""}
+                  onChange={(url) => setValue("featuredImage", url)}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Blog Images */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Blog Images</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MultipleImageUpload
+                  label="Additional Images"
+                  value={blogImages}
+                  onChange={setBlogImages}
+                  maxImages={10}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Tags */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Tags</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    placeholder="Add tag"
+                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                  />
+                  <Button type="button" onClick={addTag}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag, index) => (
+                    <Badge key={index} variant="secondary">
+                      {tag}
+                      <button type="button" onClick={() => removeTag(index)} className="ml-1">
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 };
 

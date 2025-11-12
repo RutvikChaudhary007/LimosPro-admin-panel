@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
-import adminAxiosInstance from "@/utils/axiosInstance";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
@@ -12,10 +11,22 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
  * @param data
  * @returns response data
  */
+type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
+export const getAllChauffeur = async (DateRange?: DateRange, page?: number) => {
+  const params: Record<string, unknown> = {};
+  if (DateRange?.startDate || DateRange?.endDate) {
+    params.DateRange = {
+      startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
+      endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
+    };
+  }
 
-export const getAllChauffeur = async () => {
+  if (page) {
+    params.page = page;
+  }
+
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CHAUFFEUR}`);
+    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CHAUFFEUR}`, { params });
     // console.log("response:",response)
 
     return response.data.data;
@@ -28,10 +39,16 @@ export const getAllChauffeur = async () => {
   }
 };
 
-const useFetchAllChauffeur = () =>
+const useFetchAllChauffeur = ({
+  DateRange,
+  page,
+}: {
+  DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
+  page?: number;
+}) =>
   useQuery({
-    queryKey: ["chauffeurs"],
-    queryFn: () => getAllChauffeur(),
+    queryKey: ["chauffeurs", DateRange, page],
+    queryFn: () => getAllChauffeur(DateRange, page),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,
@@ -68,8 +85,8 @@ export const useFetchChauffeurById = ({ id }: { id: string }) =>
  * @param data
  * @returns response data
  */
-export const createChauffeur = async (data: object) => {
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_CHAFFEUR, data, {
+export const createChauffeur = async (data: TChauffeurForm) => {
+  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CHAFFEUR, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -85,9 +102,9 @@ export const createChauffeur = async (data: object) => {
  * @param data
  * @returns response data
  */
-export const editChauffeur = async ({ data, id }: { data: TChauffeurForm; id: string | undefined }) => {
+export const editChauffeur = async ({ data, id }: { data: TChauffeurForm; id: string }) => {
   // console.log("edit chauffeur..:",data)
-  const response = await adminAxiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id!), data, {
+  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id), data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -104,7 +121,7 @@ export const editChauffeur = async ({ data, id }: { data: TChauffeurForm; id: st
  * @returns response data
  */
 export const deleteChauffeur = async (id: string) => {
-  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(":id", id));
+  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_CHAFFEUR.replace(":id", id));
 
   return response.data;
 };
@@ -120,6 +137,6 @@ export const bulkDeleteChauffeur = async (ids: string[]) => {
   const data = {
     chauffeurIds: ids,
   };
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_CHAFFEUR, data);
+  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_CHAFFEUR, data);
   return response.data;
 };

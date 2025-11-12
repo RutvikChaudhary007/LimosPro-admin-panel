@@ -1,21 +1,16 @@
-// @ts-nocheck
-
+import type { Table } from "@tanstack/react-table";
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchAllChauffeur from "@/api/chauffeur.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { getChauffeur, getStatusColor, type TChauffeur } from "@/components/table/column";
+import { getChauffeur } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Pagination,
@@ -26,15 +21,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import type { TChauffeur } from "@/types/chauffeur.type";
+import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Plus } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const showStatus = [
   { label: "Active", value: "active" },
@@ -44,7 +38,7 @@ const showStatus = [
 ];
 
 const showTime = [
-  { label: "All Time", value: "" },
+  { label: "All Time", value: "All Time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
@@ -275,11 +269,44 @@ const showTime = [
 function ChauffeurPage() {
   const navigate = useNavigate();
   const perPage = 10;
+  const [{ value: statusDefaultValue }] = showStatus;
+  const [{ value: timeDefaultValue }] = showTime;
   const [newPage, setNewPage] = useState<number>(1);
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-  const [selectedTime, setSelectedTime] = useState(showTime[0]);
-  const { data, refetch, isFetching, isError } = useFetchAllChauffeur();
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
+  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
+  // --- Time range helper ---
+  const { startDate, endDate } = useMemo(() => {
+    const now = new Date();
+    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+    let start: Date | undefined;
+
+    switch (selectedTime) {
+      case "weekly": {
+        // last 7 days inclusive (UTC)
+        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
+        break;
+      }
+      case "monthly": {
+        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+        break;
+      }
+      case "yearly": {
+        start = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
+        break;
+      }
+      default: {
+        // All time: leave undefined so callers can omit filters
+        start = undefined;
+      }
+    }
+
+    return { startDate: start, endDate: selectedTime ? end : undefined };
+  }, [selectedTime]);
+  const { data, refetch, isFetching, isError } = useFetchAllChauffeur({
+    DateRange: { startDate, endDate },
+    page: newPage,
+  });
+  const [tableRef, setTableRef] = useState<Table<TChauffeur> | null>(null);
   // console.log("fetchedData:",data)
 
   /**
@@ -413,86 +440,36 @@ function ChauffeurPage() {
     <>
       <PageTitle title={generatePageTitle("Chauffeur")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Chauffeur</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Chauffeur</span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
-              {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Chauffeur</span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="Chauffeur"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Chauffeur" }]}
+          action={{
+            label: "Add Chauffeur",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
+          }}
+        />
 
         <div className="flex justify-between gap-2.5">
           <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                >
-                  {selectedStatus.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showStatus.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                      onClick={() => setSelectedStatus(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] `}
-                >
-                  {selectedTime.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showTime.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF]`}
-                      onClick={() => setSelectedTime(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <SelectDropDown
+              placeholder={selectedStatus}
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
+            <SelectDropDown
+              placeholder={selectedTime}
+              items={showTime}
+              value={selectedTime}
+              setSelectedItem={setSelectedTime}
+            />
           </div>
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
-              <BulkDeleteBtn
+              <BulkDeleteBtn<TChauffeur, TBlkDelRes>
                 rowSelection={rowSelection}
                 tableRef={tableRef}
                 bulkDeleteMutation={bulkDeleteChauffeurMutation}

@@ -52,12 +52,12 @@ export default function LoginPage() {
       <div className="bg-muted relative hidden lg:block">
         <img
           src="/auth/login-form-bg.png"
-          alt="Background Image"
+          alt="BackgroundImg"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[376px] flex-col justify-center">
           <div className="mb-6 size-20">
-            <img src="/logo/limospro-logo.png" alt="Image" className="size-full object-cover" />
+            <img src="/logo/limospro-logo.png" alt="LogoImage" className="size-full object-cover" />
           </div>
           <div className="text-base-white font-montserrat space-y-4 leading-[100%] font-bold tracking-normal">
             <h4 className="text-3xl">Introducing Limospro™ Fleet System</h4>

@@ -1,3 +1,9 @@
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+import { ArcElement, Chart as ChartJS, Tooltip as chartJsToolTip, Legend } from "chart.js";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Doughnut } from "react-chartjs-2";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
@@ -10,11 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import WorldMap from "@/components/worldmap/WorldMap";
 import { generatePageTitle } from "@/utils/seo";
-import { ArcElement, Chart as ChartJS, Tooltip as chartJsToolTip, Legend } from "chart.js";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { Doughnut } from "react-chartjs-2";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const showOptions = [
   { value: "monthly", label: "Monthly" },
@@ -35,8 +36,10 @@ const data = [
   { month: "Nov", revenue: 0 },
   { month: "Dec", revenue: 0 },
 ];
-
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
+type TPayload = {
+  value: string;
+};
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: TPayload[]; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <div className="w-[77px] h-[39px] rounded-lg">

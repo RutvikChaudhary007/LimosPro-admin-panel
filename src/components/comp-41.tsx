@@ -25,7 +25,7 @@ export default function Component() {
           <Calendar />
         </Dialog>
       </Popover>
-      <p className="text-muted-foreground mt-2 text-xs" role="region" aria-live="polite">
+      <section aria-label="Form validation message" aria-live="polite" className="text-muted-foreground mt-2 text-xs">
         Built with{" "}
         <a
           className="hover:text-foreground underline"
@@ -35,7 +35,7 @@ export default function Component() {
         >
           React Aria
         </a>
-      </p>
+      </section>
     </DatePicker>
   );
 }

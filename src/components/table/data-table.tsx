@@ -1,8 +1,15 @@
 // @ts-nocheck
 
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { type ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  type Table as TanstackTable,
+  useReactTable,
+} from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -11,7 +18,7 @@ interface DataTableProps<TData, TValue> {
   onRowSelectionChange?: (updater: Record<string, boolean>) => void;
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
-  onTableReady?: (table: any) => void;
+  onTableReady?: (table: TanstackTable<TData>) => void;
 }
 
 export function DataTable<TData, TValue>({

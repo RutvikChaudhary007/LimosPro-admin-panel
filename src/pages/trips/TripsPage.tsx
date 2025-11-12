@@ -1,3 +1,7 @@
+import type { Table } from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import { type JSX, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useFetchAllTrips from "@/api/getAllTrips.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -28,9 +32,6 @@ import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown } from "lucide-react";
-import { type JSX, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const showStatus = [
   { label: "Completed", value: "completed" },
@@ -73,7 +74,7 @@ const showStatus = [
 function TripsPage(): JSX.Element {
   const navigate = useNavigate();
   const perPage = 10;
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [tableRef, setTableRef] = useState<Table<TTrips> | null>(null);
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   // const [data, setData] = useState<TTrips[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllTrips();

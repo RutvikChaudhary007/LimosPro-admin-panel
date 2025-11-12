@@ -1,5 +1,9 @@
 // @ts-nocheck
 
+import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { ChevronDown, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchALLFAQs from "@/api/faq.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -30,10 +34,6 @@ import { toastPromise, useToast } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDown, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -272,7 +272,7 @@ const FaqsPage = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href={"?page=" + currentPage}
+                  href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage - 1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
@@ -282,7 +282,7 @@ const FaqsPage = () => {
 
               <PaginationItem>
                 <PaginationNext
-                  href={"?page=" + currentPage}
+                  href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage + 1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />

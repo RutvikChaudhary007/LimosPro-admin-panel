@@ -1,10 +1,8 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format, getYear, setYear } from "date-fns";
-import { CalendarIcon, Camera, Plus, X } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import { SelectValueContext } from "react-aria-components";
+import { getYear, setYear } from "date-fns";
+import { Plus, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -13,10 +11,8 @@ import { cn } from "@/lib/utils";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
-import { Calendar } from "../ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
@@ -179,6 +175,44 @@ const FleetOptions = [
   "Executive Coach 40 Passenger",
 ];
 
+const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
+  if (!data) return undefined;
+  // console.log("edit chauffeur formdata:>",data)
+  return {
+    regionId: data?.servicePricings?.[0]?.region?.id || "",
+    description: data?.servicePricings?.[0]?.description || "",
+    affiliateId: data?.affiliateId,
+    plateNumber: data?.plateNumber,
+    brand: data?.brand,
+    documents: data?.documents,
+    bagsCapacity: data?.bagsCapacity,
+    capacity: data?.capacity,
+    year: data?.year,
+    color: data?.color,
+    model: data?.model,
+    vehicleType: data?.vehicleType,
+    vehicleImages: data?.vehicleImages,
+    status: data?.status,
+    baseFair: data?.servicePricings?.[0]?.basePrice ? Number(data?.servicePricings?.[0]?.basePrice) : 0,
+    minHour: data?.servicePricings?.[0]?.minHour ? Number(data?.servicePricings?.[0]?.minHour) : 0,
+    pricePerMile: data?.servicePricings?.[0]?.pricePerMile ? Number(data?.servicePricings?.[0]?.pricePerMile) : 0,
+    pricePerHour: data?.servicePricings?.[0]?.ratePerHour ? Number(data?.servicePricings?.[0]?.ratePerHour) : 0,
+    pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute ? Number(data?.servicePricings?.[0]?.ratePerMinute) : 0,
+    minFair: data?.servicePricings?.[0]?.minPrice ? Number(data?.servicePricings?.[0]?.minPrice) : 0,
+    cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate
+      ? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate)
+      : 0,
+    extraTime: data?.servicePricings?.[0]?.extraTime ? Number(data?.servicePricings?.[0]?.extraTime) : 0,
+    zonePricings: data?.servicePricings?.[0]?.zonePricings?.map((zone) => {
+      return {
+        zoneStart: zone?.zoneStart,
+        zoneEnd: zone?.zoneEnd,
+        pricePerMile: zone?.pricePerMile,
+        pricePerDistance: zone?.pricePerDistance,
+      };
+    }),
+  };
+};
 const FleetForm = ({
   initialData,
   isAffiliateFetching,
@@ -191,7 +225,7 @@ const FleetForm = ({
 }: IFleetFormProps) => {
   const { toast } = useToast();
   //   console.log("affiliateData:", affiliateData);
-  const [globalAirportLimit, setGlobalAirportLimit] = useState("65");
+  const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
   const [zonePricing, setZonePricing] = useState([]);
   const [isZoneActive, setIsZoneActive] = useState(false);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -199,62 +233,11 @@ const FleetForm = ({
   const years = Array.from({ length: 200 }, (_, i) => 1900 + i); // Example range from 1925 to 2024
 
   function onYearChange(year: string) {
-    const newDate = setYear(date, parseInt(year));
+    const newDate = setYear(date, parseInt(year, 10));
     setDate(newDate);
     form.setValue("year", newDate, { shouldValidate: true });
   }
-  useEffect(() => {
-    if (initialData?.servicePricings?.[0]?.zonePricingEnabled) {
-      setIsZoneActive(Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false));
-    }
-    if (initialData?.servicePricings?.[0]?.zonePricings) {
-      setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
-    }
-    if (initialData?.year) {
-      form.setValue("year", initialData?.year, { shouldValidate: true });
-    }
-    if (initialData?.vehicleImages) {
-      setPreviews(initialData?.vehicleImages?.map((img) => img?.url));
-    }
-  }, [initialData]);
-  const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
-    if (!data) return undefined;
-    // console.log("edit chauffeur formdata:>",data)
-    return {
-      regionId: data?.servicePricings?.[0]?.region?.id || "",
-      description: data?.servicePricings?.[0]?.description || "",
-      affiliateId: data?.affiliateId,
-      plateNumber: data?.plateNumber,
-      brand: data?.brand,
-      documents: data?.documents,
-      bagsCapacity: data?.bagsCapacity,
-      capacity: data?.capacity,
-      year: data?.year,
-      color: data?.color,
-      model: data?.model,
-      vehicleType: data?.vehicleType,
-      vehicleImages: data?.vehicleImages,
-      status: data?.status,
-      baseFair: data?.servicePricings?.[0]?.basePrice ? Number(data?.servicePricings?.[0]?.basePrice) : 0,
-      minHour: data?.servicePricings?.[0]?.minHour ? Number(data?.servicePricings?.[0]?.minHour) : 0,
-      pricePerMile: data?.servicePricings?.[0]?.pricePerMile ? Number(data?.servicePricings?.[0]?.pricePerMile) : 0,
-      pricePerHour: data?.servicePricings?.[0]?.ratePerHour ? Number(data?.servicePricings?.[0]?.ratePerHour) : 0,
-      pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute ? Number(data?.servicePricings?.[0]?.ratePerMinute) : 0,
-      minFair: data?.servicePricings?.[0]?.minPrice ? Number(data?.servicePricings?.[0]?.minPrice) : 0,
-      cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate
-        ? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate)
-        : 0,
-      extraTime: data?.servicePricings?.[0]?.extraTime ? Number(data?.servicePricings?.[0]?.extraTime) : 0,
-      zonePricings: data?.servicePricings?.[0]?.zonePricings?.map((zone) => {
-        return {
-          zoneStart: zone?.zoneStart,
-          zoneEnd: zone?.zoneEnd,
-          pricePerMile: zone?.pricePerMile,
-          pricePerDistance: zone?.pricePerDistance,
-        };
-      }),
-    };
-  };
+
   const imagesRef = useRef<HTMLInputElement | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<TFleetForm>({
@@ -275,6 +258,21 @@ const FleetForm = ({
       //   status: "",
     },
   });
+
+  useEffect(() => {
+    if (initialData?.servicePricings?.[0]?.zonePricingEnabled) {
+      setIsZoneActive(Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false));
+    }
+    if (initialData?.servicePricings?.[0]?.zonePricings) {
+      setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
+    }
+    if (initialData?.year) {
+      form.setValue("year", initialData?.year, { shouldValidate: true });
+    }
+    if (initialData?.vehicleImages) {
+      setPreviews(initialData?.vehicleImages?.map((img) => img?.url));
+    }
+  }, [initialData, form]);
 
   const handleFilesChange = (files: FileList | null, onChange: (files: File[]) => void) => {
     form.clearErrors();
@@ -298,7 +296,7 @@ const FleetForm = ({
     console.log("preview urls:", previews);
   };
 
-  const removeImage = (index: number, field: any) => {
+  const removeImage = (index: number, field: unknown) => {
     const updated = previews.filter((_, i) => i !== index);
     setPreviews(updated);
     field.onChange(updated); // keep in sync with form
@@ -738,7 +736,7 @@ const FleetForm = ({
             <FormField
               control={form.control}
               name="year"
-              render={({ field }) => (
+              render={({ _field }) => (
                 <FormItem className="flex flex-col   placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Year</FormLabel>
                   <Select onValueChange={onYearChange} value={getYear(date).toString()}>
@@ -790,7 +788,7 @@ const FleetForm = ({
                     </FormControl>
                     <SelectContent className="">
                       {FleetOptions?.map((option, i) => (
-                        <SelectItem className="cursor-pointer" key={i} value={option}>
+                        <SelectItem className="cursor-pointer" key={`${i}-${option}`} value={option}>
                           {option}
                         </SelectItem>
                       ))}
@@ -808,7 +806,7 @@ const FleetForm = ({
             <FormField
               control={form.control}
               name="zonePricings"
-              render={({ field }) => (
+              render={({ _field }) => (
                 <FormItem className="flex flex-col col-start-1 col-span-6  placeholder:text-[#E6E6E6] font-medium cursor-pointer">
                   <FormLabel>Zone Pricing</FormLabel>
 
@@ -840,9 +838,10 @@ const FleetForm = ({
                             <div
                               // className={styles.zoneGroup}
                               className={cn("flex flex-col items-start mb-4 ")}
-                              key={index}
+                              key={`${index}-${zone.end}`}
                             >
                               <label
+                                htmlFor="zone"
                                 style={{
                                   fontWeight: "600",
                                   marginBottom: "8px",
@@ -862,7 +861,9 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label className="mb-1.5 text-[#343434] font-medium">Zone Start (mile)</label>
+                                  <label htmlFor="zoneStart" className="mb-1.5 text-[#343434] font-medium">
+                                    Zone Start (mile)
+                                  </label>
                                   <input
                                     className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
                                     type="number"
@@ -881,7 +882,9 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label className="mb-1.5 text-[#343434] font-medium">Zone End (mile)</label>
+                                  <label htmlFor="zoneEnd" className="mb-1.5 text-[#343434] font-medium">
+                                    Zone End (mile)
+                                  </label>
                                   <input
                                     className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
                                     type="number"
@@ -900,7 +903,9 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label className="mb-1.5 text-[#343434] font-medium">Price per Mile</label>
+                                  <label htmlFor="pricePerPMile" className="mb-1.5 text-[#343434] font-medium">
+                                    Price per Mile
+                                  </label>
                                   <input
                                     className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
                                     type="number"
@@ -918,7 +923,9 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label className="mb-1.5 text-[#343434] font-medium">Price per Minute</label>
+                                  <label htmlFor="pricePerPMin" className="mb-1.5 text-[#343434] font-medium">
+                                    Price per Minute
+                                  </label>
                                   <input
                                     className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
                                     type="number"
@@ -979,7 +986,7 @@ const FleetForm = ({
                                   ...zonePricing,
                                   {
                                     start: 0.01,
-                                    end: parseInt(finalLastEnd),
+                                    end: parseInt(finalLastEnd, 10),
                                     pricePerMile: 0,
                                     pricePerDistance: 0,
                                   },
@@ -1030,7 +1037,7 @@ const FleetForm = ({
                   <div className="mt-2 flex gap-3">
                     {previews.map((src, index) => (
                       <div
-                        key={index}
+                        key={`${index}-${src.slice(0, 3)}`}
                         className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden"
                       >
                         <img src={src} alt="preview" className="object-cover w-full h-full" />
@@ -1073,7 +1080,7 @@ const FleetForm = ({
                     Upload Documents:{" "}
                     {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
                       <span
-                        key={idx}
+                        key={`${idx}-${text}`}
                         className={idx < field.value.length ? "text-gray-700 underline" : "text-gray-300"}
                       >
                         {text}{" "}
@@ -1092,7 +1099,7 @@ const FleetForm = ({
                         const newFiles = Array.from(e.target.files ?? []);
                         // Filter out File objects from current value (keep only document objects with url)
                         const existingDocs = field.value.filter(
-                          (doc: any) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl),
+                          (doc: File | { url: string }) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl),
                         );
                         field.onChange([...existingDocs, ...newFiles]);
                       }}

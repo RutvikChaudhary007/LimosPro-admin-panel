@@ -1,3 +1,7 @@
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -19,10 +23,6 @@ import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 
 // const data = {
 //     id: 1,
@@ -45,7 +45,7 @@ const libraries = ["places", "geocoding"];
 const ViewAffiliatePage = () => {
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const { id } = useParams();
-  const [googleMapsApiKey] = useState<string | null>(env!.VITE_GOOGLE_MAP_KEY);
+  const [googleMapsApiKey] = useState<string | null>(env?.VITE_GOOGLE_MAP_KEY ?? "");
   const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
@@ -193,28 +193,28 @@ const ViewAffiliatePage = () => {
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <div className="w-full h-[209px] space-y-4">
                 <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Company</h6>
-                {Object.entries(data as Record<string, React.ReactNode>).map(([key, val]) => {
-                  // if (!["email","phone", "location", "entityType", "address"].includes(key.toLowerCase())) return;
+                {Object.entries(data as Record<string, React.ReactNode>)?.map(([key, val]) => {
                   if (
                     !["businessemail", "businesscontactnumber", "entitytype", "businessaddress"].includes(
                       key.toLowerCase(),
                     )
-                  )
-                    return;
-                  return (
-                    <div key={key} className="flex items-center gap-6">
-                      <Label className="text-sm font-semibold capitalize min-w-[158px]">{key}:</Label>
-                      <span className="text-[#3A3A3A] font-medium">
-                        {["businessaddress"].includes(key.toLowerCase())
-                          ? loadError
-                            ? "Error map api loading"
-                            : !businessAddress
-                              ? "Error fetching address"
-                              : businessAddress
-                          : val}
-                      </span>
-                    </div>
-                  );
+                  ) {
+                    return (
+                      <div key={key} className="flex items-center gap-6">
+                        <Label className="text-sm font-semibold capitalize min-w-[158px]">{key}:</Label>
+                        <span className="text-[#3A3A3A] font-medium">
+                          {["businessaddress"].includes(key.toLowerCase())
+                            ? loadError
+                              ? "Error map api loading"
+                              : !businessAddress
+                                ? "Error fetching address"
+                                : businessAddress
+                            : val}
+                        </span>
+                      </div>
+                    );
+                  }
+                  return <></>;
                 })}
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />

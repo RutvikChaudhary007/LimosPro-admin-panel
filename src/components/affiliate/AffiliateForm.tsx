@@ -1,11 +1,9 @@
-// @ts-nocheck
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FC, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import type { IAffiliate } from "@/types/affiliate.type";
+import type { IAffiliate, IEditAffiliateRes } from "@/types/affiliate.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import AddressInput from "../AddressInput";
 import { Button } from "../ui/button";
@@ -30,10 +28,10 @@ const formSchema = z.object({
       message: "Last name cannot be empty or just whitespace.",
     })
     .min(3, { message: "Last name must be at least 3 characters" }),
-  // businessLocation: z.object({
-  //     latitude: z.number(),
-  //     longitude: z.number(),
-  // }),
+  businessLocation: z.object({
+    latitude: z.number().nullable(),
+    longitude: z.number().nullable(),
+  }),
   businessAddress: z
     .string()
     .refine((value) => value.trim() !== "", {
@@ -51,27 +49,24 @@ const formSchema = z.object({
     .refine(
       (phone) => {
         // Remove all non-digit characters and check length
-        const digitsOnly = phone.replace(/\D/g, "");
+        const digitsOnly = phone.replaceAll(/\D/g, "");
         return digitsOnly.length >= 10 && digitsOnly.length <= 15;
       },
       { message: "Phone number must have 10-15 digits" },
     ),
-  // businessContactNumber: z
-  //     .string()
-  //     .min(1, { message: "Phone is required" })
-  //     .regex(/^\d+$/, { message: "Must be number" })
-  //     // .transform((v) => Number(v))
-  //     .refine((n) => n >= 0, { message: "Must be non‑negative" }),
   entityType: z.string().min(1, { message: "Entity Type is required" }),
   isChauffer: z.boolean(),
   taxId: z.string().min(2, { message: "Tax id is required." }),
   businessEmail: z.email(),
   commissionRate: z
     .string()
-    .min(1, { message: "Commission Rate is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    .refine((value) => value.trim() !== "", {
+      message: "Commission rate cannot be empty or just whitespace.",
+    })
+    .refine((value) => !Number.isNaN(Number(value)), {
+      message: "Commission rate must be a valid number.",
+    })
+    .refine((n) => Number(n) >= 0, { message: "Must be non‑negative" }),
   password: z.string().refine((value) => value.trim() !== "", {
     message: "Password cannot be empty or just whitespace.",
   }),
@@ -121,8 +116,8 @@ const formSchema = z.object({
 
 type TAffiliateForm = z.infer<typeof formSchema>;
 interface AffiliateFormProps {
-  initialData?: TAffiliateForm;
-  onSubmit: (data: IAffiliate) => void;
+  initialData?: IEditAffiliateRes;
+  onSubmit: (data: FormData) => void;
   disabledFields?: string[];
   type: string;
 }
@@ -145,6 +140,29 @@ interface IAddressObj {
   };
 }
 
+const transformInitialData = (data?: IEditAffiliateRes): TAffiliateForm | undefined => {
+  if (!data) return undefined;
+  // console.log("initial data:", data)
+
+  return {
+    firstName: data?.user?.firstName || "",
+    lastName: data?.user?.lastName || "",
+    email: data?.user?.email || "",
+    password: data?.user?.password || "",
+    isChauffer: data.isChauffer ?? false,
+    companyName: data.companyName || "",
+    businessContactNumber: data.businessContactNumber || "",
+    businessAddress: data.businessAddress || "",
+    businessLocation: data.businessLocation || { latitude: null, longitude: null },
+    businessEmail: data.businessEmail || "",
+    entityType: data.entityType || "",
+    taxId: data.taxId || "",
+    commissionRate: data?.commissionRate ? Number(data.commissionRate).toString() : "0",
+    documents: data.documents || [],
+    status: data.status || "",
+  };
+};
+
 const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   initialData,
   onSubmit,
@@ -156,15 +174,15 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
     if (!value) return "";
 
     // Keep the + and all digits
-    let input = value.replace(/[^\d+]/g, "");
+    let input = value.replaceAll(/[^\d+]/g, "");
 
     // Ensure it starts with +
     if (!input.startsWith("+")) {
-      input = "+" + input;
+      input = `+${input}`;
     }
 
     // Remove any + after the first one
-    input = "+" + input.slice(1).replace(/\+/g, "");
+    input = `+${input.slice(1).replaceAll(/\+/g, "")}`;
 
     // Extract country code and remaining digits
     const withoutPlus = input.slice(1);
@@ -201,7 +219,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
 
       // Try 2-digit country code first, then 3-digit, then 1-digit
       let ccLength = 2;
-      if (withoutPlus.length > 3 && parseInt(withoutPlus.slice(0, 3)) >= 100) {
+      if (withoutPlus.length > 3 && parseInt(withoutPlus.slice(0, 3), 10) >= 100) {
         ccLength = 3;
       } else if (withoutPlus[0] === "1") {
         ccLength = 1;
@@ -222,41 +240,19 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
     }
   };
 
-  const [newAddress, setNewAddress] = useState("");
-  const [addressObj, setAddressObj] = useState<IAddressObj>();
-  const [isAddressValid, setIsAddressValid] = useState(false);
+  const [_newAddress, setNewAddress] = useState("");
+  const [_addressObj, setAddressObj] = useState<IAddressObj>();
+  const [_isAddressValid, setIsAddressValid] = useState(false);
   // const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const [statusValue, setStatusValue] = useState<{
+  const [_statusValue, setStatusValue] = useState<{
     status: string;
     entityType: string;
   }>({
     status: "",
     entityType: "",
   });
-  const transformInitialData = (data?: TAffiliateForm): TAffiliateForm | undefined => {
-    if (!data) return undefined;
-    // console.log("initial data:", data)
 
-    return {
-      firstName: data?.user?.firstName,
-      lastName: data?.user?.lastName,
-      email: data?.user?.email,
-      password: data?.user?.password,
-      isChauffer: data.isChauffer,
-      companyName: data.companyName,
-      businessContactNumber: data.businessContactNumber,
-      businessAddress: data.businessAddress,
-      businessEmail: data.businessEmail,
-      businessLocation: businessAddress,
-      entityType: data.entityType,
-      taxId: data.taxId,
-      // commissionRate: !isNaN(data?.commissionRate) ? parseInt(data.commissionRate):'0',
-      commissionRate: parseInt(data?.commissionRate).toString() ?? "0",
-      documents: data.documents,
-      status: data.status,
-    };
-  };
   const form = useForm<TAffiliateForm>({
     resolver: zodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
@@ -270,8 +266,8 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
       businessAddress: "",
       businessEmail: "",
       businessLocation: {
-        latitude: 0,
-        longitude: 0,
+        latitude: null,
+        longitude: null,
       },
       entityType: "",
       taxId: "",
@@ -287,18 +283,11 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
     if (businessAddress) {
       form.setValue("businessAddress", businessAddress);
     }
-  }, [initialData, businessAddress]);
+  }, [initialData, businessAddress, form]);
   const documents = form.watch("documents");
   const fileCount = documents?.length || 0;
   const handleFormSubmit = async (values: IAffiliate) => {
     try {
-      if (values) {
-        values.businessLocation = {
-          latitude: addressObj?.location.latitude,
-          longitude: addressObj?.location.longitude,
-        };
-      }
-      console.log("values:", values);
       const formData = new FormData();
 
       // Append all scalar values
@@ -312,7 +301,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
       formData.append("businessAddress", values.businessAddress);
       formData.append("entityType", values.entityType);
       formData.append("commissionRate", values.commissionRate?.toString() || "0");
-      formData.append("status", values.status);
+      formData.append("status", values.status || "");
       formData.append("isChauffer", values.isChauffer ? "true" : "false");
       formData.append("taxId", values.taxId);
       formData.append("businessLocation", JSON.stringify(values.businessLocation));
@@ -322,7 +311,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
         formData.append(`documents`, file);
       });
 
-      await onSubmit(formData);
+      onSubmit(formData);
       form.reset();
     } catch (error) {
       console.error(error);
@@ -567,7 +556,10 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   <FormLabel>
                     Upload Documents:{" "}
                     {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
-                      <span key={idx} className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}>
+                      <span
+                        key={`${idx}-${text}`}
+                        className={idx < fileCount ? "text-gray-700 underline" : "text-gray-300"}
+                      >
                         {text}
                       </span>
                     ))}
@@ -581,7 +573,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       onChange={(e) => {
                         const newFiles = Array.from(e.target.files ?? []);
                         // Filter out File objects from current value (keep only document objects with url)
-                        const existingDocs = field.value.filter((doc: any) => !(doc instanceof File) && doc.url);
+                        const existingDocs = field.value.filter(
+                          (doc: File | { url: string }) => !(doc instanceof File) && doc.url,
+                        );
                         field.onChange([...existingDocs, ...newFiles]);
                       }}
                     />

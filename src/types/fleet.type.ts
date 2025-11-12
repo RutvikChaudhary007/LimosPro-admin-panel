@@ -1,4 +1,4 @@
-import type { TAffiliate } from "@/components/table/column";
+import type { TAffiliate } from "./affiliate.type";
 
 export type TFleetData = {
   id: string;

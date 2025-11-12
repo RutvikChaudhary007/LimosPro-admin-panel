@@ -1,4 +1,6 @@
-// @ts-nocheck
+import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Edit, Eye, Mail, Phone, Reply, Star, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -11,9 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Edit, Eye, Mail, Phone, Reply, Star, Trash2 } from "lucide-react";
+import type { IAffiliate } from "@/types/affiliate.type";
+import type { TChauffeur } from "@/types/chauffeur.type";
 import Icons from "../common/Icons";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";
@@ -109,7 +110,7 @@ export function getRegionColumns(
     {
       id: "access",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-      cell: ({ row }) => <AccessCell row={row} onAccess={onAccess} />,
+      cell: ({ row }) => <AccessCell<TRegion> row={row} onAccess={onAccess} />,
       enableSorting: false,
     },
     {
@@ -140,7 +141,7 @@ export type TRegionAdmin = {
 export function getRegionAdminColumns(
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
-  onAccess: (id: string) => void,
+  _onAccess: (id: string) => void,
 ): ColumnDef<TRegionAdmin>[] {
   return [
     {
@@ -214,29 +215,6 @@ export function getRegionAdminColumns(
   ];
 }
 
-export type TAffiliate = {
-  id: string;
-  userId: string;
-  isChauffer: boolean;
-  companyName: string;
-  taxId: string;
-  entityType: string;
-  businessEmail: string;
-  businessContactNumber: string;
-  businessAddress: string;
-  businessLocation: {
-    latitude: number;
-    longitude: number;
-  };
-  commissionRate: string;
-  documents: [];
-  stripeAccountId: string;
-  stripeAccountStatus: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export const getStatusColor = (status: string): string => {
   if (status?.toLowerCase() === "active") {
     return "bg-[#444444]";
@@ -269,7 +247,7 @@ export function getAffiliate(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
-): ColumnDef<TAffiliate>[] {
+): ColumnDef<IAffiliate>[] {
   return [
     {
       id: "select",
@@ -325,7 +303,7 @@ export function getAffiliate(
       accessorKey: "status",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
       cell: ({ row }) => (
-        <Badge variant={getStatusVariant(row.original.status)} className="capitalize">
+        <Badge variant={getStatusVariant(row?.original?.status ?? "")} className="capitalize">
           {row.original.status}
         </Badge>
         // <div className="inset-shadow-2xs inset-shadow-[#EEEEEE]">
@@ -341,10 +319,10 @@ export function getAffiliate(
       header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button onClick={() => onView(row?.original?.id ?? "")} variant="outlineNavBtnBlack" size="xl" spacing="lg">
             <Eye />
           </Button>
-          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button onClick={() => onEdit(row.original.id ?? "")} variant="outlineNavBtnBlack" size="xl" spacing="lg">
             <Edit />
           </Button>
           <Dialog>
@@ -366,7 +344,7 @@ export function getAffiliate(
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button onClick={() => onDelete(row.original.id ?? "")} variant="destructive">
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -378,64 +356,6 @@ export function getAffiliate(
     },
   ];
 }
-
-export type TChauffeur = {
-  id: string;
-  userId: string;
-  affiliateId: string;
-  status: string;
-  password: string;
-  panNumber: string;
-  licenseNumber: string;
-  vehicleId: string;
-  documents:
-    | [
-        {
-          size: number;
-          fileUrl: string;
-          mimetype: string;
-          originalName: string;
-        },
-        {
-          size: number;
-          fileUrl: string;
-          mimetype: string;
-          originalName: string;
-        },
-      ]
-    | string[];
-  rating: string;
-  availability: boolean;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  businessAddress: string;
-  user: {
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-  gratuity: string;
-  createdAt: string;
-  updatedAt: string;
-  vehicle: {
-    id: string;
-    affiliateId: string;
-    plateNumber: string;
-    brand: string;
-    model: string;
-    year: number;
-    color: string;
-    vehicleType: string;
-    capacity: number;
-    documents: [];
-    vehicleImages: [];
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string | null | undefined;
-  };
-};
 
 export function getChauffeur(
   onView: (id: string) => void,
@@ -1070,6 +990,10 @@ export type TPayments = {
   PaymentId: string;
   Amount: string;
   Status: string;
+  userDetails?: {
+    firstName: string;
+    lastName: string;
+  };
 };
 export function getPayments(onView: (id: string) => void, onMap: (id: string) => void): ColumnDef<TPayments>[] {
   return [
@@ -1098,7 +1022,6 @@ export function getPayments(onView: (id: string) => void, onMap: (id: string) =>
       accessorKey: "PassengerName",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
       cell: ({ row }) => {
-        console.log("row", row.original?.userDetails);
         return (
           <span className="text-[#3A3A3A] font-medium">
             {row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}
@@ -1149,7 +1072,6 @@ export function getPayments(onView: (id: string) => void, onMap: (id: string) =>
 export type TRefund = {
   id: string;
   transactionId: string;
-  id: string;
   paymentId: string;
   amount: string;
   refundId?: string;
@@ -1225,6 +1147,10 @@ export type TRefundRequest = {
   PaymentId: string;
   Amount: string;
   Status: string;
+  userDetails?: {
+    firstName: string;
+    lastName: string;
+  };
 };
 
 export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefundRequest>[] {
@@ -1254,7 +1180,6 @@ export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefun
       accessorKey: "PassengerName",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
       cell: ({ row }) => {
-        console.log("row", row.original?.userDetails);
         return (
           <span className="text-[#3A3A3A] font-medium">
             {row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}
@@ -1409,6 +1334,10 @@ export type TStaffMember = {
   email: string;
   password: string;
   role: string;
+  user?: {
+    firstName: string;
+    lastName: string;
+  };
 };
 
 export function getStaffMember(
@@ -1624,7 +1553,7 @@ export function getTestimonial(
     {
       accessorKey: "customerImage",
       header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />,
-      cell: ({ row }) => <img src={row.original.customerImage} className="w-[70px] h-[70px]" />,
+      cell: ({ row }) => <img src={row.original.customerImage} className="w-[70px] h-[70px]" alt={row.original.id} />,
       enableSorting: false,
     },
     {
@@ -2114,6 +2043,7 @@ export type TChauffeurAvailablility = {
   lastName: string;
   licenseNumber: string;
   ratings: string;
+  rating?: string;
   status: string;
 };
 
@@ -2292,6 +2222,10 @@ export type TContent = {
   id: string;
   content: string;
   description: string;
+  firstName?: string;
+  lastName?: string;
+  ratings?: string;
+  status: string;
 };
 
 export function getContent(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TContent>[] {

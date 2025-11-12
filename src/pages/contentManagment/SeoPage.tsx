@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/layouts/BreadCramb";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -16,9 +19,6 @@ import {
 } from "@/components/ui/pagination";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 const tableData: THomeContent[] = [
   {
@@ -54,9 +54,9 @@ const tableData: THomeContent[] = [
 
 const SeoPage = () => {
   const navigate = useNavigate();
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, _setPerPage] = useState(10);
   const [data, setData] = useState<THomeContent[]>(tableData);
-  const [activeBtn, setActiveBtn] = useState<string>("Home");
+  const [_activeBtn, _setActiveBtn] = useState<string>("Home");
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(
     data,
     1,
@@ -144,76 +144,74 @@ const SeoPage = () => {
     return items;
   };
   return (
-    <>
-      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Content Management</h2>
-              <h4>
-                <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Seo</span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT}>
-              {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add</span>
-              </Button>
-            </Link>
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+        <div className="w-full h-full flex items-center justify-between">
+          <div>
+            <h2 className="font-medium text-xl text-black">Content Management</h2>
+            <h4>
+              <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
+              <span className="text-[#959595] w-[116px] h-4">/ Seo</span>
+            </h4>
           </div>
-        </Header>
+          <Link to={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT}>
+            {" "}
+            <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Plus className="text-[#515151]" />
+              <span className="text-[#515151] font-medium text-sm">Add</span>
+            </Button>
+          </Link>
+        </div>
+      </Header>
 
-        <div className="flex items-center justify-between">
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none  rounded">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595] rounded"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
-            </div>
+      <div className="flex items-center justify-between">
+        <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+          <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none  rounded">
+            <Input
+              type="search"
+              placeholder="search"
+              className="text-[#959595] rounded"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
           </div>
         </div>
-
-        <DataTable
-          columns={columns}
-          data={currentItems}
-          rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
-          globalFilter={searchValue}
-          onGlobalFilterChange={setSearchValue}
-        />
-
-        {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
-          <Pagination className="justify-end mt-5 cursor-pointer">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href={"?page=" + currentPage}
-                  onClick={prevPage}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-
-              {generatePaginationItems()}
-
-              <PaginationItem>
-                <PaginationNext
-                  href={"?page=" + currentPage}
-                  onClick={nextPage}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
       </div>
-    </>
+
+      <DataTable
+        columns={columns}
+        data={currentItems}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
+        globalFilter={searchValue}
+        onGlobalFilterChange={setSearchValue}
+      />
+
+      {/* Pagination */}
+      {tableData.length > 0 && calculatedTotalPages > 1 && (
+        <Pagination className="justify-end mt-5 cursor-pointer">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href={`?page=${currentPage}`}
+                onClick={prevPage}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+
+            {generatePaginationItems()}
+
+            <PaginationItem>
+              <PaginationNext
+                href={`?page=${currentPage}`}
+                onClick={nextPage}
+                className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
+    </div>
   );
 };
 

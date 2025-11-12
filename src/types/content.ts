@@ -178,7 +178,7 @@ export interface BlogPostFormData {
 export interface ContentBlockFormData {
   blockType: string;
   sectionName: string;
-  content: any;
+  content: unknown;
   sortOrder: number;
   pageName?: string;
   isActive: boolean;
@@ -187,7 +187,7 @@ export interface ContentBlockFormData {
 export interface PageTemplateFormData {
   pageName: string;
   slug: string;
-  layout: any;
+  layout: unknown;
   seo?: {
     title: string;
     description: string;

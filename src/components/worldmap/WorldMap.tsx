@@ -1,6 +1,6 @@
-import type { TRegion } from "@/types/map.type";
 import { useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
+import type { TRegion } from "@/types/map.type";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 

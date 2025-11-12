@@ -1,5 +1,8 @@
 //@ts-nocheck
 
+import { ChevronDown, Download } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useFetchAllRefund from "@/api/getAllRefund.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -27,9 +30,6 @@ import {
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Download } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const showOptions = [
   { label: "Show 10", value: 10 },
@@ -74,10 +74,13 @@ const RefundPage = () => {
     selectedOption.value,
   );
 
-  const handleView = useCallback((id: string) => {
-    console.log("view:", id);
-    navigate(constant.ROUTING_URLS.VIEW_REFUND);
-  }, []);
+  const handleView = useCallback(
+    (id: string) => {
+      console.log("view:", id);
+      navigate(constant.ROUTING_URLS.VIEW_REFUND);
+    },
+    [navigate],
+  );
   const columns = useMemo(() => getRefund(handleView), [handleView]);
   const [rowSelection, setRowSelection] = useState({});
 

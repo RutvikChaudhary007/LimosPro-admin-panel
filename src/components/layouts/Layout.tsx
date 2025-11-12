@@ -1,8 +1,8 @@
+import { Outlet } from "react-router-dom";
 import { AppSidebar } from "@/components/layouts/partials/app-sidebar";
 import { SiteFooter } from "@/components/layouts/partials/site-footer";
 import { SiteHeader } from "@/components/layouts/partials/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Outlet } from "react-router-dom";
 export default function Layout() {
   return (
     <SidebarProvider

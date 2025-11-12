@@ -1,9 +1,9 @@
-import IconFilesUpload from "@/assets/Icons/ic-document-arrow-up.svg?react";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
+import IconFilesUpload from "@/assets/Icons/ic-document-arrow-up.svg?react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { FieldSeparator } from "./field";
 
 /* ------------------------------------------------------------------ */

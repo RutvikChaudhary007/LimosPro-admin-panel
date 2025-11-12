@@ -21,7 +21,7 @@ import type {
 } from "../types/content";
 
 // Utility function to build query string
-const buildQueryString = (params: Record<string, any>): string => {
+const buildQueryString = (params: Record<string, unknown>): string => {
   const queryParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
@@ -78,10 +78,10 @@ export const blogService = {
       const response = await adminAxiosInstance.get(url);
 
       // Handle backend response structure: { status, message, data: { posts, pagination } }
-      if (response.data?.data && response.data?.data.posts) {
+      if (response.data?.data?.pagination && response?.data?.data?.posts) {
         return {
-          data: response.data?.data.posts,
-          pagination: response.data?.data.pagination,
+          data: response.data?.data?.posts,
+          pagination: response.data?.data?.pagination,
         };
       }
 
@@ -126,7 +126,7 @@ export const blogService = {
   },
 
   // Get blog statistics
-  getStats: async (): Promise<ApiResponse<any>> => {
+  getStats: async (): Promise<ApiResponse<unknown>> => {
     const response = await adminAxiosInstance.get(API_ENDPOINTS.BLOG.GET_STATS);
     return response?.data;
   },
@@ -303,10 +303,10 @@ export const mediaService = {
       const response = await adminAxiosInstance.get(url);
 
       // Handle backend response structure: { status, message, data: { media, pagination } }
-      if (response?.data?.data && response?.data?.data.media) {
+      if (response?.data?.data?.pagination && response?.data?.data?.media) {
         return {
-          data: response?.data?.data.media || [],
-          pagination: response?.data?.data.pagination || {
+          data: response.data.data.media || [],
+          pagination: response.data.data.pagination || {
             page: 1,
             limit: 10,
             total: 0,
@@ -370,7 +370,6 @@ export const mediaService = {
 
   // Upload multiple media files
   uploadMultiple: async (files: File[], category?: string, folder?: string): Promise<ApiResponse<MediaLibrary[]>> => {
-    const token = localStorage.getItem("token");
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("files", file);
@@ -400,7 +399,7 @@ export const mediaService = {
   },
 
   // Get media statistics
-  getStats: async (): Promise<ApiResponse<any>> => {
+  getStats: async (): Promise<ApiResponse<unknown>> => {
     const response = await adminAxiosInstance.get(API_ENDPOINTS.MEDIA.GET_STATS);
     return response?.data || {};
   },

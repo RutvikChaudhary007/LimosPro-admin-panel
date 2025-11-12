@@ -1,3 +1,8 @@
+import type { Table } from "@tanstack/react-table";
+import { ChevronDown, Plus } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchAllTestimonials from "@/api/testimonial.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -29,10 +34,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Plus } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -42,7 +43,7 @@ const showOptions = [
 
 const TestimonialPage = () => {
   const navigate = useNavigate();
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [tableRef, setTableRef] = useState<Table<TTestimonial> | null>(null);
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TTestimonial[]>(tableData);
@@ -58,10 +59,13 @@ const TestimonialPage = () => {
   useEffect(() => {
     setPerPage(selected.value);
   }, [selected]);
-  const handleEdit = useCallback((id: string) => {
-    console.log("Edit:", id);
-    navigate(constant.ROUTING_URLS.EDIT_TESTIMONIALS.replace(":id", id));
-  }, []);
+  const handleEdit = useCallback(
+    (id: string) => {
+      console.log("Edit:", id);
+      navigate(constant.ROUTING_URLS.EDIT_TESTIMONIALS.replace(":id", id));
+    },
+    [navigate],
+  );
   const deleteTestimonial = queries.useDeleteTestimonialMutation();
   const bulkDeleteTestimonial = queries.useBulkDeleteTestimonialMutation();
   const handleDelete = (id: string) => {
@@ -261,7 +265,7 @@ const TestimonialPage = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href={"?page=" + currentPage}
+                  href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage - 1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
@@ -271,7 +275,7 @@ const TestimonialPage = () => {
 
               <PaginationItem>
                 <PaginationNext
-                  href={"?page=" + currentPage}
+                  href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage + 1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />

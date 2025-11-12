@@ -14,7 +14,11 @@ function AdminProtectedRoute() {
       // console.log("login..")
       navigate("/cms/login");
     }
-  }, []);
+  }, [
+    // console.log("login..")
+    navigate,
+    userRole,
+  ]);
   return userRole && ["Super Admin", "SEO Agent", "Affiliate"].includes(userRole) && <Outlet />;
 }
 

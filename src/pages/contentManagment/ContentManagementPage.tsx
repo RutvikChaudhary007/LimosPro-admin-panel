@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import useFetchAllContentBlock, { useFetchPageContentBlockTab } from "@/api/contentBlock.api";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
@@ -21,9 +24,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 const ContentManagement = () => {
   const navigate = useNavigate();
@@ -51,6 +51,7 @@ const ContentManagement = () => {
     if (activeBtn?.toLowerCase() === row?.pageName?.toLowerCase()) {
       return true;
     }
+    return false;
   });
   // console.log("filteredData:",filteredData)
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(
@@ -225,7 +226,7 @@ const ContentManagement = () => {
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={"?page=" + currentPage}
+                href={`?page=${currentPage}`}
                 onClick={prevPage}
                 className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
               />
@@ -235,7 +236,7 @@ const ContentManagement = () => {
 
             <PaginationItem>
               <PaginationNext
-                href={"?page=" + currentPage}
+                href={`?page=${currentPage}`}
                 onClick={nextPage}
                 className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
               />

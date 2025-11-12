@@ -1,5 +1,10 @@
 // @ts-nocheck
 
+import type { Table } from "@tanstack/react-table";
+import { ChevronDown, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchALLNews from "@/api/news.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -31,10 +36,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const showOptions = [
   { value: 10, label: "Show 10" },
@@ -66,7 +67,7 @@ const showOptions = [
 // ]
 const Newspage = () => {
   const navigate = useNavigate();
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [tableRef, setTableRef] = useState<Table<TNews> | null>(null);
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TNews[]>(tableData);
@@ -276,7 +277,7 @@ const Newspage = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href={"?page=" + currentPage}
+                  href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage - 1)}
                   className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
@@ -286,7 +287,7 @@ const Newspage = () => {
 
               <PaginationItem>
                 <PaginationNext
-                  href={"?page=" + currentPage}
+                  href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage + 1)}
                   className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
                 />

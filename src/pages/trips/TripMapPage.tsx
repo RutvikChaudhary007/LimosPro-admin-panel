@@ -1,14 +1,14 @@
 //@ts-nocheck
 
+import { MessageSquareMore, Phone, Route, Send } from "lucide-react";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import useFetchTripById from "@/api/getTripById.api";
 import Header from "@/components/layouts/BreadCramb";
 import LiveTracking from "@/components/liveTracking/LiveTracking";
 import { Spinner } from "@/components/Spinner";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { MessageSquareMore, Phone, Route, Send } from "lucide-react";
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
 
 const TripMapPage = () => {
   const { id } = useParams();
@@ -20,35 +20,33 @@ const TripMapPage = () => {
   // const car = { lat: 35.0, lng: -90.0 }; // Somewhere on route
 
   return (
-    <>
-      <div className="p-6 space-y-6 md:p-8 md:space-y-8 relative">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Track Live Location</h2>
-              <h4 className="text-[#959595] text-sm mt-1">Trips / Track Live Location</h4>
-            </div>
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8 relative">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+        <div className="w-full h-full flex items-center justify-between">
+          <div>
+            <h2 className="font-medium text-xl text-black">Track Live Location</h2>
+            <h4 className="text-[#959595] text-sm mt-1">Trips / Track Live Location</h4>
           </div>
-        </Header>
+        </div>
+      </Header>
 
-        {isFetching ? (
-          <Spinner />
-        ) : (
-          <>
-            <div className="w-full h-[684px] mt-5 rounded overflow-hidden shadow">
-              <LiveTracking
-                dropPosition={data?.dropoffLocation}
-                pickPosition={data?.pickupLocation}
-                // carPosition={car}
-              />
-            </div>
+      {isFetching ? (
+        <Spinner />
+      ) : (
+        <>
+          <div className="w-full h-[684px] mt-5 rounded overflow-hidden shadow">
+            <LiveTracking
+              dropPosition={data?.dropoffLocation}
+              pickPosition={data?.pickupLocation}
+              // carPosition={car}
+            />
+          </div>
 
-            {/* Passenger & Chauffeur info section */}
-            <Content data={data} />
-          </>
-        )}
-      </div>
-    </>
+          {/* Passenger & Chauffeur info section */}
+          <Content data={data} />
+        </>
+      )}
+    </div>
   );
 };
 
@@ -134,7 +132,10 @@ const Content = ({ data }: { data: object }) => {
               Call
               {/* </button> */}
             </Link>
-            <button className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition">
+            <button
+              type="button"
+              className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition"
+            >
               <MessageSquareMore className="w-4 h-4 mr-1 fill-none" />
               Chat
             </button>
@@ -188,7 +189,10 @@ const Content = ({ data }: { data: object }) => {
               <Phone className="w-4 h-4 mr-1 fill-none" />
               Call
             </Link>
-            <button className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition">
+            <button
+              type="button"
+              className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition"
+            >
               <MessageSquareMore className="w-4 h-4 mr-1 fill-none" />
               Chat
             </button>

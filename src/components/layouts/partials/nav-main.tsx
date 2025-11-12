@@ -1,3 +1,5 @@
+import { ChevronRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import {
@@ -10,8 +12,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { ChevronRight } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
 
 interface NavItem {
   title: string;
@@ -25,7 +25,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const isActivePath = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
+  const isActivePath = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const renderSubItems = (subItems: NavItem["items"] = []) => (
     <SidebarMenuSub>

@@ -95,9 +95,9 @@ type TFormData = {
   rating: number;
   isFeatured: boolean;
 };
-export const editTestimonial = async ({ data, id }: { data: TFormData; id: string | undefined }) => {
+export const editTestimonial = async ({ data, id }: { data: TFormData; id: string }) => {
   // console.log("edit testimonial..:",data)
-  const response = await adminAxiosInstance.put(API_ENDPOINTS.EDIT_TESTIMONIAL.replace(":id", id!), data, {
+  const response = await adminAxiosInstance.put(API_ENDPOINTS.EDIT_TESTIMONIAL.replace(":id", id), data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

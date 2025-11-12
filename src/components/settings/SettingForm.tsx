@@ -7,7 +7,7 @@ import type { ISettingFormProps } from "@/types/settings.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import type { TSetting } from "../table/column";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 

@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
 // import { deleteUser } from '@/api/deleteUser';
 
+import type { Table } from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import UsefetchAllUsers from "@/api/getAllUser.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -32,9 +36,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
-import { ChevronDown } from "lucide-react";
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const showStatus = [
   { label: "Active", value: "active" },
@@ -84,7 +85,7 @@ function UsersPage() {
     return { startDate: start, endDate: selectedTime.value ? end : undefined };
   }, [selectedTime]);
 
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [tableRef, setTableRef] = useState<Table<TUsers> | null>(null);
   const { data, refetch, isFetching, isError } = UsefetchAllUsers({
     DateRange: { startDate, endDate },
   });

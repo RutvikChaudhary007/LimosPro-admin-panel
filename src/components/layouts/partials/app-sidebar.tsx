@@ -54,8 +54,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { constant } from "@/lib/constant";
-import { hasDynamicAccess } from "@/utils/Helper";
 import { useUserStore } from "@/stores/useAuthStore";
+import { hasDynamicAccess } from "@/utils/Helper";
 
 const data = {
   navMain: [
@@ -213,7 +213,7 @@ export function AppSidebar({
         return hasDynamicAccess(item.url, user?.role, user?.permissions) ? item : null; // Changed from [] to null
       })
       .filter(Boolean) as typeof data.navMain;
-  }, [data.navMain]);
+  }, [user?.permissions, user?.role]);
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header */}

@@ -1,11 +1,11 @@
 //@ts-nocheck
 
-import { constant } from "@/lib/constant";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { ArrowRight, Plus } from "lucide-react";
 import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from "react-router-dom";
+import { constant } from "@/lib/constant";
 import { getChauffeurAvailablility } from "../table/column";
 import { DataTable } from "../table/data-table";
 import { Button } from "../ui/button";
@@ -47,7 +47,7 @@ function TableAndPieChart({
     console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_CHAUFFEUR.replace(":id", id));
   };
-  const handleDelete = (id: string) => {
+  const handleDelete = (_id: string) => {
     // setData((prev) =>
     //   prev.filter((row) => row.id !== id))
   };
@@ -169,7 +169,7 @@ function TableAndPieChart({
           <div className="w-full">
             {fleetDistribution?.fleets?.length > 0 ? (
               fleetDistribution?.fleets?.map((content, i) => (
-                <React.Fragment key={i}>
+                <React.Fragment key={`${i}-${content.fleet}`}>
                   <div className="w-full flex justify-between items-center">
                     <p className="text-[#3A3A3A] font-bold text-sm">{content.fleet}</p>
                     <p className="text-[#3A3A3A] text-sm">

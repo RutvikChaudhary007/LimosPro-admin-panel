@@ -1,5 +1,8 @@
-// @ts-nocheck
-
+import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import PageTitle from "@/components/common/PageTitle";
@@ -11,11 +14,6 @@ import queries from "@/lib/queries";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 
 const libraries = ["places", "geocoding"];
 
@@ -23,7 +21,7 @@ function EditAffiliatePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   // console.log("id:",id)
-  const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
+  const [googleMapsApiKey] = useState<string | null>(env?.VITE_GOOGLE_MAP_KEY ?? "");
   const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
@@ -31,7 +29,7 @@ function EditAffiliatePage() {
     libraries: libraries as Libraries,
   });
 
-  const { data, isFetching, error } = UsefetchAffiliateById({ id });
+  const { data, isFetching } = UsefetchAffiliateById({ id });
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
@@ -62,7 +60,7 @@ function EditAffiliatePage() {
     };
   }, [isLoaded, loadError, data]);
   const editAffiliateMutation = queries.useEditAffiliateMutation();
-  const handleEditAffiliate = async (data: unknown) => {
+  const handleEditAffiliate = async (data: FormData) => {
     // console.log("called handleCreateAffiliate")
     try {
       toastPromise(editAffiliateMutation.mutateAsync({ data, id }), {
@@ -91,10 +89,7 @@ function EditAffiliatePage() {
       <PageTitle title={generatePageTitle("Affiliate")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <Link to={constant.ROUTING_URLS.AFFILIATE}>
-          <Button
-            variant="outline"
-            className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
-          >
+          <Button variant="outlineBlack">
             <ArrowLeft /> Back
           </Button>
         </Link>

@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import type { Table } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +13,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { getAffiliate, type TAffiliate } from "@/components/table/column";
+import { getAffiliate } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
@@ -29,6 +30,8 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import type { IAffiliate } from "@/types/affiliate.type";
+import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
@@ -91,7 +94,7 @@ function AffiliatePage() {
     DateRange: { startDate, endDate },
     page: newPage,
   });
-  const [tableRef, setTableRef] = useState<unknown>(null);
+  const [tableRef, setTableRef] = useState<Table<IAffiliate> | null>(null);
   const queryClient = useQueryClient();
   useEffect(() => {
     if (FetchData?.pagination?.hasNextPage === true) {
@@ -100,10 +103,9 @@ function AffiliatePage() {
         queryFn: () => getAllAffiliate({ startDate, endDate }, newPage + 1),
       });
     }
-  }, [queryClient, newPage, FetchData]);
+  }, [queryClient, newPage, FetchData, startDate, endDate]);
 
-  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(data, 1, perPage);
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TAffiliate>(
+  const { currentPage, setPage, totalPages, currentItems } = usePagination<IAffiliate>(
     FetchData?.affiliates,
     newPage,
     perPage,
@@ -120,14 +122,12 @@ function AffiliatePage() {
     }
   }, [currentItems]);
   const handleView = (id: string) => {
-    console.log("view:", id);
     navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id", id));
   };
 
   const deleteAffiliateMutation = queries.useDeleteAffiliateMutation(refetch);
   const bulkDeleteAffiliateMutation = queries.useBulkDeleteAffiliateMutation();
   const handleEdit = (id: string) => {
-    console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id", id));
   };
   const handleDelete = async (id: string) => {
@@ -257,7 +257,7 @@ function AffiliatePage() {
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
-              <BulkDeleteBtn
+              <BulkDeleteBtn<IAffiliate, TBlkDelRes>
                 rowSelection={rowSelection}
                 tableRef={tableRef}
                 bulkDeleteMutation={bulkDeleteAffiliateMutation}

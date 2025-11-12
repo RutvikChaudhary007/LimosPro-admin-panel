@@ -1,3 +1,5 @@
+import { IconEyeOff, IconLock, IconMail } from "@tabler/icons-react";
+import { TrendingDown } from "lucide-react";
 import IconChevronDown from "@/assets/Icons/ic-chevron-down.svg?react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { IconEyeOff, IconLock, IconMail } from "@tabler/icons-react";
-import { TrendingDown } from "lucide-react";
 
 function CardPage() {
   return (

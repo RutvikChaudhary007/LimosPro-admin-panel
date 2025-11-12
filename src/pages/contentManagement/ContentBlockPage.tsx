@@ -1,5 +1,9 @@
 //@ts-nocheck
 
+import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import useFetchAllContentBlock from "@/api/contentBlock.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -23,10 +27,6 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
-import { Plus } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 function ContentBlockPage() {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ function ContentBlockPage() {
     limit: perPage,
   });
 
-  const tabsData = useMemo(() => {
+  const _tabsData = useMemo(() => {
     const uniqueTabs = new Set();
     data?.blocks?.foreach((rawData) => {
       uniqueTabs.add(rawData?.pageName);
@@ -56,7 +56,7 @@ function ContentBlockPage() {
     try {
       toastPromise(deleteChauffeurMutation.mutateAsync(id), {
         loading: "Deleting chauffeur...",
-        success: (res) => {
+        success: (_res) => {
           //   if(res) refetch();
           return "Yeah! Chauffeur deleted successfully";
         },

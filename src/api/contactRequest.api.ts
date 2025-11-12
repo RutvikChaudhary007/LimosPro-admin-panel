@@ -83,9 +83,9 @@ export const createChauffeur = async (data: object) => {
  * @param data
  * @returns response data
  */
-export const editChauffeur = async ({ data, id }: { data: unknown; id: string | undefined }) => {
+export const editChauffeur = async ({ data, id }: { data: unknown; id: string }) => {
   // console.log("edit chauffeur..:",data)
-  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id!), data, {
+  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id), data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

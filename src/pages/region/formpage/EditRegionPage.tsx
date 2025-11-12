@@ -1,4 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft, MapPinned } from "lucide-react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { z } from "zod";
 // import { Label } from '@/components/ui/label'
 import { useFetchRegionById } from "@/api/region.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -10,12 +16,6 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import { ArrowLeft, MapPinned } from "lucide-react";
-import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
-import { z } from "zod";
 
 const formSchema = z.object({
   regionName: z.string().min(2, {
@@ -34,7 +34,7 @@ const EditRegionPage = () => {
     },
   });
   useEffect(() => {
-    if (data && data?.regionName) {
+    if (data?.regionName) {
       form.reset({
         regionName: data.regionName,
       });
@@ -63,64 +63,62 @@ const EditRegionPage = () => {
     // console.log("data:", values);
   }
   return (
-    <>
-      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <PageHeader
-          title="Region Management"
-          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Edit Regions" }]}
-          action={{
-            variant: "outlineBlack",
-            label: "Back to Regions",
-            icon: <ArrowLeft />,
-            link: constant.ROUTING_URLS.REGION,
-          }}
-        />
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8">
+      <PageHeader
+        title="Region Management"
+        breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Edit Regions" }]}
+        action={{
+          variant: "outlineBlack",
+          label: "Back to Regions",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.REGION,
+        }}
+      />
 
-        {isFetching ? (
-          <Spinner />
-        ) : (
-          <Card>
-            <CardBody>
-              <form onSubmit={form.handleSubmit(onSubmit)}>
-                <CardTitle>Edit Regions</CardTitle>
-                <div className="space-y-4 my-4">
-                  <Field>
-                    <FieldLabel htmlFor="regionName" className="text-base-black gap-0">
-                      Region
-                    </FieldLabel>
+      {isFetching ? (
+        <Spinner />
+      ) : (
+        <Card>
+          <CardBody>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <CardTitle>Edit Regions</CardTitle>
+              <div className="space-y-4 my-4">
+                <Field>
+                  <FieldLabel htmlFor="regionName" className="text-base-black gap-0">
+                    Region
+                  </FieldLabel>
 
-                    <Controller
-                      control={form.control}
-                      name="regionName"
-                      render={({ field }) => (
-                        <InputGroup>
-                          <InputGroupInput {...field} id="regionName" type="text" placeholder="Add Region" />
-                          <InputGroupAddon>
-                            <MapPinned />
-                          </InputGroupAddon>
-                        </InputGroup>
-                      )}
-                    />
-
-                    <FieldDescription className="mt-1">Provide region name here.</FieldDescription>
-
-                    {form.formState.errors.regionName && (
-                      <p className="text-danger text-sm mt-1">{form.formState.errors.regionName.message}</p>
+                  <Controller
+                    control={form.control}
+                    name="regionName"
+                    render={({ field }) => (
+                      <InputGroup>
+                        <InputGroupInput {...field} id="regionName" type="text" placeholder="Add Region" />
+                        <InputGroupAddon>
+                          <MapPinned />
+                        </InputGroupAddon>
+                      </InputGroup>
                     )}
-                  </Field>
-                </div>
+                  />
 
-                <CardFooter>
-                  <Button type="submit" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Saving..." : "Save Region"}
-                  </Button>
-                </CardFooter>
-              </form>
-            </CardBody>
-          </Card>
-        )}
-      </div>
-    </>
+                  <FieldDescription className="mt-1">Provide region name here.</FieldDescription>
+
+                  {form.formState.errors.regionName && (
+                    <p className="text-danger text-sm mt-1">{form.formState.errors.regionName.message}</p>
+                  )}
+                </Field>
+              </div>
+
+              <CardFooter>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Saving..." : "Save Region"}
+                </Button>
+              </CardFooter>
+            </form>
+          </CardBody>
+        </Card>
+      )}
+    </div>
   );
 };
 
