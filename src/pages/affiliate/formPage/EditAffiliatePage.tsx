@@ -7,6 +7,7 @@ import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
+import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -83,7 +84,7 @@ function EditAffiliatePage() {
     // });
   };
 
-  if (isFetching) return <p>Loading...</p>;
+  if (isFetching) return <Spinner />;
   return (
     <>
       <PageTitle title={generatePageTitle("Affiliate")} />
