@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type User = {
+export type User = {
   id: string;
   name: string;
   accessToken: string;
@@ -9,6 +9,7 @@ type User = {
   lastName: string;
   email: string;
   role?: string;
+  avatar?: string;
   permissions: string[];
   refreshToken: string;
 };

@@ -5,7 +5,7 @@ import IconLanguage from "@/assets/Icons/ic-translate.svg?react";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useUserStore } from "@/stores/useAuthStore";
+import { type User, useUserStore } from "@/stores/useAuthStore";
 import { NavUser } from "./nav-user";
 export function SiteHeader() {
   const { user } = useUserStore();
@@ -37,7 +37,7 @@ export function SiteHeader() {
             </Button>
           </div>
           <div className="">
-            <NavUser user={user} />
+            <NavUser user={user as User} />
           </div>
         </div>
       </div>
