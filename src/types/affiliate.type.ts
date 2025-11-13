@@ -1,3 +1,5 @@
+import type { Tfilters, TPagination } from "./global/ApiResponse.type";
+
 type TBusinessLocation = {
   latitude: number | null;
   longitude: number | null;
@@ -47,3 +49,9 @@ export interface IEditAffiliateRes extends IAffiliate {
   };
   location: TBusinessLocation;
 }
+
+export type TAffiliateRes = {
+  affiliates: IAffiliate[];
+  pagination: TPagination;
+  filters: Tfilters;
+};

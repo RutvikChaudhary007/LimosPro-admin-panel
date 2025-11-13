@@ -331,8 +331,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
       form.setValue("businessAddress", businessAddress);
     }
   }, [initialData, businessAddress, form]);
-  const documents = form.watch("documents");
-  const fileCount = documents?.length || 0;
+  // const documents = form.watch("documents");
   const handleFormSubmit = async (values: IAffiliate) => {
     try {
       const formData = new FormData();

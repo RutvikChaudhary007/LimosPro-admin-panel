@@ -1,4 +1,8 @@
-import type { QueryObserverResult, RefetchOptions, UseMutationResult } from "@tanstack/react-query";
+import type {
+  QueryObserverResult,
+  RefetchOptions,
+  UseMutationResult,
+} from "@tanstack/react-query";
 import type { Table } from "@tanstack/react-table";
 import { AxiosError } from "axios";
 import { Trash2 } from "lucide-react";
@@ -21,8 +25,12 @@ interface BulkDeleteBtnProps<TData, TResponse> {
   rowSelection: Record<string, boolean>;
   tableRef: Table<TData> | null;
   bulkDeleteMutation: UseMutationResult<TResponse, unknown, string[], unknown>;
-  refetch: (options?: RefetchOptions) => Promise<QueryObserverResult<TData[], Error>>;
-  setRowSelection: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  refetch: (
+    options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<TData, Error>>;
+  setRowSelection: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >;
   title?: string;
   descTitle?: string;
 }
@@ -42,7 +50,9 @@ const BulkDeleteBtn = <TData, TResponse>({
     if (!tableRef) return;
 
     // Extract selected IDs (assumes your data rows have an `id` field)
-    const selectedIds = tableRef.getSelectedRowModel().rows.map((row) => (row.original as { id: string }).id);
+    const selectedIds = tableRef
+      .getSelectedRowModel()
+      .rows.map((row) => (row.original as { id: string }).id);
 
     try {
       setIsDialogOpen(false);
@@ -53,7 +63,10 @@ const BulkDeleteBtn = <TData, TResponse>({
           setRowSelection({});
           return `Yeah! ${title} deleted successfully`;
         },
-        error: (e) => (e instanceof AxiosError ? e.message : `Oops! Failed to delete ${title}`),
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.message
+            : `Oops! Failed to delete ${title}`,
       });
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);
@@ -64,30 +77,44 @@ const BulkDeleteBtn = <TData, TResponse>({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outlineBlack" disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}>
+        <Button
+          variant="outlineBlack"
+          disabled={
+            Object.keys(rowSelection).filter((k) => rowSelection[k]).length ===
+            0
+          }
+        >
           <span>Delete</span>
           <Trash2 />
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+      <DialogContent
+        className="sm:max-w-[425px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Delete {title}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete these {descTitle}? This action cannot be undone.
+            Are you sure you want to delete these {descTitle}? This action
+            cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-4">
           <p className="text-sm text-muted-foreground">
-            <strong>Are you absolutely sure?</strong> This action cannot be undone.
+            <strong>Are you absolutely sure?</strong> This action cannot be
+            undone.
           </p>
         </div>
 
         <DialogFooter className="mt-6">
           <Button
             variant="destructive"
-            disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+            disabled={
+              Object.keys(rowSelection).filter((k) => rowSelection[k])
+                .length === 0
+            }
             onClick={handleBulkDelete}
           >
             Confirm Delete

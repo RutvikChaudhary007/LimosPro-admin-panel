@@ -49,7 +49,9 @@ const ViewAffiliatePage = () => {
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
   );
-  const [, setBusinessAddress] = useState<string | undefined>(undefined);
+  const [businessAddress, setBusinessAddress] = useState<string | undefined>(
+    undefined,
+  );
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey || "",
@@ -61,7 +63,6 @@ const ViewAffiliatePage = () => {
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
-
     const fetchAddress = async () => {
       if (isLoaded && data && !loadError) {
         try {
@@ -70,7 +71,7 @@ const ViewAffiliatePage = () => {
             lng: data?.businessLocation?.longitude,
           });
           if (isMounted) {
-            console.log("Decoded Address:", address);
+            // console.log("Decoded Address:", address);
             if (address) {
               setBusinessAddress(address as string);
             }
@@ -88,9 +89,12 @@ const ViewAffiliatePage = () => {
     };
   }, [isLoaded, loadError, data]);
   const documentsLength = data?.documents?.length;
-  const docJsx = [1, 2, 3, 4].map((i) => (
+  const docJsx = data?.documents?.map((doc: { fileUrl: string }, i: number) => (
     <div key={i} className="flex items-center gap-6">
-      <Label className="font-semibold w-full max-w-max"> Document {i}:</Label>
+      <Label className="font-semibold w-full max-w-max">
+        {" "}
+        Document {i + 1}:
+      </Label>
       <div
         className={cn(
           "bg-base-white w-full flex items-center space-x-5",
@@ -102,7 +106,8 @@ const ViewAffiliatePage = () => {
         </Badge>
 
         <Link
-          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
+          // to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
+          to={doc?.fileUrl ?? "#"}
           rel="noreferrer"
           target="_blank"
         >
@@ -116,7 +121,8 @@ const ViewAffiliatePage = () => {
           </Button>
         </Link>
         <Link
-          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
+          // to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
+          to={doc?.fileUrl ?? "#"}
           download={i <= documentsLength ? data?.documents[i - 1] : "#"}
           target="_blank"
         >
@@ -133,19 +139,7 @@ const ViewAffiliatePage = () => {
     </div>
   ));
   if (isError) return <ErrorCard refetch={refetch} />;
-  // for (let i = 1; i <= 4; i++) {
-  //     docJsx.push (
-  //         <div key={i} className="flex items-center gap-6">
-  //                         <Label className="block text-sm font-semibold capitalize w-[95px] ">Document {i}:</Label>
-  //                         <div className={cn("bg-base-white w-full h-[33px] flex items-center space-x-5", i > documentsLength && "opacity-50 cursor-no-drop")} >
-  //                         <Label className="inline-block bg-[#444444] text-white px-2 py-0.5 rounded text-xs text-center !w-[70px] h-5">{i<=documentsLength ? "Submitted" : "Pending"}</Label>
-  //                         <Link to={i <= documentsLength ? data.Documents[(i - 1)]: "#"} rel="noreferrer" target="_blank"><img src="/document-eye.svg" alt="eye page" /> </Link>
-  //                         <Link to={i <= documentsLength ? data.Documents[(i-1)]:"#"} download={i <= documentsLength ? data.Documents[(i-1)]:"#"} target="_blank"><img src="/document-arrow-down.svg" alt="down page" />
-  //                         </Link>
-  //                         </div>
-  //                     </div>
-  //     )
-  // }
+
   return (
     <>
       <PageTitle title={generatePageTitle("Affiliate")} />
@@ -174,6 +168,11 @@ const ViewAffiliatePage = () => {
                 <CardTitle>{data?.companyName}</CardTitle>
                 <CardDescription className="text-sm font-bold">
                   {data?.user?.firstName} {data?.user?.lastName}
+                  {
+                    businessAddress?.split(",")[
+                      businessAddress?.split(",").length - 1
+                    ]
+                  }
                 </CardDescription>
                 <CardAction>
                   <DropdownMenu>
@@ -206,18 +205,20 @@ const ViewAffiliatePage = () => {
                     Company
                   </h6>
                   {Object.entries(data as Record<string, React.ReactNode>)?.map(
-                    ([key]) => {
+                    ([key, val]) => {
                       if (
-                        ![
+                        [
                           "businessemail",
                           "businesscontactnumber",
                           "entitytype",
                           "businessaddress",
-                        ].includes(key.toLowerCase())
+                        ].includes(key?.toLowerCase())
                       ) {
                         return (
                           <div key={key} className="flex items-center gap-6">
-                            <Label>{key}:</Label>
+                            <Label>
+                              {key}:{val}
+                            </Label>
                           </div>
                         );
                       }
