@@ -7,7 +7,7 @@ function FileUploadPage() {
     <div className="p-2 space-y-2">
       <FilesUpload maxSize={5} />
       <ImagesUpload />
-      <InlineFileUpload />
+      <InlineFileUpload multiple={true} />
     </div>
   );
 }

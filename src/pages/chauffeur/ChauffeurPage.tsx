@@ -1,5 +1,5 @@
 import type { Table } from "@tanstack/react-table";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,7 +11,11 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getChauffeur } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -44,228 +48,6 @@ const showTime = [
   { label: "Yearly", value: "yearly" },
 ];
 
-// const tableData: TChauffeur[] = [
-//         {
-//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db19",
-//             "businessAddress": "dafs",
-//             "password": "dfa",
-//             "user": {
-//               "firstName": "dkfsa",
-//               "lastName": "dfas",
-//               "email": "ddfa@email.com"
-//             },
-//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-//             "status": "Active",
-//             "panNumber": "chauffeur_pan_875f",
-//             "licenseNumber": "license_number_875f",
-//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-//             "documents": [
-//                 {
-//                     "size": 254971,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot (7).png"
-//                 },
-//                 {
-//                     "size": 316890,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot 2023-07-25 120555.png"
-//                 }
-//             ],
-//             "rating": "5.00",
-//             "availability": true,
-//             "location": {
-//                 "latitude": 40.76303278785429,
-//                 "longitude": -73.81583247888925
-//             },
-//             "gratuity": "0.00",
-//             "createdAt": "2025-07-15T13:07:17.448Z",
-//             "updatedAt": "2025-07-15T13:07:17.448Z",
-//             "vehicle": {
-//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-//                 "plateNumber": "AB-123-CDa",
-//                 "brand": "Mercedes-S-classa",
-//                 "model": "2024",
-//                 "year": 2025,
-//                 "color": "black",
-//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
-//                 "capacity": 4,
-//                 "documents": [],
-//                 "vehicleImages": [],
-//                 "createdAt": "2025-07-15T12:43:58.461Z",
-//                 "updatedAt": "2025-07-15T12:43:58.461Z",
-//                 "deletedAt": null
-//             }
-//         },
-//         {
-//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db17",
-//             "businessAddress": "dafs",
-//             "password": "dfa",
-//             "user": {
-//               "firstName": "dkfsa",
-//               "lastName": "dfas",
-//               "email": "ddfa@email.com"
-//             },
-//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-//             "status": "pending",
-//             "panNumber": "chauffeur_pan_875f",
-//             "licenseNumber": "license_number_875f",
-//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-//             "documents": [
-//                 {
-//                     "size": 254971,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot (7).png"
-//                 },
-//                 {
-//                     "size": 316890,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot 2023-07-25 120555.png"
-//                 }
-//             ],
-//             "rating": "5.00",
-//             "availability": true,
-//             "location": {
-//                 "latitude": 40.76303278785429,
-//                 "longitude": -73.81583247888925
-//             },
-//             "gratuity": "0.00",
-//             "createdAt": "2025-07-15T13:07:17.448Z",
-//             "updatedAt": "2025-07-15T13:07:17.448Z",
-//             "vehicle": {
-//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-//                 "plateNumber": "AB-123-CDa",
-//                 "brand": "Mercedes-S-classa",
-//                 "model": "2024",
-//                 "year": 2025,
-//                 "color": "black",
-//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
-//                 "capacity": 4,
-//                 "documents": [],
-//                 "vehicleImages": [],
-//                 "createdAt": "2025-07-15T12:43:58.461Z",
-//                 "updatedAt": "2025-07-15T12:43:58.461Z",
-//                 "deletedAt": null
-//             }
-//         },
-//         {
-//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db16",
-//             "businessAddress": "dafs",
-//             "password": "dfa",
-//             "user": {
-//               "firstName": "dkfsa",
-//               "lastName": "dfas",
-//               "email": "ddfa@email.com"
-//             },
-//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-//             "status": "inactive",
-//             "panNumber": "chauffeur_pan_875f",
-//             "licenseNumber": "license_number_875f",
-//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-//             "documents": [
-//                 {
-//                     "size": 254971,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot (7).png"
-//                 },
-//                 {
-//                     "size": 316890,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot 2023-07-25 120555.png"
-//                 }
-//             ],
-//             "rating": "5.00",
-//             "availability": true,
-//             "location": {
-//                 "latitude": 40.76303278785429,
-//                 "longitude": -73.81583247888925
-//             },
-//             "gratuity": "0.00",
-//             "createdAt": "2025-07-15T13:07:17.448Z",
-//             "updatedAt": "2025-07-15T13:07:17.448Z",
-//             "vehicle": {
-//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-//                 "plateNumber": "AB-123-CDa",
-//                 "brand": "Mercedes-S-classa",
-//                 "model": "2024",
-//                 "year": 2025,
-//                 "color": "black",
-//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
-//                 "capacity": 4,
-//                 "documents": [],
-//                 "vehicleImages": [],
-//                 "createdAt": "2025-07-15T12:43:58.461Z",
-//                 "updatedAt": "2025-07-15T12:43:58.461Z",
-//                 "deletedAt": null
-//             }
-//         },
-//         {
-//             "id": "801c9f7e-7dfa-4f97-9664-912fe821db15",
-//             "businessAddress": "dafs",
-//             "password": "dfa",
-//             "user": {
-//               "firstName": "dkfsa",
-//               "lastName": "dfas",
-//               "email": "ddfa@email.com"
-//             },
-//             "userId": "1b54693c-685f-4360-b07d-6ebfe74a96a7",
-//             "affiliateId": "ba5227db-7a3f-45f5-945c-e9d5ef01968d",
-//             "status": "suspended",
-//             "panNumber": "chauffeur_pan_875f",
-//             "licenseNumber": "license_number_875f",
-//             "vehicleId": "3959bb6d-8782-41db-9365-ff7876e88131",
-//             "documents": [
-//                 {
-//                     "size": 254971,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832584-Screenshot%20%287%29.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot (7).png"
-//                 },
-//                 {
-//                     "size": 316890,
-//                     "fileUrl": "https://qb-nauticalnode.s3.ap-south-1.amazonaws.com/chauffeurs/1752584832590-Screenshot%202023-07-25%20120555.png",
-//                     "mimetype": "image/png",
-//                     "originalName": "Screenshot 2023-07-25 120555.png"
-//                 }
-//             ],
-//             "rating": "5.00",
-//             "availability": true,
-//             "location": {
-//                 "latitude": 40.76303278785429,
-//                 "longitude": -73.81583247888925
-//             },
-//             "gratuity": "0.00",
-//             "createdAt": "2025-07-15T13:07:17.448Z",
-//             "updatedAt": "2025-07-15T13:07:17.448Z",
-//             "vehicle": {
-//                 "id": "3959bb6d-8782-41db-9365-ff7876e88131",
-//                 "affiliateId": "d194f9aa-8bee-4c36-9d50-c2df01882efe",
-//                 "plateNumber": "AB-123-CDa",
-//                 "brand": "Mercedes-S-classa",
-//                 "model": "2024",
-//                 "year": 2025,
-//                 "color": "black",
-//                 "vehicleType": "Executive Sedan Fit for 3 Passengers",
-//                 "capacity": 4,
-//                 "documents": [],
-//                 "vehicleImages": [],
-//                 "createdAt": "2025-07-15T12:43:58.461Z",
-//                 "updatedAt": "2025-07-15T12:43:58.461Z",
-//                 "deletedAt": null
-//             }
-//         },
-//     ]
 function ChauffeurPage() {
   const navigate = useNavigate();
   const perPage = 10;
@@ -277,17 +59,39 @@ function ChauffeurPage() {
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
     let start: Date | undefined;
 
     switch (selectedTime) {
       case "weekly": {
         // last 7 days inclusive (UTC)
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6,
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
         break;
       }
       case "monthly": {
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
+        );
         break;
       }
       case "yearly": {
@@ -334,7 +138,8 @@ function ChauffeurPage() {
           if (res) refetch();
           return "Yeah! Chauffeur deleted successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to delete chauffeur"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to delete chauffeur",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -349,7 +154,9 @@ function ChauffeurPage() {
   const columns = getChauffeur(handleView, handleEdit, handleDelete);
 
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   /**
    * Below is for dummy data
@@ -358,12 +165,13 @@ function ChauffeurPage() {
   /**
    * Below is for real data
    */
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TChauffeur>(
-    data?.chauffeurs || [],
-    newPage,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TChauffeur>(
+      data?.chauffeurs || [],
+      newPage,
+      perPage,
+      data?.pagination,
+    );
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -382,7 +190,10 @@ function ChauffeurPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -398,12 +209,19 @@ function ChauffeurPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -450,8 +268,8 @@ function ChauffeurPage() {
           }}
         />
 
-        <div className="flex justify-between gap-2.5">
-          <div className="flex items-center gap-3">
+        <div className="flex justify-between gap-4">
+          <div className="flex items-center gap-4">
             <SelectDropDown
               placeholder={selectedStatus}
               items={showStatus}
@@ -465,7 +283,7 @@ function ChauffeurPage() {
               setSelectedItem={setSelectedTime}
             />
           </div>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
@@ -479,14 +297,18 @@ function ChauffeurPage() {
                 descTitle="chauffeur"
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div>
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>
@@ -512,7 +334,9 @@ function ChauffeurPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -522,7 +346,11 @@ function ChauffeurPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

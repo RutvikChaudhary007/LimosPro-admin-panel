@@ -64,12 +64,13 @@ interface InlineFileUploadProps extends VariantProps<typeof uploadBoxVariants> {
 export default function InlineFileUpload({
   variant,
   maxSize = 10,
+  multiple = false,
   accept = ".jpg, .jpeg, .png, .doc, .xls, .txt, .pdf, .svg",
   title = "Upload File",
   removable = true,
 }: InlineFileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [dragOver, setDragOver] = useState(false);
 
   const maxFileBytes = maxSize * 1024 * 1024;
@@ -79,30 +80,50 @@ export default function InlineFileUpload({
     return accept.split(",").some((p) => {
       p = p.trim();
       if (p === "*" || p === "*/*") return true;
-      if (p.endsWith("/*") && file.type.startsWith(p.replace("/*", ""))) return true;
-      if (p.startsWith(".") && file.name.toLowerCase().endsWith(p.toLowerCase())) return true;
+      if (p.endsWith("/*") && file.type.startsWith(p.replace("/*", "")))
+        return true;
+      if (
+        p.startsWith(".") &&
+        file.name.toLowerCase().endsWith(p.toLowerCase())
+      )
+        return true;
       return file.type === p;
     });
   };
 
   const handleFile = (list: FileList | null) => {
     if (!list) return;
-    const f = list[0];
+    const validFiles: File[] = [];
 
-    if (!f) return;
-    if (f.size > maxFileBytes) return;
-    if (accept !== "*" && !matchesAccept(f, accept)) return;
+    Array.from(list).forEach((f) => {
+      if (
+        f.size <= maxFileBytes &&
+        (accept === "*" || matchesAccept(f, accept))
+      ) {
+        validFiles.push(f);
+      }
+    });
 
-    setFile(f);
+    if (validFiles.length === 0) return;
+
+    setFiles((prev) => (multiple ? [...prev, ...validFiles] : [validFiles[0]]));
   };
 
-  const removeFile = () => setFile(null);
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="w-full">
       <button
         type="button"
-        className={cn(uploadBoxVariants({ variant, drag: dragOver, hasFile: !!file }))}
+        className={cn(
+          uploadBoxVariants({
+            variant,
+            drag: dragOver,
+            hasFile: files.length > 0,
+          }),
+        )}
         onClick={() => inputRef.current?.click()}
         onDragOver={(e) => {
           e.preventDefault();
@@ -115,23 +136,32 @@ export default function InlineFileUpload({
           handleFile(e.dataTransfer.files);
         }}
       >
-        <IconInlineFileUpload className="size-6" />
+        <IconInlineFileUpload className="size-6 shrink-0" />
 
-        {file ? (
-          <div className="flex w-full items-center gap-2 justify-between flex-nowrap min-w-0">
-            <span className="font-bold truncate min-w-0 max-w-[150px] sm:max-w-none">{file.name}</span>
-            {removable && file && (
-              <Button
-                variant="outlineNavBtnBlack"
-                className="w-6 h-6 p-2 [&_svg:not([class*='size-'])]:size-4"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeFile();
-                }}
+        {files.length > 0 ? (
+          <div className="flex flex-col sm:flex-row sm:flex-wrap w-full gap-2">
+            {files.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between w-full sm:w-auto min-w-0 border border-dashed border-base-gray rounded px-2 py-1 text-sm"
               >
-                <Trash2 />
-              </Button>
-            )}
+                <span className="truncate max-w-[120px] font-bold">
+                  {file.name}
+                </span>
+                {removable && (
+                  <Button
+                    variant="outlineNavBtnBlack"
+                    className="ml-2 w-6 h-6 p-2 [&_svg:not([class*='size-'])]:size-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeFile(index);
+                    }}
+                  >
+                    <Trash2 />
+                  </Button>
+                )}
+              </div>
+            ))}
           </div>
         ) : (
           <span className="font-medium">{title}</span>
@@ -141,6 +171,7 @@ export default function InlineFileUpload({
           ref={inputRef}
           type="file"
           className="hidden"
+          multiple={multiple}
           accept={accept}
           onChange={(e) => {
             handleFile(e.target.files);
