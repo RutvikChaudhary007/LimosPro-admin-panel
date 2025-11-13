@@ -1,15 +1,25 @@
 import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { IconFileDownload, IconFileInfo } from "@tabler/icons-react";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getStatusColor } from "@/components/table/column";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardBody,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,22 +27,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
-
-// const data = {
-//     id: 1,
-//     email: "name@email.com",
-//     phone: "+1-424-231-6798",
-//     location: "Company Location",
-//     entityType: "Private Limited Company (Pvt Ltd)",
-//     address: "123 Main St, Anytown, USA",
-//     Documents: ["/4.25x6_Standard_Mailing_Print_Template_Alt.pdf","link 2"]
-// }
 
 const showStatus = [
   { label: "Active", value: "active" },
@@ -48,9 +49,7 @@ const ViewAffiliatePage = () => {
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
   );
-  const [businessAddress, setBusinessAddress] = useState<string | undefined>(
-    undefined,
-  );
+  const [, setBusinessAddress] = useState<string | undefined>(undefined);
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey || "",
@@ -88,37 +87,47 @@ const ViewAffiliatePage = () => {
       isMounted = false;
     };
   }, [isLoaded, loadError, data]);
-  // console.log("data:",data)
-  // if(error) return (<h1>error.message</h1>);
   const documentsLength = data?.documents?.length;
-  // const docJsx = [];
   const docJsx = [1, 2, 3, 4].map((i) => (
     <div key={i} className="flex items-center gap-6">
-      <Label className="block text-sm font-semibold capitalize w-[95px] ">
-        Document {i}:
-      </Label>
+      <Label className="font-semibold w-full max-w-max"> Document {i}:</Label>
       <div
         className={cn(
-          "bg-[#FFFFFF] w-full h-[33px] flex items-center space-x-5",
+          "bg-base-white w-full flex items-center space-x-5",
           i > documentsLength && "opacity-50 cursor-no-drop",
         )}
       >
-        <Label className="inline-block bg-[#444444] text-white px-2 py-0.5 rounded text-xs text-center !w-[70px] h-5">
+        <Badge variant="black">
           {i <= documentsLength ? "Submitted" : "Pending"}
-        </Label>
+        </Badge>
+
         <Link
           to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
           rel="noreferrer"
           target="_blank"
         >
-          <img src="/document-eye.svg" alt="eye page" />{" "}
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View File"
+          >
+            <IconFileInfo />
+          </Button>
         </Link>
         <Link
           to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
           download={i <= documentsLength ? data?.documents[i - 1] : "#"}
           target="_blank"
         >
-          <img src="/document-arrow-down.svg" alt="down page" />
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Download File"
+          >
+            <IconFileDownload />
+          </Button>
         </Link>
       </div>
     </div>
@@ -128,7 +137,7 @@ const ViewAffiliatePage = () => {
   //     docJsx.push (
   //         <div key={i} className="flex items-center gap-6">
   //                         <Label className="block text-sm font-semibold capitalize w-[95px] ">Document {i}:</Label>
-  //                         <div className={cn("bg-[#FFFFFF] w-full h-[33px] flex items-center space-x-5", i > documentsLength && "opacity-50 cursor-no-drop")} >
+  //                         <div className={cn("bg-base-white w-full h-[33px] flex items-center space-x-5", i > documentsLength && "opacity-50 cursor-no-drop")} >
   //                         <Label className="inline-block bg-[#444444] text-white px-2 py-0.5 rounded text-xs text-center !w-[70px] h-5">{i<=documentsLength ? "Submitted" : "Pending"}</Label>
   //                         <Link to={i <= documentsLength ? data.Documents[(i - 1)]: "#"} rel="noreferrer" target="_blank"><img src="/document-eye.svg" alt="eye page" /> </Link>
   //                         <Link to={i <= documentsLength ? data.Documents[(i-1)]:"#"} download={i <= documentsLength ? data.Documents[(i-1)]:"#"} target="_blank"><img src="/document-arrow-down.svg" alt="down page" />
@@ -141,117 +150,90 @@ const ViewAffiliatePage = () => {
     <>
       <PageTitle title={generatePageTitle("Affiliate")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Link to={constant.ROUTING_URLS.AFFILIATE}>
-          <Button
-            variant="outline"
-            className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
-          >
-            <ArrowLeft /> Back
-          </Button>
-        </Link>
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Affiliate</h2>
-              <h4>
-                {" "}
-                <span className="text-[#959595] w-[116px] h-4 text-xs">
-                  LIMOSPRO
-                </span>{" "}
-                <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
-                  / View Affiliate
-                </span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Affiliate"
+          breadcrumbs={[
+            { label: "Home", path: "/" },
+            { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
+            { label: "View Affiliate" },
+          ]}
+          action={{
+            variant: "outlineBlack",
+            label: "Back",
+            icon: <ArrowLeft />,
+            link: constant.ROUTING_URLS.AFFILIATE,
+          }}
+        />
+
         {isFetching ? (
           <Spinner />
         ) : (
-          <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
-            <CardHeader className="w-full h-[55px] flex items-center justify-between">
-              <div className="w-full h-full">
-                <h4 className="font-semibold text-xl text-[#000000]">
-                  {data?.companyName}
-                </h4>
-                <h5 className="text-[#5A5A5A] font-semibold">
+          <Card>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>{data?.companyName}</CardTitle>
+                <CardDescription className="text-sm font-bold">
                   {data?.user?.firstName} {data?.user?.lastName}
-                </h5>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                  >
-                    {selectedStatus.label}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className={cn(
-                    `w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
+                </CardDescription>
+                <CardAction>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="black">{selectedStatus.label}</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className={cn(`w-full max-w-56`)}
+                      align="start"
+                    >
+                      <DropdownMenuGroup>
+                        {showStatus.map((option) => (
+                          <DropdownMenuItem
+                            key={option.value}
+                            className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-base-white"}`}
+                            onClick={() => setSelectedStatus(option)}
+                          >
+                            {option.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardAction>
+              </CardHeader>
+              <FieldSeparator />
+              <CardContent>
+                <div className="w-full space-y-4 mb-4">
+                  <h6 className="font-montserrat font-bold text-base-black text-sm my-4">
+                    Company
+                  </h6>
+                  {Object.entries(data as Record<string, React.ReactNode>)?.map(
+                    ([key]) => {
+                      if (
+                        ![
+                          "businessemail",
+                          "businesscontactnumber",
+                          "entitytype",
+                          "businessaddress",
+                        ].includes(key.toLowerCase())
+                      ) {
+                        return (
+                          <div key={key} className="flex items-center gap-6">
+                            <Label>{key}:</Label>
+                          </div>
+                        );
+                      }
+                      return <></>;
+                    },
                   )}
-                  align="start"
-                >
-                  <DropdownMenuGroup>
-                    {showStatus.map((option) => (
-                      <DropdownMenuItem
-                        key={option.value}
-                        className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF] ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                        onClick={() => setSelectedStatus(option)}
-                      >
-                        {option.label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <div className="w-full h-[209px] space-y-4">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
-                  Company
-                </h6>
-                {Object.entries(data as Record<string, React.ReactNode>)?.map(
-                  ([key, val]) => {
-                    if (
-                      ![
-                        "businessemail",
-                        "businesscontactnumber",
-                        "entitytype",
-                        "businessaddress",
-                      ].includes(key.toLowerCase())
-                    ) {
-                      return (
-                        <div key={key} className="flex items-center gap-6">
-                          <Label className="text-sm font-semibold capitalize min-w-[158px]">
-                            {key}:
-                          </Label>
-                          {/* <span className="text-[#3A3A3A] font-medium">
-                          {["businessaddress"].includes(key.toLowerCase())
-                            ? loadError
-                              ? "Error map api loading"
-                              : !businessAddress
-                                ? "Error fetching address"
-                                : businessAddress
-                            : val}
-                        </span> */}
-                        </div>
-                      );
-                    }
-                    return <></>;
-                  },
-                )}
-              </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <div className="w-full h-[215px]">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
-                  Documents
-                </h6>
-                {docJsx}
-              </div>
-            </CardContent>
+                </div>
+                <FieldSeparator />
+                <div className="space-y-4">
+                  <h6 className="font-montserrat font-bold text-base-black text-sm mt-4">
+                    Documents
+                  </h6>
+                  {docJsx}
+                </div>
+              </CardContent>
+            </CardBody>
           </Card>
         )}
       </div>
