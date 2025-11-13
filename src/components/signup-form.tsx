@@ -10,18 +10,32 @@ import { BadgeCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { Alert, AlertTitle } from "./ui/alert";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
-export function SignupForm({ className, ...props }: React.ComponentProps<"div">) {
+export function SignupForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex flex-col items-center gap-4", className)} {...props}>
+    <div
+      className={cn("flex flex-col items-center gap-4", className)}
+      {...props}
+    >
       <Card className="bg-base-white shadow-base-light w-full max-w-full rounded-[12px] border-0 p-8 sm:max-w-[480px]">
         <Alert variant="success">
           <BadgeCheck />
-          <AlertTitle>We have emailed you a link to reset your password!</AlertTitle>
+          <AlertTitle>
+            We have emailed you a link to reset your password!
+          </AlertTitle>
         </Alert>
         <CardHeader className="text-left">
           <CardTitle className="text-base-black font-montserrat text-3xl leading-[100%] font-bold tracking-[0]">
@@ -37,7 +51,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                   <span className="text-base-danger ml-1">*</span>
                 </FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="name" type="text" placeholder="Enter a name" required />
+                  <InputGroupInput
+                    id="name"
+                    type="text"
+                    placeholder="Enter a name"
+                    required
+                  />
                   <InputGroupAddon>
                     <IconUserCircle />
                   </InputGroupAddon>
@@ -49,7 +68,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                   <span className="text-base-danger ml-1">*</span>
                 </FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="email" type="email" placeholder="Email Address" required />
+                  <InputGroupInput
+                    id="email"
+                    type="email"
+                    placeholder="Email Address"
+                    required
+                  />
                   <InputGroupAddon>
                     <IconMail />
                   </InputGroupAddon>
@@ -64,7 +88,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                   <span className="text-base-danger ml-1">*</span>
                 </FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="password" type="password" placeholder="Password" required />
+                  <InputGroupInput
+                    id="password"
+                    type="password"
+                    placeholder="Password"
+                    required
+                  />
                   <InputGroupAddon>
                     <IconLock />
                   </InputGroupAddon>
@@ -83,7 +112,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
                   <span className="text-base-danger ml-1">*</span>
                 </FieldLabel>
                 <InputGroup>
-                  <InputGroupInput id="confirm-password" type="password" placeholder="Confirm Password" required />
+                  <InputGroupInput
+                    id="confirm-password"
+                    type="password"
+                    placeholder="Confirm Password"
+                    required
+                  />
                   <InputGroupAddon>
                     <IconLock />
                   </InputGroupAddon>

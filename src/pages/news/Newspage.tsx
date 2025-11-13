@@ -72,12 +72,8 @@ const Newspage = () => {
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TNews[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchALLNews();
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TNews>(
-    data?.items,
-    1,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TNews>(data?.items, 1, perPage, data?.pagination);
   // console.log("currentItems:", currentItems);
 
   useEffect(() => {
@@ -97,7 +93,8 @@ const Newspage = () => {
           if (res) refetch();
           return "News deleted successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to delete news"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to delete news",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -127,7 +124,10 @@ const Newspage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -143,12 +143,19 @@ const Newspage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -197,9 +204,14 @@ const Newspage = () => {
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_NEWS}>
               {" "}
-              <Button variant="secondary" className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant="secondary"
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add News</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add News
+                </span>
               </Button>
             </Link>
           </div>
@@ -279,7 +291,9 @@ const Newspage = () => {
                 <PaginationPrevious
                   href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -289,7 +303,11 @@ const Newspage = () => {
                 <PaginationNext
                   href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

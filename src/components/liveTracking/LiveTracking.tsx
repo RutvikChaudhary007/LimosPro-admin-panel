@@ -196,7 +196,14 @@
 
 // export default LiveTracking;
 
-import { GoogleMap, InfoWindow, Marker, OverlayView, Polyline, useJsApiLoader } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  InfoWindow,
+  Marker,
+  OverlayView,
+  Polyline,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { env } from "@/utils/env";
@@ -228,7 +235,11 @@ const mapStyle = [
 ];
 
 const APIKEY = env?.VITE_GOOGLE_MAP_KEY;
-const libraries: ("geometry" | "places" | "geocoding")[] = ["geometry", "places", "geocoding"];
+const libraries: ("geometry" | "places" | "geocoding")[] = [
+  "geometry",
+  "places",
+  "geocoding",
+];
 
 interface LatLng {
   lat: number;
@@ -244,14 +255,22 @@ interface Props {
 
 const CAR_SIZE = 40;
 
-const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCarPosition }) => {
+const LiveTracking: React.FC<Props> = ({
+  dropPosition,
+  pickPosition,
+  externalCarPosition,
+}) => {
   // Load Google Maps script
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: APIKEY,
     libraries,
   });
-  const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(undefined);
-  const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(undefined);
+  const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(
+    undefined,
+  );
+  const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(
+    undefined,
+  );
 
   // Initialize Places Autocomplete
   useEffect(() => {
@@ -291,7 +310,9 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
   }, [isLoaded, loadError, pickPosition, dropPosition]);
 
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
-  const [carPosition, setCarPosition] = useState<LatLng>(externalCarPosition || pickPosition);
+  const [carPosition, setCarPosition] = useState<LatLng>(
+    externalCarPosition || pickPosition,
+  );
   const [heading, setHeading] = useState<number>(0);
   const [isFollowing, setIsFollowing] = useState(true);
   const [routePath, setRoutePath] = useState<LatLng[]>([pickPosition]);
@@ -306,8 +327,13 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
       if (routePath.length > 0) {
         // update heading to next point
         const current = new window.google.maps.LatLng(carPosition);
-        const next = new window.google.maps.LatLng(routePath[pathIndexRef.current] || externalCarPosition);
-        const h = window.google.maps.geometry.spherical.computeHeading(current, next);
+        const next = new window.google.maps.LatLng(
+          routePath[pathIndexRef.current] || externalCarPosition,
+        );
+        const h = window.google.maps.geometry.spherical.computeHeading(
+          current,
+          next,
+        );
         setHeading(h);
       }
     }
@@ -423,7 +449,10 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
           onClick={() => setActiveMarker("pickUpClicked")}
         />
         {activeMarker === "pickUpClicked" && (
-          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={pickPosition}>
+          <InfoWindow
+            onCloseClick={() => setActiveMarker(null)}
+            position={pickPosition}
+          >
             <div>
               <strong>Pickup:</strong> {pickUpAddress}
             </div>
@@ -440,7 +469,10 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
           onClick={() => setActiveMarker("dropClicked")}
         />
         {activeMarker === "dropClicked" && (
-          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={dropPosition}>
+          <InfoWindow
+            onCloseClick={() => setActiveMarker(null)}
+            position={dropPosition}
+          >
             <div>
               <strong>Drop:</strong> {dropOffAddress}
             </div>
@@ -458,7 +490,10 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
         />
 
         {/* Car */}
-        <OverlayView position={carPosition} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+        <OverlayView
+          position={carPosition}
+          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        >
           <div
             style={{
               width: `${CAR_SIZE}px`,
@@ -472,7 +507,11 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, pickPosition, externalCar
               pointerEvents: "none",
             }}
           >
-            <img src="/icons/car.png" alt="car" style={{ width: "100%", height: "100%" }} />
+            <img
+              src="/icons/car.png"
+              alt="car"
+              style={{ width: "100%", height: "100%" }}
+            />
           </div>
         </OverlayView>
       </GoogleMap>

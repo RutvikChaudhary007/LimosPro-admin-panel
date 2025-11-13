@@ -30,7 +30,8 @@ const EditCrewMemberPage = () => {
           if (res) navigate(constant.ROUTING_URLS.CREW_MEMBERS);
           return "Crew Member Updated Successfully!";
         },
-        error: (e) => (e instanceof Error ? e.message : "Failed to Update Crew Member!"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to Update Crew Member!",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -56,13 +57,21 @@ const EditCrewMemberPage = () => {
             <h2 className="font-medium text-xl text-black">Crew Member</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Crew Member</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                LIMOSPRO
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit Crew Member
+              </span>
             </h4>
           </div>
         </div>
       </Header>
-      <CrewMemberForm initialData={dummyData} onSubmit={handleEditCrewMember} type={"Edit Crew Member"} />
+      <CrewMemberForm
+        initialData={dummyData}
+        onSubmit={handleEditCrewMember}
+        type={"Edit Crew Member"}
+      />
     </div>
   );
 };

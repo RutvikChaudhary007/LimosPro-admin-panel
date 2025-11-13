@@ -60,7 +60,8 @@ function ContentBlockPage() {
           //   if(res) refetch();
           return "Yeah! Chauffeur deleted successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to delete chauffeur"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to delete chauffeur",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -75,7 +76,9 @@ function ContentBlockPage() {
   const columns = getContent(handleEdit, handleDelete);
 
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   const { currentPage, setPage, totalPages, currentItems } = usePagination<any>(
     data?.chauffeurs || [],
@@ -101,7 +104,10 @@ function ContentBlockPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -117,12 +123,19 @@ function ContentBlockPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -165,15 +178,24 @@ function ContentBlockPage() {
               <h2 className="font-medium text-xl text-black">Content Block</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Content Block</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Content Block
+                </span>
               </h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
               {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant={"outline"}
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Content Block</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add Content Block
+                </span>
               </Button>
             </Link>
           </div>
@@ -228,7 +250,9 @@ function ContentBlockPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -238,7 +262,11 @@ function ContentBlockPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

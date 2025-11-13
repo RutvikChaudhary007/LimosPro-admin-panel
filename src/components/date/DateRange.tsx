@@ -5,7 +5,11 @@ import { Calendar } from "lucide-react";
 import type React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // function formatDate(date: Date | undefined) {
 //   if (!date) {
@@ -42,7 +46,11 @@ export function Calendar28({ dateRange, setDateRange }: CalendarProps) {
               variant="outline"
               className="flex-1 justify-start text-left font-normal rounded text-[#959595] cursor-pointer"
             >
-              {dateRange.from ? format(dateRange.from, "PPP") : <span>Start Date</span>}
+              {dateRange.from ? (
+                format(dateRange.from, "PPP")
+              ) : (
+                <span>Start Date</span>
+              )}
               <Calendar className="ml-2 h-4 w-4" />
             </Button>
           </PopoverTrigger>
@@ -68,7 +76,11 @@ export function Calendar28({ dateRange, setDateRange }: CalendarProps) {
               variant="outline"
               className="flex-1 justify-start text-left font-normal rounded text-[#959595] cursor-pointer"
             >
-              {dateRange.to ? format(dateRange.to, "PPP") : <span>End date</span>}
+              {dateRange.to ? (
+                format(dateRange.to, "PPP")
+              ) : (
+                <span>End date</span>
+              )}
               <Calendar className="ml-2 h-4 w-4" />
             </Button>
           </PopoverTrigger>

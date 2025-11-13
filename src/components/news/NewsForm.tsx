@@ -6,7 +6,14 @@ import isFieldDisabled from "@/utils/disableFormField";
 import type { TNews } from "../table/column";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 
 const formSchema = z.object({
@@ -20,7 +27,12 @@ const formSchema = z.object({
 
 export type TNewsForm = z.infer<typeof formSchema>;
 
-const NewsForm = ({ initialData, onSubmit, disabledFields, type }: INewsFormProps) => {
+const NewsForm = ({
+  initialData,
+  onSubmit,
+  disabledFields,
+  type,
+}: INewsFormProps) => {
   const transformInitialData = (data?: TNews): TNewsForm | undefined => {
     if (!data) return undefined;
     return {
@@ -34,7 +46,9 @@ const NewsForm = ({ initialData, onSubmit, disabledFields, type }: INewsFormProp
     },
   });
 
-  const handleFormSubmit: SubmitHandler<TNewsForm> = async (data: TNewsForm) => {
+  const handleFormSubmit: SubmitHandler<TNewsForm> = async (
+    data: TNewsForm,
+  ) => {
     try {
       await onSubmit(data);
       form.reset();

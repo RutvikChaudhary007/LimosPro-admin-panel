@@ -11,7 +11,11 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import BreadCramb from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
-import { getStatusColor, getUsers, type TUsers } from "@/components/table/column";
+import {
+  getStatusColor,
+  getUsers,
+  type TUsers,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -59,17 +63,39 @@ function UsersPage() {
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
     let start: Date | undefined;
 
     switch (selectedTime.value) {
       case "weekly": {
         // last 7 days inclusive (UTC)
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6,
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
         break;
       }
       case "monthly": {
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
+        );
         break;
       }
       case "yearly": {
@@ -90,7 +116,8 @@ function UsersPage() {
     DateRange: { startDate, endDate },
   });
 
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TUsers>(data?.users, 1, perPage);
 
   const handleView = (id: string) => {
     console.log("view:", id);
@@ -120,7 +147,9 @@ function UsersPage() {
 
   const columns = getUsers(handleView, handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -138,7 +167,10 @@ function UsersPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -154,12 +186,19 @@ function UsersPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -202,8 +241,12 @@ function UsersPage() {
               <h2 className="font-medium text-xl text-black">User</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ User</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / User
+                </span>
               </h4>
             </div>
             {/* <Link to={constant.ROUTING_URLS.CREATE_USERS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
@@ -272,7 +315,8 @@ function UsersPage() {
           <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
             <span
               className={`${
-                Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
                   ? "cursor-no-drop"
                   : "cursor-pointer"
               }`}
@@ -320,7 +364,9 @@ function UsersPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -330,7 +376,11 @@ function UsersPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

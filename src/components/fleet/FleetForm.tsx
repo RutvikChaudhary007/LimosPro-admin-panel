@@ -5,7 +5,14 @@ import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import type { IFleetFormProps } from "@/types/fleet.type";
@@ -13,7 +20,13 @@ import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 const maxSize = 10 * 1024 * 1024;
@@ -157,9 +170,12 @@ const formSchema = z.object({
     .refine((files) => files.every((f) => f.size <= maxSize), {
       message: `Max size ${maxSize / (1024 * 1024)}MB`,
     })
-    .refine((files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)), {
-      message: "Invalid file types detected",
-    }),
+    .refine(
+      (files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)),
+      {
+        message: "Invalid file types detected",
+      },
+    ),
   status: z.string().optional(),
 });
 
@@ -193,16 +209,30 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
     vehicleType: data?.vehicleType,
     vehicleImages: data?.vehicleImages,
     status: data?.status,
-    baseFair: data?.servicePricings?.[0]?.basePrice ? Number(data?.servicePricings?.[0]?.basePrice) : 0,
-    minHour: data?.servicePricings?.[0]?.minHour ? Number(data?.servicePricings?.[0]?.minHour) : 0,
-    pricePerMile: data?.servicePricings?.[0]?.pricePerMile ? Number(data?.servicePricings?.[0]?.pricePerMile) : 0,
-    pricePerHour: data?.servicePricings?.[0]?.ratePerHour ? Number(data?.servicePricings?.[0]?.ratePerHour) : 0,
-    pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute ? Number(data?.servicePricings?.[0]?.ratePerMinute) : 0,
-    minFair: data?.servicePricings?.[0]?.minPrice ? Number(data?.servicePricings?.[0]?.minPrice) : 0,
+    baseFair: data?.servicePricings?.[0]?.basePrice
+      ? Number(data?.servicePricings?.[0]?.basePrice)
+      : 0,
+    minHour: data?.servicePricings?.[0]?.minHour
+      ? Number(data?.servicePricings?.[0]?.minHour)
+      : 0,
+    pricePerMile: data?.servicePricings?.[0]?.pricePerMile
+      ? Number(data?.servicePricings?.[0]?.pricePerMile)
+      : 0,
+    pricePerHour: data?.servicePricings?.[0]?.ratePerHour
+      ? Number(data?.servicePricings?.[0]?.ratePerHour)
+      : 0,
+    pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute
+      ? Number(data?.servicePricings?.[0]?.ratePerMinute)
+      : 0,
+    minFair: data?.servicePricings?.[0]?.minPrice
+      ? Number(data?.servicePricings?.[0]?.minPrice)
+      : 0,
     cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate
       ? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate)
       : 0,
-    extraTime: data?.servicePricings?.[0]?.extraTime ? Number(data?.servicePricings?.[0]?.extraTime) : 0,
+    extraTime: data?.servicePricings?.[0]?.extraTime
+      ? Number(data?.servicePricings?.[0]?.extraTime)
+      : 0,
     zonePricings: data?.servicePricings?.[0]?.zonePricings?.map((zone) => {
       return {
         zoneStart: zone?.zoneStart,
@@ -261,7 +291,9 @@ const FleetForm = ({
 
   useEffect(() => {
     if (initialData?.servicePricings?.[0]?.zonePricingEnabled) {
-      setIsZoneActive(Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false));
+      setIsZoneActive(
+        Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false),
+      );
     }
     if (initialData?.servicePricings?.[0]?.zonePricings) {
       setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
@@ -274,7 +306,10 @@ const FleetForm = ({
     }
   }, [initialData, form]);
 
-  const handleFilesChange = (files: FileList | null, onChange: (files: File[]) => void) => {
+  const handleFilesChange = (
+    files: FileList | null,
+    onChange: (files: File[]) => void,
+  ) => {
     form.clearErrors();
     if (!files) return;
     if (files.length > 3) {
@@ -401,13 +436,20 @@ const FleetForm = ({
                     >
                       <FormControl className="w-full min-w-full rounded">
                         <SelectTrigger className="cursor-pointer w-full">
-                          <SelectValue className="placeholder:text-[#E6E6E6] font-medium" placeholder="select region" />
+                          <SelectValue
+                            className="placeholder:text-[#E6E6E6] font-medium"
+                            placeholder="select region"
+                          />
                           {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="">
                         {RegionData?.regions?.map((option) => (
-                          <SelectItem className="cursor-pointer capitalize" key={option.id} value={option.id}>
+                          <SelectItem
+                            className="cursor-pointer capitalize"
+                            key={option.id}
+                            value={option.id}
+                          >
                             {option.regionName}
                           </SelectItem>
                         ))}
@@ -451,7 +493,11 @@ const FleetForm = ({
                       </FormControl>
                       <SelectContent className="">
                         {affiliateData?.affiliates?.map((option) => (
-                          <SelectItem className="cursor-pointer" key={option.id} value={option.id}>
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={option.id}
+                            value={option.id}
+                          >
                             {option.companyName}
                           </SelectItem>
                         ))}
@@ -518,7 +564,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium ">
                   <FormLabel>Capacity</FormLabel>
                   <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input type="number" disabled={isFieldDisabled(disabledFields, "capacity")} {...field} />
+                    <Input
+                      type="number"
+                      disabled={isFieldDisabled(disabledFields, "capacity")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.capacity ? "visible text-red-600" : "invisible"}`}
@@ -535,7 +585,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Base Fair</FormLabel>
                   <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input type="number" disabled={isFieldDisabled(disabledFields, "baseFair")} {...field} />
+                    <Input
+                      type="number"
+                      disabled={isFieldDisabled(disabledFields, "baseFair")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.baseFair ? "visible text-red-600" : "invisible"}`}
@@ -552,7 +606,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Min Fair</FormLabel>
                   <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input type="number" disabled={isFieldDisabled(disabledFields, "minFair")} {...field} />
+                    <Input
+                      type="number"
+                      disabled={isFieldDisabled(disabledFields, "minFair")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.minFair ? "visible text-red-600" : "invisible"}`}
@@ -591,7 +649,10 @@ const FleetForm = ({
                 <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Price per hour</FormLabel>
                   <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input disabled={isFieldDisabled(disabledFields, "pricePerHour")} {...field} />
+                    <Input
+                      disabled={isFieldDisabled(disabledFields, "pricePerHour")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
@@ -608,7 +669,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col col-span-2 col-start-1 placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Price per mile</FormLabel>
                   <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="0" disabled={isFieldDisabled(disabledFields, "pricePerMile")} {...field} />
+                    <Input
+                      placeholder="0"
+                      disabled={isFieldDisabled(disabledFields, "pricePerMile")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
@@ -625,11 +690,20 @@ const FleetForm = ({
                 <FormItem className="flex flex-col col-span-2 col-start-3 placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Price per minute</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="0" disabled={isFieldDisabled(disabledFields, "pricePerMinute")} {...field} />
+                    <Input
+                      placeholder="0"
+                      disabled={isFieldDisabled(
+                        disabledFields,
+                        "pricePerMinute",
+                      )}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${
-                      form.formState.errors.pricePerMinute ? "visible text-red-600" : "invisible"
+                      form.formState.errors.pricePerMinute
+                        ? "visible text-red-600"
+                        : "invisible"
                     }`}
                   >
                     {form.formState.errors.pricePerMinute?.message}
@@ -646,13 +720,18 @@ const FleetForm = ({
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
                     <Input
                       placeholder="0"
-                      disabled={isFieldDisabled(disabledFields, "cityToCityHourlyRate")}
+                      disabled={isFieldDisabled(
+                        disabledFields,
+                        "cityToCityHourlyRate",
+                      )}
                       {...field}
                     />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${
-                      form.formState.errors.cityToCityHourlyRate ? "visible text-red-600" : "invisible"
+                      form.formState.errors.cityToCityHourlyRate
+                        ? "visible text-red-600"
+                        : "invisible"
                     }`}
                   >
                     {form.formState.errors.cityToCityHourlyRate?.message}
@@ -689,7 +768,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Brand</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Brand" disabled={isFieldDisabled(disabledFields, "brand")} {...field} />
+                    <Input
+                      placeholder="Brand"
+                      disabled={isFieldDisabled(disabledFields, "brand")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.brand ? "visible text-red-600" : "invisible"}`}
@@ -706,7 +789,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Model</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Model" disabled={isFieldDisabled(disabledFields, "model")} {...field} />
+                    <Input
+                      placeholder="Model"
+                      disabled={isFieldDisabled(disabledFields, "model")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.model ? "visible text-red-600" : "invisible"}`}
@@ -723,7 +810,11 @@ const FleetForm = ({
                 <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Color</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Color" disabled={isFieldDisabled(disabledFields, "color")} {...field} />
+                    <Input
+                      placeholder="Color"
+                      disabled={isFieldDisabled(disabledFields, "color")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.color ? "visible text-red-600" : "invisible"}`}
@@ -739,9 +830,14 @@ const FleetForm = ({
               render={({ _field }) => (
                 <FormItem className="flex flex-col   placeholder:text-[#E6E6E6] font-medium">
                   <FormLabel>Year</FormLabel>
-                  <Select onValueChange={onYearChange} value={getYear(date).toString()}>
+                  <Select
+                    onValueChange={onYearChange}
+                    value={getYear(date).toString()}
+                  >
                     <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <SelectTrigger className="w-full cursor-pointer">{getYear(date)}</SelectTrigger>
+                      <SelectTrigger className="w-full cursor-pointer">
+                        {getYear(date)}
+                      </SelectTrigger>
                     </FormControl>
 
                     <SelectContent>
@@ -788,7 +884,11 @@ const FleetForm = ({
                     </FormControl>
                     <SelectContent className="">
                       {FleetOptions?.map((option, i) => (
-                        <SelectItem className="cursor-pointer" key={`${i}-${option}`} value={option}>
+                        <SelectItem
+                          className="cursor-pointer"
+                          key={`${i}-${option}`}
+                          value={option}
+                        >
                           {option}
                         </SelectItem>
                       ))}
@@ -812,7 +912,9 @@ const FleetForm = ({
 
                   <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
                     <Card>
-                      <CardHeader className={"flex flext start items-center my-5 mx-2.5"}>
+                      <CardHeader
+                        className={"flex flext start items-center my-5 mx-2.5"}
+                      >
                         <input
                           className="cursor-pointer"
                           type="checkbox"
@@ -856,12 +958,19 @@ const FleetForm = ({
                               </label>
 
                               {/* <div className={styles.zoneFieldGroup}> */}
-                              <div className={"flex gap-2 mb-5 items-start flex-col w-full"}>
+                              <div
+                                className={
+                                  "flex gap-2 mb-5 items-start flex-col w-full"
+                                }
+                              >
                                 <div
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label htmlFor="zoneStart" className="mb-1.5 text-[#343434] font-medium">
+                                  <label
+                                    htmlFor="zoneStart"
+                                    className="mb-1.5 text-[#343434] font-medium"
+                                  >
                                     Zone Start (mile)
                                   </label>
                                   <input
@@ -870,10 +979,16 @@ const FleetForm = ({
                                     placeholder="Start Mile"
                                     value={zone.start}
                                     step="0.01"
-                                    min={index === 0 ? 0.01 : zonePricing?.[index - 1]?.end}
+                                    min={
+                                      index === 0
+                                        ? 0.01
+                                        : zonePricing?.[index - 1]?.end
+                                    }
                                     onChange={(e) => {
                                       const newZones = [...zonePricing];
-                                      newZones[index].start = parseFloat(e.target.value);
+                                      newZones[index].start = parseFloat(
+                                        e.target.value,
+                                      );
                                       setZonePricing(newZones);
                                     }}
                                   />
@@ -882,7 +997,10 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label htmlFor="zoneEnd" className="mb-1.5 text-[#343434] font-medium">
+                                  <label
+                                    htmlFor="zoneEnd"
+                                    className="mb-1.5 text-[#343434] font-medium"
+                                  >
                                     Zone End (mile)
                                   </label>
                                   <input
@@ -894,7 +1012,9 @@ const FleetForm = ({
                                     max={globalAirportLimit}
                                     onChange={(e) => {
                                       const newZones = [...zonePricing];
-                                      newZones[index].end = parseFloat(e.target.value);
+                                      newZones[index].end = parseFloat(
+                                        e.target.value,
+                                      );
                                       setZonePricing(newZones);
                                     }}
                                   />
@@ -903,7 +1023,10 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label htmlFor="pricePerPMile" className="mb-1.5 text-[#343434] font-medium">
+                                  <label
+                                    htmlFor="pricePerPMile"
+                                    className="mb-1.5 text-[#343434] font-medium"
+                                  >
                                     Price per Mile
                                   </label>
                                   <input
@@ -914,7 +1037,9 @@ const FleetForm = ({
                                     step="0.01"
                                     onChange={(e) => {
                                       const newZones = [...zonePricing];
-                                      newZones[index].pricePerMile = parseFloat(e.target.value);
+                                      newZones[index].pricePerMile = parseFloat(
+                                        e.target.value,
+                                      );
                                       setZonePricing(newZones);
                                     }}
                                   />
@@ -923,7 +1048,10 @@ const FleetForm = ({
                                   // className={styles.labeledInput}
                                   className={"flex flex-col w-full"}
                                 >
-                                  <label htmlFor="pricePerPMin" className="mb-1.5 text-[#343434] font-medium">
+                                  <label
+                                    htmlFor="pricePerPMin"
+                                    className="mb-1.5 text-[#343434] font-medium"
+                                  >
                                     Price per Minute
                                   </label>
                                   <input
@@ -934,7 +1062,8 @@ const FleetForm = ({
                                     value={zone.pricePerDistance}
                                     onChange={(e) => {
                                       const newZones = [...zonePricing];
-                                      newZones[index].pricePerDistance = parseFloat(e.target.value);
+                                      newZones[index].pricePerDistance =
+                                        parseFloat(e.target.value);
                                       setZonePricing(newZones);
                                     }}
                                   />
@@ -944,7 +1073,9 @@ const FleetForm = ({
                                   className="ml-2.5 py-1.5 px-2.5"
                                   padding="6px 10px"
                                   onClick={() => {
-                                    const newZones = zonePricing?.filter((_, i) => i !== index);
+                                    const newZones = zonePricing?.filter(
+                                      (_, i) => i !== index,
+                                    );
                                     setZonePricing(newZones);
                                   }}
                                 >
@@ -969,7 +1100,8 @@ const FleetForm = ({
                                   },
                                 ]);
                               } else {
-                                const lastEnd = zonePricing?.[zonePricing.length - 1].end;
+                                const lastEnd =
+                                  zonePricing?.[zonePricing.length - 1].end;
                                 if (lastEnd >= globalAirportLimit) {
                                   toast({
                                     title: "Global Airport Limit",
@@ -998,7 +1130,11 @@ const FleetForm = ({
                           </Button>
                         )}
                         {isZoneActive && zonePricing.length > 0 && (
-                          <Button type="button" className="my-2.5 py-1.5 px-4" onClick={() => setZonePricing([])}>
+                          <Button
+                            type="button"
+                            className="my-2.5 py-1.5 px-4"
+                            onClick={() => setZonePricing([])}
+                          >
                             Clear All Zones
                           </Button>
                         )}
@@ -1029,7 +1165,9 @@ const FleetForm = ({
                       multiple
                       className="hidden"
                       value={undefined}
-                      onChange={(e) => handleFilesChange(e.target.files, field.onChange)}
+                      onChange={(e) =>
+                        handleFilesChange(e.target.files, field.onChange)
+                      }
                     />
                   </FormControl>
 
@@ -1040,7 +1178,11 @@ const FleetForm = ({
                         key={`${index}-${src.slice(0, 3)}`}
                         className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden"
                       >
-                        <img src={src} alt="preview" className="object-cover w-full h-full" />
+                        <img
+                          src={src}
+                          alt="preview"
+                          className="object-cover w-full h-full"
+                        />
                         {/* Camera / Clear Icon */}
                         <button
                           type="button"
@@ -1078,10 +1220,19 @@ const FleetForm = ({
                 <FormItem className="col-span-6 rounded ">
                   <FormLabel>
                     Upload Documents:{" "}
-                    {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
+                    {[
+                      "Document 1*",
+                      "Document 2*",
+                      "Document 3*",
+                      "Document 4*",
+                    ].map((text, idx) => (
                       <span
                         key={`${idx}-${text}`}
-                        className={idx < field.value.length ? "text-gray-700 underline" : "text-gray-300"}
+                        className={
+                          idx < field.value.length
+                            ? "text-gray-700 underline"
+                            : "text-gray-300"
+                        }
                       >
                         {text}{" "}
                       </span>
@@ -1099,7 +1250,9 @@ const FleetForm = ({
                         const newFiles = Array.from(e.target.files ?? []);
                         // Filter out File objects from current value (keep only document objects with url)
                         const existingDocs = field.value.filter(
-                          (doc: File | { url: string }) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl),
+                          (doc: File | { url: string }) =>
+                            !(doc instanceof File) &&
+                            (doc?.url ?? doc?.fileUrl),
                         );
                         field.onChange([...existingDocs, ...newFiles]);
                       }}

@@ -3,13 +3,14 @@ import {
   IconBuilding,
   IconBuildingBridge2,
   IconEye,
+  IconEyeClosed,
   IconId,
   IconLock,
   IconMail,
   IconPhone,
   IconUser,
 } from "@tabler/icons-react";
-import { type ChangeEvent, type FC, useEffect, useState } from "react";
+import { type FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
@@ -181,7 +182,7 @@ const transformInitialData = (
   data?: IEditAffiliateRes,
 ): TAffiliateForm | undefined => {
   if (!data) return undefined;
-  // console.log("initial data:", data)
+  console.log("initial data:", data?.businessAddress);
 
   return {
     firstName: data?.user?.firstName || "",
@@ -191,7 +192,7 @@ const transformInitialData = (
     isChauffer: data.isChauffer ?? false,
     companyName: data.companyName || "",
     businessContactNumber: data.businessContactNumber || "",
-    businessAddress: data.businessAddress || "",
+    businessAddress: data?.businessAddress || "",
     businessLocation: data.businessLocation || {
       latitude: null,
       longitude: null,
@@ -214,6 +215,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   type,
   businessAddress,
 }) => {
+  console.log("businessAddress:", businessAddress);
   const formatPhoneNumber = (value: string): string => {
     if (!value) return "";
 
@@ -287,22 +289,12 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
     }
   };
 
-  const [_newAddress, setNewAddress] = useState("");
-  const [_addressObj, setAddressObj] = useState<IAddressObj>();
-  const [_isAddressValid, setIsAddressValid] = useState(false);
-  // const fileRef = useRef<HTMLInputElement | null>(null);
-
-  const [_statusValue, setStatusValue] = useState<{
-    status: string;
-    entityType: string;
-  }>({
-    status: "",
-    entityType: "",
-  });
+  const [addressObj, setAddressObj] = useState<IAddressObj>();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<TAffiliateForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: transformInitialData(initialData) || {
+    defaultValues: {
       firstName: "",
       lastName: "",
       email: "",
@@ -323,19 +315,39 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
       status: "",
     },
   });
+
   useEffect(() => {
-    if (initialData?.businessAddress) {
-      setNewAddress(initialData.businessAddress);
+    if (initialData) {
+      const transformedData = transformInitialData(initialData);
+      if (transformedData) {
+        form.reset(transformedData);
+        console.log(
+          "Form reset with businessAddress:",
+          transformedData.businessAddress,
+        );
+      }
     }
-    if (businessAddress) {
-      form.setValue("businessAddress", businessAddress);
-    }
-  }, [initialData, businessAddress, form]);
+  }, [initialData, form]);
+  const handleAddressChange = useCallback(
+    (value: string) => {
+      if (form.formState.errors.businessAddress) {
+        form.clearErrors("businessAddress");
+      }
+      form.setValue("businessAddress", value);
+    },
+    [form],
+  );
   // const documents = form.watch("documents");
   const handleFormSubmit = async (values: IAffiliate) => {
     try {
       const formData = new FormData();
-
+      if (addressObj) {
+        console.log("addressObj:", addressObj);
+        values.businessLocation = {
+          latitude: addressObj?.location.latitude,
+          longitude: addressObj?.location.longitude,
+        };
+      }
       // Append all scalar values
       formData.append("firstName", values.firstName);
       formData.append("lastName", values.lastName);
@@ -512,7 +524,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                     <InputGroup>
                       <InputGroupInput
                         id="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="e.g., mysecretpasswd123"
                         disabled={isFieldDisabled(disabledFields, "password")}
                         {...field}
@@ -520,8 +532,12 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       <InputGroupAddon>
                         <IconLock />
                       </InputGroupAddon>
-                      <InputGroupAddon align="inline-end">
-                        <IconEye />
+                      <InputGroupAddon
+                        align="inline-end"
+                        className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <IconEye /> : <IconEyeClosed />}
                       </InputGroupAddon>
                     </InputGroup>
                   )}
@@ -634,15 +650,8 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       <AddressInput
                         value={field.value}
                         field={field}
-                        onChange={(value) => {
-                          setNewAddress(value);
-                          if (form.formState.errors.businessAddress) {
-                            form.clearErrors("businessAddress");
-                          }
-                          field.onChange(value);
-                        }}
+                        onChange={handleAddressChange}
                         onUpdate={setAddressObj}
-                        onValidityChange={setIsAddressValid}
                         disabled={isFieldDisabled(
                           disabledFields,
                           "businessAddress",
@@ -794,7 +803,6 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       value={field.value}
                       onValueChange={(v) => {
                         field.onChange(v);
-                        // setStatusValue((prev) => ({ ...prev, status: v }));
                       }}
                       disabled={isFieldDisabled(disabledFields, "status")}
                     >
@@ -871,7 +879,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 )}
               </Field>
 
-              <Field className="self-end">
+              <Field className="self-center">
                 <FieldLabel
                   htmlFor="isChauffer"
                   className="text-base-black gap-0"
@@ -897,8 +905,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       </FormControl>
 
                       <FieldDescription className="mt-1">
-                        Toggle to indicate if the affiliate provides chauffeur
-                        services.
+                        Toggle to enable chauffeur privileges.
                       </FieldDescription>
 
                       <FieldDescription
@@ -915,7 +922,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 />
               </Field>
 
-              <Field>
+              <Field className="col-span-2">
                 <Controller
                   control={form.control}
                   name="documents"
@@ -923,18 +930,10 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                     <FilesUpload
                       title="Upload Documents"
                       accept="image/jpeg,image/png,application/pdf"
-                      {...({
-                        onChange: (e: ChangeEvent<HTMLInputElement>) => {
-                          const newFiles = Array.from(e.target.files ?? []);
-                          // Keep existing uploaded documents (with URLs) and add new File objects
-                          const existingDocs =
-                            field.value?.filter(
-                              (doc: File | { url: string }) =>
-                                !(doc instanceof File) && doc?.url,
-                            ) || [];
-                          field.onChange([...existingDocs, ...newFiles]);
-                        },
-                      } as any)}
+                      maxSize={10}
+                      multiple
+                      value={field.value}
+                      onChange={field.onChange}
                       disabled={isFieldDisabled(disabledFields, "documents")}
                     />
                   )}
@@ -970,21 +969,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       documents: [],
                       status: "",
                     });
-                    // form.setValue("documents", []);
-                    setStatusValue({ status: "", entityType: "" });
-                    // if (fileRef.current) fileRef.current.value = "";
-                    setNewAddress("");
                     setAddressObj(undefined);
-                    setIsAddressValid(false);
-                    // form.reset();
-                    // form.setValue("status", "")
-                    // form.resetField('documents');
-                    // setStatusValue({
-                    //     status: "",
-                    //     entityType: ""
-                    // });
-                    // if (fileRef.current) fileRef.current.value = '';
-                    // setNewAddress("");
                   }}
                 >
                   Clear Alls

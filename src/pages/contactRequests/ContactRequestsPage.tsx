@@ -9,7 +9,10 @@ import ViewModal from "@/components/ContactRequests/ViewModal";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
-import { getContactRequest, type TContactRequest } from "@/components/table/column";
+import {
+  getContactRequest,
+  type TContactRequest,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -334,12 +337,13 @@ const ContactRequestsPage = () => {
   const { data, isFetching } = useFetchAllContactRequest();
   // const [data, setData] = useState<TContactRequest[]>(tableData);
 
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TContactRequest>(
-    data?.contactRequests,
-    1,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } =
+    usePagination<TContactRequest>(
+      data?.contactRequests,
+      1,
+      perPage,
+      data?.pagination,
+    );
 
   useEffect(() => {
     setPerPage(selected.value);
@@ -353,7 +357,10 @@ const ContactRequestsPage = () => {
     console.log("Email:", id);
     setIsModal(true);
   }, []);
-  const columns = useMemo(() => getContactRequest(handleView, handleEmail), [handleView, handleEmail]);
+  const columns = useMemo(
+    () => getContactRequest(handleView, handleEmail),
+    [handleView, handleEmail],
+  );
 
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -373,7 +380,10 @@ const ContactRequestsPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -389,12 +399,19 @@ const ContactRequestsPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -433,10 +450,14 @@ const ContactRequestsPage = () => {
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
           <div className="w-full h-full flex items-center justify-between">
             <div>
-              <h2 className="font-medium text-xl text-black">Contact Requests</h2>
+              <h2 className="font-medium text-xl text-black">
+                Contact Requests
+              </h2>
               <h4>
                 <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Contact Requests</span>
+                <span className="text-[#959595] w-[116px] h-4">
+                  / Contact Requests
+                </span>
               </h4>
             </div>
           </div>
@@ -476,7 +497,10 @@ const ContactRequestsPage = () => {
               <Button
                 variant={"outline"}
                 className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
                 onClick={() => {
                   // setData((prev) =>
                   //   prev.filter((row, i) => !rowSelection[i])
@@ -486,7 +510,9 @@ const ContactRequestsPage = () => {
                   setRowSelection({});
                 }}
               >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
+                <span className="text-[#959595] text-sm w-[93px] h-[19px]">
+                  Delete
+                </span>
                 <Trash2 size={14} className="text-[#959595] cursor-pointer" />
               </Button>
             </span>
@@ -515,7 +541,9 @@ const ContactRequestsPage = () => {
         )}
 
         {/* View Dialog */}
-        {msgId && <ViewModal id={msgId} open={isOpen} onOpenChange={setIsOpen} />}
+        {msgId && (
+          <ViewModal id={msgId} open={isOpen} onOpenChange={setIsOpen} />
+        )}
         {/* View Dialog */}
         <ReplyFC isModal={isModal} setIsModal={setIsModal} />
         {/* Pagination */}
@@ -526,7 +554,9 @@ const ContactRequestsPage = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -536,7 +566,11 @@ const ContactRequestsPage = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

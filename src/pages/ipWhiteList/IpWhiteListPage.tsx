@@ -305,14 +305,11 @@ const IpWhiteListPage = () => {
   const [perPage, setPerPage] = useState(10);
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TIpWhiteList[]>(tableData);
-  const { data, refetch, isFetching, isError } = useFetchALLIPWhiteLists(perPage);
+  const { data, refetch, isFetching, isError } =
+    useFetchALLIPWhiteLists(perPage);
 
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TIpWhiteList>(
-    data?.items,
-    1,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TIpWhiteList>(data?.items, 1, perPage, data?.pagination);
   // console.log("tableData:",tableData.length)
   useEffect(() => {
     setPerPage(selected.value);
@@ -322,7 +319,8 @@ const IpWhiteListPage = () => {
     navigate(constant.ROUTING_URLS.EDIT_IP_WHITE_LIST.replace(":id", id));
   };
   const deleteIPWhiteListMutation = queries.useDeleteIPWhiteListMutation();
-  const bulkDeleteIPWhiteListMutation = queries.useBulkDeleteIPWhiteListMutation();
+  const bulkDeleteIPWhiteListMutation =
+    queries.useBulkDeleteIPWhiteListMutation();
   const handleDelete = (id: string) => {
     try {
       toastPromise(deleteIPWhiteListMutation.mutateAsync(id), {
@@ -331,7 +329,8 @@ const IpWhiteListPage = () => {
           if (res) refetch();
           return "Yeah! IP White List deleted successfully.";
         },
-        error: (e) => (e instanceof Error ? e.message : "Failed to delete IP White List."),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to delete IP White List.",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -362,7 +361,10 @@ const IpWhiteListPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -378,12 +380,19 @@ const IpWhiteListPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -429,14 +438,21 @@ const IpWhiteListPage = () => {
               <h2 className="font-medium text-xl text-black">IP White List</h2>
               <h4>
                 <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ IP White List</span>
+                <span className="text-[#959595] w-[116px] h-4">
+                  / IP White List
+                </span>
               </h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_IP_WHITE_LIST}>
               {" "}
-              <Button variant={"secondary"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant={"secondary"}
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add IP</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add IP
+                </span>
               </Button>
             </Link>
           </div>
@@ -516,7 +532,9 @@ const IpWhiteListPage = () => {
                 <PaginationPrevious
                   // href={"?page="+currentPage}
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -525,7 +543,11 @@ const IpWhiteListPage = () => {
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

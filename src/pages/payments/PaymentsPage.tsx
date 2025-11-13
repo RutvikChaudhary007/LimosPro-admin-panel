@@ -8,7 +8,11 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
-import { getPayments, getStatusColor, type TPayments } from "@/components/table/column";
+import {
+  getPayments,
+  getStatusColor,
+  type TPayments,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,12 +82,13 @@ const PaymentsPage = () => {
     limit: selectedOption.value,
     status: selectedStatus.value,
   });
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TPayments>(
-    data?.payments,
-    newPage,
-    selectedOption.value,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TPayments>(
+      data?.payments,
+      newPage,
+      selectedOption.value,
+      data?.pagination,
+    );
 
   const handleView = useCallback(
     (id: string) => {
@@ -99,7 +104,10 @@ const PaymentsPage = () => {
     },
     [navigate],
   );
-  const columns = useMemo(() => getPayments(handleView, handleEdit), [handleView, handleEdit]);
+  const columns = useMemo(
+    () => getPayments(handleView, handleEdit),
+    [handleView, handleEdit],
+  );
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
@@ -120,7 +128,10 @@ const PaymentsPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -136,12 +147,19 @@ const PaymentsPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -184,8 +202,12 @@ const PaymentsPage = () => {
               <h2 className="font-medium text-xl text-black">Payments</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Payments</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Payments
+                </span>
               </h4>
             </div>
           </div>
@@ -256,14 +278,19 @@ const PaymentsPage = () => {
                 variant={"outline"}
                 className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
                 // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
                 onClick={() => {
                   // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
                   setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                   setRowSelection({});
                 }}
               >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Export</span>
+                <span className="text-[#959595] text-sm w-[93px] h-[19px]">
+                  Export
+                </span>
                 <Download size={14} className="text-[#959595] cursor-pointer" />
               </Button>
             </span>
@@ -290,7 +317,9 @@ const PaymentsPage = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -300,7 +329,11 @@ const PaymentsPage = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

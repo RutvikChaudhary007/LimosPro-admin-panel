@@ -4,7 +4,12 @@ import type { BlogPost } from "@/types/content";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 interface BlogPostCardProps {
   blogPost: BlogPost;
@@ -13,7 +18,12 @@ interface BlogPostCardProps {
   onDelete: (id: string) => void;
 }
 
-const BlogPostCard: React.FC<BlogPostCardProps> = ({ blogPost, onEdit, onView, onDelete }) => {
+const BlogPostCard: React.FC<BlogPostCardProps> = ({
+  blogPost,
+  onEdit,
+  onView,
+  onDelete,
+}) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "published":
@@ -40,13 +50,21 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ blogPost, onEdit, onView, o
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg line-clamp-2">{blogPost.title}</CardTitle>
+            <CardTitle className="text-lg line-clamp-2">
+              {blogPost.title}
+            </CardTitle>
             <div className="flex items-center gap-2 mt-2">
-              <Badge className={getStatusColor(blogPost.status)}>{blogPost.status}</Badge>
+              <Badge className={getStatusColor(blogPost.status)}>
+                {blogPost.status}
+              </Badge>
               {blogPost.tags && blogPost.tags.length > 0 && (
                 <div className="flex gap-1">
                   {blogPost.tags.slice(0, 2).map((tag, index) => (
-                    <Badge key={`${index}-${tag}`} variant="outline" className="text-xs">
+                    <Badge
+                      key={`${index}-${tag}`}
+                      variant="outline"
+                      className="text-xs"
+                    >
                       {tag}
                     </Badge>
                   ))}
@@ -74,7 +92,10 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ blogPost, onEdit, onView, o
                 <Edit className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(blogPost.id)} className="text-red-600">
+              <DropdownMenuItem
+                onClick={() => onDelete(blogPost.id)}
+                className="text-red-600"
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -84,14 +105,24 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ blogPost, onEdit, onView, o
       </CardHeader>
       <CardContent>
         {blogPost.featuredImage && (
-          <img src={blogPost.featuredImage} alt={blogPost.title} className="w-full h-32 object-cover rounded-md mb-3" />
+          <img
+            src={blogPost.featuredImage}
+            alt={blogPost.title}
+            className="w-full h-32 object-cover rounded-md mb-3"
+          />
         )}
-        {blogPost.excerpt && <p className="text-sm text-gray-600 line-clamp-3 mb-3">{blogPost.excerpt}</p>}
+        {blogPost.excerpt && (
+          <p className="text-sm text-gray-600 line-clamp-3 mb-3">
+            {blogPost.excerpt}
+          </p>
+        )}
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex flex-col gap-1">
             {blogPost.author && <span>By {blogPost.author}</span>}
             <span>Created: {formatDate(blogPost.createdAt)}</span>
-            {blogPost.publishedAt && <span>Published: {formatDate(blogPost.publishedAt)}</span>}
+            {blogPost.publishedAt && (
+              <span>Published: {formatDate(blogPost.publishedAt)}</span>
+            )}
           </div>
           <div className="text-right">
             <span>{blogPost.viewCount} views</span>

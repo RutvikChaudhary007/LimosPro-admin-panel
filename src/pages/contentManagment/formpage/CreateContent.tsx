@@ -1,7 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import type React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ContentManagementForm, { type TContentForm } from "@/components/contentManagement/ContentManagementForm";
+import ContentManagementForm, {
+  type TContentForm,
+} from "@/components/contentManagement/ContentManagementForm";
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -21,7 +23,8 @@ const CreateContent: React.FC = () => {
           if (res) navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
           return "Yeah! Content created successfully.";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to create content."),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to create content.",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -42,11 +45,17 @@ const CreateContent: React.FC = () => {
       <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
         <div className="w-full h-full flex items-center justify-between">
           <div>
-            <h2 className="font-medium text-xl text-black">Content Management</h2>
+            <h2 className="font-medium text-xl text-black">
+              Content Management
+            </h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">All Pages</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Add Page</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                All Pages
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Add Page
+              </span>
             </h4>
           </div>
           {/* <Button className="text-white bg-[#5A5A5A]">Manage Field</Button> */}

@@ -7,7 +7,10 @@ export function hasAccess(path: string, role: string): boolean {
 }
 
 // New function to check access using permissions from login response
-export function hasPermissionAccess(path: string, userPermissions: string[]): boolean {
+export function hasPermissionAccess(
+  path: string,
+  userPermissions: string[],
+): boolean {
   // If user has 'accessAllFeatures' permission, grant access to everything
   if (userPermissions.includes("accessAllFeatures")) {
     return true;
@@ -25,7 +28,11 @@ export function hasPermissionAccess(path: string, userPermissions: string[]): bo
 }
 
 // Enhanced function that supports both role-based and permission-based access
-export function hasDynamicAccess(path: string, role?: string, userPermissions?: string[]): boolean {
+export function hasDynamicAccess(
+  path: string,
+  role?: string,
+  userPermissions?: string[],
+): boolean {
   // If permissions are provided, use permission-based access
   if (userPermissions && userPermissions.length > 0) {
     return hasPermissionAccess(path, userPermissions);

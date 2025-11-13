@@ -35,7 +35,10 @@ const EditTestimonailPage = () => {
             if (res) navigate(constant.ROUTING_URLS.TESTIMONIALS);
             return "Yeah! Testimonail updated successfully";
           },
-          error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update testimonial"),
+          error: (e) =>
+            e instanceof Error
+              ? e.message
+              : "Opps! Failed to update testimonial",
         },
       );
     } catch (error) {
@@ -62,8 +65,12 @@ const EditTestimonailPage = () => {
             <h2 className="font-medium text-xl text-black">Testimonail</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Testimonail</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Testimonail</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Testimonail
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit Testimonail
+              </span>
             </h4>
           </div>
         </div>
@@ -71,7 +78,11 @@ const EditTestimonailPage = () => {
       {isFetching ? (
         <Spinner />
       ) : (
-        <TestimonialForm initialData={data} onSubmit={handleSubmit} type="Edit Testimonail" />
+        <TestimonialForm
+          initialData={data}
+          onSubmit={handleSubmit}
+          type="Edit Testimonail"
+        />
       )}
     </div>
   );

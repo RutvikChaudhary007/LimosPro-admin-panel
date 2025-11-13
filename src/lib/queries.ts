@@ -1,18 +1,44 @@
-import { type QueryObserverResult, type RefetchOptions, useMutation } from "@tanstack/react-query";
+import {
+  type QueryObserverResult,
+  type RefetchOptions,
+  useMutation,
+} from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import { bulkDeleteChauffeur, createChauffeur, deleteChauffeur, editChauffeur } from "@/api/chauffeur.api";
-import { createContentBlock, deleteContentBlock, editContentBlock } from "@/api/contentBlock.api";
+import {
+  bulkDeleteChauffeur,
+  createChauffeur,
+  deleteChauffeur,
+  editChauffeur,
+} from "@/api/chauffeur.api";
+import {
+  createContentBlock,
+  deleteContentBlock,
+  editContentBlock,
+} from "@/api/contentBlock.api";
 import { createAffiliate } from "@/api/createAffiliate.api";
 import { createFleet } from "@/api/createFleet.api";
-import { bulkDeleteCrewMember, createCrewMember, deleteCrewMember, editCrewMember } from "@/api/crewMember.api";
-import { bulkDeleteAffiliate, deleteAffiliate } from "@/api/deleteAffiliate.api";
+import {
+  bulkDeleteCrewMember,
+  createCrewMember,
+  deleteCrewMember,
+  editCrewMember,
+} from "@/api/crewMember.api";
+import {
+  bulkDeleteAffiliate,
+  deleteAffiliate,
+} from "@/api/deleteAffiliate.api";
 import { bulkDeletefleet, deletefleet } from "@/api/deleteFleet.api";
 import { bulkDeleteTrips } from "@/api/deleteTrips.api";
 import { bulkDeleteUser, deleteUser } from "@/api/deleteUser.api";
 import { editAffiliate } from "@/api/editAffiliate.api";
 import { editFleetById } from "@/api/editFleetById.api";
-import { bulkDeleteFAQById, createFAQ, deleteFAQById, editFAQById } from "@/api/faq.api";
+import {
+  bulkDeleteFAQById,
+  createFAQ,
+  deleteFAQById,
+  editFAQById,
+} from "@/api/faq.api";
 import {
   bulkDeleteIPWhiteListById,
   createIPWhiteList,
@@ -20,19 +46,45 @@ import {
   editIPWhiteListById,
 } from "@/api/ipWhiteList.api";
 import { login } from "@/api/login.api";
-import { bulkDeleteNewsById, createNews, deleteNewsById, editNewsById } from "@/api/news.api";
-import { bulkDeletePartnerById, createPartner, deletePartnerById, editPartnerById } from "@/api/ourPartners.api";
+import {
+  bulkDeleteNewsById,
+  createNews,
+  deleteNewsById,
+  editNewsById,
+} from "@/api/news.api";
+import {
+  bulkDeletePartnerById,
+  createPartner,
+  deletePartnerById,
+  editPartnerById,
+} from "@/api/ourPartners.api";
 import { createRegion, deleteRegion, editRegion } from "@/api/region.api";
-import { createRegionAdmin, deleteRegionAdmin, editRegionAdmin } from "@/api/regionAdmin.api";
-import { bulkDeleteStaffMember, createStaffMember, deleteStaffMember, editStaffMember } from "@/api/staffMember.api";
-import { bulkDeleteTestimonial, createTestimonial, deleteTestimonial, editTestimonial } from "@/api/testimonial.api";
+import {
+  createRegionAdmin,
+  deleteRegionAdmin,
+  editRegionAdmin,
+} from "@/api/regionAdmin.api";
+import {
+  bulkDeleteStaffMember,
+  createStaffMember,
+  deleteStaffMember,
+  editStaffMember,
+} from "@/api/staffMember.api";
+import {
+  bulkDeleteTestimonial,
+  createTestimonial,
+  deleteTestimonial,
+  editTestimonial,
+} from "@/api/testimonial.api";
 import { updateUser } from "@/api/updateUserById.api";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
 import { constant } from "./constant";
 
-type TRefetch = (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<unknown, Error>>;
+type TRefetch = (
+  options?: RefetchOptions | undefined,
+) => Promise<QueryObserverResult<unknown, Error>>;
 
 // Auth
 const useLoginMutation = () => {
@@ -45,7 +97,10 @@ const useLoginMutation = () => {
       const userRole = userData?.roles;
 
       // reject unauthorized role
-      if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
+      if (
+        !userRole ||
+        !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)
+      ) {
         //  return Promise.reject(new Error("Unauthorized user"));
         throw new Error("Unauthorized user");
       }
@@ -60,7 +115,9 @@ const useLoginMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       } else if (err instanceof Error) {
         throw err;
@@ -87,7 +144,10 @@ const useCreatefleetMutation = () =>
 
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
       }
 
       // Don't show toast for rate limiting
@@ -109,7 +169,10 @@ const useEditfleetMutation = () =>
 
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
       }
 
       // Don't show toast for rate limiting
@@ -133,7 +196,10 @@ const useDeletefleetMutation = (refetch: TRefetch) =>
 
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
       }
 
       // Don't show toast for rate limiting
@@ -155,7 +221,10 @@ const useBulkDeletefleetMutation = () =>
 
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
-        errorMessage = axiosError.response?.data?.message || axiosError.response?.data?.error || errorMessage;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
       }
 
       // Don't show toast for rate limiting
@@ -191,7 +260,9 @@ const useCreateAffiliateMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -216,7 +287,9 @@ const useEditAffiliateMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -237,7 +310,9 @@ const useDeleteAffiliateMutation = (refetch: TRefetch) =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         ); // 🔹 important: throw
       }
       throw new Error("An unexpected error occurred"); // 🔹 throw
@@ -253,7 +328,9 @@ const useBulkDeleteAffiliateMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         ); // 🔹 important: throw
       }
       throw new Error("An unexpected error occurred"); // 🔹 throw
@@ -269,7 +346,8 @@ const useBulkDeleteAffiliateMutation = () =>
 const useUpdateUserMutation = () => {
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: IUserFormData }) => updateUser(id, data),
+    mutationFn: ({ id, data }: { id: string; data: IUserFormData }) =>
+      updateUser(id, data),
     onSuccess: () => {
       navigate(constant.ROUTING_URLS.USERS);
     },
@@ -277,7 +355,9 @@ const useUpdateUserMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -295,7 +375,9 @@ const useDeleteUserMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -312,7 +394,9 @@ const useBulkDeleteUserMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -339,7 +423,9 @@ const useCreateChauffeurMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -361,7 +447,9 @@ const useEditChauffeurMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -380,7 +468,9 @@ const useDeleteChauffeurMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -398,7 +488,9 @@ const useBulkDeleteChauffeurMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -425,7 +517,9 @@ const useCreateCrewMemberMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -443,7 +537,9 @@ const useUpdateCrewMemberMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -460,7 +556,9 @@ const useDeleteCrewMemberMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -477,7 +575,9 @@ const useBulkDeleteCrewMemberMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -504,7 +604,9 @@ const useCreateStaffMemberMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -526,7 +628,9 @@ const useUpdateStaffMemberMutation = () => {
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -544,7 +648,9 @@ const useDeleteStaffMemberMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -561,7 +667,9 @@ const useBulkDeleteStaffMemberMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -584,7 +692,9 @@ const useCreateTestimonialMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -601,7 +711,9 @@ const useEditTestimonialMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -623,7 +735,9 @@ const useDeleteTestimonialMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -645,7 +759,9 @@ const useBulkDeleteTestimonialMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -668,7 +784,9 @@ const useCreateNewsMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -685,7 +803,9 @@ const useEditNewsMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -702,7 +822,9 @@ const useDeleteNewsMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -719,7 +841,9 @@ const useBulkDeleteNewsMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -742,7 +866,9 @@ const useCreateOurPartnerMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -759,7 +885,9 @@ const useEditOurPartnerMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -776,7 +904,9 @@ const useDeleteOurPartnerMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -793,7 +923,9 @@ const useBulkDeleteOurPartnerMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -816,7 +948,9 @@ const useCreateFaqMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -833,7 +967,9 @@ const useEditFaqMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -850,7 +986,9 @@ const useDeleteFaqMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -867,7 +1005,9 @@ const useBulkDeleteFaqMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -890,7 +1030,9 @@ const useCreateIPWhiteListMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -907,7 +1049,9 @@ const useEditIPWhiteListMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -924,7 +1068,9 @@ const useDeleteIPWhiteListMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -941,7 +1087,9 @@ const useBulkDeleteIPWhiteListMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -965,7 +1113,9 @@ const useBulkDeleteTripsMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -989,7 +1139,9 @@ const useCreateRegionMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1006,7 +1158,9 @@ const useEditRegionMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1023,7 +1177,9 @@ const useDeleteRegionMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1045,7 +1201,9 @@ const useCreateRegionAdminMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1062,7 +1220,9 @@ const useEditRegionAdminMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1079,7 +1239,9 @@ const useDeleteRegionAdminMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1101,7 +1263,9 @@ const useCreateContentBlockMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1118,7 +1282,9 @@ const useEditContentBlockMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");
@@ -1135,7 +1301,9 @@ const useDeleteContentBlockMutation = () =>
       if (err && typeof err === "object" && "isAxiosError" in err) {
         const axiosError = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message || axiosError.response?.data?.error || "An unexpected error occurred",
+          axiosError.response?.data?.message ||
+            axiosError.response?.data?.error ||
+            "An unexpected error occurred",
         );
       }
       throw new Error("An unexpected error occurred");

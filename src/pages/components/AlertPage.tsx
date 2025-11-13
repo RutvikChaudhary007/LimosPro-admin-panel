@@ -1,4 +1,9 @@
-import { AlertCircleIcon, AlertTriangleIcon, BadgeCheck, PopcornIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  BadgeCheck,
+  PopcornIcon,
+} from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -9,7 +14,10 @@ function AlertPage() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Alert>
           <PopcornIcon />
-          <AlertTitle>This is a Primary Alert This is a Primary Alert This is a Primary Alert</AlertTitle>
+          <AlertTitle>
+            This is a Primary Alert This is a Primary Alert This is a Primary
+            Alert
+          </AlertTitle>
         </Alert>
         <Alert variant="solidPrimary">
           <PopcornIcon />
@@ -36,12 +44,16 @@ function AlertPage() {
         <Alert variant="success">
           <BadgeCheck />
           <AlertTitle>Success!</AlertTitle>
-          <AlertDescription>Your changes have been saved successfully.</AlertDescription>
+          <AlertDescription>
+            Your changes have been saved successfully.
+          </AlertDescription>
         </Alert>
         <Alert variant="solidSuccess">
           <BadgeCheck />
           <AlertTitle>Success!</AlertTitle>
-          <AlertDescription>Your changes have been saved successfully.</AlertDescription>
+          <AlertDescription>
+            Your changes have been saved successfully.
+          </AlertDescription>
         </Alert>
       </div>
 
@@ -50,12 +62,16 @@ function AlertPage() {
         <Alert variant="danger">
           <AlertCircleIcon />
           <AlertTitle>Payment Failed</AlertTitle>
-          <AlertDescription>Please verify your billing information and try again.</AlertDescription>
+          <AlertDescription>
+            Please verify your billing information and try again.
+          </AlertDescription>
         </Alert>
         <Alert variant="solidDanger">
           <AlertCircleIcon />
           <AlertTitle>Payment Failed</AlertTitle>
-          <AlertDescription>Please verify your billing information and try again.</AlertDescription>
+          <AlertDescription>
+            Please verify your billing information and try again.
+          </AlertDescription>
         </Alert>
       </div>
 
@@ -64,12 +80,16 @@ function AlertPage() {
         <Alert variant="warning">
           <AlertTriangleIcon />
           <AlertTitle>Warning</AlertTitle>
-          <AlertDescription>Be cautious while performing this action.</AlertDescription>
+          <AlertDescription>
+            Be cautious while performing this action.
+          </AlertDescription>
         </Alert>
         <Alert variant="solidWarning">
           <AlertTriangleIcon />
           <AlertTitle>Warning</AlertTitle>
-          <AlertDescription>Be cautious while performing this action.</AlertDescription>
+          <AlertDescription>
+            Be cautious while performing this action.
+          </AlertDescription>
         </Alert>
       </div>
     </div>

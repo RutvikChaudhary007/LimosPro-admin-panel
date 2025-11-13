@@ -3,7 +3,11 @@ import IconMail from "@/assets/Icons/ic-mail.svg?react";
 import IconSearch from "@/assets/Icons/ic-search.svg?react";
 import IconLanguage from "@/assets/Icons/ic-translate.svg?react";
 import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { type User, useUserStore } from "@/stores/useAuthStore";
 import { NavUser } from "./nav-user";

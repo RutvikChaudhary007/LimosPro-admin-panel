@@ -8,7 +8,11 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardFooter, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
@@ -38,7 +42,8 @@ function AddRegionPage() {
           }
           return "Yeah! Region created successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to create region"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to create region",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -52,7 +57,11 @@ function AddRegionPage() {
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
         title="Region Management"
-        breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Add Regions" }]}
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Region Management" },
+          { label: "Add Regions" },
+        ]}
         action={{
           variant: "outlineBlack",
           label: "Back to Regions",
@@ -67,7 +76,10 @@ function AddRegionPage() {
             <CardTitle>Create Regions</CardTitle>
             <div className="space-y-4 my-4">
               <Field>
-                <FieldLabel htmlFor="regionName" className="text-base-black gap-0">
+                <FieldLabel
+                  htmlFor="regionName"
+                  className="text-base-black gap-0"
+                >
                   Region
                 </FieldLabel>
 
@@ -76,7 +88,12 @@ function AddRegionPage() {
                   name="regionName"
                   render={({ field }) => (
                     <InputGroup>
-                      <InputGroupInput {...field} id="regionName" type="text" placeholder="Add Region" />
+                      <InputGroupInput
+                        {...field}
+                        id="regionName"
+                        type="text"
+                        placeholder="Add Region"
+                      />
                       <InputGroupAddon>
                         <MapPinned />
                       </InputGroupAddon>
@@ -84,10 +101,14 @@ function AddRegionPage() {
                   )}
                 />
 
-                <FieldDescription className="mt-1">Provide region name here.</FieldDescription>
+                <FieldDescription className="mt-1">
+                  Provide region name here.
+                </FieldDescription>
 
                 {form.formState.errors.regionName && (
-                  <p className="text-danger text-sm mt-1">{form.formState.errors.regionName.message}</p>
+                  <p className="text-danger text-sm mt-1">
+                    {form.formState.errors.regionName.message}
+                  </p>
                 )}
               </Field>
             </div>

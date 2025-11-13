@@ -28,7 +28,10 @@ const CreateTestimonailPage = () => {
             if (res) navigate(constant.ROUTING_URLS.TESTIMONIALS);
             return "Yeah! Testimonial created successfully";
           },
-          error: (e) => (e instanceof Error ? e.message : "Opps! Failed to create testimonial"),
+          error: (e) =>
+            e instanceof Error
+              ? e.message
+              : "Opps! Failed to create testimonial",
         },
       );
     } catch (error) {
@@ -56,8 +59,12 @@ const CreateTestimonailPage = () => {
             <h2 className="font-medium text-xl text-black">Testimonail</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Testimonail</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Testimonail</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Testimonail
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Create Testimonail
+              </span>
             </h4>
           </div>
         </div>

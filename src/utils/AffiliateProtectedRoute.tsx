@@ -10,12 +10,18 @@ function AdminProtectedRoute() {
   const userRole = localStorage.getItem("role");
   console.log(userRole);
   useEffect(() => {
-    if (!userRole || !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)) {
+    if (
+      !userRole ||
+      !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)
+    ) {
       console.log("login..");
       navigate("/cms/login");
     }
   }, [navigate, userRole]);
-  return userRole && ["Super Admin", "SEO Agent", "Affiliate"].includes(userRole) && <Outlet />;
+  return (
+    userRole &&
+    ["Super Admin", "SEO Agent", "Affiliate"].includes(userRole) && <Outlet />
+  );
 }
 
 export default AdminProtectedRoute;

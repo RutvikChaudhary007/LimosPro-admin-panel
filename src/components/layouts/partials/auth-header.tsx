@@ -27,7 +27,11 @@ export function AuthHeader() {
       <div className="flex h-full w-full items-center justify-between px-4 py-2">
         {/* Logo */}
         <Link to="/" className="h-[50px] w-[161px] cursor-pointer">
-          <img src="/logo/limospro-full-logo-dark.png" alt="LimosProLogo" className="object-cover" />
+          <img
+            src="/logo/limospro-full-logo-dark.png"
+            alt="LimosProLogo"
+            className="object-cover"
+          />
         </Link>
 
         {/* Right-side dynamic text */}

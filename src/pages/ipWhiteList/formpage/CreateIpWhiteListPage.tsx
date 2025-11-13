@@ -1,7 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import IpWhiteListForm, { type TIpWhiteListForm } from "@/components/ipWhiteList/IpWhiteListForm";
+import IpWhiteListForm, {
+  type TIpWhiteListForm,
+} from "@/components/ipWhiteList/IpWhiteListForm";
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -19,7 +21,10 @@ const CreateIpWhiteListPage = () => {
           if (res) navigate(constant.ROUTING_URLS.IP_WHITE_LIST);
           return "Yeah! IP White List created successfully.";
         },
-        error: (e) => (e instanceof Error ? e.message : "Failed to create IP White List. Please try again."),
+        error: (e) =>
+          e instanceof Error
+            ? e.message
+            : "Failed to create IP White List. Please try again.",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -46,8 +51,12 @@ const CreateIpWhiteListPage = () => {
             <h2 className="font-medium text-xl text-black">IP white list</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">IP white list</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Add IP</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                IP white list
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Add IP
+              </span>
             </h4>
           </div>
         </div>

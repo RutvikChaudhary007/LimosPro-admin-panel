@@ -33,7 +33,8 @@ const EditUserPage = () => {
       toastPromise(await updateUserMutation.mutateAsync({ id: id!, data }), {
         loading: "Loading...",
         success: "Yeah! sucessfully updated the user.",
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update the user."),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to update the user.",
       });
     } catch (error) {
       console.error(error);
@@ -56,12 +57,18 @@ const EditUserPage = () => {
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">User</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit User</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit User
+              </span>
             </h4>
           </div>
         </div>
       </Header>
-      <UserForm initialData={initialData} onSubmit={handleEditUser} type={"Edit User"} />
+      <UserForm
+        initialData={initialData}
+        onSubmit={handleEditUser}
+        type={"Edit User"}
+      />
     </div>
   );
 };

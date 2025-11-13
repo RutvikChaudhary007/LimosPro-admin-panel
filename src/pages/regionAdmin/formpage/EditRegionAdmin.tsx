@@ -6,9 +6,22 @@ import { z } from "zod";
 // import { Label } from "@/components/ui/label"
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { constant } from "@/lib/constant";
 
 const formSchema = z.object({
@@ -18,7 +31,9 @@ const formSchema = z.object({
   lastName: z.string().min(2, {
     message: "Last name must be at least 2 characters.",
   }),
-  email: z.string({ message: "Email is required." }).email({ message: "Please enter a valid email address" }),
+  email: z
+    .string({ message: "Email is required." })
+    .email({ message: "Please enter a valid email address" }),
   password: z
     .string({ message: "Password no is required." })
     .trim()
@@ -76,7 +91,9 @@ const EditRegionAdmin = () => {
           <h4>
             <span className="text-[#959595] w-14 h-4">Region Management</span>{" "}
             <span className="text-[#959595] w-[116px] h-4">/ Admins</span>{" "}
-            <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Region Admin</span>
+            <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+              / Edit Region Admin
+            </span>
           </h4>
         </div>
       </Header>
@@ -84,13 +101,18 @@ const EditRegionAdmin = () => {
       <div className="w-full bg-[#FDFDFD] shadow-base-light flex flex-col gap-[34px] p-4 overflow-auto">
         <div className="w-full text-xl font-semibold">Edit Regional Admin</div>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 grid-rows-4 gap-x-5">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid grid-cols-2 grid-rows-4 gap-x-5"
+          >
             <FormField
               control={form.control}
               name="firstName"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormLabel className="text-black text-sm">First Name</FormLabel>
+                  <FormLabel className="text-black text-sm">
+                    First Name
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -108,7 +130,9 @@ const EditRegionAdmin = () => {
               name="lastName"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormLabel className="text-black text-sm">Last Name</FormLabel>
+                  <FormLabel className="text-black text-sm">
+                    Last Name
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -163,17 +187,26 @@ const EditRegionAdmin = () => {
               name="permission"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-3 mb-[31px] col-span-2 col-start-1">
-                  <FormLabel className="text-black text-sm">Permission</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormLabel className="text-black text-sm">
+                    Permission
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl className="w-full">
                       <SelectTrigger className="min-w-full">
                         <SelectValue placeholder="Select a verified email to display" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="col-span-2 col-start-1">
-                      <SelectItem value="m@example.com">m@example.com</SelectItem>
+                      <SelectItem value="m@example.com">
+                        m@example.com
+                      </SelectItem>
                       <SelectItem value="m@google.com">m@google.com</SelectItem>
-                      <SelectItem value="m@support.com">m@support.com</SelectItem>
+                      <SelectItem value="m@support.com">
+                        m@support.com
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

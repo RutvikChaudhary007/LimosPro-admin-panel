@@ -70,9 +70,13 @@ const buildQueryString = (params: Record<string, unknown>): string => {
 // Blog API Services
 export const blogService = {
   // Get all blog posts
-  getAll: async (params: BlogQueryParams = {}): Promise<PaginatedResponse<BlogPost>> => {
+  getAll: async (
+    params: BlogQueryParams = {},
+  ): Promise<PaginatedResponse<BlogPost>> => {
     const queryString = buildQueryString(params);
-    const url = queryString ? `${API_ENDPOINTS.BLOG.GET_ALL}?${queryString}` : API_ENDPOINTS.BLOG.GET_ALL;
+    const url = queryString
+      ? `${API_ENDPOINTS.BLOG.GET_ALL}?${queryString}`
+      : API_ENDPOINTS.BLOG.GET_ALL;
 
     try {
       const response = await adminAxiosInstance.get(url);
@@ -103,25 +107,38 @@ export const blogService = {
 
   // Get blog post by ID
   getById: async (id: string): Promise<ApiResponse<BlogPost>> => {
-    const response = await adminAxiosInstance.get(API_ENDPOINTS.BLOG.GET_BY_ID(id));
+    const response = await adminAxiosInstance.get(
+      API_ENDPOINTS.BLOG.GET_BY_ID(id),
+    );
     return response?.data;
   },
 
   // Create new blog post
   create: async (data: BlogPostFormData): Promise<ApiResponse<BlogPost>> => {
-    const response = await adminAxiosInstance.post(API_ENDPOINTS.BLOG.CREATE, data);
+    const response = await adminAxiosInstance.post(
+      API_ENDPOINTS.BLOG.CREATE,
+      data,
+    );
     return response?.data;
   },
 
   // Update blog post
-  update: async (id: string, data: Partial<BlogPostFormData>): Promise<ApiResponse<BlogPost>> => {
-    const response = await adminAxiosInstance.put(API_ENDPOINTS.BLOG.UPDATE(id), data);
+  update: async (
+    id: string,
+    data: Partial<BlogPostFormData>,
+  ): Promise<ApiResponse<BlogPost>> => {
+    const response = await adminAxiosInstance.put(
+      API_ENDPOINTS.BLOG.UPDATE(id),
+      data,
+    );
     return response?.data;
   },
 
   // Delete blog post
   delete: async (id: string): Promise<ApiResponse<void>> => {
-    const response = await adminAxiosInstance.delete(API_ENDPOINTS.BLOG.DELETE(id));
+    const response = await adminAxiosInstance.delete(
+      API_ENDPOINTS.BLOG.DELETE(id),
+    );
     return response?.data;
   },
 
@@ -295,9 +312,13 @@ export default useFetchAllBlogPosts;
 // // Media Library API Services
 export const mediaService = {
   // Get all media
-  getAll: async (params: MediaQueryParams = {}): Promise<PaginatedResponse<MediaLibrary>> => {
+  getAll: async (
+    params: MediaQueryParams = {},
+  ): Promise<PaginatedResponse<MediaLibrary>> => {
     const queryString = buildQueryString(params);
-    const url = queryString ? `${API_ENDPOINTS.MEDIA.GET_ALL}?${queryString}` : API_ENDPOINTS.MEDIA.GET_ALL;
+    const url = queryString
+      ? `${API_ENDPOINTS.MEDIA.GET_ALL}?${queryString}`
+      : API_ENDPOINTS.MEDIA.GET_ALL;
 
     try {
       const response = await adminAxiosInstance.get(url);
@@ -333,18 +354,26 @@ export const mediaService = {
 
   // Get media by ID
   getById: async (id: string): Promise<ApiResponse<MediaLibrary>> => {
-    const response = await adminAxiosInstance.get(API_ENDPOINTS.MEDIA.GET_BY_ID(id));
+    const response = await adminAxiosInstance.get(
+      API_ENDPOINTS.MEDIA.GET_BY_ID(id),
+    );
     return response?.data || {};
   },
 
   // Get media by category
-  getByCategory: async (category: string): Promise<ApiResponse<MediaLibrary[]>> => {
-    const response = await adminAxiosInstance.get(API_ENDPOINTS.MEDIA.GET_BY_CATEGORY(category));
+  getByCategory: async (
+    category: string,
+  ): Promise<ApiResponse<MediaLibrary[]>> => {
+    const response = await adminAxiosInstance.get(
+      API_ENDPOINTS.MEDIA.GET_BY_CATEGORY(category),
+    );
     return response?.data || [];
   },
 
   // Upload single media file
-  upload: async (data: MediaUploadFormData): Promise<ApiResponse<MediaLibrary>> => {
+  upload: async (
+    data: MediaUploadFormData,
+  ): Promise<ApiResponse<MediaLibrary>> => {
     const token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("file", data.file);
@@ -369,7 +398,11 @@ export const mediaService = {
   },
 
   // Upload multiple media files
-  uploadMultiple: async (files: File[], category?: string, folder?: string): Promise<ApiResponse<MediaLibrary[]>> => {
+  uploadMultiple: async (
+    files: File[],
+    category?: string,
+    folder?: string,
+  ): Promise<ApiResponse<MediaLibrary[]>> => {
     const formData = new FormData();
     files.forEach((file) => {
       formData.append("files", file);
@@ -377,7 +410,10 @@ export const mediaService = {
     if (category) formData.append("category", category);
     if (folder) formData.append("folder", folder);
 
-    const response = await adminAxiosInstance.post(API_ENDPOINTS.MEDIA.UPLOAD_MULTIPLE, formData);
+    const response = await adminAxiosInstance.post(
+      API_ENDPOINTS.MEDIA.UPLOAD_MULTIPLE,
+      formData,
+    );
 
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -387,20 +423,30 @@ export const mediaService = {
   },
 
   // Update media
-  update: async (id: string, data: Partial<MediaLibrary>): Promise<ApiResponse<MediaLibrary>> => {
-    const response = await adminAxiosInstance.put(API_ENDPOINTS.MEDIA.UPDATE(id), data);
+  update: async (
+    id: string,
+    data: Partial<MediaLibrary>,
+  ): Promise<ApiResponse<MediaLibrary>> => {
+    const response = await adminAxiosInstance.put(
+      API_ENDPOINTS.MEDIA.UPDATE(id),
+      data,
+    );
     return response?.data || {};
   },
 
   // Delete media
   delete: async (id: string): Promise<ApiResponse<void>> => {
-    const response = await adminAxiosInstance.delete(API_ENDPOINTS.MEDIA.DELETE(id));
+    const response = await adminAxiosInstance.delete(
+      API_ENDPOINTS.MEDIA.DELETE(id),
+    );
     return response?.data || {};
   },
 
   // Get media statistics
   getStats: async (): Promise<ApiResponse<unknown>> => {
-    const response = await adminAxiosInstance.get(API_ENDPOINTS.MEDIA.GET_STATS);
+    const response = await adminAxiosInstance.get(
+      API_ENDPOINTS.MEDIA.GET_STATS,
+    );
     return response?.data || {};
   },
 };

@@ -8,7 +8,10 @@ export const getAllPermissions = async (data?: TPara) => {
   if (data?.limit) {
     params.limit = data.limit;
   }
-  const response = await axiosInstance.get(`${API_ENDPOINTS.PERSMISSIONS.GET_ALL}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.PERSMISSIONS.GET_ALL}`,
+    { params },
+  );
 
   return response.data.data;
 };

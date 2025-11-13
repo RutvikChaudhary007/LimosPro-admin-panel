@@ -1,4 +1,11 @@
-import { GoogleMap, InfoWindow, Marker, OverlayView, Polyline, useJsApiLoader } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  InfoWindow,
+  Marker,
+  OverlayView,
+  Polyline,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { env } from "@/utils/env";
@@ -53,7 +60,8 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
     libraries,
   });
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
-  const [carPosition, setCarPosition] = useState<google.maps.LatLngLiteral>(livePosition);
+  const [carPosition, setCarPosition] =
+    useState<google.maps.LatLngLiteral>(livePosition);
   const [heading, setHeading] = useState<number>(0);
   const [isFollowing, setIsFollowing] = useState(true);
   const [routePath, setRoutePath] = useState<LatLng[]>([livePosition]);
@@ -86,7 +94,8 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
 
   // Move car along the route
   useEffect(() => {
-    if (!isLoaded || !window.google?.maps?.geometry || routePath.length === 0) return;
+    if (!isLoaded || !window.google?.maps?.geometry || routePath.length === 0)
+      return;
 
     let index = 0;
     const interval = setInterval(() => {
@@ -97,13 +106,17 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
         }
 
         const next = routePath[index];
-        const h = window.google.maps.geometry.spherical.computeHeading(prev, next);
+        const h = window.google.maps.geometry.spherical.computeHeading(
+          prev,
+          next,
+        );
         setHeading(h);
 
-        const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-          new window.google.maps.LatLng(prev),
-          new window.google.maps.LatLng(next),
-        );
+        const distance =
+          window.google.maps.geometry.spherical.computeDistanceBetween(
+            new window.google.maps.LatLng(prev),
+            new window.google.maps.LatLng(next),
+          );
         console.log("distance:", distance);
         index++;
         return next;
@@ -141,7 +154,10 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
           onClick={() => setActiveMarker("pickUpClicked")}
         />
         {activeMarker === "pickUpClicked" && (
-          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={livePosition}>
+          <InfoWindow
+            onCloseClick={() => setActiveMarker(null)}
+            position={livePosition}
+          >
             <div>
               <strong>Pickup:</strong> 5678 Oak Avenue Austin, TX 73301
             </div>
@@ -157,7 +173,10 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
           onClick={() => setActiveMarker("dropClicked")}
         />
         {activeMarker === "dropClicked" && (
-          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={dropPosition}>
+          <InfoWindow
+            onCloseClick={() => setActiveMarker(null)}
+            position={dropPosition}
+          >
             <div>
               <strong>Drop:</strong> John F. Kennedy International Airport (JFK)
             </div>
@@ -173,7 +192,10 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
           }}
         />
 
-        <OverlayView position={carPosition} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
+        <OverlayView
+          position={carPosition}
+          mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+        >
           <div
             style={{
               width: `${CAR_SIZE}px`,
@@ -187,7 +209,11 @@ const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
               pointerEvents: "none",
             }}
           >
-            <img src="/icons/car.png" alt="car" style={{ width: "100%", height: "100%" }} />
+            <img
+              src="/icons/car.png"
+              alt="car"
+              style={{ width: "100%", height: "100%" }}
+            />
           </div>
         </OverlayView>
       </GoogleMap>

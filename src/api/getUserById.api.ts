@@ -4,7 +4,9 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
 
 export const getUserById = async (id?: string) => {
   if (id) {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_USERS_BY_ID.replace(":id", id)}`);
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_USERS_BY_ID.replace(":id", id)}`,
+    );
     console.log("response:", response.data);
     return response?.data?.data;
   }

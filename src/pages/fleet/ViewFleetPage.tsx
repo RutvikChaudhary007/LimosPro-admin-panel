@@ -47,8 +47,12 @@ const ViewFleetPage = () => {
             <h2 className="font-medium text-xl text-black">Fleet</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Fleet</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View Fleet</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Fleet
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / View Fleet
+              </span>
             </h4>
           </div>
         </div>
@@ -59,12 +63,20 @@ const ViewFleetPage = () => {
         <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
           <CardHeader className="w-full  flex items-center justify-between">
             <div className="w-full h-full">
-              <h4 className="font-semibold text-xl text-[#000000]">{data?.vehicleType}.</h4>
-              <h5 className="text-[#5A5A5A] font-semibold">Affiliate: {data?.affiliate}</h5>
+              <h4 className="font-semibold text-xl text-[#000000]">
+                {data?.vehicleType}.
+              </h4>
+              <h5 className="text-[#5A5A5A] font-semibold">
+                Affiliate: {data?.affiliate}
+              </h5>
               <div className="grid grid-cols-3 gap-6 mt-6">
                 <div className="w-[154px] h-[154px] bg-[#D9D9D9] rounded">
                   <img
-                    src={data?.vehicleImages?.[0]?.url ? data?.vehicleImages?.[0]?.url : "/fleet/fleetimg.svg"}
+                    src={
+                      data?.vehicleImages?.[0]?.url
+                        ? data?.vehicleImages?.[0]?.url
+                        : "/fleet/fleetimg.svg"
+                    }
                     alt="image1"
                     className="w-full h-full object-cover"
                   />
@@ -72,14 +84,22 @@ const ViewFleetPage = () => {
                 <div className="rounded w-[154px] h-[154px] bg-[#D9D9D9]">
                   <img
                     className="w-full h-full object-cover"
-                    src={data?.vehicleImages?.[1]?.url ? data?.vehicleImages?.[1]?.url : "/fleet/fleetimg.svg"}
+                    src={
+                      data?.vehicleImages?.[1]?.url
+                        ? data?.vehicleImages?.[1]?.url
+                        : "/fleet/fleetimg.svg"
+                    }
                     alt="image2"
                   />
                 </div>
                 <div className="w-[154px] h-[154px] bg-[#D9D9D9] rounded">
                   <img
                     className="w-full h-full object-cover"
-                    src={data?.vehicleImages?.[2]?.url ? data?.vehicleImages?.[2]?.url : "/fleet/fleetimg.svg"}
+                    src={
+                      data?.vehicleImages?.[2]?.url
+                        ? data?.vehicleImages?.[2]?.url
+                        : "/fleet/fleetimg.svg"
+                    }
                     alt="image3"
                   />
                 </div>
@@ -90,35 +110,55 @@ const ViewFleetPage = () => {
             <hr className="w-full h-[1px] bg-[#EEEEEE]" />
             <div className="w-full h-full space-y-4">
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Description:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data?.description}</span>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Description:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  {data?.description}
+                </span>
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
 
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Bags:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data.bagsCapacity}</span>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Bags:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  {data.bagsCapacity}
+                </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Capacity:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data.capacity}</span>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Capacity:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  {data.capacity}
+                </span>
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Base Fair:</Label>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Base Fair:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">15</span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Min Fair:</Label>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Min Fair:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">3</span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Min Hour:</Label>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Min Hour:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">10</span>
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <div className="flex items-center gap-6">
-                <Label className="w-[153px] text-sm font-semibold capitalize">Price per hour:</Label>
+                <Label className="w-[153px] text-sm font-semibold capitalize">
+                  Price per hour:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">60</span>
               </div>
             </div>

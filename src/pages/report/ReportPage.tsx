@@ -1,9 +1,22 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
-import { ArcElement, Chart as ChartJS, Tooltip as chartJsToolTip, Legend } from "chart.js";
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Tooltip as chartJsToolTip,
+  Legend,
+} from "chart.js";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Doughnut } from "react-chartjs-2";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
@@ -39,14 +52,26 @@ const data = [
 type TPayload = {
   value: string;
 };
-const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: TPayload[]; label?: string }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: TPayload[];
+  label?: string;
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className="w-[77px] h-[39px] rounded-lg">
-        <div className="bg-[#E0E0E0] px-1 py-0.5 w-full h-[15px] text-[#5A5A5A] text-[8px]">{label} 2025</div>
+        <div className="bg-[#E0E0E0] px-1 py-0.5 w-full h-[15px] text-[#5A5A5A] text-[8px]">
+          {label} 2025
+        </div>
         <div className="bg-[#F1F1F1] w-full h-6 flex p-1 text-[#5A5A5A] text-[8px] items-end justify-between">
           Earnings:
-          <span className="text-[#000000] text-xs flex">${payload?.[0]?.value}</span>
+          <span className="text-[#000000] text-xs flex">
+            ${payload?.[0]?.value}
+          </span>
         </div>
       </div>
     );
@@ -79,7 +104,12 @@ const ReportPage = () => {
   const [selected, setSelected] = useState(showOptions[0]);
   ChartJS.register(ArcElement, chartJsToolTip, Legend);
   const Chartdata = {
-    labels: ["Total Affiliates", "Total Chauffeur", "Total Fleets", "Total Trips"],
+    labels: [
+      "Total Affiliates",
+      "Total Chauffeur",
+      "Total Fleets",
+      "Total Trips",
+    ],
     datasets: [
       {
         // label: '#',
@@ -141,7 +171,10 @@ const ReportPage = () => {
             <div className="w-full h-full">
               <h2 className="font-semibold text-black pb-1">Total Revenue</h2>
               <ResponsiveContainer width="100%" height={355}>
-                <LineChart data={data} margin={{ top: 15, right: 30, left: 0, bottom: 5 }}>
+                <LineChart
+                  data={data}
+                  margin={{ top: 15, right: 30, left: 0, bottom: 5 }}
+                >
                   <CartesianGrid vertical={false} />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -161,7 +194,10 @@ const ReportPage = () => {
           <div className="w-[520px] h-[400px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-light p-4">
             <h2 className="font-semibold text-black pb-1">Total Bookings</h2>
             <ResponsiveContainer width="100%" height={355}>
-              <LineChart data={data} margin={{ top: 15, right: 30, left: 0, bottom: 5 }}>
+              <LineChart
+                data={data}
+                margin={{ top: 15, right: 30, left: 0, bottom: 5 }}
+              >
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="month" />
                 <YAxis />

@@ -8,7 +8,11 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
-import { getStatusColor, getTrips, type TTrips } from "@/components/table/column";
+import {
+  getStatusColor,
+  getTrips,
+  type TTrips,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,7 +82,8 @@ function TripsPage(): JSX.Element {
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   // const [data, setData] = useState<TTrips[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllTrips();
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data?.trips ?? data, 1, perPage);
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TTrips>(data?.trips ?? data, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
   const handleView = (id: string) => {
@@ -112,7 +117,10 @@ function TripsPage(): JSX.Element {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -128,12 +136,19 @@ function TripsPage(): JSX.Element {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -176,8 +191,12 @@ function TripsPage(): JSX.Element {
               <h2 className="font-medium text-xl text-black">Trips</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Trips</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Trips
+                </span>
               </h4>
             </div>
           </div>
@@ -265,7 +284,9 @@ function TripsPage(): JSX.Element {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -275,7 +296,11 @@ function TripsPage(): JSX.Element {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

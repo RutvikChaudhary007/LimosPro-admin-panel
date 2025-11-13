@@ -7,7 +7,9 @@ import { toast } from "sonner";
 // import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
 // import { useMutation } from '@tanstack/react-query';
 // import type { AxiosError } from 'axios';
-import UsefetchAllAffiliate, { getAllAffiliate } from "@/api/getAllAffiliate.api";
+import UsefetchAllAffiliate, {
+  getAllAffiliate,
+} from "@/api/getAllAffiliate.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -15,7 +17,11 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getAffiliate } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -58,17 +64,39 @@ function AffiliatePage() {
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
     let start: Date | undefined;
 
     switch (selectedTime) {
       case "weekly": {
         // last 7 days inclusive (UTC)
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6,
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
         break;
       }
       case "monthly": {
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
+        );
         break;
       }
       case "yearly": {
@@ -105,12 +133,13 @@ function AffiliatePage() {
     }
   }, [queryClient, newPage, FetchData, startDate, endDate]);
 
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<IAffiliate>(
-    FetchData?.affiliates,
-    newPage,
-    perPage,
-    FetchData?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<IAffiliate>(
+      FetchData?.affiliates,
+      newPage,
+      perPage,
+      FetchData?.pagination,
+    );
   useEffect(() => {
     if (currentPage) {
       setNewPage(currentPage);
@@ -137,7 +166,8 @@ function AffiliatePage() {
       toastPromise(deleteAffiliateMutation.mutateAsync(id), {
         loading: "Deleting Affiliate...",
         success: "Yeah! Affiliate deleted successfully!",
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to delete affiliate"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to delete affiliate",
       });
     } catch (error) {
       // Error handling is done in onError callback
@@ -169,7 +199,10 @@ function AffiliatePage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -185,12 +218,19 @@ function AffiliatePage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -304,7 +344,9 @@ function AffiliatePage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -314,7 +356,11 @@ function AffiliatePage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

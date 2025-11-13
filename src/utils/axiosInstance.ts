@@ -50,11 +50,17 @@ async function refreshAccessToken(): Promise<string> {
 adminAxiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error?.config as { _retry?: boolean; headers?: Record<string, string> } | undefined;
+    const originalRequest = error?.config as
+      | { _retry?: boolean; headers?: Record<string, string> }
+      | undefined;
     const status = error?.response?.status;
     const expired = error?.response?.data?.message === "jwt expired";
 
-    if (originalRequest && !originalRequest._retry && (status === 401 || expired)) {
+    if (
+      originalRequest &&
+      !originalRequest._retry &&
+      (status === 401 || expired)
+    ) {
       originalRequest._retry = true;
 
       try {

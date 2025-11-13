@@ -3,10 +3,19 @@ import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
-import { getRefundRequest, getStatusColor, type TRefundRequest } from "@/components/table/column";
+import {
+  getRefundRequest,
+  getStatusColor,
+  type TRefundRequest,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -88,7 +97,8 @@ const RefundRequestPage = () => {
     },
     chauffeur: "jdkfsalds",
   });
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TRefundRequest>(data, 1, perPage);
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TRefundRequest>(data, 1, perPage);
 
   const handleView = useCallback((id: string) => {
     console.log("view:", id);
@@ -123,7 +133,10 @@ const RefundRequestPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -139,12 +152,19 @@ const RefundRequestPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -186,8 +206,12 @@ const RefundRequestPage = () => {
               <h2 className="font-medium text-xl text-black">Refund Request</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Refund Request</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Refund Request
+                </span>
               </h4>
             </div>
           </div>
@@ -252,7 +276,8 @@ const RefundRequestPage = () => {
             </DropdownMenu>
             <span
               className={`${
-                Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
                   ? "cursor-no-drop"
                   : "cursor-pointer"
               }`}
@@ -260,14 +285,19 @@ const RefundRequestPage = () => {
               <Button
                 variant={"secondary"}
                 className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
                 onClick={() => {
                   // setData((prev) =>prev.filter((row,i) => !rowSelection[i])
                   // );
                   // setRowSelection({});
                 }}
               >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Export</span>
+                <span className="text-[#959595] text-sm w-[93px] h-[19px]">
+                  Export
+                </span>
                 <Download size={14} className="text-[#959595] cursor-pointer" />
               </Button>
             </span>
@@ -286,8 +316,12 @@ const RefundRequestPage = () => {
               <div className="w-full h-full space-y-6 ">
                 <div className="flex items-center justify-between">
                   <DialogTitle>
-                    <h4 className="font-semibold text-xl text-[#000000]">Booking Id: TRXPAY000111</h4>
-                    <h5 className="text-[#5A5A5A] font-semibold">Created on: 03-21-2025 at 05:30 PM</h5>
+                    <h4 className="font-semibold text-xl text-[#000000]">
+                      Booking Id: TRXPAY000111
+                    </h4>
+                    <h5 className="text-[#5A5A5A] font-semibold">
+                      Created on: 03-21-2025 at 05:30 PM
+                    </h5>
                   </DialogTitle>
                 </div>
               </div>
@@ -295,73 +329,114 @@ const RefundRequestPage = () => {
 
             <hr className="w-full h-[1px] bg-[#EEEEEE]" />
             <div className="w-full h-full space-y-4">
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
+              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                Passenger
+              </h6>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Name:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Name:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
                   {modalData?.user.firstName} {modalData?.user.lastName}
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Email:</Label>
-                <span className="text-[#3A3A3A] font-medium">name@email.com</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">phone:</Label>
-                <span className="text-[#3A3A3A] font-medium">+1-424-231-6798</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Booking ID:</Label>
-                <span className="text-[#3A3A3A] font-medium">AA57329144</span>
-              </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
-
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Car Name::</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Email:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
-                  Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or Similar.
+                  name@email.com
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  phone:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  +1-424-231-6798
+                </span>
+              </div>
+              <div className="flex items-center gap-6">
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Booking ID:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">AA57329144</span>
+              </div>
+              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                Car and Chauffeur
+              </h6>
+
+              <div className="flex items-center gap-6">
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Car Name::
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or
+                  Similar.
+                </span>
+              </div>
+              <div className="flex items-center gap-6">
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Chauffeur:
+                </Label>
                 <Link
                   to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", modalData?.chauffeur)}`}
                   className="underline"
                 >
-                  <span className="text-[#3A3A3A] font-medium">David Thompson</span>
+                  <span className="text-[#3A3A3A] font-medium">
+                    David Thompson
+                  </span>
                 </Link>
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Ride</h6>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Status:</Label>
-                <span className={`text-[#3A3A3A] font-medium ${getStatusColor("Completed")} px-2 py-0.5 rounded`}>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Status:
+                </Label>
+                <span
+                  className={`text-[#3A3A3A] font-medium ${getStatusColor("Completed")} px-2 py-0.5 rounded`}
+                >
                   Completed
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">type:</Label>
-                <span className="text-[#3A3A3A] font-medium">Airport Transfer</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">From:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  type:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
-                  Houston Airport Marriott at George Bush Intercontinental, John F Kennedy Boulevard, Houston, TX, USA
+                  Airport Transfer
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">To:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  From:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
-                  Royal Caribbean International-Cruise Terminal 2, Harborside Drive, Galveston, TX, USA
+                  Houston Airport Marriott at George Bush Intercontinental, John
+                  F Kennedy Boulevard, Houston, TX, USA
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Total Price:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  To:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  Royal Caribbean International-Cruise Terminal 2, Harborside
+                  Drive, Galveston, TX, USA
+                </span>
+              </div>
+              <div className="flex items-center gap-6">
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Total Price:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">$1879</span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Refund Price:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Refund Price:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">$1879</span>
               </div>
             </div>
@@ -376,7 +451,9 @@ const RefundRequestPage = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -386,7 +463,11 @@ const RefundRequestPage = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

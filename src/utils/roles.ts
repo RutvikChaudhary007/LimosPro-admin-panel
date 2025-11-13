@@ -48,7 +48,10 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
     constant.ROUTING_URLS.EDIT_REGION,
   ],
 
-  viewRegionReports: [constant.ROUTING_URLS.REPORTS, constant.ROUTING_URLS.DASHBOARD],
+  viewRegionReports: [
+    constant.ROUTING_URLS.REPORTS,
+    constant.ROUTING_URLS.DASHBOARD,
+  ],
 
   // Content Management
   optimizeContent: [
@@ -70,11 +73,22 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   manageSeoReports: [constant.ROUTING_URLS.SEO, constant.ROUTING_URLS.REPORTS],
 
   // Trip Management
-  assignTrips: [constant.ROUTING_URLS.TRIPS, constant.ROUTING_URLS.TRIPS_MAP, constant.ROUTING_URLS.VIEW_TRIPS],
+  assignTrips: [
+    constant.ROUTING_URLS.TRIPS,
+    constant.ROUTING_URLS.TRIPS_MAP,
+    constant.ROUTING_URLS.VIEW_TRIPS,
+  ],
 
-  monitorLiveTrips: [constant.ROUTING_URLS.TRIPS, constant.ROUTING_URLS.TRIPS_MAP, constant.ROUTING_URLS.VIEW_TRIPS],
+  monitorLiveTrips: [
+    constant.ROUTING_URLS.TRIPS,
+    constant.ROUTING_URLS.TRIPS_MAP,
+    constant.ROUTING_URLS.VIEW_TRIPS,
+  ],
 
-  updateTripStatus: [constant.ROUTING_URLS.TRIPS, constant.ROUTING_URLS.VIEW_TRIPS],
+  updateTripStatus: [
+    constant.ROUTING_URLS.TRIPS,
+    constant.ROUTING_URLS.VIEW_TRIPS,
+  ],
 
   handleTripEmergencies: [
     constant.ROUTING_URLS.TRIPS,
@@ -99,7 +113,10 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
     constant.ROUTING_URLS.VIEW_BOOKING,
   ],
 
-  bookRide: [constant.ROUTING_URLS.BOOKING, constant.ROUTING_URLS.CREATE_BOOKING],
+  bookRide: [
+    constant.ROUTING_URLS.BOOKING,
+    constant.ROUTING_URLS.CREATE_BOOKING,
+  ],
 
   // Fleet Management
   manageFleets: [
@@ -166,7 +183,10 @@ export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   [constant.ROUTING_URLS.VIEW_AFFILIATE]: [ROLES.ADMIN],
   [constant.ROUTING_URLS.DASHBOARD]: [ROLES.ADMIN, ROLES.AFFILIATE],
   [constant.ROUTING_URLS.REPORTS]: [ROLES.ADMIN, ROLES.AFFILIATE],
-  [constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES]: [ROLES.ADMIN, ROLES.SEO],
+  [constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES]: [
+    ROLES.ADMIN,
+    ROLES.SEO,
+  ],
   [constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT]: [ROLES.ADMIN, ROLES.SEO],
   [constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT]: [ROLES.ADMIN, ROLES.SEO],
   [constant.ROUTING_URLS.CREW_MEMBERS]: [ROLES.ADMIN, ROLES.AFFILIATE],
@@ -216,8 +236,16 @@ export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   [constant.ROUTING_URLS.TRIPS]: [ROLES.ADMIN, ROLES.AFFILIATE],
   [constant.ROUTING_URLS.TRIPS_MAP]: [ROLES.ADMIN, ROLES.AFFILIATE],
   [constant.ROUTING_URLS.VIEW_TRIPS]: [ROLES.ADMIN, ROLES.AFFILIATE],
-  [constant.ROUTING_URLS.NOTIFICATION]: [ROLES.ADMIN, ROLES.AFFILIATE, ROLES.SEO],
-  [constant.ROUTING_URLS.VIEW_NOTIFICATION]: [ROLES.ADMIN, ROLES.AFFILIATE, ROLES.SEO],
+  [constant.ROUTING_URLS.NOTIFICATION]: [
+    ROLES.ADMIN,
+    ROLES.AFFILIATE,
+    ROLES.SEO,
+  ],
+  [constant.ROUTING_URLS.VIEW_NOTIFICATION]: [
+    ROLES.ADMIN,
+    ROLES.AFFILIATE,
+    ROLES.SEO,
+  ],
   [constant.ROUTING_URLS.PAYMENTS]: [ROLES.ADMIN, ROLES.AFFILIATE],
   [constant.ROUTING_URLS.VIEW_PAYMENTS]: [ROLES.ADMIN, ROLES.AFFILIATE],
   [constant.ROUTING_URLS.REFUND]: [ROLES.ADMIN, ROLES.AFFILIATE],

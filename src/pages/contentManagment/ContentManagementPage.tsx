@@ -3,7 +3,9 @@
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useFetchAllContentBlock, { useFetchPageContentBlockTab } from "@/api/contentBlock.api";
+import useFetchAllContentBlock, {
+  useFetchPageContentBlockTab,
+} from "@/api/contentBlock.api";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
@@ -30,7 +32,8 @@ const ContentManagement = () => {
   const perPage = 10;
   const [page, setCPage] = useState(1);
 
-  const { data: tabsData, isFetching: fetchingTabs } = useFetchPageContentBlockTab();
+  const { data: tabsData, isFetching: fetchingTabs } =
+    useFetchPageContentBlockTab();
   // console.log("tabsData:",tabsData?.pageNames)
   const { data, refetch, isFetching } = useFetchAllContentBlock({
     limit: perPage,
@@ -54,12 +57,8 @@ const ContentManagement = () => {
     return false;
   });
   // console.log("filteredData:",filteredData)
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(
-    filteredData,
-    page,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } =
+    usePagination<THomeContent>(filteredData, page, perPage, data?.pagination);
 
   useEffect(() => {
     if (currentPage) setCPage(currentPage);
@@ -77,7 +76,8 @@ const ContentManagement = () => {
         setActiveBtn("Home");
         return "Yeah! successfully deleted the content.";
       },
-      error: (e) => (e instanceof Error ? e.message : "Opps! failed to delete content."),
+      error: (e) =>
+        e instanceof Error ? e.message : "Opps! failed to delete content.",
     });
   };
   const columns = getHomeContent(handleEdit, handleDelete);
@@ -100,7 +100,10 @@ const ContentManagement = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -116,12 +119,19 @@ const ContentManagement = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -158,7 +168,9 @@ const ContentManagement = () => {
       <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
         <div className="w-full h-full flex items-center justify-between">
           <div>
-            <h2 className="font-medium text-xl text-black">Content Management</h2>
+            <h2 className="font-medium text-xl text-black">
+              Content Management
+            </h2>
             <h4>
               <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
               <span className="text-[#959595] w-[116px] h-4">/ All Pages</span>
@@ -166,9 +178,14 @@ const ContentManagement = () => {
           </div>
           <Link to={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT}>
             {" "}
-            <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Button
+              variant={"outline"}
+              className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+            >
               <Plus className="text-[#515151]" />
-              <span className="text-[#515151] font-medium text-sm">Add New Page</span>
+              <span className="text-[#515151] font-medium text-sm">
+                Add New Page
+              </span>
             </Button>
           </Link>
         </div>
@@ -194,7 +211,8 @@ const ContentManagement = () => {
             <Button
               className={cn(
                 "bg-[#EEEEEE] text-[#C8C8C8] font-medium rounded hover:text-black",
-                btn?.toLowerCase() === activeBtn?.toLowerCase() && "bg-[#939393] text-white",
+                btn?.toLowerCase() === activeBtn?.toLowerCase() &&
+                  "bg-[#939393] text-white",
               )}
               key={i}
               variant={"secondary"}
@@ -228,7 +246,9 @@ const ContentManagement = () => {
               <PaginationPrevious
                 href={`?page=${currentPage}`}
                 onClick={prevPage}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
               />
             </PaginationItem>
 
@@ -238,7 +258,11 @@ const ContentManagement = () => {
               <PaginationNext
                 href={`?page=${currentPage}`}
                 onClick={nextPage}
-                className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === calculatedTotalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>

@@ -19,7 +19,10 @@ export const getAllCrewMember = async ({ limit, page }: TArg) => {
     params.page = page;
   }
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`, { params });
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_ALL_CREW_MEMBER}`,
+      { params },
+    );
     // console.log("response:",response)
 
     return response.data.data;
@@ -50,7 +53,9 @@ export default useFetchAllCrewMember;
  */
 
 export const deleteCrewMember = async ({ id }: { id: string }) => {
-  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_CREW_MEMBER.replace(":id", id));
+  const response = await axiosInstance.delete(
+    API_ENDPOINTS.DELETE_CREW_MEMBER.replace(":id", id),
+  );
 
   return response.data;
 };
@@ -65,7 +70,10 @@ export const bulkDeleteCrewMember = async (ids: string[]) => {
   const data = {
     crewMemberIds: ids,
   };
-  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_CREW_MEMBER, data);
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.BULK_DELETE_CREW_MEMBER,
+    data,
+  );
 
   return response.data;
 };
@@ -81,7 +89,11 @@ export const createCrewMember = async (data: TCrewMemberForm) => {
     delete data.phone;
     delete data.designation;
   }
-  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_CREW_MEMBER, data, {});
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.CREATE_CREW_MEMBER,
+    data,
+    {},
+  );
 
   return response.data;
 };
@@ -91,9 +103,19 @@ export const createCrewMember = async (data: TCrewMemberForm) => {
  * @param {id}
  * @return {*}
  */
-export const editCrewMember = async ({ data, id }: { data: TCrewMemberForm; id: string }) => {
+export const editCrewMember = async ({
+  data,
+  id,
+}: {
+  data: TCrewMemberForm;
+  id: string;
+}) => {
   console.log("iddd", id);
-  const response = await axiosInstance.patch(API_ENDPOINTS.EDIT_CREW_MEMBER.replace(":id", id), data, {});
+  const response = await axiosInstance.patch(
+    API_ENDPOINTS.EDIT_CREW_MEMBER.replace(":id", id),
+    data,
+    {},
+  );
 
   return response.data;
 };

@@ -22,14 +22,17 @@ const EditNewsPage = () => {
   const editNews = queries.useEditNewsMutation();
   const handleSubmit = async (data: TNewsForm): Promise<void> => {
     try {
-      toastPromise(editNews.mutateAsync({ id: id!, data: { body: data.news } }), {
-        loading: "Updating news...",
-        success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.NEWS);
-          return "Yeah! News updated successfully";
+      toastPromise(
+        editNews.mutateAsync({ id: id!, data: { body: data.news } }),
+        {
+          loading: "Updating news...",
+          success: (res) => {
+            if (res) navigate(constant.ROUTING_URLS.NEWS);
+            return "Yeah! News updated successfully";
+          },
+          error: "Failed to update news",
         },
-        error: "Failed to update news",
-      });
+      );
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -56,12 +59,18 @@ const EditNewsPage = () => {
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">News</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit News</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit News
+              </span>
             </h4>
           </div>
         </div>
       </Header>
-      {isFetching ? <Spinner /> : <NewsForm initialData={data} onSubmit={handleSubmit} type="Edit News" />}
+      {isFetching ? (
+        <Spinner />
+      ) : (
+        <NewsForm initialData={data} onSubmit={handleSubmit} type="Edit News" />
+      )}
     </div>
   );
 };

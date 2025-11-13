@@ -294,17 +294,39 @@ function FleetPage() {
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
     let start: Date | undefined;
 
     switch (selectedTime.value) {
       case "weekly": {
         // last 7 days inclusive (UTC)
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6,
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
         break;
       }
       case "monthly": {
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
+        );
         break;
       }
       case "yearly": {
@@ -324,7 +346,8 @@ function FleetPage() {
   const { data, refetch, isPending, isError } = UsefetchAllFleets({
     DateRange: { startDate, endDate },
   });
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data?.vehicles, 1, perPage);
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TFleet>(data?.vehicles, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
 
   // const queryClient = useQueryClient();
@@ -374,7 +397,10 @@ function FleetPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -390,12 +416,19 @@ function FleetPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -438,15 +471,24 @@ function FleetPage() {
               <h2 className="font-medium text-xl text-black">Fleet</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Fleet</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Fleet
+                </span>
               </h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_FLEET}>
               {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant={"outline"}
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Fleet</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add Fleet
+                </span>
               </Button>
             </Link>
           </div>
@@ -528,7 +570,9 @@ function FleetPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -538,7 +582,11 @@ function FleetPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

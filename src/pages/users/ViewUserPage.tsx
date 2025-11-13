@@ -59,7 +59,9 @@ const ViewUserPage = () => {
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">User</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View User</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / View User
+              </span>
             </h4>
           </div>
         </div>
@@ -74,7 +76,9 @@ const ViewUserPage = () => {
                 <h4 className="font-semibold text-xl text-[#000000]">
                   {data?.firstName} {data?.lastName}
                 </h4>
-                <h5 className="text-[#5A5A5A] font-semibold">Location: {data?.location}</h5>
+                <h5 className="text-[#5A5A5A] font-semibold">
+                  Location: {data?.location}
+                </h5>
               </div>
               {/* <DropdownMenu >
                             <DropdownMenuTrigger asChild> */}
@@ -105,26 +109,48 @@ const ViewUserPage = () => {
             <CardContent className="space-y-6">
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <div className="w-full h-full space-y-4">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">All Details</h6>
+                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                  All Details
+                </h6>
                 <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize">DOB:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.dateOfBirth}</span>
+                  <Label className="text-sm font-semibold capitalize">
+                    DOB:
+                  </Label>
+                  <span className="text-[#3A3A3A] font-medium">
+                    {data?.dateOfBirth}
+                  </span>
                 </div>
                 <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize">Gender:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.gender}</span>
+                  <Label className="text-sm font-semibold capitalize">
+                    Gender:
+                  </Label>
+                  <span className="text-[#3A3A3A] font-medium">
+                    {data?.gender}
+                  </span>
                 </div>
                 <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize">Email:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.email}</span>
+                  <Label className="text-sm font-semibold capitalize">
+                    Email:
+                  </Label>
+                  <span className="text-[#3A3A3A] font-medium">
+                    {data?.email}
+                  </span>
                 </div>
                 <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize">Payment Method:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.paymentMethod}</span>
+                  <Label className="text-sm font-semibold capitalize">
+                    Payment Method:
+                  </Label>
+                  <span className="text-[#3A3A3A] font-medium">
+                    {data?.paymentMethod}
+                  </span>
                 </div>
                 <div className="flex items-center gap-6">
-                  <Label className="text-sm font-semibold capitalize">Phone:</Label>
-                  <span className="text-[#3A3A3A] font-medium">{data?.phoneNumber}</span>
+                  <Label className="text-sm font-semibold capitalize">
+                    Phone:
+                  </Label>
+                  <span className="text-[#3A3A3A] font-medium">
+                    {data?.phoneNumber}
+                  </span>
                 </div>
               </div>
             </CardContent>

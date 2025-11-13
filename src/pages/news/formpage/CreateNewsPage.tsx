@@ -47,7 +47,9 @@ const CreateNewsPage = () => {
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">News</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create News</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Create News
+              </span>
             </h4>
           </div>
         </div>

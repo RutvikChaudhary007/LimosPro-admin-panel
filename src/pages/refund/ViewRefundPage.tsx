@@ -55,9 +55,15 @@ const getNewStatusColor = (value: string) => {
   console.log(value.toLowerCase().trim());
   console.log(
     "newStatus:",
-    newStatus.find((status) => status.value.toLowerCase().trim() === value.toLowerCase().trim()),
+    newStatus.find(
+      (status) =>
+        status.value.toLowerCase().trim() === value.toLowerCase().trim(),
+    ),
   );
-  return newStatus.find((status) => status.value.toLowerCase().trim() === value.toLowerCase().trim());
+  return newStatus.find(
+    (status) =>
+      status.value.toLowerCase().trim() === value.toLowerCase().trim(),
+  );
 };
 const ViewRefundPage = () => {
   const [selectedStatus, setSelectedStatus] = useState(newStatus[3]);
@@ -78,8 +84,12 @@ const ViewRefundPage = () => {
             <h2 className="font-medium text-xl text-black">Refund</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Refund</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View Refund</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Refund
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / View Refund
+              </span>
             </h4>
           </div>
         </div>
@@ -89,8 +99,12 @@ const ViewRefundPage = () => {
           <div className="w-full h-full space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-semibold text-xl text-[#000000]">Refund Id: TRXPAY000111</h4>
-                <h5 className="text-[#5A5A5A] font-semibold">Created on: 03-21-2025 at 05:30 PM</h5>
+                <h4 className="font-semibold text-xl text-[#000000]">
+                  Refund Id: TRXPAY000111
+                </h4>
+                <h5 className="text-[#5A5A5A] font-semibold">
+                  Created on: 03-21-2025 at 05:30 PM
+                </h5>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -102,7 +116,9 @@ const ViewRefundPage = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`)}
+                  className={cn(
+                    `w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
+                  )}
                   align="start"
                 >
                   <DropdownMenuGroup>
@@ -124,70 +140,112 @@ const ViewRefundPage = () => {
         <CardContent className="space-y-6">
           <hr className="w-full h-[1px] bg-[#EEEEEE]" />
           <div className="w-full h-full space-y-4">
-            <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
+            <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+              Passenger
+            </h6>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Name:</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Name:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">
                 {data?.user.firstName} {data?.user.lastName}
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Email:</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Email:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">name@email.com</span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">phone:</Label>
-              <span className="text-[#3A3A3A] font-medium">+1-424-231-6798</span>
-            </div>
-            <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Booking ID:</Label>
-              <span className="text-[#3A3A3A] font-medium">AA57329144</span>
-            </div>
-            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-            <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
-
-            <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Car Name::</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                phone:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">
-                Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or Similar.
+                +1-424-231-6798
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
-              <Link to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", data.affiliate)}`} className="underline">
-                <span className="text-[#3A3A3A] font-medium">David Thompson</span>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Booking ID:
+              </Label>
+              <span className="text-[#3A3A3A] font-medium">AA57329144</span>
+            </div>
+            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+            <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+              Car and Chauffeur
+            </h6>
+
+            <div className="flex items-center gap-6">
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Car Name::
+              </Label>
+              <span className="text-[#3A3A3A] font-medium">
+                Executive luxury Van (Minibus) Mercedes Benz Sprinter, Or
+                Similar.
+              </span>
+            </div>
+            <div className="flex items-center gap-6">
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Chauffeur:
+              </Label>
+              <Link
+                to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", data.affiliate)}`}
+                className="underline"
+              >
+                <span className="text-[#3A3A3A] font-medium">
+                  David Thompson
+                </span>
               </Link>
             </div>
             <hr className="w-full h-[1px] bg-[#EEEEEE]" />
             <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Ride</h6>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Status:</Label>
-              <span className={`text-[#3A3A3A] font-medium ${getStatusColor("Completed")} px-2 py-0.5 rounded`}>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Status:
+              </Label>
+              <span
+                className={`text-[#3A3A3A] font-medium ${getStatusColor("Completed")} px-2 py-0.5 rounded`}
+              >
                 Completed
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">type:</Label>
-              <span className="text-[#3A3A3A] font-medium">Airport Transfer</span>
-            </div>
-            <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">From:</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                type:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">
-                Houston Airport Marriott at George Bush Intercontinental, John F Kennedy Boulevard, Houston, TX, USA
+                Airport Transfer
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">To:</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                From:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">
-                Royal Caribbean International-Cruise Terminal 2, Harborside Drive, Galveston, TX, USA
+                Houston Airport Marriott at George Bush Intercontinental, John F
+                Kennedy Boulevard, Houston, TX, USA
               </span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Total Price:</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                To:
+              </Label>
+              <span className="text-[#3A3A3A] font-medium">
+                Royal Caribbean International-Cruise Terminal 2, Harborside
+                Drive, Galveston, TX, USA
+              </span>
+            </div>
+            <div className="flex items-center gap-6">
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Total Price:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">$1879</span>
             </div>
             <div className="flex items-center gap-6">
-              <Label className="min-w-[153px] text-sm font-semibold capitalize">Refund Price:</Label>
+              <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                Refund Price:
+              </Label>
               <span className="text-[#3A3A3A] font-medium">$1879</span>
             </div>
           </div>

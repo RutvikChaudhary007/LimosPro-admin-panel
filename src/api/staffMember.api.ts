@@ -22,7 +22,10 @@ export const getAllStaffMember = async ({ limit, page }: TArg) => {
     params.page = page;
   }
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`, { params });
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_ALL_STAFF_MEMBER}`,
+      { params },
+    );
     // console.log("response:",response)
 
     return response.data.data;
@@ -55,7 +58,9 @@ export default useFetchAllStaffMember;
  */
 export const getStaffMemberById = async ({ id }: TArg) => {
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_SINGLE_STAFF_MEMBER.replace(":id", id)}`);
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_SINGLE_STAFF_MEMBER.replace(":id", id)}`,
+    );
     // console.log("response:",response)
 
     return response.data.data;
@@ -90,7 +95,10 @@ export const createStaffMember = async (data: object) => {
     delete data?.region;
   }
   const response = await axiosInstance.post(
-    API_ENDPOINTS.CREATE_STAFF_MEMBER.replace(":regionId", params.regionId as string),
+    API_ENDPOINTS.CREATE_STAFF_MEMBER.replace(
+      ":regionId",
+      params.regionId as string,
+    ),
     data,
   );
 
@@ -103,12 +111,23 @@ export const createStaffMember = async (data: object) => {
  * ###################################################
  */
 
-export const editStaffMember = async ({ id, regionId, data }: { id: string; regionId: string; data: object }) => {
+export const editStaffMember = async ({
+  id,
+  regionId,
+  data,
+}: {
+  id: string;
+  regionId: string;
+  data: object;
+}) => {
   if (data?.region) {
     delete data?.region;
   }
   const response = await axiosInstance.patch(
-    API_ENDPOINTS.EDIT_STAFF_MEMBER.replace(":id", id as string).replace(":regionId", regionId as string),
+    API_ENDPOINTS.EDIT_STAFF_MEMBER.replace(":id", id as string).replace(
+      ":regionId",
+      regionId as string,
+    ),
     data,
     {},
   );
@@ -123,7 +142,9 @@ export const editStaffMember = async ({ id, regionId, data }: { id: string; regi
  */
 
 export const deleteStaffMember = async ({ id }: { id: string }) => {
-  const response = await axiosInstance.delete(API_ENDPOINTS.DELETE_STAFF_MEMBER.replace(":id", id));
+  const response = await axiosInstance.delete(
+    API_ENDPOINTS.DELETE_STAFF_MEMBER.replace(":id", id),
+  );
 
   return response.data;
 };
@@ -138,7 +159,10 @@ export const bulkDeleteStaffMember = async (ids: string[]) => {
   const data = {
     staffMemberIds: ids,
   };
-  const response = await axiosInstance.post(API_ENDPOINTS.BULK_DELETE_STAFF_MEMBER, data);
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.BULK_DELETE_STAFF_MEMBER,
+    data,
+  );
 
   return response.data;
 };

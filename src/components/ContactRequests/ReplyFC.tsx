@@ -19,7 +19,9 @@ const ReplyFC = ({
             <div className="flex items-center justify-between">
               <DialogTitle className="space-y-1">
                 <Reply className="text-[#5A5A5A]" />
-                <h4 className="font-semibold text-xl text-[#000000]">name@email.com</h4>
+                <h4 className="font-semibold text-xl text-[#000000]">
+                  name@email.com
+                </h4>
               </DialogTitle>
             </div>
           </div>
@@ -28,7 +30,10 @@ const ReplyFC = ({
         <hr className="w-full h-[1px] bg-[#EEEEEE]" />
         <div className="h-[85px] w-[600px]">
           <Label className="text-sm pb-3">Subject</Label>
-          <Input className="h-full rounded placeholder:text-[#E6E6E6]" placeholder="Write Subject here" />
+          <Input
+            className="h-full rounded placeholder:text-[#E6E6E6]"
+            placeholder="Write Subject here"
+          />
         </div>
         <div className="h-[217px] w-[600px] mt-10">
           <Label className="text-sm  pb-3">Message</Label>

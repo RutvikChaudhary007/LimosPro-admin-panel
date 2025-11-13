@@ -20,7 +20,11 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 type MultiSelectContextType = {
@@ -45,7 +49,9 @@ export function MultiSelect({
   onValuesChange?: (values: string[]) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [internalValues, setInternalValues] = useState(new Set<string>(values ?? defaultValues));
+  const [internalValues, setInternalValues] = useState(
+    new Set<string>(values ?? defaultValues),
+  );
   const selectedValues = values ? new Set(values) : internalValues;
   const [items, setItems] = useState<Map<string, ReactNode>>(new Map());
 
@@ -133,14 +139,18 @@ export function MultiSelectValue({
   const valueRef = useRef<HTMLDivElement>(null);
   const overflowRef = useRef<HTMLDivElement>(null);
 
-  const shouldWrap = overflowBehavior === "wrap" || (overflowBehavior === "wrap-when-open" && open);
+  const shouldWrap =
+    overflowBehavior === "wrap" ||
+    (overflowBehavior === "wrap-when-open" && open);
 
   const checkOverflow = useCallback(() => {
     if (valueRef.current == null) return;
 
     const containerElement = valueRef.current;
     const overflowElement = overflowRef.current;
-    const items = containerElement.querySelectorAll<HTMLElement>("[data-selected-item]");
+    const items = containerElement.querySelectorAll<HTMLElement>(
+      "[data-selected-item]",
+    );
 
     if (overflowElement != null) overflowElement.style.display = "none";
     items.forEach((child) => child.style.removeProperty("display"));
@@ -173,14 +183,22 @@ export function MultiSelectValue({
   );
 
   if (selectedValues.size === 0 && placeholder) {
-    return <span className="min-w-0 overflow-hidden font-normal text-muted-foreground">{placeholder}</span>;
+    return (
+      <span className="min-w-0 overflow-hidden font-normal text-muted-foreground">
+        {placeholder}
+      </span>
+    );
   }
 
   return (
     <div
       {...props}
       ref={handleResize}
-      className={cn("flex w-fit gap-1.5 overflow-hidden", shouldWrap && "h-full flex-wrap", className)}
+      className={cn(
+        "flex w-fit gap-1.5 overflow-hidden",
+        shouldWrap && "h-full flex-wrap",
+        className,
+      )}
     >
       {[...selectedValues]
         .filter((value) => items.has(value))
@@ -200,7 +218,9 @@ export function MultiSelectValue({
             }
           >
             {items.get(value)}
-            {clickToRemove && <XIcon className="size-2 text-muted-foreground group-hover:text-destructive" />}
+            {clickToRemove && (
+              <XIcon className="size-2 text-muted-foreground group-hover:text-destructive" />
+            )}
           </Badge>
         ))}
       <Badge
@@ -236,12 +256,20 @@ export function MultiSelectContent({
       <PopoverContent className="min-w-[var(--radix-popover-trigger-width)] p-0">
         <Command {...props}>
           {canSearch ? (
-            <CommandInput placeholder={typeof search === "object" ? search.placeholder : undefined} />
+            <CommandInput
+              placeholder={
+                typeof search === "object" ? search.placeholder : undefined
+              }
+            />
           ) : (
             <button className="sr-only" />
           )}
           <CommandList>
-            {canSearch && <CommandEmpty>{typeof search === "object" ? search.emptyMessage : undefined}</CommandEmpty>}
+            {canSearch && (
+              <CommandEmpty>
+                {typeof search === "object" ? search.emptyMessage : undefined}
+              </CommandEmpty>
+            )}
             {children}
           </CommandList>
         </Command>
@@ -275,24 +303,32 @@ export function MultiSelectItem({
         onSelect?.(value);
       }}
     >
-      <CheckIcon className={cn("mr-2 size-4", isSelected ? "opacity-100" : "opacity-0")} />
+      <CheckIcon
+        className={cn("mr-2 size-4", isSelected ? "opacity-100" : "opacity-0")}
+      />
       {children}
     </CommandItem>
   );
 }
 
-export function MultiSelectGroup(props: ComponentPropsWithoutRef<typeof CommandGroup>) {
+export function MultiSelectGroup(
+  props: ComponentPropsWithoutRef<typeof CommandGroup>,
+) {
   return <CommandGroup {...props} />;
 }
 
-export function MultiSelectSeparator(props: ComponentPropsWithoutRef<typeof CommandSeparator>) {
+export function MultiSelectSeparator(
+  props: ComponentPropsWithoutRef<typeof CommandSeparator>,
+) {
   return <CommandSeparator {...props} />;
 }
 
 function useMultiSelectContext() {
   const context = useContext(MultiSelectContext);
   if (context == null) {
-    throw new Error("useMultiSelectContext must be used within a MultiSelectContext");
+    throw new Error(
+      "useMultiSelectContext must be used within a MultiSelectContext",
+    );
   }
   return context;
 }

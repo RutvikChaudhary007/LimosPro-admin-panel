@@ -6,13 +6,26 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import useFetchAllRegions from "@/api/region.api";
 import useFetchAllStaffRoles from "@/api/role.api";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -35,9 +48,16 @@ const formSchema = z.object({
   region: z.string(),
 });
 
-const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaffMemberForm) => {
-  const { data: regionsData, isFetching: isFetchingRegions } = useFetchAllRegions({ DateRange: {} });
-  const { data: rolesData, isFetching: isFetchingRoles } = useFetchAllStaffRoles();
+const StaffMemberForm = ({
+  initialData,
+  onSubmit,
+  disabledFields,
+  type,
+}: TStaffMemberForm) => {
+  const { data: regionsData, isFetching: isFetchingRegions } =
+    useFetchAllRegions({ DateRange: {} });
+  const { data: rolesData, isFetching: isFetchingRoles } =
+    useFetchAllStaffRoles();
   const transformInitialData = (data?: z.infer<typeof formSchema>) => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
@@ -65,7 +85,9 @@ const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaff
     if (rolesData?.length > 0 && initialData?.user) {
       console.log("roleFD:", rolesData);
       console.log("initialData?.user?.roles:", initialData?.user?.roles);
-      const role = rolesData?.find((rawData) => rawData?.roleName === initialData?.user?.roles);
+      const role = rolesData?.find(
+        (rawData) => rawData?.roleName === initialData?.user?.roles,
+      );
       form.setValue("role", role?.roleName);
     }
     if (initialData?.region) {
@@ -154,7 +176,9 @@ const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaff
               name="role"
               render={({ field }) => (
                 <FormItem className="w-full col-span-full">
-                  <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Role</FormLabel>
+                  <FormLabel className="placeholder-[#E6E6E6] font-medium">
+                    Select Role
+                  </FormLabel>
                   {isFetchingRoles ? (
                     <p>Loading...</p>
                   ) : (
@@ -174,7 +198,11 @@ const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaff
                       </FormControl>
                       <SelectContent className="">
                         {rolesData?.map((option) => (
-                          <SelectItem className="cursor-pointer" key={option?.id} value={option?.roleName}>
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={option?.id}
+                            value={option?.roleName}
+                          >
                             {option?.roleName}
                           </SelectItem>
                         ))}
@@ -197,7 +225,9 @@ const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaff
               name="region"
               render={({ field }) => (
                 <FormItem className="w-full col-span-full">
-                  <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Region</FormLabel>
+                  <FormLabel className="placeholder-[#E6E6E6] font-medium">
+                    Select Region
+                  </FormLabel>
                   {isFetchingRegions ? (
                     <p>Loading...</p>
                   ) : (
@@ -217,7 +247,11 @@ const StaffMemberForm = ({ initialData, onSubmit, disabledFields, type }: TStaff
                       </FormControl>
                       <SelectContent className="">
                         {regionsData?.regions?.map((option) => (
-                          <SelectItem className="cursor-pointer" key={option?.id} value={option?.id}>
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={option?.id}
+                            value={option?.id}
+                          >
                             {option?.regionName}
                           </SelectItem>
                         ))}

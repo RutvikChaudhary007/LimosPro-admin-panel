@@ -16,7 +16,8 @@ const CreateStaffMemberPage = () => {
       toastPromise(createStaffMutation.mutateAsync(values), {
         loading: "Creating Staff Member...",
         success: "Staff Member Created Successfully",
-        error: (e) => (e instanceof Error ? e.message : "Failed to create Staff Member"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to create Staff Member",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -41,7 +42,9 @@ const CreateStaffMemberPage = () => {
           <h2 className="font-medium text-xl text-black">Staff Members</h2>
           <h4>
             <span className="text-[#959595] w-14 h-4">Staff Members</span>{" "}
-            <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Staff Members</span>
+            <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+              / Create Staff Members
+            </span>
           </h4>
         </div>
       </Header>

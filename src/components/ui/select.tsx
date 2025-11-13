@@ -79,11 +79,15 @@ function Select({
   );
 }
 
-function SelectGroup(props: React.ComponentProps<typeof SelectPrimitive.Group>) {
+function SelectGroup(
+  props: React.ComponentProps<typeof SelectPrimitive.Group>,
+) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />;
 }
 
-function SelectValue(props: React.ComponentProps<typeof SelectPrimitive.Value>) {
+function SelectValue(
+  props: React.ComponentProps<typeof SelectPrimitive.Value>,
+) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
@@ -92,7 +96,8 @@ function SelectTrigger({
   size,
   children,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Trigger> & SelectTriggerVariants) {
+}: React.ComponentProps<typeof SelectPrimitive.Trigger> &
+  SelectTriggerVariants) {
   const { variant } = React.useContext(SelectContext);
 
   return (
@@ -147,7 +152,10 @@ function SelectContent({
   );
 }
 
-function SelectLabel({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Label>) {
+function SelectLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Label>) {
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
@@ -157,11 +165,19 @@ function SelectLabel({ className, ...props }: React.ComponentProps<typeof Select
   );
 }
 
-function SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {
+function SelectItem({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Item>) {
   const { variant } = React.useContext(SelectContext);
 
   return (
-    <SelectPrimitive.Item data-slot="select-item" className={cn(selectItemVariants({ variant }), className)} {...props}>
+    <SelectPrimitive.Item
+      data-slot="select-item"
+      className={cn(selectItemVariants({ variant }), className)}
+      {...props}
+    >
       <span className="opacity-0 absolute right-4 flex size-4 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon />
@@ -172,7 +188,10 @@ function SelectItem({ className, children, ...props }: React.ComponentProps<type
   );
 }
 
-function SelectSeparator({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.Separator>) {
+function SelectSeparator({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
@@ -182,11 +201,17 @@ function SelectSeparator({ className, ...props }: React.ComponentProps<typeof Se
   );
 }
 
-function SelectScrollUpButton({ className, ...props }: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
+function SelectScrollUpButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
   return (
     <SelectPrimitive.ScrollUpButton
       data-slot="select-scroll-up-button"
-      className={cn("flex cursor-default items-center justify-center py-1", className)}
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
       {...props}
     >
       <ChevronUpIcon className="size-4" />
@@ -201,7 +226,10 @@ function SelectScrollDownButton({
   return (
     <SelectPrimitive.ScrollDownButton
       data-slot="select-scroll-down-button"
-      className={cn("flex cursor-default items-center justify-center py-1", className)}
+      className={cn(
+        "flex cursor-default items-center justify-center py-1",
+        className,
+      )}
       {...props}
     >
       <ChevronDownIcon className="size-4" />
@@ -234,13 +262,20 @@ function SelectDropDown({
 }: SelectDropDownProps) {
   return (
     <Select value={value} onValueChange={setSelectedItem} variant={variant}>
-      <SelectTrigger className={classname} data-has-value={value ? "true" : undefined}>
+      <SelectTrigger
+        className={classname}
+        data-has-value={value ? "true" : undefined}
+      >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
 
       <SelectContent>
         {items.map((item) => (
-          <SelectItem key={item.value} value={item.value} disabled={item.disabled}>
+          <SelectItem
+            key={item.value}
+            value={item.value}
+            disabled={item.disabled}
+          >
             {item.label}
           </SelectItem>
         ))}

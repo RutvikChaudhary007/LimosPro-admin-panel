@@ -26,7 +26,11 @@ function CardBody({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-body"
-      className={cn("flex flex-col gap-4 w-full p-6 justify-between", "", className)}
+      className={cn(
+        "flex flex-col gap-4 w-full p-6 justify-between",
+        "",
+        className,
+      )}
       {...props}
     />
   );
@@ -50,7 +54,10 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("font-montserrat font-bold text-base-black text-2xl leading-[100%] tracking-normal", className)}
+      className={cn(
+        "font-montserrat font-bold text-base-black text-2xl leading-[100%] tracking-normal",
+        className,
+      )}
       {...props}
     />
   );
@@ -60,7 +67,10 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("font-quicksand font-medium text-base-gray text-xs leading-[100%] tracking-normal ", className)}
+      className={cn(
+        "font-quicksand font-medium text-base-gray text-xs leading-[100%] tracking-normal ",
+        className,
+      )}
       {...props}
     />
   );
@@ -70,7 +80,10 @@ function CardAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-action"
-      className={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+        className,
+      )}
       {...props}
     />
   );
@@ -80,7 +93,10 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-content"
-      className={cn(" font-quicksand font-medium text-base-black text-base leading-[100%] tracking-normal", className)}
+      className={cn(
+        " font-quicksand font-medium text-base-black text-base leading-[100%] tracking-normal",
+        className,
+      )}
       {...props}
     />
   );
@@ -144,7 +160,9 @@ function MetricCard({
   valueClass?: string;
 }) {
   return (
-    <Card className={`border-base-primary @container/card w-full rounded ${bgClass} shadow-none ${wrapperClass}`}>
+    <Card
+      className={`border-base-primary @container/card w-full rounded ${bgClass} shadow-none ${wrapperClass}`}
+    >
       <CardBody className={`pt-2.5 pl-6 pb-6 pr-2.5 gap-1.5 ${bodyClass}`}>
         <CardHeader className={headerClass}>
           <CardAction className={actionClass}>
@@ -156,10 +174,14 @@ function MetricCard({
         </CardHeader>
 
         <CardContent className={`space-y-1 ${contentClass}`}>
-          <p className={`font-quicksand text-base leading-[100%] font-medium tracking-[0] text-black ${titleClass}`}>
+          <p
+            className={`font-quicksand text-base leading-[100%] font-medium tracking-[0] text-black ${titleClass}`}
+          >
             {title}
           </p>
-          <h4 className={`font-montserrat text-2xl leading-[100%] font-bold tracking-[0] text-black ${valueClass}`}>
+          <h4
+            className={`font-montserrat text-2xl leading-[100%] font-bold tracking-[0] text-black ${valueClass}`}
+          >
             {value}
           </h4>
         </CardContent>

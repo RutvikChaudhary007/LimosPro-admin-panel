@@ -62,12 +62,8 @@ const FaqsPage = () => {
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TFaqs[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchALLFAQs(perPage);
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TFaqs>(
-    data?.items,
-    1,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TFaqs>(data?.items, 1, perPage, data?.pagination);
 
   useEffect(() => {
     setPerPage(selected.value);
@@ -86,7 +82,8 @@ const FaqsPage = () => {
           if (res) refetch();
           return "Yeah! FAQ deleted successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Delete FAQ failed"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Delete FAQ failed",
       });
     } catch (err) {
       if (err instanceof Error) {
@@ -124,7 +121,10 @@ const FaqsPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -140,12 +140,19 @@ const FaqsPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -185,7 +192,9 @@ const FaqsPage = () => {
         <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
           <div className="w-full h-full flex items-center justify-between">
             <div>
-              <h2 className="font-medium text-xl text-black">Frequently Asked Question</h2>
+              <h2 className="font-medium text-xl text-black">
+                Frequently Asked Question
+              </h2>
               <h4>
                 <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
                 <span className="text-[#959595] w-[116px] h-4">/ Faq</span>
@@ -193,9 +202,14 @@ const FaqsPage = () => {
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_FAQ}>
               {" "}
-              <Button variant="secondary" className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant="secondary"
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Faq</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add Faq
+                </span>
               </Button>
             </Link>
           </div>
@@ -274,7 +288,9 @@ const FaqsPage = () => {
                 <PaginationPrevious
                   href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -284,7 +300,11 @@ const FaqsPage = () => {
                 <PaginationNext
                   href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

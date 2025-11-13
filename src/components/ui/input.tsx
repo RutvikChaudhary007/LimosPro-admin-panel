@@ -25,7 +25,14 @@ function Input({
   variant,
   ...props
 }: React.ComponentProps<"input"> & VariantProps<typeof inputVariants>) {
-  return <input type={type} data-slot="input" className={cn(inputVariants({ variant }), className)} {...props} />;
+  return (
+    <input
+      type={type}
+      data-slot="input"
+      className={cn(inputVariants({ variant }), className)}
+      {...props}
+    />
+  );
 }
 
 export { Input };

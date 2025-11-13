@@ -49,15 +49,27 @@ const getNewStatusColor = (value: string) => {
   console.log(value.toLowerCase().trim());
   console.log(
     "newStatus:",
-    newStatus.find((status) => status.value.toLowerCase().trim() === value.toLowerCase().trim()),
+    newStatus.find(
+      (status) =>
+        status.value.toLowerCase().trim() === value.toLowerCase().trim(),
+    ),
   );
-  return newStatus.find((status) => status.value.toLowerCase().trim() === value.toLowerCase().trim());
+  return newStatus.find(
+    (status) =>
+      status.value.toLowerCase().trim() === value.toLowerCase().trim(),
+  );
 };
 const ViewTripsPage = () => {
   const { id } = useParams();
-  const [googleMapsApiKey] = useState<string | null>(env?.VITE_GOOGLE_MAP_KEY ?? "");
-  const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(undefined);
-  const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(undefined);
+  const [googleMapsApiKey] = useState<string | null>(
+    env?.VITE_GOOGLE_MAP_KEY ?? "",
+  );
+  const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(
+    undefined,
+  );
+  const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(
+    undefined,
+  );
 
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
@@ -120,8 +132,12 @@ const ViewTripsPage = () => {
             <h2 className="font-medium text-xl text-black">Trips</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Trips</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View Trips</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Trips
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / View Trips
+              </span>
             </h4>
           </div>
         </div>
@@ -134,9 +150,12 @@ const ViewTripsPage = () => {
             <div className="w-full h-full space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold text-xl text-[#000000]">Booking ID: AA57329144.</h4>
+                  <h4 className="font-semibold text-xl text-[#000000]">
+                    Booking ID: AA57329144.
+                  </h4>
                   <h5 className="text-[#5A5A5A] font-semibold">
-                    Created on: {formatDate(data?.createdAt || "", "dd-MM-yyyy hh:mm a")}
+                    Created on:{" "}
+                    {formatDate(data?.createdAt || "", "dd-MM-yyyy hh:mm a")}
                   </h5>
                 </div>
                 <DropdownMenu>
@@ -149,7 +168,9 @@ const ViewTripsPage = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`)}
+                    className={cn(
+                      `w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
+                    )}
                     align="start"
                   >
                     <DropdownMenuGroup>
@@ -176,32 +197,50 @@ const ViewTripsPage = () => {
           <CardContent className="space-y-6">
             <hr className="w-full h-[1px] bg-[#EEEEEE]" />
             <div className="w-full h-full space-y-4">
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Passenger</h6>
+              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                Passenger
+              </h6>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Name:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Name:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
                   {data?.user?.firstName} {data?.user?.lastName}
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Email:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data?.user?.email}</span>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Email:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  {data?.user?.email}
+                </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">phone:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data?.user?.phoneNumber}</span>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  phone:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  {data?.user?.phoneNumber}
+                </span>
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Car and Chauffeur</h6>
+              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                Car and Chauffeur
+              </h6>
 
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Car Name:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Car Name:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
                   {data?.vehicle?.make} {data?.vehicle?.model}
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Chauffeur:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Chauffeur:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
                   {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
                 </span>
@@ -209,11 +248,17 @@ const ViewTripsPage = () => {
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Trip</h6>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Price:</Label>
-                <span className="text-[#3A3A3A] font-medium">${data?.fare}</span>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Price:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  ${data?.fare}
+                </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Status:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Status:
+                </Label>
                 <span
                   className={`text-[#3A3A3A] font-medium ${getNewStatusColor(data?.tripStatus)?.css} px-2 py-0.5 rounded`}
                 >
@@ -221,19 +266,35 @@ const ViewTripsPage = () => {
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">Type:</Label>
-                <span className="text-[#3A3A3A] font-medium">{data?.tripType}</span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">From:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  Type:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
-                  {loadError ? "Error map api loading" : !pickUpAddress ? "Error fetching address" : pickUpAddress}
+                  {data?.tripType}
                 </span>
               </div>
               <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">To:</Label>
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  From:
+                </Label>
                 <span className="text-[#3A3A3A] font-medium">
-                  {loadError ? "Error map api loading" : !dropOffAddress ? "Error fetching address" : dropOffAddress}
+                  {loadError
+                    ? "Error map api loading"
+                    : !pickUpAddress
+                      ? "Error fetching address"
+                      : pickUpAddress}
+                </span>
+              </div>
+              <div className="flex items-center gap-6">
+                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                  To:
+                </Label>
+                <span className="text-[#3A3A3A] font-medium">
+                  {loadError
+                    ? "Error map api loading"
+                    : !dropOffAddress
+                      ? "Error fetching address"
+                      : dropOffAddress}
                 </span>
               </div>
             </div>

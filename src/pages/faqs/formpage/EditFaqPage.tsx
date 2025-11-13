@@ -27,7 +27,8 @@ const EditFaqPage = () => {
           if (res) navigate(constant.ROUTING_URLS.FAQ);
           return "Yeah! FAQ updated successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Edit FAQ failed"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Edit FAQ failed",
       });
     } catch (err) {
       if (err instanceof Error)
@@ -52,11 +53,15 @@ const EditFaqPage = () => {
       <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
         <div className="w-full h-full flex items-center justify-between">
           <div>
-            <h2 className="font-medium text-xl text-black">Frequently Asked Question</h2>
+            <h2 className="font-medium text-xl text-black">
+              Frequently Asked Question
+            </h2>
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">Faq</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Faq</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit Faq
+              </span>
             </h4>
           </div>
         </div>

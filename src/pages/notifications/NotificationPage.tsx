@@ -3,7 +3,11 @@
 import { ChevronDown, Trash2 } from "lucide-react";
 import { type JSX, useMemo, useState } from "react";
 import Header from "@/components/layouts/BreadCramb";
-import { getNotification, getStatusColor, type TNotification } from "@/components/table/column";
+import {
+  getNotification,
+  getStatusColor,
+  type TNotification,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,13 +40,15 @@ const tableData: TNotification[] = [
   {
     id: "12345",
     notification: "New Inquiry Received",
-    description: "You have a new inquiry from a potential passenger. Check the details and follow up.",
+    description:
+      "You have a new inquiry from a potential passenger. Check the details and follow up.",
     created_at: "2025-04-16T10:00:00Z",
   },
   {
     id: "67890",
     notification: "Ride Completed Successfully",
-    description: "The ride for booking ID #4521 has been successfully completed by the assigned driver.",
+    description:
+      "The ride for booking ID #4521 has been successfully completed by the assigned driver.",
     created_at: "2025-04-16T10:00:00Z",
   },
   {
@@ -60,13 +66,15 @@ const tableData: TNotification[] = [
   {
     id: "12345",
     notification: "New Inquiry Received",
-    description: "You have a new inquiry from a potential passenger. Check the details and follow up.",
+    description:
+      "You have a new inquiry from a potential passenger. Check the details and follow up.",
     created_at: "2025-04-16T10:00:00Z",
   },
   {
     id: "67890",
     notification: "Ride Completed Successfully",
-    description: "The ride for booking ID #4521 has been successfully completed by the assigned driver.",
+    description:
+      "The ride for booking ID #4521 has been successfully completed by the assigned driver.",
     created_at: "2025-04-16T10:00:00Z",
   },
   {
@@ -84,13 +92,15 @@ const tableData: TNotification[] = [
   {
     id: "12345",
     notification: "New Inquiry Received",
-    description: "You have a new inquiry from a potential passenger. Check the details and follow up.",
+    description:
+      "You have a new inquiry from a potential passenger. Check the details and follow up.",
     created_at: "2025-04-16T10:00:00Z",
   },
   {
     id: "67890",
     notification: "Ride Completed Successfully",
-    description: "The ride for booking ID #4521 has been successfully completed by the assigned driver.",
+    description:
+      "The ride for booking ID #4521 has been successfully completed by the assigned driver.",
     created_at: "2025-04-16T10:00:00Z",
   },
   {
@@ -140,7 +150,10 @@ function NotificationPage(): JSX.Element {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -156,12 +169,19 @@ function NotificationPage(): JSX.Element {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -201,8 +221,12 @@ function NotificationPage(): JSX.Element {
             <h2 className="font-medium text-xl text-black">Notification</h2>
             <h4>
               {" "}
-              <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-              <span className="text-xs text-[#939393] w-[50px] h-4">/ Notification</span>
+              <span className="text-[#515151] w-[116px] h-4 text-xs">
+                LIMOSPRO
+              </span>{" "}
+              <span className="text-xs text-[#939393] w-[50px] h-4">
+                / Notification
+              </span>
             </h4>
           </div>
         </div>
@@ -244,13 +268,18 @@ function NotificationPage(): JSX.Element {
             <Button
               variant={"outline"}
               className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-              disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+              disabled={
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
+              }
               onClick={() => {
                 setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                 setRowSelection({});
               }}
             >
-              <span className="text-[#959595] text-sm w-[93px] h-[19px]">Delete</span>
+              <span className="text-[#959595] text-sm w-[93px] h-[19px]">
+                Delete
+              </span>
               <Trash2 size={14} className="text-[#959595] cursor-pointer" />
             </Button>
           </span>
@@ -282,7 +311,9 @@ function NotificationPage(): JSX.Element {
               <PaginationPrevious
                 href="#"
                 onClick={() => handlePageChange(currentPage - 1)}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
               />
             </PaginationItem>
 
@@ -292,7 +323,11 @@ function NotificationPage(): JSX.Element {
               <PaginationNext
                 href="#"
                 onClick={() => handlePageChange(currentPage + 1)}
-                className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === calculatedTotalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>

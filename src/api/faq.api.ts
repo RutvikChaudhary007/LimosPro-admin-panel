@@ -53,7 +53,9 @@ export default useFetchALLFAQs;
  */
 
 export const getFAQById = async (id: string) => {
-  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_FAQ_BY_ID.replace(":id", id));
+  const response = await adminAxiosInstance.get(
+    API_ENDPOINTS.GET_FAQ_BY_ID.replace(":id", id),
+  );
   return response.data?.data;
 };
 
@@ -74,7 +76,10 @@ export const useFetchFAQById = (id: string) => {
  * @returns response data
  */
 export const createFAQ = async (data: TFaqForm) => {
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_FAQ, data);
+  const response = await adminAxiosInstance.post(
+    API_ENDPOINTS.CREATE_FAQ,
+    data,
+  );
 
   return response.data?.data;
 };
@@ -86,12 +91,22 @@ export const createFAQ = async (data: TFaqForm) => {
  * @param data
  * @returns response data
  */
-export const editFAQById = async ({ id, data }: { id: string; data: TFaqForm }) => {
-  const response = await adminAxiosInstance.put(API_ENDPOINTS.EDIT_FAQ.replace(":id", id), data, {
-    headers: {
-      "Content-Type": "application/json",
+export const editFAQById = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: TFaqForm;
+}) => {
+  const response = await adminAxiosInstance.put(
+    API_ENDPOINTS.EDIT_FAQ.replace(":id", id),
+    data,
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
 
   return response.data?.data;
 };
@@ -104,7 +119,9 @@ export const editFAQById = async ({ id, data }: { id: string; data: TFaqForm }) 
  * @returns response data
  */
 export const deleteFAQById = async (id: string) => {
-  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_FAQ.replace(":id", id));
+  const response = await adminAxiosInstance.delete(
+    API_ENDPOINTS.DELETE_FAQ.replace(":id", id),
+  );
 
   return response.data;
 };
@@ -120,7 +137,10 @@ export const bulkDeleteFAQById = async (ids: string[]) => {
   const data = {
     faqsIds: ids,
   };
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_FAQ, data);
+  const response = await adminAxiosInstance.post(
+    API_ENDPOINTS.BULK_DELETE_FAQ,
+    data,
+  );
 
   return response.data;
 };

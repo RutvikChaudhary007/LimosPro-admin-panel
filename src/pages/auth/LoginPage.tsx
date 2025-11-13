@@ -57,23 +57,33 @@ export default function LoginPage() {
         />
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[376px] flex-col justify-center">
           <div className="mb-6 size-20">
-            <img src="/logo/limospro-logo.png" alt="LogoImage" className="size-full object-cover" />
+            <img
+              src="/logo/limospro-logo.png"
+              alt="LogoImage"
+              className="size-full object-cover"
+            />
           </div>
           <div className="text-base-white font-montserrat space-y-4 leading-[100%] font-bold tracking-normal">
             <h4 className="text-3xl">Introducing Limospro™ Fleet System</h4>
             <p className="text-lg">
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-              industry&apos;s standard dummy text ever since the 1500s.
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry&apos;s standard dummy
+              text ever since the 1500s.
             </p>
           </div>
         </div>
       </div>
       <div className="absolute right-10 bottom-10 z-10 max-w-[416px]">
         {(success || error) && (
-          <Alert variant={success ? "solidSuccess" : "solidDanger"} className="shadow-base-light">
+          <Alert
+            variant={success ? "solidSuccess" : "solidDanger"}
+            className="shadow-base-light"
+          >
             <BadgeCheck />
             <AlertTitle>
-              {error ? error : "Thank you for using Limospro. We will redirect you in few seconds."}
+              {error
+                ? error
+                : "Thank you for using Limospro. We will redirect you in few seconds."}
             </AlertTitle>
           </Alert>
         )}

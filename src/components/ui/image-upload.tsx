@@ -1,6 +1,12 @@
 // @ts-nocheck
 
-import { Image as ImageIcon, Link as LinkIcon, Loader, Upload, X } from "lucide-react";
+import {
+  Image as ImageIcon,
+  Link as LinkIcon,
+  Loader,
+  Upload,
+  X,
+} from "lucide-react";
 import type React from "react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -70,7 +76,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
         if (error instanceof Error && error.message.includes("404")) {
           toast.error("Media Upload Not Available", {
-            description: "The media upload feature is not yet implemented. Please use image URLs instead.",
+            description:
+              "The media upload feature is not yet implemented. Please use image URLs instead.",
             duration: 6000,
           });
           setUploadMode("url");
@@ -145,7 +152,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       {uploadMode === "url" ? (
         <div>
-          <Input type="url" placeholder={placeholder} value={urlInput} onChange={handleUrlChange} />
+          <Input
+            type="url"
+            placeholder={placeholder}
+            value={urlInput}
+            onChange={handleUrlChange}
+          />
         </div>
       ) : (
         <Card>
@@ -172,14 +184,22 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   <Upload className="h-8 w-8 mx-auto text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium">Click to upload</span> or drag and drop
+                      <span className="font-medium">Click to upload</span> or
+                      drag and drop
                     </p>
-                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, GIF up to 5MB
+                    </p>
                   </div>
                 </div>
               )}
             </div>
-            <input type="file" accept="image/*" onChange={handleFileInputChange} className="hidden" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileInputChange}
+              className="hidden"
+            />
           </CardContent>
         </Card>
       )}
@@ -195,7 +215,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 className="w-full h-48 object-cover rounded-lg"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
-                  e.currentTarget.nextElementSibling?.classList.remove("hidden");
+                  e.currentTarget.nextElementSibling?.classList.remove(
+                    "hidden",
+                  );
                 }}
               />
               <div className="hidden flex items-center justify-center w-full h-48 bg-gray-100 rounded-lg">

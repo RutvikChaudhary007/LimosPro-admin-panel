@@ -24,8 +24,12 @@ const TripMapPage = () => {
       <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
         <div className="w-full h-full flex items-center justify-between">
           <div>
-            <h2 className="font-medium text-xl text-black">Track Live Location</h2>
-            <h4 className="text-[#959595] text-sm mt-1">Trips / Track Live Location</h4>
+            <h2 className="font-medium text-xl text-black">
+              Track Live Location
+            </h2>
+            <h4 className="text-[#959595] text-sm mt-1">
+              Trips / Track Live Location
+            </h4>
           </div>
         </div>
       </Header>
@@ -56,31 +60,52 @@ const Content = ({ data }: { data: object }) => {
     <div className="w-full mx-auto bg-white rounded shadow mt-6 flex flex-col md:flex-col items-center justify-center px-6 py-2 gap-6 border">
       {/* Nav Tabs */}
       <div className="w-full h-full flex items-center justify-between">
-        <Label className="w-full cursor-pointer block" onClick={() => setActiveTab("carAndChauffeur")}>
-          <div className="text-xs font-semibold text-black mb-1 items-start text-center">Car and Chauffeur</div>
+        <Label
+          className="w-full cursor-pointer block"
+          onClick={() => setActiveTab("carAndChauffeur")}
+        >
+          <div className="text-xs font-semibold text-black mb-1 items-start text-center">
+            Car and Chauffeur
+          </div>
           <hr
             className={cn(
               "w-full h-full border",
-              activeTab === "carAndChauffeur" ? "border-black" : "border-[#D9D9D9]",
+              activeTab === "carAndChauffeur"
+                ? "border-black"
+                : "border-[#D9D9D9]",
             )}
           />
         </Label>
 
-        <Label className="w-full cursor-pointer block" onClick={() => setActiveTab("passengerDetails")}>
-          <div className="text-xs font-semibold text-black mb-1 items-center text-center">Passenger’s Details</div>
+        <Label
+          className="w-full cursor-pointer block"
+          onClick={() => setActiveTab("passengerDetails")}
+        >
+          <div className="text-xs font-semibold text-black mb-1 items-center text-center">
+            Passenger’s Details
+          </div>
           <hr
             className={cn(
               "w-full h-full border",
-              activeTab === "passengerDetails" ? "border-black" : "border-[#D9D9D9]",
+              activeTab === "passengerDetails"
+                ? "border-black"
+                : "border-[#D9D9D9]",
             )}
           />
         </Label>
-        <Label className="w-full cursor-pointer block" onClick={() => setActiveTab("trackingDetails")}>
-          <div className="text-xs font-semibold text-black mb-1 items-end text-center">Tracking Details</div>
+        <Label
+          className="w-full cursor-pointer block"
+          onClick={() => setActiveTab("trackingDetails")}
+        >
+          <div className="text-xs font-semibold text-black mb-1 items-end text-center">
+            Tracking Details
+          </div>
           <hr
             className={cn(
               "w-full h-full border",
-              activeTab === "trackingDetails" ? "border-black" : "border-[#D9D9D9]",
+              activeTab === "trackingDetails"
+                ? "border-black"
+                : "border-[#D9D9D9]",
             )}
           />
         </Label>
@@ -90,7 +115,9 @@ const Content = ({ data }: { data: object }) => {
         <div className="flex items-center justify-between w-full h-full">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-lg font-semibold text-gray-600">{data?.chauffeur?.firstName?.slice(0, 1)}</span>
+              <span className="text-lg font-semibold text-gray-600">
+                {data?.chauffeur?.firstName?.slice(0, 1)}
+              </span>
             </div>
             <div>
               <div className="font-semibold text-gray-700">
@@ -103,7 +130,9 @@ const Content = ({ data }: { data: object }) => {
           <div>
             <div className="font-semibold text-gray-700">PAN:</div>
             <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">{data?.chauffeur?.panNumber}</span>
+              <span className="font-semibold">
+                {data?.chauffeur?.panNumber}
+              </span>
             </div>
           </div>
 
@@ -111,7 +140,9 @@ const Content = ({ data }: { data: object }) => {
           <div>
             <div className="font-semibold text-gray-700">License:</div>
             <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">{data?.chauffeur?.licenseNumber}</span>
+              <span className="font-semibold">
+                {data?.chauffeur?.licenseNumber}
+              </span>
             </div>
           </div>
 
@@ -119,7 +150,9 @@ const Content = ({ data }: { data: object }) => {
           <div>
             <div className="font-semibold text-gray-700">Car:</div>
             <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">Executive Sedan Cadillac. Lincoln. Or Similar.</span>
+              <span className="font-semibold">
+                Executive Sedan Cadillac. Lincoln. Or Similar.
+              </span>
             </div>
           </div>
 
@@ -148,7 +181,9 @@ const Content = ({ data }: { data: object }) => {
         <div className="flex items-center justify-between w-full h-full">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-lg font-semibold text-gray-600">{data?.user?.firstName?.slice(0, 1)}</span>
+              <span className="text-lg font-semibold text-gray-600">
+                {data?.user?.firstName?.slice(0, 1)}
+              </span>
             </div>
             <div>
               <div className="font-semibold text-gray-700">
@@ -177,7 +212,9 @@ const Content = ({ data }: { data: object }) => {
           <div>
             <div className="font-semibold text-gray-700">Primary Address:</div>
             <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">1234 Elm Street, Los Angeles, CA 90001</span>
+              <span className="font-semibold">
+                1234 Elm Street, Los Angeles, CA 90001
+              </span>
             </div>
           </div>
 
@@ -207,7 +244,9 @@ const Content = ({ data }: { data: object }) => {
             <Send className="text-[#5A5A5A]" />
             <div>
               <div className="font-medium text-gray-700">Current Location</div>
-              <div className="text-xs font-medium text-gray-500">San Francisco</div>
+              <div className="text-xs font-medium text-gray-500">
+                San Francisco
+              </div>
             </div>
           </div>
 

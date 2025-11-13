@@ -8,7 +8,9 @@ import type { IUserFormData } from "@/types/user.type";
 
 const CreateUserPage = () => {
   const handleCreateUser = async (data: IUserFormData) => {
-    return new Promise((res) => setTimeout(() => res(console.log("IUserFormData:", data)), 5000));
+    return new Promise((res) =>
+      setTimeout(() => res(console.log("IUserFormData:", data)), 5000),
+    );
   };
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
@@ -27,7 +29,9 @@ const CreateUserPage = () => {
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">User</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create User</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Create User
+              </span>
             </h4>
           </div>
         </div>

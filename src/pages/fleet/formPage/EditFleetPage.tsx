@@ -19,8 +19,11 @@ const _dummnyData = {};
 const EditFleetPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: AffiliateData, isFetching: isAffiliateFetching } = useFetchAllAffiliate({ DateRange: undefined });
-  const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions({});
+  const { data: AffiliateData, isFetching: isAffiliateFetching } =
+    useFetchAllAffiliate({ DateRange: undefined });
+  const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
+    {},
+  );
   const { data, isFetching } = useFetchFleetById({ id });
   const editFleetMutation = queries.useEditfleetMutation();
   const handleEditFleet = async (data: TFleetData) => {
@@ -31,7 +34,8 @@ const EditFleetPage = () => {
           if (res) navigate(constant.ROUTING_URLS.FLEETS);
           return "Fleet updated successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Failed to update fleet"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to update fleet",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -58,8 +62,12 @@ const EditFleetPage = () => {
             <h2 className="font-medium text-xl text-black">Fleet</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Fleet</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Fleet</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Fleet
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit Fleet
+              </span>
             </h4>
           </div>
         </div>

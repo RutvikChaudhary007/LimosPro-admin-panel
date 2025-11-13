@@ -5,7 +5,10 @@ export const bulkDeleteTrips = async (ids: string[]) => {
   const data = {
     tripIds: ids,
   };
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_TRIPS, data);
+  const response = await adminAxiosInstance.post(
+    API_ENDPOINTS.BULK_DELETE_TRIPS,
+    data,
+  );
 
   return response.data;
 };

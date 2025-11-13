@@ -9,7 +9,11 @@ import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
-import { formatDate, getBooking, type TBooking } from "@/components/table/column";
+import {
+  formatDate,
+  getBooking,
+  type TBooking,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -147,7 +151,9 @@ function BookingPage() {
   };
   const columns = getBooking(handleView);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   // Filter data
   const filterData = data?.bookings?.filter((row: RowData) => {
@@ -160,7 +166,10 @@ function BookingPage() {
       return false;
     }
 
-    if (selectedStatus && row.status.toLowerCase() !== selectedStatus.value.toLowerCase()) {
+    if (
+      selectedStatus &&
+      row.status.toLowerCase() !== selectedStatus.value.toLowerCase()
+    ) {
       return false;
     }
 
@@ -201,7 +210,15 @@ function BookingPage() {
 
   // Handle CSV export
   const handleExportCsv = () => {
-    const headers = ["ID", "Affiliate Id", "bookingType", "scheduledTime", "price", "Status", "Created At"];
+    const headers = [
+      "ID",
+      "Affiliate Id",
+      "bookingType",
+      "scheduledTime",
+      "price",
+      "Status",
+      "Created At",
+    ];
 
     const csvData = data?.bookings?.map((v) => [
       v?.id || "",
@@ -238,7 +255,10 @@ function BookingPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -254,12 +274,19 @@ function BookingPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -302,8 +329,12 @@ function BookingPage() {
               <h2 className="font-medium text-xl text-black">Bookings</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Bookings</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Bookings
+                </span>
               </h4>
             </div>
             <div className="w-[612px] h-[47px] flex gap-[50px]  items-center justify-between">
@@ -311,25 +342,33 @@ function BookingPage() {
                 <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
                   {statusCounts?.accepted}
                 </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Accepted</div>
+                <div className="text-center text-black h-4 text-xs w-[79px]">
+                  Accepted
+                </div>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
                   {statusCounts?.pending}
                 </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Pending</div>
+                <div className="text-center text-black h-4 text-xs w-[79px]">
+                  Pending
+                </div>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
                   {statusCounts?.cancelled}
                 </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Cancelled</div>
+                <div className="text-center text-black h-4 text-xs w-[79px]">
+                  Cancelled
+                </div>
               </div>
               <div className="flex flex-col gap-1">
                 <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
                   {statusCounts?.completed}
                 </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Completed</div>
+                <div className="text-center text-black h-4 text-xs w-[79px]">
+                  Completed
+                </div>
               </div>
             </div>
           </div>
@@ -400,7 +439,9 @@ function BookingPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -410,7 +451,11 @@ function BookingPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

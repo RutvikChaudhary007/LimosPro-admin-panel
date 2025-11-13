@@ -8,15 +8,22 @@ export const getAllFleets = async (DateRange: DateRange, page?: number) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
-      startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
-      endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
+      startDate: DateRange.startDate
+        ? new Date(DateRange.startDate).toISOString()
+        : undefined,
+      endDate: DateRange.endDate
+        ? new Date(DateRange.endDate).toISOString()
+        : undefined,
     };
   }
   if (page) {
     params.page = page;
   }
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_FLEETS}`, { params });
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_ALL_FLEETS}`,
+      { params },
+    );
     // console.log("response:",response)
 
     return response.data.data;
@@ -29,7 +36,13 @@ export const getAllFleets = async (DateRange: DateRange, page?: number) => {
   }
 };
 
-const useFetchAllFleets = ({ DateRange, page }: { DateRange: DateRange; page?: number }) =>
+const useFetchAllFleets = ({
+  DateRange,
+  page,
+}: {
+  DateRange: DateRange;
+  page?: number;
+}) =>
   useQuery({
     queryKey: ["Fleets", { DateRange }, { page }],
     queryFn: () => getAllFleets(DateRange, page),

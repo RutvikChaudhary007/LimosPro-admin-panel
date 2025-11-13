@@ -9,8 +9,12 @@ export const getAllUsers = async (DateRange: DateRange) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
-      startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
-      endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
+      startDate: DateRange.startDate
+        ? new Date(DateRange.startDate).toISOString()
+        : undefined,
+      endDate: DateRange.endDate
+        ? new Date(DateRange.endDate).toISOString()
+        : undefined,
     };
   }
   try {
