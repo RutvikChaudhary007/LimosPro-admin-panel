@@ -45,8 +45,12 @@ const libraries = ["places", "geocoding"];
 const ViewAffiliatePage = () => {
   const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const { id } = useParams();
-  const [googleMapsApiKey] = useState<string | null>(env?.VITE_GOOGLE_MAP_KEY ?? "");
-  const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
+  const [googleMapsApiKey] = useState<string | null>(
+    env?.VITE_GOOGLE_MAP_KEY ?? "",
+  );
+  const [businessAddress, setBusinessAddress] = useState<string | undefined>(
+    undefined,
+  );
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey || "",
@@ -90,7 +94,9 @@ const ViewAffiliatePage = () => {
   // const docJsx = [];
   const docJsx = [1, 2, 3, 4].map((i) => (
     <div key={i} className="flex items-center gap-6">
-      <Label className="block text-sm font-semibold capitalize w-[95px] ">Document {i}:</Label>
+      <Label className="block text-sm font-semibold capitalize w-[95px] ">
+        Document {i}:
+      </Label>
       <div
         className={cn(
           "bg-[#FFFFFF] w-full h-[33px] flex items-center space-x-5",
@@ -100,7 +106,11 @@ const ViewAffiliatePage = () => {
         <Label className="inline-block bg-[#444444] text-white px-2 py-0.5 rounded text-xs text-center !w-[70px] h-5">
           {i <= documentsLength ? "Submitted" : "Pending"}
         </Label>
-        <Link to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"} rel="noreferrer" target="_blank">
+        <Link
+          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
+          rel="noreferrer"
+          target="_blank"
+        >
           <img src="/document-eye.svg" alt="eye page" />{" "}
         </Link>
         <Link
@@ -145,8 +155,12 @@ const ViewAffiliatePage = () => {
               <h2 className="font-medium text-xl text-black">Affiliate</h2>
               <h4>
                 {" "}
-                <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ View Affiliate</span>
+                <span className="text-[#959595] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                  / View Affiliate
+                </span>
               </h4>
             </div>
           </div>
@@ -157,7 +171,9 @@ const ViewAffiliatePage = () => {
           <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
             <CardHeader className="w-full h-[55px] flex items-center justify-between">
               <div className="w-full h-full">
-                <h4 className="font-semibold text-xl text-[#000000]">{data?.companyName}</h4>
+                <h4 className="font-semibold text-xl text-[#000000]">
+                  {data?.companyName}
+                </h4>
                 <h5 className="text-[#5A5A5A] font-semibold">
                   {data?.user?.firstName} {data?.user?.lastName}
                 </h5>
@@ -172,7 +188,9 @@ const ViewAffiliatePage = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className={cn(`w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`)}
+                  className={cn(
+                    `w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
+                  )}
                   align="start"
                 >
                   <DropdownMenuGroup>
@@ -192,17 +210,25 @@ const ViewAffiliatePage = () => {
             <CardContent className="space-y-6">
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <div className="w-full h-[209px] space-y-4">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Company</h6>
-                {Object.entries(data as Record<string, React.ReactNode>)?.map(([key, val]) => {
-                  if (
-                    !["businessemail", "businesscontactnumber", "entitytype", "businessaddress"].includes(
-                      key.toLowerCase(),
-                    )
-                  ) {
-                    return (
-                      <div key={key} className="flex items-center gap-6">
-                        <Label className="text-sm font-semibold capitalize min-w-[158px]">{key}:</Label>
-                        <span className="text-[#3A3A3A] font-medium">
+                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                  Company
+                </h6>
+                {Object.entries(data as Record<string, React.ReactNode>)?.map(
+                  ([key, val]) => {
+                    if (
+                      ![
+                        "businessemail",
+                        "businesscontactnumber",
+                        "entitytype",
+                        "businessaddress",
+                      ].includes(key.toLowerCase())
+                    ) {
+                      return (
+                        <div key={key} className="flex items-center gap-6">
+                          <Label className="text-sm font-semibold capitalize min-w-[158px]">
+                            {key}:
+                          </Label>
+                          {/* <span className="text-[#3A3A3A] font-medium">
                           {["businessaddress"].includes(key.toLowerCase())
                             ? loadError
                               ? "Error map api loading"
@@ -210,16 +236,19 @@ const ViewAffiliatePage = () => {
                                 ? "Error fetching address"
                                 : businessAddress
                             : val}
-                        </span>
-                      </div>
-                    );
-                  }
-                  return <></>;
-                })}
+                        </span> */}
+                        </div>
+                      );
+                    }
+                    return <></>;
+                  },
+                )}
               </div>
               <hr className="w-full h-[1px] bg-[#EEEEEE]" />
               <div className="w-full h-[215px]">
-                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Documents</h6>
+                <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                  Documents
+                </h6>
                 {docJsx}
               </div>
             </CardContent>

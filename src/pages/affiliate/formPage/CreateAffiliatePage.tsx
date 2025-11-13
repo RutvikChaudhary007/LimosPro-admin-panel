@@ -1,9 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
-import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
@@ -27,7 +25,8 @@ function CreateAffiliatePage() {
           }
           return "Affiliate created successfully!";
         },
-        error: (e) => (e instanceof Error ? e.message : "Failed to create affiliate"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to create affiliate",
       });
     } catch (error) {
       // Error handling is done in onError callback
@@ -36,13 +35,24 @@ function CreateAffiliatePage() {
   };
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-      <Link to={constant.ROUTING_URLS.AFFILIATE}>
-        <Button variant="outlineBlack">
-          <ArrowLeft /> Back
-        </Button>
-      </Link>
-      <PageHeader title="Affiliate" breadcrumbs={[{ label: "Home", path: "/" }, { label: "Create Affiliate" }]} />
-      <AffiliateForm onSubmit={handleCreateAffiliate} type={"Create Affiliate"} />
+      <PageHeader
+        title="Affiliate"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
+          { label: "Create Affiliate" },
+        ]}
+        action={{
+          variant: "outlineBlack",
+          label: "Back",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.AFFILIATE,
+        }}
+      />
+      <AffiliateForm
+        onSubmit={handleCreateAffiliate}
+        type={"Create Affiliate"}
+      />
     </div>
   );
 }

@@ -34,7 +34,9 @@ export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
   return [
     {
       accessorKey: "userName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="USERS" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="USERS" />
+      ),
       // cell: ({row})=>(<>
       // {row.original.firstName} {row.original.lastName}
       // </>),
@@ -42,23 +44,33 @@ export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
     },
     {
       accessorKey: "bookingId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking ID" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Booking ID" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "price",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Price $" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Price $" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Label
-          className={cn("flex items-center rounded bg-[#D9D9D9] px-2 w-20 text-sm", [
-            getStatusColor(row.original.status),
-            row.original.status.toLocaleLowerCase() === "active" && "text-white",
-          ])}
+          className={cn(
+            "flex items-center rounded bg-[#D9D9D9] px-2 w-20 text-sm",
+            [
+              getStatusColor(row.original.status),
+              row.original.status.toLocaleLowerCase() === "active" &&
+                "text-white",
+            ],
+          )}
         >
           {row.original.status}
         </Label>
@@ -85,7 +97,10 @@ export function getRegionColumns(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -103,25 +118,44 @@ export function getRegionColumns(
     },
     {
       accessorKey: "regionName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Region Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Region Name" />
+      ),
       enableSorting: false,
     },
     // { accessorKey: "admin", header: ({ column }) => <DataTableColumnHeader column={column} title="Admin" />,enableSorting: false, },
-    {
-      id: "access",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-      cell: ({ row }) => <AccessCell<TRegion> row={row} onAccess={onAccess} />,
-      enableSorting: false,
-    },
+    // {
+    //   id: "access",
+    //   header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
+    //   cell: ({ row }) => <AccessCell<TRegion> row={row} onAccess={onAccess} />,
+    //   enableSorting: false,
+    // },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button variant="outlineNavBtnBlack" size="xl" spacing="lg" onClick={() => onEdit(row.original.id)}>
+          <AccessCell<TRegion> row={row} onAccess={onAccess} />
+
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            onClick={() => onEdit(row.original.id)}
+            className="ml-4"
+            tooltip="Edit Details"
+          >
             <Edit />
           </Button>
-          <Button variant="outlineNavBtnBlack" size="xl" spacing="lg" onClick={() => onDelete(row.original.id)}>
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            onClick={() => onDelete(row.original.id)}
+            tooltip="Delete"
+          >
             <Trash2 />
           </Button>
         </div>
@@ -149,7 +183,10 @@ export function getRegionAdminColumns(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -167,42 +204,67 @@ export function getRegionAdminColumns(
     },
     {
       accessorKey: "region.regionName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Region Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Region Name" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "user.email",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Edit"
+          >
             <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete"
+              >
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Regional Admin</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this regional admin? This action cannot be undone.
+                  Are you sure you want to delete this regional admin? This
+                  action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -254,7 +316,10 @@ export function getAffiliate(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -272,38 +337,57 @@ export function getAffiliate(
     },
     {
       accessorKey: "companyName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Affiliate Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Affiliate Name" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "businessEmail",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Business Email" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Business Email" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "businessAddress",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Business Address" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Business Address" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "commissionRate",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Commission Rate" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Commission Rate" />
+      ),
       cell: ({ row }) => {
-        return <span className="text-sm text-black">{row?.original?.commissionRate} % Per Ride</span>;
+        return (
+          <span className="text-sm text-black">
+            {row?.original?.commissionRate} % Per Ride
+          </span>
+        );
       },
       enableSorting: false,
     },
     {
       accessorKey: "isChauffer",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Chauffeur" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Chauffeur" />
+      ),
       cell: ({ row }) => <span>{row.original.isChauffer ? "Yes" : "No"}</span>,
       enableSorting: false,
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
-        <Badge variant={getStatusVariant(row?.original?.status ?? "")} className="capitalize">
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
+        >
           {row.original.status}
         </Badge>
         // <div className="inset-shadow-2xs inset-shadow-[#EEEEEE]">
@@ -316,35 +400,62 @@ export function getAffiliate(
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row?.original?.id ?? "")} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row?.original?.id ?? "")}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View"
+          >
             <Eye />
           </Button>
-          <Button onClick={() => onEdit(row.original.id ?? "")} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onEdit(row.original.id ?? "")}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Edit"
+          >
             <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete"
+              >
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Affiliate</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this affiliate? This action cannot be undone.
+                  Are you sure you want to delete this affiliate? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id ?? "")} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id ?? "")}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -368,7 +479,10 @@ export function getChauffeur(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -386,26 +500,35 @@ export function getChauffeur(
     },
     {
       accessorKey: "vehicleId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Vehicle Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Vehicle Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "licenseNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="License Number" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="License Number" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "panNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Pan Number" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Pan Number" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "rating",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Rating" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Rating" />
+      ),
       cell: ({ row }) => {
         return (
-          <Badge variant={"default"} className="text-sm text-black bg-[#D9D9D9] px-1 py-0.5 rounded">
-            <Star className="fill-[#3A3A3A]" /> <span className="text-[#3A3A3A] text-sm">{row.original.rating}</span>
+          <Badge>
+            <Star />
+            <span>{row.original.rating}</span>
           </Badge>
         );
       },
@@ -413,55 +536,74 @@ export function getChauffeur(
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
-        <Badge
-          variant={"default"}
-          className={`capitalize rounded w-[70px] h-5 inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)}`}
-        >
-          {row.original.status}
+        <Badge variant={getStatusVariant(row?.original?.status ?? "")}>
+          <span>{row.original.status}</span>
         </Badge>
       ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View"
+          >
             <Eye />
           </Button>
-          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Edit"
+          >
             <Edit />
           </Button>
-
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="outlineNavBtnBlack" size="xl" spacing="lg"
-          >
-            <Trash2  />
-          </Button> */}
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete"
+              >
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Chauffeur</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this chauffeur? This action cannot be undone.
+                  Are you sure you want to delete this chauffeur? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -501,7 +643,10 @@ export function getUsers(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -519,7 +664,9 @@ export function getUsers(
     },
     {
       id: "id",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       cell: ({ row }) => (
         <span>
           {row.original.firstName} {row.original.lastName}
@@ -529,17 +676,23 @@ export function getUsers(
     },
     {
       accessorKey: "email",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "phoneNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Phone" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Badge
           variant={"default"}
@@ -552,13 +705,25 @@ export function getUsers(
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Eye />
           </Button>
-          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Edit />
           </Button>
           <Dialog>
@@ -567,20 +732,28 @@ export function getUsers(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete User</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this user? This action cannot be undone.
+                  Are you sure you want to delete this user? This action cannot
+                  be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -630,14 +803,19 @@ export const formatDate = (dateString: string | null) => {
   return format(new Date(dateString), "MMM d, yyyy h:mm a");
 };
 
-export function getBooking(onView: (id: string) => void): ColumnDef<TBooking>[] {
+export function getBooking(
+  onView: (id: string) => void,
+): ColumnDef<TBooking>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -655,28 +833,38 @@ export function getBooking(onView: (id: string) => void): ColumnDef<TBooking>[] 
     },
     {
       accessorKey: "affiliateId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Affiliate Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Affiliate Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "bookingType",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Type" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Booking Type" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "scheduledTime",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Scheduled Time" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Scheduled Time" />
+      ),
       cell: ({ row }) => <span>{formatDate(row.original.createdAt)}</span>,
       enableSorting: false,
     },
     {
       accessorKey: "fare",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Price $" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Price $" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Badge
           variant={"default"}
@@ -689,10 +877,17 @@ export function getBooking(onView: (id: string) => void): ColumnDef<TBooking>[] 
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button type="button" variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            type="button"
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Mail />
           </Button>
           <Button
@@ -709,7 +904,12 @@ export function getBooking(onView: (id: string) => void): ColumnDef<TBooking>[] 
           >
             <Phone />
           </Button>
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Eye />
           </Button>
         </div>
@@ -747,7 +947,10 @@ export function getFleets(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -765,38 +968,60 @@ export function getFleets(
     },
     {
       accessorKey: "affiliateId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Affiliate Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Affiliate Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "plateNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Plate Number" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Plate Number" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "vehicleType",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Vehicle Type" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Vehicle Type" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "model",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Model" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Model" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "capacity",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Capacity" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Capacity" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Eye />
           </Button>
-          <Button onClick={() => onEdit(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Edit />
           </Button>
           <Dialog>
@@ -805,20 +1030,28 @@ export function getFleets(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Fleet</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this fleet? This action cannot be undone.
+                  Are you sure you want to delete this fleet? This action cannot
+                  be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -852,14 +1085,20 @@ export type TTrips = {
   updatedAt: string;
 };
 
-export function getTrips(onView: (id: string) => void, onMap: (id: string) => void): ColumnDef<TTrips>[] {
+export function getTrips(
+  onView: (id: string) => void,
+  onMap: (id: string) => void,
+): ColumnDef<TTrips>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -877,17 +1116,23 @@ export function getTrips(onView: (id: string) => void, onMap: (id: string) => vo
     },
     {
       accessorKey: "bookingId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Booking Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "tripType",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Trip Type" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Trip Type" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "tripStatus",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Trip Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Trip Status" />
+      ),
       cell: ({ row }) => (
         <Badge
           variant={"default"}
@@ -900,15 +1145,24 @@ export function getTrips(onView: (id: string) => void, onMap: (id: string) => vo
     },
     {
       accessorKey: "distanceInKm",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Distance In Km" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Distance In Km" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Eye />
           </Button>
           <Button
@@ -948,7 +1202,10 @@ export function getNotification(): ColumnDef<TNotification>[] {
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -966,17 +1223,23 @@ export function getNotification(): ColumnDef<TNotification>[] {
     },
     {
       accessorKey: "notification",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Notification" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Notification" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "description",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Description" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "created_at",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Created On" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Created On" />
+      ),
       enableSorting: false,
       cell: ({ row }) => getDate(row.original.created_at),
     },
@@ -995,14 +1258,20 @@ export type TPayments = {
     lastName: string;
   };
 };
-export function getPayments(onView: (id: string) => void, onMap: (id: string) => void): ColumnDef<TPayments>[] {
+export function getPayments(
+  onView: (id: string) => void,
+  onMap: (id: string) => void,
+): ColumnDef<TPayments>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1020,11 +1289,14 @@ export function getPayments(onView: (id: string) => void, onMap: (id: string) =>
     },
     {
       accessorKey: "PassengerName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Passenger Name" />
+      ),
       cell: ({ row }) => {
         return (
           <span className="text-[#3A3A3A] font-medium">
-            {row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}
+            {row.original?.userDetails?.firstName}{" "}
+            {row.original?.userDetails?.lastName}
           </span>
         );
       },
@@ -1032,25 +1304,38 @@ export function getPayments(onView: (id: string) => void, onMap: (id: string) =>
     },
     {
       accessorKey: "bookingId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Booking Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "paymentId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="PaymentId" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "amount",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Amount $" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Eye />
           </Button>
           <Button
@@ -1077,14 +1362,19 @@ export type TRefund = {
   refundId?: string;
   Status: string;
 };
-export function getRefund(onView: (id: string) => void): ColumnDef<TPayments>[] {
+export function getRefund(
+  onView: (id: string) => void,
+): ColumnDef<TPayments>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1102,35 +1392,51 @@ export function getRefund(onView: (id: string) => void): ColumnDef<TPayments>[] 
     },
     {
       accessorKey: "passengerName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Passenger Name" />
+      ),
       cell: ({ row }) => (
         <span className="text-[#3A3A3A] font-medium">
-          {row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}
+          {row.original?.userDetails?.firstName}{" "}
+          {row.original?.userDetails?.lastName}
         </span>
       ),
       enableSorting: false,
     },
     {
       accessorKey: "id",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Refund Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "paymentId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="PaymentId" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "amount",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Amount $" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
-          <Button onClick={() => onView(row.original.id)} variant="outlineNavBtnBlack" size="xl" spacing="lg">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+          >
             <Eye />
           </Button>
         </div>
@@ -1153,14 +1459,19 @@ export type TRefundRequest = {
   };
 };
 
-export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefundRequest>[] {
+export function getRefundRequest(
+  onView: (id: string) => void,
+): ColumnDef<TRefundRequest>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1178,11 +1489,14 @@ export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefun
     },
     {
       accessorKey: "PassengerName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Passenger Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Passenger Name" />
+      ),
       cell: ({ row }) => {
         return (
           <span className="text-[#3A3A3A] font-medium">
-            {row.original?.userDetails?.firstName} {row.original?.userDetails?.lastName}
+            {row.original?.userDetails?.firstName}{" "}
+            {row.original?.userDetails?.lastName}
           </span>
         );
       },
@@ -1190,22 +1504,30 @@ export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefun
     },
     {
       accessorKey: "RefundId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Id" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Refund Id" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "PaymentId",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="PaymentId" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="PaymentId" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "Amount",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Amount $" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Amount $" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Booking Details" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
           <Button onClick={() => onView(row.original.id)}>
@@ -1217,10 +1539,17 @@ export function getRefundRequest(onView: (id: string) => void): ColumnDef<TRefun
     },
     {
       id: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Refund Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Refund Status" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center ">
-          <Button className={cn("bg-[#F1F1F1] rounded w-[103px] h-[33px]", getStatusColor(row.original.Status))}>
+          <Button
+            className={cn(
+              "bg-[#F1F1F1] rounded w-[103px] h-[33px]",
+              getStatusColor(row.original.Status),
+            )}
+          >
             {row.original.Status}
           </Button>
         </div>
@@ -1237,14 +1566,20 @@ export type TCrewMember = {
   email: string;
   phone: string;
 };
-export function getCrewMember(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TCrewMember>[] {
+export function getCrewMember(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TCrewMember>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1262,27 +1597,37 @@ export function getCrewMember(onEdit: (id: string) => void, onDelete: (id: strin
     },
     {
       accessorKey: "name",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "description",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Description" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "email",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "phoneNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Phone" />
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Booking Details" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Booking Details" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
           <Button onClick={() => onEdit(row.original.id)}>
@@ -1301,20 +1646,28 @@ export function getCrewMember(onEdit: (id: string) => void, onDelete: (id: strin
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete crew member</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this crew member? This action cannot be undone.
+                  Are you sure you want to delete this crew member? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -1351,7 +1704,10 @@ export function getStaffMember(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1369,7 +1725,9 @@ export function getStaffMember(
     },
     {
       accessorKey: "name",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       cell: ({ row }) => (
         <>
           {row.original?.user?.firstName} {row.original?.user?.lastName}
@@ -1379,18 +1737,26 @@ export function getStaffMember(
     },
     {
       accessorKey: "user.email",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
       enableSorting: false,
     },
     {
       id: "access",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-      cell: ({ row }) => <Button onClick={() => onAccess(row.original.id)}>Manage Access</Button>,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Access" />
+      ),
+      cell: ({ row }) => (
+        <Button onClick={() => onAccess(row.original.id)}>Manage Access</Button>
+      ),
       enableSorting: false,
     },
     {
       id: "action",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Action" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center">
           <Button onClick={() => onEdit(row.original.id)}>
@@ -1402,20 +1768,28 @@ export function getStaffMember(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Staff Member</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this staff member? This action cannot be undone.
+                  Are you sure you want to delete this staff member? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -1453,7 +1827,10 @@ export function getContactRequest(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1471,17 +1848,23 @@ export function getContactRequest(
     },
     {
       accessorKey: "email",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "phone",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Phone" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Phone" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "message",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Message" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Message" />
+      ),
       enableSorting: false,
     },
     {
@@ -1523,7 +1906,10 @@ export function getTestimonial(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1541,19 +1927,33 @@ export function getTestimonial(
     },
     {
       accessorKey: "customerName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "content",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Message" />,
-      cell: ({ row }) => <div className="w-[501px] text-wrap">{row.original.content}</div>,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Message" />
+      ),
+      cell: ({ row }) => (
+        <div className="w-[501px] text-wrap">{row.original.content}</div>
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "customerImage",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />,
-      cell: ({ row }) => <img src={row.original.customerImage} className="w-[70px] h-[70px]" alt={row.original.id} />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Photo" />
+      ),
+      cell: ({ row }) => (
+        <img
+          src={row.original.customerImage}
+          className="w-[70px] h-[70px]"
+          alt={row.original.id}
+        />
+      ),
       enableSorting: false,
     },
     {
@@ -1574,20 +1974,28 @@ export function getTestimonial(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Testimonial</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this testimonial? This action cannot be undone.
+                  Are you sure you want to delete this testimonial? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -1614,14 +2022,20 @@ export type TOurPartner = {
   url: string;
 };
 
-export function getOurPartner(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TOurPartner>[] {
+export function getOurPartner(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TOurPartner>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1639,19 +2053,33 @@ export function getOurPartner(onEdit: (id: string) => void, onDelete: (id: strin
     },
     {
       accessorKey: "companyName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Company Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Company Name" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "url",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="URL" />,
-      cell: ({ row }) => <div className="w-[501px] text-wrap">{row.original.url}</div>,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="URL" />
+      ),
+      cell: ({ row }) => (
+        <div className="w-[501px] text-wrap">{row.original.url}</div>
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "photo",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Photo" />,
-      cell: ({ row }) => <img src={row.original.photo} className="w-[70px] h-[70px]" alt="photoUrl" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Photo" />
+      ),
+      cell: ({ row }) => (
+        <img
+          src={row.original.photo}
+          className="w-[70px] h-[70px]"
+          alt="photoUrl"
+        />
+      ),
       enableSorting: false,
     },
     {
@@ -1672,20 +2100,28 @@ export function getOurPartner(onEdit: (id: string) => void, onDelete: (id: strin
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Our Partner</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this our partner? This action cannot be undone.
+                  Are you sure you want to delete this our partner? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -1710,14 +2146,20 @@ export type TNews = {
   body: string;
 };
 
-export function getNews(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TNews>[] {
+export function getNews(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TNews>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1735,7 +2177,9 @@ export function getNews(onEdit: (id: string) => void, onDelete: (id: string) => 
     },
     {
       accessorKey: "body",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="News" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="News" />
+      ),
       enableSorting: false,
     },
     {
@@ -1757,20 +2201,28 @@ export function getNews(onEdit: (id: string) => void, onDelete: (id: string) => 
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete News</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this news? This action cannot be undone.
+                  Are you sure you want to delete this news? This action cannot
+                  be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -1804,14 +2256,20 @@ export type TSetting = {
   skype?: string;
 };
 
-export function getSettings(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TSetting>[] {
+export function getSettings(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TSetting>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1829,7 +2287,9 @@ export function getSettings(onEdit: (id: string) => void, onDelete: (id: string)
     },
     {
       accessorKey: "news",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="News" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="News" />
+      ),
       enableSorting: false,
     },
     {
@@ -1870,7 +2330,10 @@ export function getIpWhiteList(
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1888,12 +2351,16 @@ export function getIpWhiteList(
     },
     {
       accessorKey: "ip",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="IP" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="IP" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "name",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       enableSorting: false,
     },
     {
@@ -1914,20 +2381,28 @@ export function getIpWhiteList(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Ip White List</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this ip white-list? This action cannot be undone.
+                  Are you sure you want to delete this ip white-list? This
+                  action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -1953,14 +2428,20 @@ export type TFaqs = {
   answer: string;
 };
 
-export function getFaqs(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TFaqs>[] {
+export function getFaqs(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TFaqs>[] {
   return [
     {
       id: "select",
       header: ({ table }) => (
         <Checkbox
           className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
         />
@@ -1978,12 +2459,16 @@ export function getFaqs(onEdit: (id: string) => void, onDelete: (id: string) => 
     },
     {
       accessorKey: "question",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Question" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Question" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "answer",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Answer" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Answer" />
+      ),
       enableSorting: false,
     },
     {
@@ -2004,20 +2489,28 @@ export function getFaqs(onEdit: (id: string) => void, onDelete: (id: string) => 
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Faq</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this faq? This action cannot be undone.
+                  Are you sure you want to delete this faq? This action cannot
+                  be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -2054,7 +2547,9 @@ export function getChauffeurAvailablility(
   return [
     {
       accessorKey: "name",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       // cell: ({row})=>(<>
       // {row.original.firstName} {row.original.lastName}
       // </>),
@@ -2062,28 +2557,39 @@ export function getChauffeurAvailablility(
     },
     {
       accessorKey: "licenseNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="License Number" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="License Number" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "rating",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Ratings" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ratings" />
+      ),
       cell: ({ row }) => (
         <Label className="flex items-center rounded bg-[#D9D9D9] px-1 w-16">
-          <Star className="fill-black text-sm max-h-4 max-w-4" /> <span className="text-xl">{row.original.rating}</span>
+          <Star className="fill-black text-sm max-h-4 max-w-4" />{" "}
+          <span className="text-xl">{row.original.rating}</span>
         </Label>
       ),
       enableSorting: false,
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Label
-          className={cn("flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm", [
-            getStatusColor(row.original.status),
-            row.original.status.toLocaleLowerCase() === "active" && "text-white",
-          ])}
+          className={cn(
+            "flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
+            [
+              getStatusColor(row.original.status),
+              row.original.status.toLocaleLowerCase() === "active" &&
+                "text-white",
+            ],
+          )}
         >
           {row.original.status}
         </Label>
@@ -2108,20 +2614,28 @@ export function getChauffeurAvailablility(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Chauffeur Availability</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this chauffeur availability? This action cannot be undone.
+                  Are you sure you want to delete this chauffeur availability?
+                  This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -2159,12 +2673,16 @@ export function getHomeContent(
   return [
     {
       accessorKey: "content.title",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Content Title" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Content Title" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "sectionName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="sectionName" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="sectionName" />
+      ),
       enableSorting: false,
     },
     {
@@ -2185,20 +2703,28 @@ export function getHomeContent(
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Content</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this content? This action cannot be undone.
+                  Are you sure you want to delete this content? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>
@@ -2228,11 +2754,16 @@ export type TContent = {
   status: string;
 };
 
-export function getContent(onEdit: (id: string) => void, onDelete: (id: string) => void): ColumnDef<TContent>[] {
+export function getContent(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TContent>[] {
   return [
     {
       accessorKey: "firstName",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       cell: ({ row }) => (
         <>
           {row.original.firstName} {row.original.lastName}
@@ -2242,12 +2773,16 @@ export function getContent(onEdit: (id: string) => void, onDelete: (id: string) 
     },
     {
       accessorKey: "licenseNumber",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="License Number" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="License Number" />
+      ),
       enableSorting: false,
     },
     {
       accessorKey: "ratings",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Ratings" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ratings" />
+      ),
       cell: ({ row }) => (
         <Label className="flex items-center rounded bg-[#D9D9D9] px-2 w-14">
           <Star className="fill-black text-sm max-h-4 max-w-4" />{" "}
@@ -2258,13 +2793,19 @@ export function getContent(onEdit: (id: string) => void, onDelete: (id: string) 
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Label
-          className={cn("flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm", [
-            getStatusColor(row.original.status),
-            row.original.status.toLocaleLowerCase() === "active" && "text-white",
-          ])}
+          className={cn(
+            "flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
+            [
+              getStatusColor(row.original.status),
+              row.original.status.toLocaleLowerCase() === "active" &&
+                "text-white",
+            ],
+          )}
         >
           {row.original.status}
         </Label>
@@ -2289,20 +2830,28 @@ export function getContent(onEdit: (id: string) => void, onDelete: (id: string) 
                 <Trash2 />
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
               <DialogHeader>
                 <DialogTitle>Delete Content</DialogTitle>
                 <DialogDescription>
-                  Are you sure you want to delete this content? This action cannot be undone.
+                  Are you sure you want to delete this content? This action
+                  cannot be undone.
                 </DialogDescription>
               </DialogHeader>
               <div className="py-4">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot be undone.
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
                 </p>
               </div>
               <DialogFooter className="mt-6">
-                <Button onClick={() => onDelete(row.original.id)} variant="destructive">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
                   Confirm Delete
                 </Button>
               </DialogFooter>

@@ -1,14 +1,13 @@
 import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
@@ -22,8 +21,12 @@ function EditAffiliatePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   // console.log("id:",id)
-  const [googleMapsApiKey] = useState<string | null>(env?.VITE_GOOGLE_MAP_KEY ?? "");
-  const [businessAddress, setBusinessAddress] = useState<string | undefined>(undefined);
+  const [googleMapsApiKey] = useState<string | null>(
+    env?.VITE_GOOGLE_MAP_KEY ?? "",
+  );
+  const [businessAddress, setBusinessAddress] = useState<string | undefined>(
+    undefined,
+  );
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey || "",
@@ -70,7 +73,8 @@ function EditAffiliatePage() {
           if (res) navigate(constant.ROUTING_URLS.AFFILIATE);
           return "Yeah! Affiliate updated successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! failed to update affiliate."),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! failed to update affiliate.",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -89,23 +93,20 @@ function EditAffiliatePage() {
     <>
       <PageTitle title={generatePageTitle("Affiliate")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Link to={constant.ROUTING_URLS.AFFILIATE}>
-          <Button variant="outlineBlack">
-            <ArrowLeft /> Back
-          </Button>
-        </Link>
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Affiliate</h2>
-              <h4>
-                {" "}
-                <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Affiliate</span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Affiliate"
+          breadcrumbs={[
+            { label: "Home", path: "/" },
+            { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
+            { label: "Edit Affiliate" },
+          ]}
+          action={{
+            variant: "outlineBlack",
+            label: "Back",
+            icon: <ArrowLeft />,
+            link: constant.ROUTING_URLS.AFFILIATE,
+          }}
+        />
         <AffiliateForm
           onSubmit={handleEditAffiliate}
           initialData={data}

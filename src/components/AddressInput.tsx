@@ -1,16 +1,16 @@
 //@ts-nocheck
 
 import { type Libraries, useLoadScript } from "@react-google-maps/api";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Building2Icon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-// import { Toaster} from "@/hooks/use-toast";
 import type { ControllerRenderProps } from "react-hook-form";
 import { toast } from "sonner";
+// import { Toaster} from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import { FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { env } from "@/utils/env";
 import { initializeGooglePlacesAutocomplete } from "@/utils/googleMaps";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 interface AddressFields {
   address: string;
@@ -24,7 +24,8 @@ interface AddressFields {
   };
 }
 
-interface AddressInputProps<T extends FieldValues> extends React.InputHTMLAttributes<HTMLInputElement> {
+interface AddressInputProps<T extends FieldValues>
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   value: string;
   field: ControllerRenderProps<T, Path<T>>;
   onChange: (value: string) => void;
@@ -72,7 +73,12 @@ const AddressInput = <T extends FieldValues>({
     // onUpdate(fields);
 
     // Check if all required fields are filled
-    const isValid = !!fields.address && !!fields.city && !!fields.state && !!fields.zip && !!fields.country;
+    const isValid =
+      !!fields.address &&
+      !!fields.city &&
+      !!fields.state &&
+      !!fields.zip &&
+      !!fields.country;
     onValidityChange(isValid);
   }, [fields, onChange, onValidityChange]);
 
@@ -104,7 +110,9 @@ const AddressInput = <T extends FieldValues>({
             !!merged.country?.trim();
 
           if (!isValid) {
-            toast.error("Please provide a full address with street number, route name, city, state, zip, and country.");
+            toast.error(
+              "Please provide a full address with street number, route name, city, state, zip, and country.",
+            );
             onValidityChange(false);
             return;
           }
@@ -153,17 +161,21 @@ const AddressInput = <T extends FieldValues>({
   }
 
   return (
-    <Input
-      {...field}
-      {...props}
-      value={value}
-      onChange={(e) => {
-        onChange(e.target.value);
-      }}
-      ref={addressInputRef}
-      className="pr-10 rounded placeholder:text-[#E6E6E6] font-medium"
-      placeholder="Start typing your address..."
-    />
+    <InputGroup>
+      <InputGroupInput
+        placeholder="Start typing your address..."
+        {...field}
+        {...props}
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
+        ref={addressInputRef}
+      />
+      <InputGroupAddon>
+        <Building2Icon />
+      </InputGroupAddon>
+    </InputGroup>
   );
 };
 

@@ -10,19 +10,31 @@ import {
   MultiSelectTrigger,
   MultiSelectValue,
 } from "@/components/ui/multi-select";
-import { Spinner } from "../Spinner";
 
 type TData = {
   id: string;
   name: string;
 };
-const MultiSelectComp = ({ setSelected, selected }: { setSelected: SetStateAction; selected: string[] }) => {
-  const { data, isFetching } = useFetchAllPermissions();
-  if (isFetching) return <Spinner />;
+const MultiSelectComp = ({
+  setSelected,
+  selected,
+}: {
+  setSelected: SetStateAction;
+  selected: string[];
+}) => {
+  const { data } = useFetchAllPermissions();
+  // if (isFetching) return <Spinner />;
   return (
-    <MultiSelect usePortal={true} values={selected} onValuesChange={setSelected}>
+    <MultiSelect
+      usePortal={true}
+      values={selected}
+      onValuesChange={setSelected}
+    >
       <MultiSelectTrigger className="w-full max-w-[400px]">
-        <MultiSelectValue placeholder="Select frameworks..." overflowBehavior={"cutoff"} />
+        <MultiSelectValue
+          placeholder="Select frameworks..."
+          overflowBehavior={"cutoff"}
+        />
       </MultiSelectTrigger>
       <MultiSelectContent>
         {/* Items must be wrapped in a group for proper styling */}
