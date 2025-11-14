@@ -98,8 +98,9 @@ export default function ImagesUpload({
 
       <div className="flex flex-wrap items-start gap-4">
         {/* Upload Box */}
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           className={cn(uploadBoxVariants({ variant, drag: dragOver }), "mr-2")}
           onClick={() => inputRef.current?.click()}
           onDragOver={(e) => {
@@ -125,7 +126,7 @@ export default function ImagesUpload({
               if (inputRef.current) inputRef.current.value = "";
             }}
           />
-        </button>
+        </div>
         {/* Thumbnails */}
         {files.map((f) => (
           <div

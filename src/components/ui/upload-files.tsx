@@ -1,15 +1,18 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { Trash2, Upload } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import IconFilesUpload from "@/assets/Icons/ic-document-arrow-up.svg?react";
+import { Button } from "./button";
+import { FieldSeparator } from "./field";
 
 const uploadBoxVariants = cva(
-  "border w-full border-dashed rounded p-10 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer bg-white border-gray-300",
+  "border w-full border-dashed rounded p-10 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer font-quicksand bg-base-white border-base-gray [&_svg]:**:stroke-current ",
   {
     variants: {
       variant: {
-        primary: "text-blue-600",
-        secondary: "text-purple-600",
-        dark: "text-gray-900",
+        primary: "text-base-primary",
+        secondary: "text-base-secondary",
+        dark: "text-base-black",
       },
       drag: {
         true: "",
@@ -20,17 +23,17 @@ const uploadBoxVariants = cva(
       {
         variant: "primary",
         drag: true,
-        className: "border-blue-600 bg-blue-50",
+        className: "border-base-primary",
       },
       {
         variant: "secondary",
         drag: true,
-        className: "border-purple-600 bg-purple-50",
+        className: "border-base-secondary",
       },
       {
         variant: "dark",
         drag: true,
-        className: "border-gray-900 bg-gray-50",
+        className: "border-base-black",
       },
     ],
     defaultVariants: {
@@ -154,8 +157,8 @@ export default function FilesUpload({
         : `${(size / (1024 * 1024)).toFixed(1)} MB`;
 
   return (
-    <div className="w-full">
-      <p className="font-bold text-base text-gray-900 mb-2">{title}</p>
+    <div className="w-full font-quicksand">
+      <p className="font-bold text-base text-base-black mb-2">{title}</p>
 
       <div
         role="button"
@@ -180,32 +183,33 @@ export default function FilesUpload({
           inputRef.current?.click()
         }
       >
-        <Upload className="w-10 h-10 mb-2" />
-        <p className="font-bold text-xs text-gray-900">
+        <IconFilesUpload className="size-10 mb-2 transition" />
+        <p className="font-bold text-xs text-base-black">
           Drag your file(s) to start uploading
         </p>
 
         <div className="w-full py-6 px-8">
-          <div className="flex items-center">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-2.5 text-xs font-bold text-gray-500">Or</span>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
+          <FieldSeparator className="flex items-center [&_[data-slot=separator]]:bg-base-gray [&_[data-slot=field-separator-content]]:px-2.5! [&_[data-slot=field-separator-content]]:font-quicksand [&_[data-slot=field-separator-content]]:font-bold [&_[data-slot=field-separator-content]]:text-xs [&_[data-slot=field-separator-content]]:text-base-gray [&_[data-slot=field-separator-content]]:bg-base-white">
+            Or
+          </FieldSeparator>
         </div>
 
-        <button
-          type="button"
-          disabled={disabled}
-          className={`px-4 py-2 rounded border text-sm font-medium transition-colors ${
+        <Button
+          variant={
             variant === "primary"
-              ? "border-blue-600 text-blue-600 hover:bg-blue-50"
+              ? "outlinePrimary"
               : variant === "secondary"
-                ? "border-purple-600 text-purple-600 hover:bg-purple-50"
-                : "border-gray-900 text-gray-900 hover:bg-gray-50"
-          } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                ? "outlineSecondary"
+                : variant === "dark"
+                  ? "outlineBlack"
+                  : "outlinePrimary"
+          }
+          className="h-9 p-2"
+          size="xl"
+          spacing="sm"
         >
           {browseLabel}
-        </button>
+        </Button>
 
         <input
           ref={inputRef}
@@ -222,7 +226,7 @@ export default function FilesUpload({
       </div>
 
       {info && (
-        <div className="flex justify-between text-xs text-gray-500 mt-2 font-bold">
+        <div className="flex justify-between text-xs text-base-gray mt-2 font-bold">
           <span>Supported file formats: {accept}</span>
           <span>Max size: {maxSize} MB</span>
         </div>
@@ -232,7 +236,7 @@ export default function FilesUpload({
         {files.map((f) => (
           <div
             key={f.name}
-            className="flex items-center justify-between border border-gray-300 rounded px-2 py-2.5 bg-white"
+            className="flex items-center justify-between border border-base-gray rounded px-2 py-2.5 bg-base-white"
           >
             <div className="flex items-center gap-2">
               {f.preview ? (
@@ -242,25 +246,25 @@ export default function FilesUpload({
                   className="w-10 h-10 object-contain"
                 />
               ) : (
-                <Upload className="w-10 h-10 text-gray-400" />
+                <IconFilesUpload className="size-10" />
               )}
               <div className="text-xs">
-                <div className="font-bold text-gray-900 mb-1">{f.name}</div>
-                <div className="font-medium text-gray-500">
+                <div className="font-bold text-base-black mb-1">{f.name}</div>
+                <div className="font-medium text-base-gray">
                   {formatFileSize(f.size)}
                 </div>
               </div>
             </div>
 
-            <button
-              type="button"
+            <Button
+              variant="outlineNavBtnBlack"
+              size="xl"
+              spacing="lg"
               onClick={() => removeFile(f.name)}
-              disabled={disabled}
-              className="p-2 rounded border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
               aria-label={`Remove ${f.name}`}
             >
-              <Trash2 className="w-4 h-4" />
-            </button>
+              <Trash2 />
+            </Button>
           </div>
         ))}
       </div>

@@ -115,8 +115,9 @@ export default function InlineFileUpload({
 
   return (
     <div className="w-full">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         className={cn(
           uploadBoxVariants({
             variant,
@@ -178,7 +179,7 @@ export default function InlineFileUpload({
             if (inputRef.current) inputRef.current.value = "";
           }}
         />
-      </button>
+      </div>
     </div>
   );
 }
