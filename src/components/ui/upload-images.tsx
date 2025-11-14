@@ -2,7 +2,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Plus, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 // IMAGE ONLY UPLOAD
 const uploadBoxVariants = cva(
@@ -49,6 +48,7 @@ interface ImagesUploadProps extends VariantProps<typeof uploadBoxVariants> {
   accept?: string;
   title?: string;
   info?: boolean;
+  disabled?: boolean;
 }
 
 type FileWithPreview = File & { preview?: string };
@@ -60,6 +60,7 @@ export default function ImagesUpload({
   accept = "image/*",
   title = "Upload Images",
   info = true,
+  disabled = false,
 }: ImagesUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
@@ -67,16 +68,30 @@ export default function ImagesUpload({
   const maxFileBytes = maxSize * 1024 * 1024;
 
   function addFiles(list: FileList | null) {
-    if (!list) return;
+    if (!list || disabled) return;
     const arr = Array.from(list);
     const validated: FileWithPreview[] = [];
 
     for (const f of arr) {
       if (f.size > maxFileBytes) continue;
       if (!f.type.startsWith("image/")) continue;
-      const x: FileWithPreview = f;
-      x.preview = URL.createObjectURL(f);
-      validated.push(x);
+
+      // Create date string like DDMMYYYY
+      const now = new Date();
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      const dateStamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}`;
+
+      const dotIndex = f.name.lastIndexOf(".");
+      const namePart = dotIndex !== -1 ? f.name.slice(0, dotIndex) : f.name;
+      const extPart = dotIndex !== -1 ? f.name.slice(dotIndex) : "";
+
+      const newFileName = `${namePart}_${dateStamp}${extPart}`;
+
+      const newFile: FileWithPreview = new File([f], newFileName, {
+        type: f.type,
+      });
+      newFile.preview = URL.createObjectURL(newFile);
+      validated.push(newFile);
     }
 
     setFiles((prev) =>
@@ -100,19 +115,26 @@ export default function ImagesUpload({
         {/* Upload Box */}
         <div
           role="button"
-          tabIndex={0}
-          className={cn(uploadBoxVariants({ variant, drag: dragOver }), "mr-2")}
-          onClick={() => inputRef.current?.click()}
+          tabIndex={disabled ? -1 : 0}
+          className={`${uploadBoxVariants({ variant, drag: dragOver })} ${disabled ? "opacity-50 cursor-not-allowed" : "mr-2"}`}
+          onClick={() => !disabled && inputRef.current?.click()}
           onDragOver={(e) => {
+            if (disabled) return;
             e.preventDefault();
             setDragOver(true);
           }}
           onDragLeave={() => setDragOver(false)}
           onDrop={(e) => {
+            if (disabled) return;
             e.preventDefault();
             setDragOver(false);
             addFiles(e.dataTransfer.files);
           }}
+          onKeyDown={(e) =>
+            !disabled &&
+            ["Enter", " "].includes(e.key) &&
+            inputRef.current?.click()
+          }
         >
           <Plus className="size-10" />
           <input
@@ -121,6 +143,7 @@ export default function ImagesUpload({
             className="hidden"
             multiple={multiple}
             accept={accept}
+            disabled={disabled}
             onChange={(e) => {
               addFiles(e.target.files);
               if (inputRef.current) inputRef.current.value = "";
@@ -128,9 +151,9 @@ export default function ImagesUpload({
           />
         </div>
         {/* Thumbnails */}
-        {files.map((f) => (
+        {files.map((f, i) => (
           <div
-            key={f.name}
+            key={i}
             className="relative w-[200px] h-[200px] rounded overflow-hidden"
           >
             <img

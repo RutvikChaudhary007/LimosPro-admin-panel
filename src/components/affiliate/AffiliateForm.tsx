@@ -946,38 +946,36 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 )}
               </Field>
             </CardContent>
-            <CardFooter>
-              <div className="flex items-center justify-start space-x-2.5">
-                <Button
-                  variant={"outlinePrimary"}
-                  type="button"
-                  onClick={() => {
-                    form.reset({
-                      firstName: "",
-                      lastName: "",
-                      email: "",
-                      password: "",
-                      isChauffer: false,
-                      companyName: "",
-                      businessContactNumber: "",
-                      businessAddress: "",
-                      businessEmail: "",
-                      businessLocation: { latitude: 0, longitude: 0 },
-                      entityType: "",
-                      taxId: "",
-                      commissionRate: "",
-                      documents: [],
-                      status: "",
-                    });
-                    setAddressObj(undefined);
-                  }}
-                >
-                  Clear Alls
-                </Button>
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "Saving..." : "Save Details"}
-                </Button>
-              </div>
+            <CardFooter className="flex items-center justify-start space-x-2.5">
+              <Button
+                variant={"outlinePrimary"}
+                type="button"
+                onClick={() => {
+                  form.reset({
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: "",
+                    isChauffer: false,
+                    companyName: "",
+                    businessContactNumber: "",
+                    businessAddress: "",
+                    businessEmail: "",
+                    businessLocation: { latitude: 0, longitude: 0 },
+                    entityType: "",
+                    taxId: "",
+                    commissionRate: "",
+                    documents: [],
+                    status: "",
+                  });
+                  setAddressObj(undefined);
+                }}
+              >
+                Clear Alls
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              </Button>
             </CardFooter>
           </CardBody>
         </Card>

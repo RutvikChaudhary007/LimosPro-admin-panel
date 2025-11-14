@@ -1,9 +1,18 @@
 // @ts-nocheck
 
+import {
+  IconBrand4chan,
+  IconCalendar,
+  IconClock,
+  IconCreditCard,
+  IconCurrencyDollar,
+  IconPackage,
+  IconPalette,
+  IconUsers,
+} from "@tabler/icons-react";
 import { getYear, setYear } from "date-fns";
-import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import {
   Form,
@@ -17,17 +26,26 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { Spinner } from "../Spinner";
 import { Button } from "../ui/button";
-import { Card, CardBody, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Input } from "../ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+  Card,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Field, FieldDescription, FieldLabel } from "../ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { SelectDropDown } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import FilesUpload from "../ui/upload-files";
+import ImagesUpload from "../ui/upload-images";
 
 const maxSize = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];
@@ -418,268 +436,365 @@ const FleetForm = ({
               <CardTitle>{type}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="regionId"
-                render={({ field }) => (
-                  <FormItem className="">
-                    <FormLabel>Region Id</FormLabel>
-                    {isRegionFetching ? (
-                      <h1>Loading...</h1>
-                    ) : (
-                      <Select
-                        value={field.value}
-                        onValueChange={(v) => {
-                          field.onChange(v);
-                          // setStatusValue({ ...statusValue, affiliate: v })
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl className="w-full min-w-full rounded">
-                          <SelectTrigger className="cursor-pointer w-full">
-                            <SelectValue
-                              className="placeholder:text-[#E6E6E6] font-medium"
-                              placeholder="select region"
-                            />
-                            {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="">
-                          {RegionData?.regions?.map((option) => (
-                            <SelectItem
-                              className="cursor-pointer capitalize"
-                              key={option.id}
-                              value={option.id}
-                            >
-                              {option.regionName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.name ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.regionId?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
+              <Field>
+                <FieldLabel
+                  htmlFor="regionId"
+                  className="text-base-black gap-0"
+                >
+                  Region
+                </FieldLabel>
 
-              <FormField
-                control={form.control}
-                name="affiliateId"
-                render={({ field }) => (
-                  <FormItem className="w-full ">
-                    <FormLabel className="">Affiliate</FormLabel>
-                    {isAffiliateFetching ? (
-                      <h1>Loading...</h1>
+                <Controller
+                  control={form.control}
+                  name="regionId"
+                  render={({ field }) =>
+                    isRegionFetching ? (
+                      <Spinner />
                     ) : (
-                      <Select
+                      <SelectDropDown
+                        placeholder="Select Region"
+                        items={
+                          RegionData?.regions?.map((r) => ({
+                            label: r.regionName, // dynamic label
+                            value: r.id, // dynamic value
+                          })) || []
+                        }
                         value={field.value}
-                        onValueChange={(v) => {
-                          field.onChange(v);
-                          // setStatusValue({ ...statusValue, affiliate: v })
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl className="w-full min-w-full rounded">
-                          <SelectTrigger className="cursor-pointer w-full">
-                            <SelectValue
-                              className="placeholder:text-[#E6E6E6] font-medium"
-                              placeholder="select affiliate"
-                            />
-                            {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="">
-                          {affiliateData?.affiliates?.map((option) => (
-                            <SelectItem
-                              className="cursor-pointer"
-                              key={option.id}
-                              value={option.id}
-                            >
-                              {option.companyName}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"} `}
-                    >
-                      {form.formState.errors.affiliateId?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Description</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Textarea
-                        placeholder="Write Full Description"
-                        disabled={isFieldDisabled(
-                          disabledFields,
-                          "description",
-                        )}
-                        {...field}
+                        setSelectedItem={(v) => field.onChange(v)}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.description ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.description?.message}
-                    </FormMessage>
-                  </FormItem>
+                    )
+                  }
+                />
+
+                <FieldDescription className="mt-1">
+                  Select your region.
+                </FieldDescription>
+
+                {form.formState.errors.regionId && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.regionId.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="bagsCapacity"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Bags</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="affiliateId"
+                  className="text-base-black gap-0"
+                >
+                  Affiliate
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="affiliateId"
+                  render={({ field }) =>
+                    isAffiliateFetching ? (
+                      <Spinner />
+                    ) : (
+                      <SelectDropDown
+                        placeholder="Select Affiliate"
+                        items={
+                          affiliateData?.affiliates?.map((a) => ({
+                            label: a.companyName,
+                            value: a.id,
+                          })) || []
+                        }
+                        value={field.value}
+                        setSelectedItem={(v) => field.onChange(v)}
+                      />
+                    )
+                  }
+                />
+
+                <FieldDescription className="mt-1">
+                  Select Affiliate
+                </FieldDescription>
+
+                {form.formState.errors.affiliateId && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.affiliateId.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="description"
+                  className="text-base-black gap-0"
+                >
+                  Description
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <Textarea
+                      id="description"
+                      placeholder="Write Full Description"
+                      disabled={isFieldDisabled(disabledFields, "description")}
+                      {...field}
+                    />
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter a detailed description.
+                </FieldDescription>
+
+                {form.formState.errors.description && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.description.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="bagsCapacity"
+                  className="text-base-black gap-0"
+                >
+                  Bags
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="bagsCapacity"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="bagsCapacity"
                         type="number"
-                        // placeholder="Plate Number"
+                        placeholder="0"
                         disabled={isFieldDisabled(
                           disabledFields,
                           "bagsCapacity",
                         )}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.bagsCapacity ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.bagsCapacity?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
+                      <InputGroupAddon>
+                        <IconPackage />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="capacity"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium ">
-                    <FormLabel>Capacity</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+                <FieldDescription className="mt-1">
+                  Enter the bag capacity.
+                </FieldDescription>
+
+                {form.formState.errors.bagsCapacity && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.bagsCapacity.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="capacity"
+                  className="text-base-black gap-0"
+                >
+                  Capacity
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="capacity"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="capacity"
                         type="number"
+                        placeholder="0"
                         disabled={isFieldDisabled(disabledFields, "capacity")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.capacity ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.capacity?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconUsers />{" "}
+                        {/* Example icon for capacity/passenger count */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the vehicle capacity.
+                </FieldDescription>
+
+                {form.formState.errors.capacity && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.capacity.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="baseFair"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Base Fair</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="baseFair"
+                  className="text-base-black gap-0"
+                >
+                  Base Fare
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="baseFair"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="baseFair"
                         type="number"
+                        placeholder="0"
                         disabled={isFieldDisabled(disabledFields, "baseFair")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.baseFair ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.baseFair?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCurrencyDollar />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the base fare amount.
+                </FieldDescription>
+
+                {form.formState.errors.baseFair && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.baseFair.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="minFair"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Min Fair</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="minFair" className="text-base-black gap-0">
+                  Min Fare
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="minFair"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="minFair"
                         type="number"
+                        placeholder="0"
                         disabled={isFieldDisabled(disabledFields, "minFair")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.minFair ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.minFair?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCurrencyDollar />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the minimum fare amount.
+                </FieldDescription>
+
+                {form.formState.errors.minFair && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.minFair.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="minHour"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Min Hour</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="minHour" className="text-base-black gap-0">
+                  Min Hour
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="minHour"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="minHour"
                         type="number"
-                        // placeholder="Plate Number"
+                        placeholder="0"
                         disabled={isFieldDisabled(disabledFields, "minHour")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.minHour ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.minHour?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconClock />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the minimum number of hours.
+                </FieldDescription>
+
+                {form.formState.errors.minHour && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.minHour.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="pricePerHour"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Price per hour</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="pricePerHour"
+                  className="text-base-black gap-0"
+                >
+                  Price per hour
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="pricePerHour"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="pricePerHour"
+                        type="number"
+                        placeholder="0"
                         disabled={isFieldDisabled(
                           disabledFields,
                           "pricePerHour",
                         )}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.pricePerHour?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCurrencyDollar />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the price per hour.
+                </FieldDescription>
+
+                {form.formState.errors.pricePerHour && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.pricePerHour.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="pricePerMile"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Price per mile</FormLabel>
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="pricePerMile"
+                  className="text-base-black gap-0"
+                >
+                  Price per mile
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="pricePerMile"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="pricePerMile"
+                        type="number"
                         placeholder="0"
                         disabled={isFieldDisabled(
                           disabledFields,
@@ -687,23 +802,41 @@ const FleetForm = ({
                         )}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.pricePerMile?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCurrencyDollar />{" "}
+                        {/* Example icon for price/currency */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the price per mile.
+                </FieldDescription>
+
+                {form.formState.errors.pricePerMile && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.pricePerMile.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="pricePerMinute"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Price per minute</FormLabel>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="pricePerMinute"
+                  className="text-base-black gap-0"
+                >
+                  Price per minute
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="pricePerMinute"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="pricePerMinute"
+                        type="number"
                         placeholder="0"
                         disabled={isFieldDisabled(
                           disabledFields,
@@ -711,27 +844,41 @@ const FleetForm = ({
                         )}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${
-                        form.formState.errors.pricePerMinute
-                          ? "visible text-red-600"
-                          : "invisible"
-                      }`}
-                    >
-                      {form.formState.errors.pricePerMinute?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCurrencyDollar />{" "}
+                        {/* Example icon for price/currency */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the price per minute.
+                </FieldDescription>
+
+                {form.formState.errors.pricePerMinute && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.pricePerMinute.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="cityToCityHourlyRate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>City To City Hourly Rate</FormLabel>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="cityToCityHourlyRate"
+                  className="text-base-black gap-0"
+                >
+                  City To City Hourly Rate
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="cityToCityHourlyRate"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="cityToCityHourlyRate"
+                        type="number"
                         placeholder="0"
                         disabled={isFieldDisabled(
                           disabledFields,
@@ -739,27 +886,41 @@ const FleetForm = ({
                         )}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${
-                        form.formState.errors.cityToCityHourlyRate
-                          ? "visible text-red-600"
-                          : "invisible"
-                      }`}
-                    >
-                      {form.formState.errors.cityToCityHourlyRate?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCurrencyDollar />{" "}
+                        {/* Example icon for rate/currency */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the city-to-city hourly rate.
+                </FieldDescription>
+
+                {form.formState.errors.cityToCityHourlyRate && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.cityToCityHourlyRate.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="plateNumber"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Plate Number</FormLabel>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="plateNumber"
+                  className="text-base-black gap-0"
+                >
+                  Plate Number
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="plateNumber"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="plateNumber"
+                        type="text"
                         placeholder="Plate Number"
                         disabled={isFieldDisabled(
                           disabledFields,
@@ -767,157 +928,197 @@ const FleetForm = ({
                         )}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.plateNumber ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.plateNumber?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
+                      <InputGroupAddon>
+                        <IconCreditCard />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="brand"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Brand</FormLabel>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+                <FieldDescription className="mt-1">
+                  Enter the vehicle plate number.
+                </FieldDescription>
+
+                {form.formState.errors.plateNumber && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.plateNumber.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="brand" className="text-base-black gap-0">
+                  Brand
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="brand"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="brand"
+                        type="text"
                         placeholder="Brand"
                         disabled={isFieldDisabled(disabledFields, "brand")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.brand ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.brand?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconBrand4chan />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the vehicle brand.
+                </FieldDescription>
+
+                {form.formState.errors.brand && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.brand.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="model"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Model</FormLabel>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="model" className="text-base-black gap-0">
+                  Model
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="model"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="model"
+                        type="text"
                         placeholder="Model"
                         disabled={isFieldDisabled(disabledFields, "model")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.model ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.model?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconCalendar />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the vehicle model.
+                </FieldDescription>
+
+                {form.formState.errors.model && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.model.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="color"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Color</FormLabel>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <Input
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="color" className="text-base-black gap-0">
+                  Color
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="color"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="color"
+                        type="text"
                         placeholder="Color"
                         disabled={isFieldDisabled(disabledFields, "color")}
                         {...field}
                       />
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.color ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.color?.message}
-                    </FormMessage>
-                  </FormItem>
+                      <InputGroupAddon>
+                        <IconPalette />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Enter the vehicle color.
+                </FieldDescription>
+
+                {form.formState.errors.color && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.color.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="year"
-                render={({ _field }) => (
-                  <FormItem className="flex flex-col   placeholder:text-[#E6E6E6] font-medium">
-                    <FormLabel>Year</FormLabel>
-                    <Select
-                      onValueChange={onYearChange}
-                      value={getYear(date).toString()}
-                    >
-                      <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                        <SelectTrigger className="w-full cursor-pointer">
-                          {getYear(date)}
-                        </SelectTrigger>
-                      </FormControl>
+              </Field>
 
-                      <SelectContent>
-                        {years.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+              <Field>
+                <FieldLabel htmlFor="year" className="text-base-black gap-0">
+                  Year
+                </FieldLabel>
 
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.year ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.year?.message}
-                    </FormMessage>
-                  </FormItem>
+                <Controller
+                  control={form.control}
+                  name="year"
+                  render={({ field }) => (
+                    <SelectDropDown
+                      placeholder="Select year"
+                      items={years.map((y) => ({
+                        label: y.toString(),
+                        value: y.toString(),
+                      }))}
+                      value={field.value || getYear(date).toString()}
+                      setSelectedItem={(val) => field.onChange(val)}
+                    />
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Select the vehicle year.
+                </FieldDescription>
+
+                {form.formState.errors.year && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.year.message}
+                  </p>
                 )}
-              />
+              </Field>
 
-              <FormField
-                control={form.control}
-                name="vehicleType"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel className="">Vehicle Type</FormLabel>
+              <Field>
+                <FieldLabel
+                  htmlFor="vehicleType"
+                  className="text-base-black gap-0"
+                >
+                  Vehicle Type
+                </FieldLabel>
 
-                    <Select
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v);
-                        // setStatusValue({ ...statusValue, affiliate: v })
-                      }}
-                      defaultValue={field.value}
-                    >
-                      <FormControl className="w-full min-w-full rounded">
-                        <SelectTrigger className="cursor-pointer w-full">
-                          <SelectValue
-                            className="placeholder:text-[#E6E6E6] font-medium"
-                            placeholder="select affiliate"
-                          />
-                          {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="">
-                        {FleetOptions?.map((option, i) => (
-                          <SelectItem
-                            className="cursor-pointer"
-                            key={`${i}-${option}`}
-                            value={option}
-                          >
-                            {option}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"} `}
-                    >
-                      {form.formState.errors.affiliateId?.message}
-                    </FormMessage>
-                  </FormItem>
+                <Controller
+                  control={form.control}
+                  name="vehicleType"
+                  render={({ field }) => (
+                    <SelectDropDown
+                      placeholder="Select vehicle type"
+                      items={
+                        FleetOptions?.map((option) => ({
+                          label: option,
+                          value: option,
+                        })) || []
+                      }
+                      value={field.value || ""}
+                      setSelectedItem={(val) => field.onChange(val)}
+                    />
+                  )}
+                />
+
+                <FieldDescription className="mt-1">
+                  Select the type of vehicle.
+                </FieldDescription>
+
+                {form.formState.errors.vehicleType && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.vehicleType.message}
+                  </p>
                 )}
-              />
+              </Field>
 
               <FormField
                 control={form.control}
@@ -1089,8 +1290,6 @@ const FleetForm = ({
                                   </div>
                                   <Button
                                     type="button"
-                                    className="ml-2.5 py-1.5 px-2.5"
-                                    padding="6px 10px"
                                     onClick={() => {
                                       const newZones = zonePricing?.filter(
                                         (_, i) => i !== index,
@@ -1107,7 +1306,6 @@ const FleetForm = ({
                           {isZoneActive && (
                             <Button
                               type="button"
-                              className="mt-2.5 mr-2.5 py-1.6 px-4 space-x-4"
                               onClick={() => {
                                 if (zonePricing.length === 0) {
                                   setZonePricing([
@@ -1151,7 +1349,6 @@ const FleetForm = ({
                           {isZoneActive && zonePricing.length > 0 && (
                             <Button
                               type="button"
-                              className="my-2.5 py-1.5 px-4"
                               onClick={() => setZonePricing([])}
                             >
                               Clear All Zones
@@ -1168,124 +1365,58 @@ const FleetForm = ({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="vehicleImages"
-                defaultValue={[]}
-                render={({ field }) => (
-                  <FormItem className="">
-                    <FormLabel>Upload Vehicle Images (max 3)</FormLabel>
-                    <FormControl>
-                      {/* Hidden File Input */}
-                      <Input
-                        ref={imagesRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        className="hidden"
-                        value={undefined}
-                        onChange={(e) =>
-                          handleFilesChange(e.target.files, field.onChange)
-                        }
-                      />
-                    </FormControl>
+              <Field className="col-span-full">
+                <Controller
+                  control={form.control}
+                  name="vehicleImages"
+                  render={({ field }) => (
+                    <ImagesUpload
+                      title="Upload Vehicle Images"
+                      maxSize={10}
+                      multiple
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isFieldDisabled(
+                        disabledFields,
+                        "vehicleImages",
+                      )}
+                    />
+                  )}
+                />
 
-                    {/* Image Previews */}
-                    <div className="mt-2 flex gap-3">
-                      {previews.map((src, index) => (
-                        <div
-                          key={`${index}-${src.slice(0, 3)}`}
-                          className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden"
-                        >
-                          <img
-                            src={src}
-                            alt="preview"
-                            className="object-cover w-full h-full"
-                          />
-                          {/* Camera / Clear Icon */}
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index, field)}
-                            className="cursor-pointer absolute top-1 right-1 bg-white rounded p-1"
-                          >
-                            <X className="h-4 w-4 text-red-500" />
-                          </button>
-                        </div>
-                      ))}
-
-                      {/* Add new placeholder */}
-                      <button
-                        type="button"
-                        onClick={() => imagesRef.current?.click()}
-                        className="w-28 h-28 cursor-pointer border border-dashed border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100"
-                      >
-                        <Plus className="h-6 w-6 text-gray-500" />
-                      </button>
-                    </div>
-
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.vehicleImages ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.vehicleImages?.message}
-                    </FormMessage>
-                  </FormItem>
+                {form.formState.errors.vehicleImages && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.vehicleImages.message}
+                  </p>
                 )}
-              />
-              <FormField
-                control={form.control}
-                name="documents"
-                defaultValue={[]}
-                render={({ field }) => (
-                  <FormItem className=" ">
-                    <FormLabel>
-                      Upload Documents:{" "}
-                      {[
-                        "Document 1*",
-                        "Document 2*",
-                        "Document 3*",
-                        "Document 4*",
-                      ].map((text, idx) => (
-                        <span
-                          key={`${idx}-${text}`}
-                          className={
-                            idx < field.value.length
-                              ? "text-gray-700 underline"
-                              : "text-gray-300"
-                          }
-                        >
-                          {text}{" "}
-                        </span>
-                      ))}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className="rounded cursor-pointer placeholder-[#E6E6E6]"
-                        type="file"
-                        ref={fileRef}
-                        multiple
-                        accept="image/jpeg,image/png,application/pdf"
-                        value={undefined}
-                        onChange={(e) => {
-                          const newFiles = Array.from(e.target.files ?? []);
-                          // Filter out File objects from current value (keep only document objects with url)
-                          const existingDocs = field.value.filter(
-                            (doc: File | { url: string }) =>
-                              !(doc instanceof File) &&
-                              (doc?.url ?? doc?.fileUrl),
-                          );
-                          field.onChange([...existingDocs, ...newFiles]);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              </Field>
+              <Field className="col-span-full">
+                <Controller
+                  control={form.control}
+                  name="documents"
+                  render={({ field }) => (
+                    <FilesUpload
+                      title="Upload Documents"
+                      accept="image/jpeg,image/png,application/pdf"
+                      maxSize={10}
+                      multiple
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={isFieldDisabled(disabledFields, "documents")}
+                    />
+                  )}
+                />
+
+                {form.formState.errors.documents && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.documents.message}
+                  </p>
                 )}
-              />
+              </Field>
             </CardContent>
-            <div className="flex items-center justify-start rounded px-6 space-x-2.5">
+            <CardFooter className="flex items-center justify-start space-x-2.5">
               <Button
-                className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-                variant={"secondary"}
+                variant="outlinePrimary"
                 type="button"
                 onClick={() => {
                   form.reset({
@@ -1297,15 +1428,10 @@ const FleetForm = ({
               >
                 Clear Alls
               </Button>
-              <Button
-                className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-                variant={"secondary"}
-                type="submit"
-                disabled={form.formState.isSubmitting}
-              >
+              <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Saving..." : "Save Details"}
               </Button>
-            </div>
+            </CardFooter>
           </CardBody>
         </Card>
       </form>

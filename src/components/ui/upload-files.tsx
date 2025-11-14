@@ -110,8 +110,19 @@ export default function FilesUpload({
       if (f.size > maxFileBytes) continue;
       if (accept !== "*" && !matchesAccept(f, accept)) continue;
 
-      const x: FileWithPreview = f;
-      if (f.type.startsWith("image/")) x.preview = URL.createObjectURL(f);
+      // Add date DDMMYYYY before extension
+      const now = new Date();
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      const dateStamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}`;
+
+      const dotIndex = f.name.lastIndexOf(".");
+      const namePart = dotIndex !== -1 ? f.name.slice(0, dotIndex) : f.name;
+      const extPart = dotIndex !== -1 ? f.name.slice(dotIndex) : "";
+
+      const newFileName = `${namePart}_${dateStamp}${extPart}`;
+
+      const x: FileWithPreview = new File([f], newFileName, { type: f.type });
+      if (f.type.startsWith("image/")) x.preview = URL.createObjectURL(x);
       validated.push(x);
     }
 
@@ -233,9 +244,9 @@ export default function FilesUpload({
       )}
 
       <div className="space-y-2 mt-6">
-        {files.map((f) => (
+        {files.map((f, i) => (
           <div
-            key={f.name}
+            key={i}
             className="flex items-center justify-between border border-base-gray rounded px-2 py-2.5 bg-base-white"
           >
             <div className="flex items-center gap-2">
