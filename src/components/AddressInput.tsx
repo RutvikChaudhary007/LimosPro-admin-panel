@@ -30,7 +30,7 @@ interface AddressInputProps<T extends FieldValues>
   field: ControllerRenderProps<T, Path<T>>;
   onChange: (value: string) => void;
   onUpdate: (update: IAddressObj) => void;
-  onValidityChange: (isValid: boolean) => void;
+  onValidityChange?: (isValid: boolean) => void;
 }
 
 const libraries = ["places", "geocoding"];
@@ -79,8 +79,8 @@ const AddressInput = <T extends FieldValues>({
       !!fields.state &&
       !!fields.zip &&
       !!fields.country;
-    onValidityChange(isValid);
-  }, [fields, onChange, onValidityChange]);
+    // onValidityChange(isValid);
+  }, [fields, onChange]);
 
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
@@ -113,14 +113,14 @@ const AddressInput = <T extends FieldValues>({
             toast.error(
               "Please provide a full address with street number, route name, city, state, zip, and country.",
             );
-            onValidityChange(false);
+            // onValidityChange(false);
             return;
           }
 
           setFields(merged);
 
           onChange(formatted);
-          onValidityChange(true);
+          // onValidityChange(true);
         },
       );
     }
@@ -130,7 +130,7 @@ const AddressInput = <T extends FieldValues>({
         google.maps.event.clearInstanceListeners(autocomplete);
       }
     };
-  }, [isLoaded, loadError, fields, onUpdate, onChange, onValidityChange]);
+  }, [isLoaded, loadError, fields, onUpdate, onChange]);
 
   if (loadError) {
     return (

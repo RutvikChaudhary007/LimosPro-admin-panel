@@ -71,7 +71,9 @@ export const reducer = (state: State, action: Action): State => {
     case "UPDATE_TOAST":
       return {
         ...state,
-        toasts: state.toasts.map((t) => (t.id === action.toast.id ? { ...t, ...action.toast } : t)),
+        toasts: state.toasts.map((t) =>
+          t.id === action.toast.id ? { ...t, ...action.toast } : t,
+        ),
       };
 
     case "DISMISS_TOAST": {
@@ -184,7 +186,10 @@ type PromiseMessages<T> = {
   error?: React.ReactNode | ((error: unknown) => React.ReactNode);
 };
 
-export function toastPromise<T>(promise: Promise<T>, messages: PromiseMessages<T>) {
+export function toastPromise<T>(
+  promise: Promise<T>,
+  messages: PromiseMessages<T>,
+) {
   return sonnerToast.promise<T>(promise, {
     loading: messages.loading,
     success:
@@ -195,7 +200,9 @@ export function toastPromise<T>(promise: Promise<T>, messages: PromiseMessages<T
     error: messages.error
       ? typeof messages.error === "function"
         ? (error: unknown) => {
-            const content = (messages.error as (error: unknown) => React.ReactNode)(error);
+            const content = (
+              messages.error as (error: unknown) => React.ReactNode
+            )(error);
             // The className is now handled at the toast level, not here
             return content;
           }

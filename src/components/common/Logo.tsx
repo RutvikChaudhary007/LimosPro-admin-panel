@@ -7,10 +7,16 @@ interface LogoProps {
   useSignupIcon?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ className, showBackgroundEffect = true, useSignupIcon = false }) => {
+const Logo: React.FC<LogoProps> = ({
+  className,
+  showBackgroundEffect = true,
+  useSignupIcon = false,
+}) => {
   return (
     <div className={`relative ${className || "h-10"}`}>
-      {showBackgroundEffect && <div className="absolute inset-0 bg-brand-blue rounded-lg transform rotate-3"></div>}
+      {showBackgroundEffect && (
+        <div className="absolute inset-0 bg-brand-blue rounded-lg transform rotate-3"></div>
+      )}
 
       {useSignupIcon ? (
         <div className="relative h-full w-full flex items-center justify-center">

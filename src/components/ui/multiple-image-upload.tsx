@@ -1,6 +1,13 @@
 // @ts-nocheck
 
-import { Image as ImageIcon, Link as LinkIcon, Loader, Plus, Upload, X } from "lucide-react";
+import {
+  Image as ImageIcon,
+  Link as LinkIcon,
+  Loader,
+  Plus,
+  Upload,
+  X,
+} from "lucide-react";
 import type React from "react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -40,7 +47,9 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       }
 
       // Validate file types
-      const invalidFiles = fileArray.filter((file) => !file.type.startsWith("image/"));
+      const invalidFiles = fileArray.filter(
+        (file) => !file.type.startsWith("image/"),
+      );
       if (invalidFiles.length > 0) {
         toast.error("Please select only image files");
         return;
@@ -57,10 +66,16 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       try {
         setUploading(true);
 
-        const uploadResults = await mediaService.uploadMultiple(fileArray, "blog", "blog-images");
+        const uploadResults = await mediaService.uploadMultiple(
+          fileArray,
+          "blog",
+          "blog-images",
+        );
 
         if (uploadResults.data && Array.isArray(uploadResults.data)) {
-          const newUrls = uploadResults.data.filter((item) => item?.fileUrl).map((item) => item.fileUrl);
+          const newUrls = uploadResults.data
+            .filter((item) => item?.fileUrl)
+            .map((item) => item.fileUrl);
 
           onChange([...value, ...newUrls]);
           toast.success(`${newUrls.length} image(s) uploaded successfully`);
@@ -72,7 +87,8 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
 
         if (error instanceof Error && error.message.includes("404")) {
           toast.error("Media Upload Not Available", {
-            description: "The media upload feature is not yet implemented. Please use image URLs instead.",
+            description:
+              "The media upload feature is not yet implemented. Please use image URLs instead.",
             duration: 6000,
           });
           setUploadMode("url");
@@ -202,14 +218,23 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
                   <Upload className="h-8 w-8 mx-auto text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium">Click to upload</span> or drag and drop
+                      <span className="font-medium">Click to upload</span> or
+                      drag and drop
                     </p>
-                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB each (max {maxImages})</p>
+                    <p className="text-xs text-gray-500">
+                      PNG, JPG, GIF up to 5MB each (max {maxImages})
+                    </p>
                   </div>
                 </div>
               )}
             </div>
-            <input type="file" accept="image/*" multiple onChange={handleFileInputChange} className="hidden" />
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileInputChange}
+              className="hidden"
+            />
           </CardContent>
         </Card>
       )}
@@ -227,7 +252,9 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
                     className="w-full h-32 object-cover rounded-lg"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
-                      e.currentTarget.nextElementSibling?.classList.remove("hidden");
+                      e.currentTarget.nextElementSibling?.classList.remove(
+                        "hidden",
+                      );
                     }}
                   />
                   <div className="hidden flex items-center justify-center w-full h-32 bg-gray-100 rounded-lg">

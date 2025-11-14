@@ -1,7 +1,15 @@
 import { ChevronRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -25,7 +33,8 @@ export function NavMain({ items }: { items: NavItem[] }) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const isActivePath = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
+  const isActivePath = (path: string) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const renderSubItems = (subItems: NavItem["items"] = []) => (
     <SidebarMenuSub>
@@ -58,7 +67,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
               <SidebarMenuItem key={item.title}>
                 <HoverCard openDelay={100} closeDelay={100}>
                   <HoverCardTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} data-active={active} data-child-active={childActive}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      data-active={active}
+                      data-child-active={childActive}
+                    >
                       {item.icon && <item.icon />}
                     </SidebarMenuButton>
                   </HoverCardTrigger>
@@ -78,17 +91,28 @@ export function NavMain({ items }: { items: NavItem[] }) {
           // ---------------- EXPANDED (Collapsible Menu) ----------------
           if (hasChildren) {
             return (
-              <Collapsible key={item.title} asChild defaultOpen={active || childActive} className="group/collapsible">
+              <Collapsible
+                key={item.title}
+                asChild
+                defaultOpen={active || childActive}
+                className="group/collapsible"
+              >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title} data-active={active} data-child-active={childActive}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      data-active={active}
+                      data-child-active={childActive}
+                    >
                       {item.icon && <item.icon />}
                       <span className="truncate">{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 
-                  <CollapsibleContent>{renderSubItems(item.items)}</CollapsibleContent>
+                  <CollapsibleContent>
+                    {renderSubItems(item.items)}
+                  </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
             );
@@ -97,7 +121,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
           // ---------------- NORMAL ITEM ----------------
           return (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title} data-active={active}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                data-active={active}
+              >
                 <Link to={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>

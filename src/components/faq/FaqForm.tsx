@@ -6,7 +6,14 @@ import isFieldDisabled from "@/utils/disableFormField";
 import type { TFaqs } from "../table/column";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 
 const formSchema = z.object({
@@ -26,7 +33,12 @@ const formSchema = z.object({
 
 export type TFaqForm = z.infer<typeof formSchema>;
 
-const FaqForm = ({ initialData, onSubmit, disabledFields, type }: IFaqFormProps) => {
+const FaqForm = ({
+  initialData,
+  onSubmit,
+  disabledFields,
+  type,
+}: IFaqFormProps) => {
   const transformInitialData = (data?: TFaqs): TFaqForm | undefined => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)

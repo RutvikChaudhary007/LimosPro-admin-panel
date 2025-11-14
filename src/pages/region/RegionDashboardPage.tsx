@@ -11,7 +11,11 @@ import { Spinner } from "@/components/Spinner";
 import { getRegionColumns, type TRegion } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -95,12 +99,8 @@ function RegionDashboardPage() {
   const [selected, setSelected] = useState(optionDefaultValue);
   // const [data, setData] = useState<TRegion[]>(tableData);
   const { data, refetch, isFetching } = useFetchAllRegions({ limit: perPage });
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TRegion>(
-    data?.regions,
-    page,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TRegion>(data?.regions, page, perPage, data?.pagination);
 
   useEffect(() => {
     setCPage(currentPage);
@@ -123,7 +123,8 @@ function RegionDashboardPage() {
           if (res?.status === true) refetch();
           return "Yeah! Region deleted successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Error deleting region"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Error deleting region",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -147,7 +148,10 @@ function RegionDashboardPage() {
           if (res.status === true) refetch();
           return "Yeah! Region updated.";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update access permission."),
+        error: (e) =>
+          e instanceof Error
+            ? e.message
+            : "Opps! Failed to update access permission.",
       },
     );
   };
@@ -172,7 +176,10 @@ function RegionDashboardPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -188,12 +195,19 @@ function RegionDashboardPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -231,7 +245,11 @@ function RegionDashboardPage() {
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <PageHeader
           title="Region Management"
-          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Regions" }]}
+          breadcrumbs={[
+            { label: "Home", path: "/" },
+            { label: "Region Management" },
+            { label: "Regions" },
+          ]}
           action={{
             label: "Add Regions",
             icon: <Plus />,
@@ -240,7 +258,12 @@ function RegionDashboardPage() {
         />
 
         <div className="flex justify-between">
-          <SelectDropDown placeholder={selected} items={showOptions} value={selected} setSelectedItem={setSelected} />
+          <SelectDropDown
+            placeholder={selected}
+            items={showOptions}
+            value={selected}
+            setSelectedItem={setSelected}
+          />
           <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${
@@ -255,7 +278,10 @@ function RegionDashboardPage() {
             >
               <Button
                 variant={"outlineBlack"}
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
                 onClick={() => {
                   setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                   console.log("data:", data);
@@ -303,7 +329,9 @@ function RegionDashboardPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -313,7 +341,11 @@ function RegionDashboardPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

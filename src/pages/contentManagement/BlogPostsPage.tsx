@@ -11,7 +11,13 @@ import BlogPostCard from "@/components/contentManagement/BlogPostCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { constant } from "@/lib/constant";
 import type { BlogPost, BlogQueryParams } from "@/types/content";
 import { generatePageTitle } from "@/utils/seo";
@@ -35,7 +41,8 @@ const fetchBlogPosts = async () => {
     console.error("❌ Error fetching blog posts:", error);
 
     let errorTitle = "Error Loading Blog Posts";
-    let errorDescription = "Failed to fetch blog posts. Please try again later.";
+    let errorDescription =
+      "Failed to fetch blog posts. Please try again later.";
 
     if (error instanceof Error) {
       if (error.message.includes("404")) {
@@ -50,10 +57,12 @@ const fetchBlogPosts = async () => {
         errorDescription = "You do not have permission to access blog posts.";
       } else if (error.message.includes("500")) {
         errorTitle = "Server Error";
-        errorDescription = "The server encountered an error. Please try again later.";
+        errorDescription =
+          "The server encountered an error. Please try again later.";
       } else if (error.message.includes("Failed to fetch")) {
         errorTitle = "Connection Error";
-        errorDescription = "Cannot connect to the server. Please check if the admin service is running on port 3001.";
+        errorDescription =
+          "Cannot connect to the server. Please check if the admin service is running on port 3001.";
       } else {
         errorDescription = error.message;
       }
@@ -128,7 +137,9 @@ const BlogPostsPage: React.FC = () => {
             <h1 className="text-3xl font-bold">Blog Posts</h1>
             <p className="text-gray-600">Manage your blog content</p>
           </div>
-          <Button onClick={() => navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)}>
+          <Button
+            onClick={() => navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             Create Post
           </Button>
@@ -169,7 +180,9 @@ const BlogPostsPage: React.FC = () => {
               <CardTitle className="text-sm font-medium">Total Views</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{blogPosts.reduce((sum, post) => sum + post.viewCount, 0)}</div>
+              <div className="text-2xl font-bold">
+                {blogPosts.reduce((sum, post) => sum + post.viewCount, 0)}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -177,9 +190,15 @@ const BlogPostsPage: React.FC = () => {
         {/* Filters */}
         <Card>
           <CardContent className="pt-6">
-            <form onSubmit={handleSearch} className="flex gap-4 items-end justify-between">
+            <form
+              onSubmit={handleSearch}
+              className="flex gap-4 items-end justify-between"
+            >
               <div className="flex-1">
-                <label htmlFor="search" className="text-sm font-medium mb-2 block">
+                <label
+                  htmlFor="search"
+                  className="text-sm font-medium mb-2 block"
+                >
                   Search
                 </label>
                 <div className="relative">
@@ -193,7 +212,10 @@ const BlogPostsPage: React.FC = () => {
                 </div>
               </div>
               <div className="w-48">
-                <label htmlFor="status" className="text-sm font-medium mb-2 block">
+                <label
+                  htmlFor="status"
+                  className="text-sm font-medium mb-2 block"
+                >
                   Status
                 </label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -239,9 +261,17 @@ const BlogPostsPage: React.FC = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No blog posts found</h3>
-                <p className="text-gray-600 mb-4">Get started by creating your first blog post.</p>
-                <Button onClick={() => navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)}>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No blog posts found
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Get started by creating your first blog post.
+                </p>
+                <Button
+                  onClick={() =>
+                    navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)
+                  }
+                >
                   <Plus className="mr-2 h-4 w-4" />
                   Create Post
                 </Button>
@@ -274,7 +304,11 @@ const BlogPostsPage: React.FC = () => {
             </Button>
             {[...Array(pagination.totalPages)].map((_, index) => {
               const page = index + 1;
-              if (page === 1 || page === pagination.totalPages || Math.abs(page - pagination.page) <= 2) {
+              if (
+                page === 1 ||
+                page === pagination.totalPages ||
+                Math.abs(page - pagination.page) <= 2
+              ) {
                 return (
                   <Button
                     key={page}
@@ -285,7 +319,10 @@ const BlogPostsPage: React.FC = () => {
                   </Button>
                 );
               }
-              if (page === pagination.page - 3 || page === pagination.page + 3) {
+              if (
+                page === pagination.page - 3 ||
+                page === pagination.page + 3
+              ) {
                 return <span key={page}>...</span>;
               }
               return null;

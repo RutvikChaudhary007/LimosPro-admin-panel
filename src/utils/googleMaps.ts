@@ -25,11 +25,14 @@ export const initializeGooglePlacesAutocomplete = (
     // const placeAutocomplete = new window.google.maps.places.PlaceAutocompleteElement();
     // console.log("placeAutocomplete:>",placeAutocomplete)
     // autocompleteRef.current.appendChild(placeAutocomplete);
-    const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
-      componentRestrictions: { country: ["us"] },
-      fields: ["address_components", "geometry", "formatted_address"],
-      types: ["address"],
-    });
+    const autocomplete = new window.google.maps.places.Autocomplete(
+      inputRef.current,
+      {
+        componentRestrictions: { country: ["us"] },
+        fields: ["address_components", "geometry", "formatted_address"],
+        types: ["address"],
+      },
+    );
     autocomplete.addListener("place_changed", () => {
       // console.log("place:",autocomplete.getPlace());
       const place = autocomplete.getPlace();
@@ -132,7 +135,11 @@ export const geoDecoding = ({ lat, lng }: { lat: string; lng: string }) => {
       if (status === "OK" && results && results[0]) {
         resolve(results[0].formatted_address);
       } else {
-        reject(status === "OK" ? "No address results" : `Geocoder failed due to: ${status}`);
+        reject(
+          status === "OK"
+            ? "No address results"
+            : `Geocoder failed due to: ${status}`,
+        );
       }
     });
   });

@@ -1,8 +1,21 @@
 import { useFetchContactRequestById } from "@/api/contactRequest.api";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Spinner } from "../Spinner";
 
-function ViewModal({ id, open, onOpenChange }: { id: string; open: boolean; onOpenChange: (open: boolean) => void }) {
+function ViewModal({
+  id,
+  open,
+  onOpenChange,
+}: {
+  id: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const { data, isFetching } = useFetchContactRequestById({ id });
 
   return (
@@ -15,8 +28,12 @@ function ViewModal({ id, open, onOpenChange }: { id: string; open: boolean; onOp
             <div className="w-full h-full space-y-6 ">
               <div className="flex items-center justify-between">
                 <DialogTitle className="space-y-3">
-                  <h4 className="font-semibold text-xl text-[#000000]">{data?.email}</h4>
-                  <h5 className="text-[#5A5A5A] font-semibold">{data?.phone}</h5>
+                  <h4 className="font-semibold text-xl text-[#000000]">
+                    {data?.email}
+                  </h4>
+                  <h5 className="text-[#5A5A5A] font-semibold">
+                    {data?.phone}
+                  </h5>
                 </DialogTitle>
               </div>
             </div>

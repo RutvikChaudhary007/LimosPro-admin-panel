@@ -203,14 +203,19 @@ export function AppSidebar({
             hasDynamicAccess(child.url, user?.role, user?.permissions),
           );
           // Only keep parent if parent has a route OR children are allowed
-          if (hasDynamicAccess(item.url, user?.role, user?.permissions) || allowedChildren.length > 0) {
+          if (
+            hasDynamicAccess(item.url, user?.role, user?.permissions) ||
+            allowedChildren.length > 0
+          ) {
             return { ...item, items: allowedChildren };
           }
           return null; // Changed from [] to null
         }
 
         // if no children → just check the parent
-        return hasDynamicAccess(item.url, user?.role, user?.permissions) ? item : null; // Changed from [] to null
+        return hasDynamicAccess(item.url, user?.role, user?.permissions)
+          ? item
+          : null; // Changed from [] to null
       })
       .filter(Boolean) as typeof data.navMain;
   }, [user?.permissions, user?.role]);
@@ -245,7 +250,9 @@ export function AppSidebar({
       <SidebarContent>
         <NavMain items={filteredNavigation} />
         {showDocuments && <NavDocuments items={data.documents} />}
-        {showSecondary && <NavSecondary items={data.navSecondary} className="mt-auto" />}
+        {showSecondary && (
+          <NavSecondary items={data.navSecondary} className="mt-auto" />
+        )}
       </SidebarContent>
 
       {/* Footer */}

@@ -1,8 +1,21 @@
 "use client";
 
 import * as React from "react";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Card, CardBody, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
+  Card,
+  CardBody,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 type TData = {
@@ -33,7 +46,10 @@ export function ChartAreaInteractive({ data }: TProps) {
           <CardContent>
             <div className="h-[200px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 5 }}>
+                <LineChart
+                  data={data}
+                  margin={{ top: 10, right: 10, left: 0, bottom: 5 }}
+                >
                   <XAxis dataKey="month" />
                   <YAxis domain={[0, "dataMax"]} />
                   <Tooltip />

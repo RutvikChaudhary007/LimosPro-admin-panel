@@ -5,7 +5,10 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
 export const getAllStaffRoles = async () => {
   const params: Record<string, unknown> = {};
 
-  const response = await axiosInstance.get(`${API_ENDPOINTS.ROLES.GET_ALL_STAFF_ROLE}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.ROLES.GET_ALL_STAFF_ROLE}`,
+    { params },
+  );
   // console.log("response:",response)
 
   return response.data.data;

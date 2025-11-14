@@ -11,7 +11,10 @@ export const getAllRegionAdmins = async (data?: TPara) => {
   if (data?.limit) {
     params.limit = data.limit;
   }
-  const response = await axiosInstance.get(`${API_ENDPOINTS.REGIONAL_ADMIN.GET_ALL}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ALL}`,
+    { params },
+  );
 
   return response.data.data;
 };
@@ -29,7 +32,9 @@ const useFetchAllRegionAdmins = (Data: TPara) =>
 export default useFetchAllRegionAdmins;
 
 export const getSingleRegionAdmin = async (id: string) => {
-  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_REGION_BY_ID.replace(":region_id", id)}`);
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.GET_REGION_BY_ID.replace(":region_id", id)}`,
+  );
 
   return response?.data?.data;
 };
@@ -64,20 +69,33 @@ export const createRegionAdmin = async (data: Partial<TRegionAdmin>) => {
   }
 };
 
-export const editRegionAdmin = async ({ id, data }: { id: string; data: TRegion }) => {
+export const editRegionAdmin = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: TRegion;
+}) => {
   try {
-    const response = await axiosInstance.put(`${API_ENDPOINTS.EDIT_REGION.replace(":regionId", id)}`, data);
+    const response = await axiosInstance.put(
+      `${API_ENDPOINTS.EDIT_REGION.replace(":regionId", id)}`,
+      data,
+    );
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError) console.error(error.message || "Opps! An unkown error occured");
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
   }
 };
 
 export const deleteRegionAdmin = async (id: string) => {
   try {
-    const response = await axiosInstance.delete(`${API_ENDPOINTS.DELETE_REGION.replace(":regionId", id)}`);
+    const response = await axiosInstance.delete(
+      `${API_ENDPOINTS.DELETE_REGION.replace(":regionId", id)}`,
+    );
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError) console.error(error.message || "Opps! An unkown error occured");
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
   }
 };

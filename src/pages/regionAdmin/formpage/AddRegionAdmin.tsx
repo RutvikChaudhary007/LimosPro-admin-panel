@@ -69,7 +69,8 @@ function AddRegionAdmin() {
           if (res) navigate(constant.ROUTING_URLS.REGION_ADMIN);
           return "Region admin created successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Error creating region admin"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Error creating region admin",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -83,7 +84,11 @@ function AddRegionAdmin() {
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
         title="Region Management"
-        breadcrumbs={[{ label: "Home", path: "/" }, { label: "Region Management" }, { label: "Add Regional Admin" }]}
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Region Management" },
+          { label: "Add Regional Admin" },
+        ]}
         action={{
           variant: "outlineBlack",
           label: "Back",
@@ -106,13 +111,20 @@ function AddRegionAdmin() {
                   name="firstName"
                   render={({ field }) => (
                     <InputGroup>
-                      <InputGroupInput {...field} id="firstName" type="text" placeholder="First Name" />
+                      <InputGroupInput
+                        {...field}
+                        id="firstName"
+                        type="text"
+                        placeholder="First Name"
+                      />
                     </InputGroup>
                   )}
                 />
                 <FieldDescription>Provide first name</FieldDescription>
                 {form.formState.errors.firstName && (
-                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.firstName.message}</p>
+                  <p className="text-base-danger text-sm mt-1">
+                    {form.formState.errors.firstName.message}
+                  </p>
                 )}
               </Field>
 
@@ -124,13 +136,20 @@ function AddRegionAdmin() {
                   name="lastName"
                   render={({ field }) => (
                     <InputGroup>
-                      <InputGroupInput {...field} id="lastName" type="text" placeholder="Last Name" />
+                      <InputGroupInput
+                        {...field}
+                        id="lastName"
+                        type="text"
+                        placeholder="Last Name"
+                      />
                     </InputGroup>
                   )}
                 />
                 <FieldDescription>Provide last name</FieldDescription>
                 {form.formState.errors.lastName && (
-                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.lastName.message}</p>
+                  <p className="text-base-danger text-sm mt-1">
+                    {form.formState.errors.lastName.message}
+                  </p>
                 )}
               </Field>
 
@@ -142,13 +161,20 @@ function AddRegionAdmin() {
                   name="email"
                   render={({ field }) => (
                     <InputGroup>
-                      <InputGroupInput {...field} id="email" type="email" placeholder="Email" />
+                      <InputGroupInput
+                        {...field}
+                        id="email"
+                        type="email"
+                        placeholder="Email"
+                      />
                     </InputGroup>
                   )}
                 />
                 <FieldDescription>Provide email address</FieldDescription>
                 {form.formState.errors.email && (
-                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.email.message}</p>
+                  <p className="text-base-danger text-sm mt-1">
+                    {form.formState.errors.email.message}
+                  </p>
                 )}
               </Field>
 
@@ -160,13 +186,20 @@ function AddRegionAdmin() {
                   name="password"
                   render={({ field }) => (
                     <InputGroup>
-                      <InputGroupInput {...field} id="password" type="password" placeholder="Password" />
+                      <InputGroupInput
+                        {...field}
+                        id="password"
+                        type="password"
+                        placeholder="Password"
+                      />
                     </InputGroup>
                   )}
                 />
                 <FieldDescription>Provide login password</FieldDescription>
                 {form.formState.errors.password && (
-                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.password.message}</p>
+                  <p className="text-base-danger text-sm mt-1">
+                    {form.formState.errors.password.message}
+                  </p>
                 )}
               </Field>
 
@@ -178,10 +211,12 @@ function AddRegionAdmin() {
                   name="region"
                   render={({ field }) => {
                     const options =
-                      regionData?.regions?.map((r: { id: string; regionName: string }) => ({
-                        value: r.id,
-                        label: r.regionName,
-                      })) || [];
+                      regionData?.regions?.map(
+                        (r: { id: string; regionName: string }) => ({
+                          value: r.id,
+                          label: r.regionName,
+                        }),
+                      ) || [];
 
                     return regionFetching ? (
                       <Spinner />
@@ -198,7 +233,9 @@ function AddRegionAdmin() {
 
                 <FieldDescription>Select assigned region</FieldDescription>
                 {form.formState.errors.region && (
-                  <p className="text-base-danger text-sm mt-1">{form.formState.errors.region.message}</p>
+                  <p className="text-base-danger text-sm mt-1">
+                    {form.formState.errors.region.message}
+                  </p>
                 )}
               </Field>
             </div>

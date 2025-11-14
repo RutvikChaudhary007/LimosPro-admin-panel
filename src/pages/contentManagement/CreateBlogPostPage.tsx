@@ -9,12 +9,23 @@ import * as z from "zod";
 import { blogService } from "../../api/contentServices.api";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import ImageUpload from "../../components/ui/image-upload";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import MultipleImageUpload from "../../components/ui/multiple-image-upload";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 import { Textarea } from "../../components/ui/textarea";
 import { constant } from "../../lib/constant";
 import type { BlogPostFormData } from "../../types/content";
@@ -135,7 +146,10 @@ const CreateBlogPostPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" onClick={() => navigate(constant.ROUTING_URLS.BLOG_POSTS)}>
+          <Button
+            variant="ghost"
+            onClick={() => navigate(constant.ROUTING_URLS.BLOG_POSTS)}
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Posts
           </Button>
@@ -164,7 +178,11 @@ const CreateBlogPostPage: React.FC = () => {
                     placeholder="Enter blog post title"
                     className={errors.title ? "border-red-500" : ""}
                   />
-                  {errors.title && <p className="text-sm text-red-600 mt-1">{errors.title.message}</p>}
+                  {errors.title && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {errors.title.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -175,7 +193,11 @@ const CreateBlogPostPage: React.FC = () => {
                     placeholder="blog-post-slug"
                     className={errors.slug ? "border-red-500" : ""}
                   />
-                  {errors.slug && <p className="text-sm text-red-600 mt-1">{errors.slug.message}</p>}
+                  {errors.slug && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {errors.slug.message}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -197,7 +219,11 @@ const CreateBlogPostPage: React.FC = () => {
                     rows={15}
                     className={errors.content ? "border-red-500" : ""}
                   />
-                  {errors.content && <p className="text-sm text-red-600 mt-1">{errors.content.message}</p>}
+                  {errors.content && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {errors.content.message}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -210,7 +236,11 @@ const CreateBlogPostPage: React.FC = () => {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="metaTitle">Meta Title</Label>
-                  <Input id="metaTitle" {...register("metaTitle")} placeholder="SEO title for search engines" />
+                  <Input
+                    id="metaTitle"
+                    {...register("metaTitle")}
+                    placeholder="SEO title for search engines"
+                  />
                 </div>
 
                 <div>
@@ -230,7 +260,9 @@ const CreateBlogPostPage: React.FC = () => {
                       value={keywordInput}
                       onChange={(e) => setKeywordInput(e.target.value)}
                       placeholder="Add keyword"
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addKeyword())}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addKeyword())
+                      }
                     />
                     <Button type="button" onClick={addKeyword}>
                       <Plus className="h-4 w-4" />
@@ -240,7 +272,11 @@ const CreateBlogPostPage: React.FC = () => {
                     {metaKeywords.map((keyword, index) => (
                       <Badge key={index} variant="secondary">
                         {keyword}
-                        <button type="button" onClick={() => removeKeyword(index)} className="ml-1">
+                        <button
+                          type="button"
+                          onClick={() => removeKeyword(index)}
+                          className="ml-1"
+                        >
                           <X className="h-3 w-3" />
                         </button>
                       </Badge>
@@ -268,7 +304,10 @@ const CreateBlogPostPage: React.FC = () => {
               <CardContent className="space-y-4">
                 <div>
                   <Label htmlFor="status">Status</Label>
-                  <Select onValueChange={(value) => setValue("status", value as any)} defaultValue="draft">
+                  <Select
+                    onValueChange={(value) => setValue("status", value as any)}
+                    defaultValue="draft"
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -282,7 +321,11 @@ const CreateBlogPostPage: React.FC = () => {
 
                 <div>
                   <Label htmlFor="author">Author</Label>
-                  <Input id="author" {...register("author")} placeholder="Author name" />
+                  <Input
+                    id="author"
+                    {...register("author")}
+                    placeholder="Author name"
+                  />
                 </div>
 
                 <div className="pt-4">
@@ -335,7 +378,9 @@ const CreateBlogPostPage: React.FC = () => {
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     placeholder="Add tag"
-                    onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                    onKeyPress={(e) =>
+                      e.key === "Enter" && (e.preventDefault(), addTag())
+                    }
                   />
                   <Button type="button" onClick={addTag}>
                     <Plus className="h-4 w-4" />
@@ -345,7 +390,11 @@ const CreateBlogPostPage: React.FC = () => {
                   {tags.map((tag, index) => (
                     <Badge key={index} variant="secondary">
                       {tag}
-                      <button type="button" onClick={() => removeTag(index)} className="ml-1">
+                      <button
+                        type="button"
+                        onClick={() => removeTag(index)}
+                        className="ml-1"
+                      >
                         <X className="h-3 w-3" />
                       </button>
                     </Badge>

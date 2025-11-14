@@ -8,10 +8,16 @@ type pagination = {
   totalItems: number;
   totalPages: number;
 };
-export default function usePagination<T>(items: T[] = [], initialPage = 1, perPage = 10, pagination?: pagination) {
+export default function usePagination<T>(
+  items: T[] = [],
+  initialPage = 1,
+  perPage = 10,
+  pagination?: pagination,
+) {
   const [currentPage, setCurrentPage] = useState(initialPage);
   // if pagination is provided from outside, use it
-  const totalPages = pagination?.totalPages ?? Math.ceil(items.length / perPage);
+  const totalPages =
+    pagination?.totalPages ?? Math.ceil(items.length / perPage);
   // const totalPages =  pagination.totalPages  ;
   // console.log(perPage)
   // const offset = (currentPage - 1) * perPage;

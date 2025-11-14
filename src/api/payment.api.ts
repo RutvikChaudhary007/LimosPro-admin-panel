@@ -16,7 +16,10 @@ export const getAllPayments = async ({ limit, page, status }: TArg) => {
   if (page) {
     params.offset = page;
   }
-  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_PAYMENTS}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.GET_ALL_PAYMENTS}`,
+    { params },
+  );
   // console.log("response:",response)
 
   return response.data.data;
@@ -35,7 +38,9 @@ const useFetchAllPayments = ({ page, limit, status }: TArg) =>
 export default useFetchAllPayments;
 
 export const getPaymentById = async ({ id }: { id: string }) => {
-  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_PAYMENT_BY_ID.replace(":id", id)}`);
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.GET_PAYMENT_BY_ID.replace(":id", id)}`,
+  );
   // console.log("response:",response)
 
   return response.data.data;

@@ -9,7 +9,14 @@ import type { IOurPartnerFormProps } from "@/types/ourPartner.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -40,9 +47,16 @@ const formSchema = z.object({
 });
 
 export type TOurPartnerForm = z.infer<typeof formSchema>;
-const OurPartnerForm = ({ initialData, onSubmit, disabledFields, type }: IOurPartnerFormProps) => {
+const OurPartnerForm = ({
+  initialData,
+  onSubmit,
+  disabledFields,
+  type,
+}: IOurPartnerFormProps) => {
   const [previews, setPreviews] = useState<string | null>(null);
-  const transformInitialData = (data?: TOurPartnerForm): TOurPartnerForm | undefined => {
+  const transformInitialData = (
+    data?: TOurPartnerForm,
+  ): TOurPartnerForm | undefined => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
     return {
@@ -61,7 +75,9 @@ const OurPartnerForm = ({ initialData, onSubmit, disabledFields, type }: IOurPar
     },
   });
 
-  const handleFormSubmit: SubmitHandler<TOurPartnerForm> = async (data: TOurPartnerForm) => {
+  const handleFormSubmit: SubmitHandler<TOurPartnerForm> = async (
+    data: TOurPartnerForm,
+  ) => {
     try {
       await onSubmit(data);
       form.reset();
@@ -151,7 +167,11 @@ const OurPartnerForm = ({ initialData, onSubmit, disabledFields, type }: IOurPar
                   <div className="mt-2 flex gap-3">
                     {previews && (
                       <div className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden">
-                        <img src={previews} alt="preview" className="object-cover w-full h-full" />
+                        <img
+                          src={previews}
+                          alt="preview"
+                          className="object-cover w-full h-full"
+                        />
                         <button
                           type="button"
                           onClick={() => {
@@ -178,7 +198,8 @@ const OurPartnerForm = ({ initialData, onSubmit, disabledFields, type }: IOurPar
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.photo ? "visible text-red-600" : "invisible"}`}
                   >
-                    {form.formState.errors.photo && typeof form.formState.errors.photo.message === "string"
+                    {form.formState.errors.photo &&
+                    typeof form.formState.errors.photo.message === "string"
                       ? form.formState.errors.photo.message
                       : null}
                   </FormMessage>

@@ -4,7 +4,10 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
 
 export const getTripById = async (id: string) => {
   const params = {};
-  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_TRIP_BY_ID.replace(":id", id)}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.GET_TRIP_BY_ID.replace(":id", id)}`,
+    { params },
+  );
   // console.log("response:",response)
 
   return response.data.data;

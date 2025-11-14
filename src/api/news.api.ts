@@ -43,7 +43,9 @@ export default useFetchALLNews;
  */
 
 export const getNewsById = async (id: string) => {
-  const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_NEWS_BY_ID.replace(":id", id));
+  const response = await adminAxiosInstance.get(
+    API_ENDPOINTS.GET_NEWS_BY_ID.replace(":id", id),
+  );
   return response.data?.data;
 };
 
@@ -64,7 +66,10 @@ export const useFetchNewsById = (id: string) => {
  * @returns response data
  */
 export const createNews = async (data: { body: string }) => {
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.CREATE_NEWS, data);
+  const response = await adminAxiosInstance.post(
+    API_ENDPOINTS.CREATE_NEWS,
+    data,
+  );
 
   return response.data?.data;
 };
@@ -76,8 +81,17 @@ export const createNews = async (data: { body: string }) => {
  * @param data
  * @returns response data
  */
-export const editNewsById = async ({ id, data }: { id: string; data: { body: string } }) => {
-  const response = await adminAxiosInstance.put(API_ENDPOINTS.EDIT_NEWS.replace(":id", id), data);
+export const editNewsById = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: { body: string };
+}) => {
+  const response = await adminAxiosInstance.put(
+    API_ENDPOINTS.EDIT_NEWS.replace(":id", id),
+    data,
+  );
 
   return response.data?.data;
 };
@@ -90,7 +104,9 @@ export const editNewsById = async ({ id, data }: { id: string; data: { body: str
  * @returns response data
  */
 export const deleteNewsById = async (id: string) => {
-  const response = await adminAxiosInstance.delete(API_ENDPOINTS.DELETE_NEWS.replace(":id", id));
+  const response = await adminAxiosInstance.delete(
+    API_ENDPOINTS.DELETE_NEWS.replace(":id", id),
+  );
 
   return response.data;
 };
@@ -106,7 +122,10 @@ export const bulkDeleteNewsById = async (ids: string[]) => {
   const data = {
     newsIds: ids,
   };
-  const response = await adminAxiosInstance.post(API_ENDPOINTS.BULK_DELETE_NEWS, data);
+  const response = await adminAxiosInstance.post(
+    API_ENDPOINTS.BULK_DELETE_NEWS,
+    data,
+  );
 
   return response.data;
 };

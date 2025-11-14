@@ -4,7 +4,11 @@
  * @param headers Array of column headers
  * @param rows Array of data rows (each row is an array of values)
  */
-export const exportToCsv = (filename: string, headers: string[], rows: (string | number)[][]) => {
+export const exportToCsv = (
+  filename: string,
+  headers: string[],
+  rows: (string | number)[][],
+) => {
   // Format the headers
   const headerRow = headers.join(",");
 
@@ -13,7 +17,10 @@ export const exportToCsv = (filename: string, headers: string[], rows: (string |
     row
       .map((value) => {
         // Handle values with commas by wrapping in quotes
-        if (typeof value === "string" && (value.includes(",") || value.includes('"') || value.includes("\n"))) {
+        if (
+          typeof value === "string" &&
+          (value.includes(",") || value.includes('"') || value.includes("\n"))
+        ) {
           // Escape quotes by doubling them
           const escaped = value.replace(/"/g, '""');
           return `"${escaped}"`;

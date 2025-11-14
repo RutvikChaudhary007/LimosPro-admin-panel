@@ -8,13 +8,18 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-transparent bg-base-primary text-base-white [a&]:hover:bg-base-primary-dark",
-        secondary: "border-transparent bg-base-secondary text-base-white [a&]:hover:bg-base-secondary-dark",
-        black: "border-transparent bg-base-black text-base-white [a&]:hover:bg-base-black/90",
-        white: "border-transparent bg-base-white text-base-black [a&]:hover:bg-base-white/90",
+        default:
+          "border-transparent bg-base-primary text-base-white [a&]:hover:bg-base-primary-dark",
+        secondary:
+          "border-transparent bg-base-secondary text-base-white [a&]:hover:bg-base-secondary-dark",
+        black:
+          "border-transparent bg-base-black text-base-white [a&]:hover:bg-base-black/90",
+        white:
+          "border-transparent bg-base-white text-base-black [a&]:hover:bg-base-white/90",
         destructive:
           "border-transparent bg-destructive text-base-black [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline: "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        outline:
+          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
       },
     },
     defaultVariants: {
@@ -28,10 +33,17 @@ function Badge({
   variant,
   asChild = false,
   ...props
-}: React.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+}: React.ComponentProps<"span"> &
+  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
   const Comp = asChild ? Slot : "span";
 
-  return <Comp data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />;
+  return (
+    <Comp
+      data-slot="badge"
+      className={cn(badgeVariants({ variant }), className)}
+      {...props}
+    />
+  );
 }
 
 export { Badge };

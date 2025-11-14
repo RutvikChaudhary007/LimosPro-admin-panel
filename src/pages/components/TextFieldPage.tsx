@@ -1,6 +1,10 @@
 import { CheckIcon, CreditCardIcon, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
 
 function TextFieldPage() {

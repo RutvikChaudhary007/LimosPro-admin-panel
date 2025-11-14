@@ -8,7 +8,14 @@ import isFieldDisabled from "@/utils/disableFormField";
 import type { TSetting } from "../table/column";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 
 const formSchema = z.object({
@@ -39,7 +46,10 @@ const formSchema = z.object({
     .transform((v) => Number(v))
     .refine((n) => n >= 0, { message: "Must be non‑negative" })
     .nullable(),
-  skype: z.string().min(1, { message: "skype number or Id is required" }).optional(),
+  skype: z
+    .string()
+    .min(1, { message: "skype number or Id is required" })
+    .optional(),
   // .regex(/^\d+$/, { message: "Must be number" })
   // .transform((v) => Number(v))
   // .refine((n) => n >= 0, { message: "Must be non‑negative" }),
@@ -53,7 +63,11 @@ const formSchema = z.object({
 
 export type TSettingForm = z.infer<typeof formSchema>;
 
-const SettingForm = ({ initialData, onSubmit, disabledFields }: ISettingFormProps) => {
+const SettingForm = ({
+  initialData,
+  onSubmit,
+  disabledFields,
+}: ISettingFormProps) => {
   const transformInitialData = (data?: TSetting): TSettingForm | undefined => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
@@ -80,7 +94,9 @@ const SettingForm = ({ initialData, onSubmit, disabledFields }: ISettingFormProp
     },
   });
 
-  const handleFormSubmit: SubmitHandler<TSettingForm> = async (data: TSettingForm) => {
+  const handleFormSubmit: SubmitHandler<TSettingForm> = async (
+    data: TSettingForm,
+  ) => {
     try {
       await onSubmit(data);
       form.reset();
@@ -146,7 +162,11 @@ const SettingForm = ({ initialData, onSubmit, disabledFields }: ISettingFormProp
                 <FormItem className="col-span-2 col-start-1">
                   <FormLabel>Phone</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="3468574294" disabled={isFieldDisabled(disabledFields, "phone")} {...field} />
+                    <Input
+                      placeholder="3468574294"
+                      disabled={isFieldDisabled(disabledFields, "phone")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.phone ? "visible text-red-600" : "invisible"}`}
@@ -163,7 +183,11 @@ const SettingForm = ({ initialData, onSubmit, disabledFields }: ISettingFormProp
                 <FormItem className="col-span-2 ">
                   <FormLabel>Whatsapp</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="3468574294" disabled={isFieldDisabled(disabledFields, "whatsapp")} {...field} />
+                    <Input
+                      placeholder="3468574294"
+                      disabled={isFieldDisabled(disabledFields, "whatsapp")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.whatsapp ? "visible text-red-600" : "invisible"}`}
@@ -181,7 +205,11 @@ const SettingForm = ({ initialData, onSubmit, disabledFields }: ISettingFormProp
                 <FormItem className="col-span-2 ">
                   <FormLabel>Skype</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="3468574294" disabled={isFieldDisabled(disabledFields, "skype")} {...field} />
+                    <Input
+                      placeholder="3468574294"
+                      disabled={isFieldDisabled(disabledFields, "skype")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.whatsapp ? "visible text-red-600" : "invisible"}`}
@@ -223,13 +251,18 @@ const SettingForm = ({ initialData, onSubmit, disabledFields }: ISettingFormProp
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
                     <Input
                       placeholder="Payment Secret Key"
-                      disabled={isFieldDisabled(disabledFields, "paymentSecretKey")}
+                      disabled={isFieldDisabled(
+                        disabledFields,
+                        "paymentSecretKey",
+                      )}
                       {...field}
                     />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${
-                      form.formState.errors.paymentSecretKey ? "visible text-red-600" : "invisible"
+                      form.formState.errors.paymentSecretKey
+                        ? "visible text-red-600"
+                        : "invisible"
                     }`}
                   >
                     {form.formState.errors.paymentSecretKey?.message}

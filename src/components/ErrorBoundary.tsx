@@ -2,7 +2,13 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom"; // Assuming react-router-dom for navigation
 import { Button } from "@/components/ui/button"; // Import Button component
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"; // Import Card components
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"; // Import Card components
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -39,7 +45,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                 Oops! Something went wrong.
               </CardTitle>
               <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                We're sorry for the inconvenience. Please try refreshing the page or navigating back.
+                We're sorry for the inconvenience. Please try refreshing the
+                page or navigating back.
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center">

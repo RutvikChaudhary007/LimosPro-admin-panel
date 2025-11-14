@@ -146,7 +146,8 @@ export const API_ENDPOINTS = {
   MEDIA: {
     GET_ALL: `${BOOKING_SERVICE_URL}/media/media`,
     GET_BY_ID: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,
-    GET_BY_CATEGORY: (category: string) => `${BOOKING_SERVICE_URL}/media/category/${category}`,
+    GET_BY_CATEGORY: (category: string) =>
+      `${BOOKING_SERVICE_URL}/media/category/${category}`,
     UPLOAD: `${BOOKING_SERVICE_URL}/media/upload`,
     UPLOAD_MULTIPLE: `${BOOKING_SERVICE_URL}/media/upload/multiple`,
     UPDATE: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,

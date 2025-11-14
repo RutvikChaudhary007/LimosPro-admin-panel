@@ -5,7 +5,9 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
 
 type TPara = { limit: number; page?: number };
 export const getPageContentBlockTab = async () => {
-  const response = await axiosInstance.get(`${API_ENDPOINTS.CONTENT_BLOCK.GET_TABS}`);
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.CONTENT_BLOCK.GET_TABS}`,
+  );
 
   return response.data.data;
 };
@@ -28,7 +30,10 @@ export const getAllContentBlock = async (data?: TPara) => {
   if (data?.page) {
     params.page = data.page;
   }
-  const response = await axiosInstance.get(`${API_ENDPOINTS.CONTENT_BLOCK.GET_ALL}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.CONTENT_BLOCK.GET_ALL}`,
+    { params },
+  );
 
   return response.data.data;
 };
@@ -46,7 +51,9 @@ const useFetchAllContentBlock = (Data: TPara) =>
 export default useFetchAllContentBlock;
 
 export const getSingleContentBlock = async (id: string) => {
-  const response = await axiosInstance.get(`${API_ENDPOINTS.CONTENT_BLOCK.GET_BY_ID.replace(":id", id)}`);
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.CONTENT_BLOCK.GET_BY_ID.replace(":id", id)}`,
+  );
 
   return response?.data?.data;
 };
@@ -63,27 +70,44 @@ export const useFetchContentBlockById = (id: string) =>
 
 export const createContentBlock = async (data: unknown) => {
   try {
-    const response = await axiosInstance.post(`${API_ENDPOINTS.CONTENT_BLOCK.CREATE}`, data);
+    const response = await axiosInstance.post(
+      `${API_ENDPOINTS.CONTENT_BLOCK.CREATE}`,
+      data,
+    );
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError) console.error(error.message || "Opps! An unkown error occured");
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
   }
 };
 
-export const editContentBlock = async ({ id, data }: { id: string; data: unknown }) => {
+export const editContentBlock = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: unknown;
+}) => {
   try {
-    const response = await axiosInstance.put(`${API_ENDPOINTS.CONTENT_BLOCK.UPDATE.replace(":id", id)}`, data);
+    const response = await axiosInstance.put(
+      `${API_ENDPOINTS.CONTENT_BLOCK.UPDATE.replace(":id", id)}`,
+      data,
+    );
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError) console.error(error.message || "Opps! An unkown error occured");
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
   }
 };
 
 export const deleteContentBlock = async (id: string) => {
   try {
-    const response = await axiosInstance.delete(`${API_ENDPOINTS.CONTENT_BLOCK.DELETE.replace(":id", id)}`);
+    const response = await axiosInstance.delete(
+      `${API_ENDPOINTS.CONTENT_BLOCK.DELETE.replace(":id", id)}`,
+    );
     return response.data;
   } catch (error) {
-    if (error instanceof AxiosError) console.error(error.message || "Opps! An unkown error occured");
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
   }
 };

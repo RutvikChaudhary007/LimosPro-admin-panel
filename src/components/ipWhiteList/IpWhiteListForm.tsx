@@ -6,7 +6,14 @@ import isFieldDisabled from "@/utils/disableFormField";
 import type { TIpWhiteList } from "../table/column";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { Input } from "../ui/input";
 
 const formSchema = z.object({
@@ -25,8 +32,15 @@ const formSchema = z.object({
 });
 
 export type TIpWhiteListForm = z.infer<typeof formSchema>;
-const IpWhiteListForm = ({ initialData, onSubmit, disabledFields, type }: IIpWhiteListFormProps) => {
-  const transformInitialData = (data?: TIpWhiteList): TIpWhiteListForm | undefined => {
+const IpWhiteListForm = ({
+  initialData,
+  onSubmit,
+  disabledFields,
+  type,
+}: IIpWhiteListFormProps) => {
+  const transformInitialData = (
+    data?: TIpWhiteList,
+  ): TIpWhiteListForm | undefined => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
     return {
@@ -42,7 +56,9 @@ const IpWhiteListForm = ({ initialData, onSubmit, disabledFields, type }: IIpWhi
     },
   });
 
-  const handleFormSubmit: SubmitHandler<TIpWhiteListForm> = async (data: TIpWhiteListForm) => {
+  const handleFormSubmit: SubmitHandler<TIpWhiteListForm> = async (
+    data: TIpWhiteListForm,
+  ) => {
     try {
       await onSubmit(data);
       form.reset();
@@ -66,7 +82,11 @@ const IpWhiteListForm = ({ initialData, onSubmit, disabledFields, type }: IIpWhi
                 <FormItem className="col-span-3 col-start-1">
                   <FormLabel>Name</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Aadmirals" disabled={isFieldDisabled(disabledFields, "name")} {...field} />
+                    <Input
+                      placeholder="Aadmirals"
+                      disabled={isFieldDisabled(disabledFields, "name")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.name ? "visible text-red-600" : "invisible"}`}
@@ -83,7 +103,11 @@ const IpWhiteListForm = ({ initialData, onSubmit, disabledFields, type }: IIpWhi
                 <FormItem className="col-span-3 col-start-1">
                   <FormLabel>IP</FormLabel>
                   <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="IP Address" disabled={isFieldDisabled(disabledFields, "ip")} {...field} />
+                    <Input
+                      placeholder="IP Address"
+                      disabled={isFieldDisabled(disabledFields, "ip")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage
                     className={`mt-1 h-5 ${form.formState.errors.ip ? "visible text-red-600" : "invisible"}`}

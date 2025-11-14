@@ -79,7 +79,9 @@ export default function ImagesUpload({
       validated.push(x);
     }
 
-    setFiles((prev) => (multiple ? [...prev, ...validated] : validated.slice(0, 1)));
+    setFiles((prev) =>
+      multiple ? [...prev, ...validated] : validated.slice(0, 1),
+    );
   }
 
   const removeFile = (name: string) => {
@@ -126,8 +128,15 @@ export default function ImagesUpload({
         </button>
         {/* Thumbnails */}
         {files.map((f) => (
-          <div key={f.name} className="relative w-[200px] h-[200px] rounded overflow-hidden">
-            <img src={f.preview} alt={f.name} className="w-full h-full object-cover rounded" />
+          <div
+            key={f.name}
+            className="relative w-[200px] h-[200px] rounded overflow-hidden"
+          >
+            <img
+              src={f.preview}
+              alt={f.name}
+              className="w-full h-full object-cover rounded"
+            />
             <Button
               className="absolute top-2.5 right-2.5 bg-base-white"
               variant="outlineNavBtnBlack"
@@ -141,7 +150,11 @@ export default function ImagesUpload({
           </div>
         ))}
       </div>
-      {info && <p className="text-xs text-base-gray mt-2 font-bold">Max size: {maxSize} MB</p>}
+      {info && (
+        <p className="text-xs text-base-gray mt-2 font-bold">
+          Max size: {maxSize} MB
+        </p>
+      )}
     </div>
   );
 }

@@ -9,8 +9,12 @@ export const getDashboard = async (DateRange?: DateRange, page?: number) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
-      startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
-      endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
+      startDate: DateRange.startDate
+        ? new Date(DateRange.startDate).toISOString()
+        : undefined,
+      endDate: DateRange.endDate
+        ? new Date(DateRange.endDate).toISOString()
+        : undefined,
     };
   }
 
@@ -19,7 +23,10 @@ export const getDashboard = async (DateRange?: DateRange, page?: number) => {
   }
 
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_DASHBOARD_DETAILS}`, { params });
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_DASHBOARD_DETAILS}`,
+      { params },
+    );
     return response?.data?.data;
   } catch (error) {
     if (error instanceof AxiosError && error?.status === 400) {

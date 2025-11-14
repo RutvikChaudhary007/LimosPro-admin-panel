@@ -65,8 +65,12 @@ const ViewBlogPostPage: React.FC = () => {
     return (
       <div className="p-6 space-y-6">
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Blog post not found</h3>
-          <p className="text-gray-600 mb-4">The blog post you're looking for doesn't exist.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Blog post not found
+          </h3>
+          <p className="text-gray-600 mb-4">
+            The blog post you're looking for doesn't exist.
+          </p>
           <Button onClick={handleBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Blog Posts
@@ -119,7 +123,10 @@ const ViewBlogPostPage: React.FC = () => {
               <CardTitle>Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: blogPost.content }} />
+              <div
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{ __html: blogPost.content }}
+              />
             </CardContent>
           </Card>
 
@@ -154,7 +161,13 @@ const ViewBlogPostPage: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-2">
-                <Badge variant={blogPost.status === "published" ? "default" : "secondary"}>{blogPost.status}</Badge>
+                <Badge
+                  variant={
+                    blogPost.status === "published" ? "default" : "secondary"
+                  }
+                >
+                  {blogPost.status}
+                </Badge>
               </div>
 
               <div className="space-y-2">
@@ -166,7 +179,9 @@ const ViewBlogPostPage: React.FC = () => {
                 <div className="flex items-center space-x-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
                   <span>
-                    {blogPost.publishedAt ? new Date(blogPost.publishedAt).toLocaleDateString() : "Not published"}
+                    {blogPost.publishedAt
+                      ? new Date(blogPost.publishedAt).toLocaleDateString()
+                      : "Not published"}
                   </span>
                 </div>
 
@@ -205,36 +220,54 @@ const ViewBlogPostPage: React.FC = () => {
               <CardContent className="space-y-3">
                 {blogPost.seo.metaTitle && (
                   <div>
-                    <label htmlFor="metaTitle" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="metaTitle"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Meta Title
                     </label>
-                    <p className="text-sm text-gray-600">{blogPost.seo.metaTitle}</p>
+                    <p className="text-sm text-gray-600">
+                      {blogPost.seo.metaTitle}
+                    </p>
                   </div>
                 )}
 
                 {blogPost.seo.metaDescription && (
                   <div>
-                    <label htmlFor="metaDesc" className="text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor="metaDesc"
+                      className="text-sm font-medium text-gray-700"
+                    >
                       Meta Description
                     </label>
-                    <p className="text-sm text-gray-600">{blogPost.seo.metaDescription}</p>
+                    <p className="text-sm text-gray-600">
+                      {blogPost.seo.metaDescription}
+                    </p>
                   </div>
                 )}
 
-                {blogPost.seo.metaKeywords && blogPost.seo.metaKeywords.length > 0 && (
-                  <div>
-                    <label htmlFor="meta" className="text-sm font-medium text-gray-700">
-                      Meta Keywords
-                    </label>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {blogPost.seo.metaKeywords.map((keyword, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {keyword}
-                        </Badge>
-                      ))}
+                {blogPost.seo.metaKeywords &&
+                  blogPost.seo.metaKeywords.length > 0 && (
+                    <div>
+                      <label
+                        htmlFor="meta"
+                        className="text-sm font-medium text-gray-700"
+                      >
+                        Meta Keywords
+                      </label>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {blogPost.seo.metaKeywords.map((keyword, index) => (
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs"
+                          >
+                            {keyword}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </CardContent>
             </Card>
           )}

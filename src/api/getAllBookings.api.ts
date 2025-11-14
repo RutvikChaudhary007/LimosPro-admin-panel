@@ -11,7 +11,9 @@ export const getAllBookings = async (DateRange?: DateRange, page?: number) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.from || DateRange?.to) {
     params.DateRange = {
-      startDate: DateRange.from ? new Date(DateRange.from).toISOString() : undefined,
+      startDate: DateRange.from
+        ? new Date(DateRange.from).toISOString()
+        : undefined,
       endDate: DateRange.to
         ? new Date(
             Date.UTC(
@@ -32,7 +34,10 @@ export const getAllBookings = async (DateRange?: DateRange, page?: number) => {
   if (page) {
     params.page = page;
   }
-  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_BOOKINGS}`, { params });
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.GET_ALL_BOOKINGS}`,
+    { params },
+  );
   //   console.log("response:", response?.data)
   return response?.data?.data;
 };

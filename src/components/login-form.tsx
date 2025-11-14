@@ -32,12 +32,18 @@ const loginSchema = z.object({
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
-interface LoginFormProps extends Omit<React.ComponentProps<"form">, "onSubmit"> {
+interface LoginFormProps
+  extends Omit<React.ComponentProps<"form">, "onSubmit"> {
   onSubmit: (data: LoginFormValues) => void; // this is our custom handler
   loading: boolean;
 }
 
-export function LoginForm({ className, onSubmit, loading, ...props }: LoginFormProps) {
+export function LoginForm({
+  className,
+  onSubmit,
+  loading,
+  ...props
+}: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -48,7 +54,11 @@ export function LoginForm({ className, onSubmit, loading, ...props }: LoginFormP
     },
   });
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <FieldGroup>
         {/* <Alert variant="success">
           <BadgeCheck />
@@ -67,7 +77,13 @@ export function LoginForm({ className, onSubmit, loading, ...props }: LoginFormP
             <span className="text-base-danger ml-1">*</span>
           </FieldLabel>
           <InputGroup>
-            <InputGroupInput id="email" type="email" placeholder="Email Address" required {...form.register("email")} />
+            <InputGroupInput
+              id="email"
+              type="email"
+              placeholder="Email Address"
+              required
+              {...form.register("email")}
+            />
             <InputGroupAddon>
               <IconMail />
             </InputGroupAddon>

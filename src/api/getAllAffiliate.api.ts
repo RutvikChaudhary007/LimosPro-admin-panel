@@ -9,8 +9,12 @@ export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
-      startDate: DateRange.startDate ? new Date(DateRange.startDate).toISOString() : undefined,
-      endDate: DateRange.endDate ? new Date(DateRange.endDate).toISOString() : undefined,
+      startDate: DateRange.startDate
+        ? new Date(DateRange.startDate).toISOString()
+        : undefined,
+      endDate: DateRange.endDate
+        ? new Date(DateRange.endDate).toISOString()
+        : undefined,
     };
   }
 
@@ -19,7 +23,10 @@ export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
   }
 
   try {
-    const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_AFFILIATE}`, { params });
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_ALL_AFFILIATE}`,
+      { params },
+    );
     console.log("response:", response.data);
     return response?.data?.data;
   } catch (error) {

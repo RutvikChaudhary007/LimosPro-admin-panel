@@ -13,20 +13,38 @@ import {
   MetricCard,
 } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 function CardPage() {
   return (
     <div className="p-2 space-y-4">
       {/* Matric Card Component [Dashboard] */}
       <div className="hidden w-full p-2">
-        <MetricCard title="Total Revenue" value="$45,231.89" percentage="5.2%" />
+        <MetricCard
+          title="Total Revenue"
+          value="$45,231.89"
+          percentage="5.2%"
+        />
 
         <MetricCard title="New Customers" value="1,204" percentage="3.8%" />
 
-        <MetricCard title="Refunds" value="$231.00" percentage="-1.1%" icon={<TrendingDown />} />
+        <MetricCard
+          title="Refunds"
+          value="$231.00"
+          percentage="-1.1%"
+          icon={<TrendingDown />}
+        />
 
-        <MetricCard title="Refunds" value="$231.00" percentage="-1.1%" icon={<TrendingDown />} />
+        <MetricCard
+          title="Refunds"
+          value="$231.00"
+          percentage="-1.1%"
+          icon={<TrendingDown />}
+        />
       </div>
       <div className="hidden space-y-4">
         {/* Card Component */}
@@ -37,7 +55,8 @@ function CardPage() {
             </CardHeader>
             <CardContent>
               <p>
-                Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+                Here are the biggest enterprise technology acquisitions of 2021
+                so far, in reverse chronological order.
               </p>
             </CardContent>
           </CardBody>
@@ -50,7 +69,8 @@ function CardPage() {
             </CardHeader>
             <CardContent>
               <p>
-                Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+                Here are the biggest enterprise technology acquisitions of 2021
+                so far, in reverse chronological order.
               </p>
             </CardContent>
             <CardFooter>
@@ -64,14 +84,19 @@ function CardPage() {
         </Card>
         {/* Card With Image */}
         <Card>
-          <CardImage src="https://placehold.co/549x200" className="w-full h-[200px]" alt="Tech" />
+          <CardImage
+            src="https://placehold.co/549x200"
+            className="w-full h-[200px]"
+            alt="Tech"
+          />
           <CardBody>
             <CardHeader>
               <CardTitle>Noteworthy technology acquisitions 2021</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+                Here are the biggest enterprise technology acquisitions of 2021
+                so far, in reverse chronological order.
               </p>
             </CardContent>
             <CardFooter>
@@ -85,14 +110,19 @@ function CardPage() {
         </Card>
         {/* Card With Image horizontal Card */}
         <Card variant="horizontal">
-          <CardImage src="https://placehold.co/200x250" className="w-[200px]" alt="Tech" />
+          <CardImage
+            src="https://placehold.co/200x250"
+            className="w-[200px]"
+            alt="Tech"
+          />
           <CardBody>
             <CardHeader>
               <CardTitle>Noteworthy technology acquisitions 2021</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+                Here are the biggest enterprise technology acquisitions of 2021
+                so far, in reverse chronological order.
               </p>
             </CardContent>
             <CardFooter>
@@ -108,7 +138,11 @@ function CardPage() {
       <div className="">
         {/* Profile Card */}
         <Card className="p-10">
-          <CardImage src="https://placehold.co/120" alt="Tech" className="w-30 h-30 mx-auto mb-2 rounded-full" />
+          <CardImage
+            src="https://placehold.co/120"
+            alt="Tech"
+            className="w-30 h-30 mx-auto mb-2 rounded-full"
+          />
           <CardBody className="p-0 items-center text-center gap-6">
             <CardContent className="space-y-1">
               <CardTitle>Bonnie Green</CardTitle>
@@ -118,7 +152,12 @@ function CardPage() {
               <Button size="sm" spacing="sm" className="p-2 h-9">
                 <span>Add Friend</span>
               </Button>
-              <Button variant="outlinePrimary" size="sm" spacing="sm" className="p-2 h-9">
+              <Button
+                variant="outlinePrimary"
+                size="sm"
+                spacing="sm"
+                className="p-2 h-9"
+              >
                 <span>Message</span>
               </Button>
             </CardFooter>
@@ -137,19 +176,34 @@ function CardPage() {
                     Email Address
                   </FieldLabel>
                   <InputGroup>
-                    <InputGroupInput id="email" type="email" placeholder="Email Address" required />
+                    <InputGroupInput
+                      id="email"
+                      type="email"
+                      placeholder="Email Address"
+                      required
+                    />
                     <InputGroupAddon>
                       <IconMail />
                     </InputGroupAddon>
                   </InputGroup>
-                  <FieldDescription className="mt-1 ">Provide your full name here.</FieldDescription>
+                  <FieldDescription className="mt-1 ">
+                    Provide your full name here.
+                  </FieldDescription>
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="password" className="text-base-black gap-0">
+                  <FieldLabel
+                    htmlFor="password"
+                    className="text-base-black gap-0"
+                  >
                     Password
                   </FieldLabel>
                   <InputGroup>
-                    <InputGroupInput id="password" type="password" placeholder="Password" required />
+                    <InputGroupInput
+                      id="password"
+                      type="password"
+                      placeholder="Password"
+                      required
+                    />
                     <InputGroupAddon>
                       <IconLock />
                     </InputGroupAddon>
@@ -157,7 +211,9 @@ function CardPage() {
                       <IconEyeOff />
                     </InputGroupAddon>
                   </InputGroup>
-                  <FieldDescription className="mt-1 ">Please insert minimum 8 characters.</FieldDescription>
+                  <FieldDescription className="mt-1 ">
+                    Please insert minimum 8 characters.
+                  </FieldDescription>
                 </Field>
               </div>
               <CardFooter>

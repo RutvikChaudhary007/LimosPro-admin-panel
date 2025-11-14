@@ -47,7 +47,7 @@ import { generatePageTitle } from "@/utils/seo";
 const StaffMemberPage = () => {
   const navigate = useNavigate();
   // const [perPage] = useState(10);
-  const [tableRef, setTableRef] = useState<any>(null);
+  const [tableRef, setTableRef] = useState < Table<TStaffMember>(null);
   const [newPage, setNewPage] = useState(1);
   // const [data, setData] = useState<TStaffMember[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllStaffMember({
