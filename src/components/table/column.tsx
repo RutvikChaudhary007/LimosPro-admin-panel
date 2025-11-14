@@ -298,7 +298,7 @@ export const getStatusVariant = (status: string) => {
     active: "black",
     inactive: "white",
     suspended: "outline",
-    completed: "destructive",
+    completed: "default",
     ongoing: "outline",
     canceled: "white",
   } as const;
@@ -694,12 +694,15 @@ export function getUsers(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Badge
-          variant={"default"}
-          className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)} w-[70px] h-5`}
-        >
-          {row.original.status}
+        <Badge variant={getStatusVariant(row?.original?.status ?? "")}>
+          <span>{row.original.status}</span>
         </Badge>
+        // <Badge
+        //   variant={"default"}
+        //   className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)} w-[70px] h-5`}
+        // >
+        //   {row.original.status}
+        // </Badge>
       ),
       enableSorting: false,
     },
@@ -715,6 +718,7 @@ export function getUsers(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="View User"
           >
             <Eye />
           </Button>
@@ -723,12 +727,18 @@ export function getUsers(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="Edit User"
           >
             <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete User"
+              >
                 <Trash2 />
               </Button>
             </DialogTrigger>
@@ -866,12 +876,15 @@ export function getBooking(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Badge
-          variant={"default"}
-          className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)} w-[70px] h-5`}
-        >
-          {row.original.status}
+        <Badge variant={getStatusVariant(row?.original?.status ?? "")}>
+          <span>{row.original.status}</span>
         </Badge>
+        // <Badge
+        //   variant={"default"}
+        //   className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)} w-[70px] h-5`}
+        // >
+        //   {row.original.status}
+        // </Badge>
       ),
       enableSorting: false,
     },
@@ -887,6 +900,7 @@ export function getBooking(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="Email User"
           >
             <Mail />
           </Button>
@@ -901,6 +915,7 @@ export function getBooking(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="Call User"
           >
             <Phone />
           </Button>
@@ -909,6 +924,7 @@ export function getBooking(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="View"
           >
             <Eye />
           </Button>
@@ -1134,12 +1150,15 @@ export function getTrips(
         <DataTableColumnHeader column={column} title="Trip Status" />
       ),
       cell: ({ row }) => (
-        <Badge
-          variant={"default"}
-          className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.tripStatus)}] ${getStatusColor(row.original.tripStatus)} w-[70px] h-5`}
-        >
-          {row.original.tripStatus}
+        <Badge variant={getStatusVariant(row?.original?.tripStatus ?? "")}>
+          <span>{row.original.tripStatus}</span>
         </Badge>
+        // <Badge
+        //   variant={"default"}
+        //   className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.tripStatus)}] ${getStatusColor(row.original.tripStatus)} w-[70px] h-5`}
+        // >
+        //   {row.original.tripStatus}
+        // </Badge>
       ),
       enableSorting: false,
     },

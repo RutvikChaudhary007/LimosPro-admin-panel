@@ -5,16 +5,19 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 // CVA definitions
-const accordionRoot = cva("shadow-base-light rounded bg-base-white overflow-hidden", {
-  variants: {
-    variant: {
-      default: "",
-      primary: "",
-      secondary: "",
+const accordionRoot = cva(
+  "shadow-base-md rounded bg-base-white overflow-hidden",
+  {
+    variants: {
+      variant: {
+        default: "",
+        primary: "",
+        secondary: "",
+      },
     },
+    defaultVariants: { variant: "default" },
   },
-  defaultVariants: { variant: "default" },
-});
+);
 
 const accordionItem = cva("border-b last:border-b-0", {
   variants: {
@@ -32,7 +35,8 @@ const accordionTrigger = cva(
   {
     variants: {
       variant: {
-        default: "text-base-black hover:bg-base-light-gray data-[state=open]:bg-base-light-gray",
+        default:
+          "text-base-black hover:bg-base-light-gray data-[state=open]:bg-base-light-gray",
         primary:
           "text-base-black hover:bg-base-primary/10 data-[state=open]:bg-base-primary data-[state=open]:text-base-white",
         secondary:
@@ -58,7 +62,8 @@ const accordionContent = cva(
 );
 
 // Context to pass variant to children
-const AccordionVariantContext = React.createContext<VariantProps<typeof accordionRoot>["variant"]>("default");
+const AccordionVariantContext =
+  React.createContext<VariantProps<typeof accordionRoot>["variant"]>("default");
 
 // Root
 function Accordion({
@@ -66,10 +71,15 @@ function Accordion({
   variant,
   children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Root> & VariantProps<typeof accordionRoot>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Root> &
+  VariantProps<typeof accordionRoot>) {
   return (
     <AccordionVariantContext.Provider value={variant}>
-      <AccordionPrimitive.Root data-slot="accordion" className={cn(accordionRoot({ variant }), className)} {...props}>
+      <AccordionPrimitive.Root
+        data-slot="accordion"
+        className={cn(accordionRoot({ variant }), className)}
+        {...props}
+      >
         {children}
       </AccordionPrimitive.Root>
     </AccordionVariantContext.Provider>
@@ -77,7 +87,11 @@ function Accordion({
 }
 
 // Item
-function AccordionItem({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+function AccordionItem({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   const variant = React.useContext(AccordionVariantContext);
   return (
     <AccordionPrimitive.Item
@@ -91,7 +105,11 @@ function AccordionItem({ className, children, ...props }: React.ComponentProps<t
 }
 
 // Trigger
-function AccordionTrigger({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   const variant = React.useContext(AccordionVariantContext);
   return (
     <AccordionPrimitive.Header className="flex">
@@ -108,7 +126,11 @@ function AccordionTrigger({ className, children, ...props }: React.ComponentProp
 }
 
 // Content
-function AccordionContent({ className, children, ...props }: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+function AccordionContent({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
   const variant = React.useContext(AccordionVariantContext);
   return (
     <AccordionPrimitive.Content

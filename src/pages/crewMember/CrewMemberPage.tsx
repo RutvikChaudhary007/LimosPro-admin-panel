@@ -97,12 +97,13 @@ const CrewMemberPage = () => {
     page: newPage,
     limit: 10,
   });
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TCrewMember>(
-    data?.crewMembers || [],
-    newPage,
-    selected.value,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TCrewMember>(
+      data?.crewMembers || [],
+      newPage,
+      selected.value,
+      data?.pagination,
+    );
 
   const handleEdit = useCallback(
     (id: string) => {
@@ -122,7 +123,8 @@ const CrewMemberPage = () => {
           if (res) refetch();
           return `Crew member deleted successfully`;
         },
-        error: (e) => (e instanceof Error ? e.message : "Failed to delete crew member"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to delete crew member",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -155,7 +157,10 @@ const CrewMemberPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -171,12 +176,19 @@ const CrewMemberPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -213,20 +225,27 @@ const CrewMemberPage = () => {
     <>
       <PageTitle title={generatePageTitle("Crew Member")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Crew Member</h2>
               <h4>
                 <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Crew Member</span>
+                <span className="text-[#959595] w-[116px] h-4">
+                  / Crew Member
+                </span>
               </h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_CREW_MEMBERS}>
               {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant={"outline"}
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add a Crew Member</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add a Crew Member
+                </span>
               </Button>
             </Link>
           </div>
@@ -306,7 +325,9 @@ const CrewMemberPage = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -316,7 +337,11 @@ const CrewMemberPage = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

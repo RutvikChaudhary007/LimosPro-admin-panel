@@ -86,21 +86,34 @@ function TableAndPieChart({
 
   const topAndBottom = useMemo(() => {
     if (!fleetDistribution?.fleetDis?.length) return [] as FleetStat[];
-    const most = fleetDistribution?.fleetDis?.reduce((a, b) => (a.count >= b.count ? a : b));
-    const least = fleetDistribution?.fleetDis?.reduce((a, b) => (a.count <= b.count ? a : b));
+    const most = fleetDistribution?.fleetDis?.reduce((a, b) =>
+      a.count >= b.count ? a : b,
+    );
+    const least = fleetDistribution?.fleetDis?.reduce((a, b) =>
+      a.count <= b.count ? a : b,
+    );
     if (most === least) return [most];
     return [most, least];
   }, [fleetDistribution?.fleetDis]);
 
   const Chartdata = useMemo(
     () => ({
-      labels: topAndBottom.length === 1 ? ["Most Requested Fleet"] : ["Most Requested Fleet", "Least Requested Fleet"],
+      labels:
+        topAndBottom.length === 1
+          ? ["Most Requested Fleet"]
+          : ["Most Requested Fleet", "Least Requested Fleet"],
       datasets: [
         {
           label: "Requested Fleet",
           data: topAndBottom.map((s) => s.count),
-          backgroundColor: ["#3A3A3A", "#939393"].slice(0, Math.max(1, topAndBottom.length)),
-          borderColor: ["#3A3A3A", "#939393"].slice(0, Math.max(1, topAndBottom.length)),
+          backgroundColor: ["#3A3A3A", "#939393"].slice(
+            0,
+            Math.max(1, topAndBottom.length),
+          ),
+          borderColor: ["#3A3A3A", "#939393"].slice(
+            0,
+            Math.max(1, topAndBottom.length),
+          ),
           borderWidth: 1,
         },
       ],
@@ -116,13 +129,19 @@ function TableAndPieChart({
           <div>Chauffeurs Availability</div>
           <div className="flex space-x-1">
             <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
-              <Button variant="secondary" className="flex justify-between rounded cursor-pointer">
+              <Button
+                variant="secondary"
+                className="flex justify-between rounded cursor-pointer"
+              >
                 <span className="text-[#959595]">Add New</span>
                 <Plus className="text-[#959595]" />
               </Button>
             </Link>
             <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
-              <Button variant="secondary" className="flex justify-between rounded cursor-pointer">
+              <Button
+                variant="secondary"
+                className="flex justify-between rounded cursor-pointer"
+              >
                 <span className="text-[#959595]">View All</span>
                 <ArrowRight className="text-[#959595]" />
               </Button>
@@ -132,7 +151,7 @@ function TableAndPieChart({
         <DataTable columns={columns} data={chauffeurAvailability} />
       </div>
       {/* pie */}
-      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-base-light overflow-y-auto custom-scrollbar-style">
+      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-base-md overflow-y-auto custom-scrollbar-style">
         <div className="min-w-full">
           <div className="p-4">Fleet Availability & Demand Ratio</div>
           <hr className="min-w-full border-[#D9D9D9] p-0 pb-0" />
@@ -171,9 +190,12 @@ function TableAndPieChart({
               fleetDistribution?.fleets?.map((content, i) => (
                 <React.Fragment key={`${i}-${content.fleet}`}>
                   <div className="w-full flex justify-between items-center">
-                    <p className="text-[#3A3A3A] font-bold text-sm">{content.fleet}</p>
+                    <p className="text-[#3A3A3A] font-bold text-sm">
+                      {content.fleet}
+                    </p>
                     <p className="text-[#3A3A3A] text-sm">
-                      <span>$ {content.price}</span> <span>{content.duration}</span>
+                      <span>$ {content.price}</span>{" "}
+                      <span>{content.duration}</span>
                     </p>
                   </div>
                   <hr className="w-full text-sm border mt-2.5 mb-2.5" />
@@ -185,12 +207,18 @@ function TableAndPieChart({
           </div>
           <div className="flex items-center justify-end gap-1 min-w-full">
             <Link to={constant.ROUTING_URLS.CREATE_FLEET}>
-              <Button className="bg-[#FFFFFF]  text-[#959595] rounded" variant="secondary">
+              <Button
+                className="bg-[#FFFFFF]  text-[#959595] rounded"
+                variant="secondary"
+              >
                 Add New <Plus />
               </Button>
             </Link>
             <Link to={constant.ROUTING_URLS.FLEETS}>
-              <Button className="bg-[#FFFFFF]  text-[#959595] rounded" variant="secondary">
+              <Button
+                className="bg-[#FFFFFF]  text-[#959595] rounded"
+                variant="secondary"
+              >
                 View All <ArrowRight />
               </Button>
             </Link>

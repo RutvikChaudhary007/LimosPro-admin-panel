@@ -22,14 +22,17 @@ const EditNewsPage = () => {
   const editNews = queries.useEditNewsMutation();
   const handleSubmit = async (data: TNewsForm): Promise<void> => {
     try {
-      toastPromise(editNews.mutateAsync({ id: id!, data: { body: data.news } }), {
-        loading: "Updating news...",
-        success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.NEWS);
-          return "Yeah! News updated successfully";
+      toastPromise(
+        editNews.mutateAsync({ id: id!, data: { body: data.news } }),
+        {
+          loading: "Updating news...",
+          success: (res) => {
+            if (res) navigate(constant.ROUTING_URLS.NEWS);
+            return "Yeah! News updated successfully";
+          },
+          error: "Failed to update news",
         },
-        error: "Failed to update news",
-      });
+      );
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -49,19 +52,25 @@ const EditNewsPage = () => {
           <ArrowLeft /> Back
         </Button>
       </Link>
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md mt-4 mb-5">
         <div className="w-full h-full flex items-center justify-between">
           <div>
             <h2 className="font-medium text-xl text-black">News</h2>
             <h4>
               {" "}
               <span className="text-[#959595] w-[116px] h-4 text-xs">News</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit News</span>
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit News
+              </span>
             </h4>
           </div>
         </div>
       </Header>
-      {isFetching ? <Spinner /> : <NewsForm initialData={data} onSubmit={handleSubmit} type="Edit News" />}
+      {isFetching ? (
+        <Spinner />
+      ) : (
+        <NewsForm initialData={data} onSubmit={handleSubmit} type="Edit News" />
+      )}
     </div>
   );
 };

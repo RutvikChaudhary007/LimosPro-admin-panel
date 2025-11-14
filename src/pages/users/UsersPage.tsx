@@ -1,27 +1,20 @@
-/* eslint-disable no-unused-vars, @typescript-eslint/no-explicit-any */
-// import { deleteUser } from '@/api/deleteUser';
-
 import type { Table } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UsefetchAllUsers from "@/api/getAllUser.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import BreadCramb from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { getStatusColor, getUsers, type TUsers } from "@/components/table/column";
+import { getUsers, type TUsers } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -31,6 +24,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -41,56 +35,85 @@ const showStatus = [
   { label: "Active", value: "active" },
   { label: "Pending", value: "pending" },
   { label: "Inactive", value: "inactive" },
-  { label: "Banned", value: "banned" },
+  { label: "Suspended", value: "suspended" },
 ];
 
 const showTime = [
-  { label: "All Time", value: "" },
+  { label: "All Time", value: "all-time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
 ];
 
 function UsersPage() {
+  const [{ value: statusDefaultValue }] = showStatus;
+  const [{ value: timeDefaultValue }] = showTime;
   const navigate = useNavigate();
   const perPage = 10;
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-  const [selectedTime, setSelectedTime] = useState(showTime[0]);
+  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
+  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
-    const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+
+    // End date (same for all except all-time)
+    const end = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23,
+        59,
+        59,
+        999,
+      ),
+    );
+
     let start: Date | undefined;
 
-    switch (selectedTime.value) {
+    switch (selectedTime) {
       case "weekly": {
-        // last 7 days inclusive (UTC)
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 6, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth(),
+            now.getUTCDate() - 6, // last 7 days
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
         break;
       }
       case "monthly": {
-        start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+        start = new Date(
+          Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
+        );
         break;
       }
       case "yearly": {
         start = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
         break;
       }
-      default: {
-        // All time: leave undefined so callers can omit filters
+      case "all-time": {
         start = undefined;
+        return { startDate: undefined, endDate: undefined };
       }
+      default:
+        start = undefined;
     }
-
-    return { startDate: start, endDate: selectedTime.value ? end : undefined };
+    return { startDate: start, endDate: end };
   }, [selectedTime]);
 
   const [tableRef, setTableRef] = useState<Table<TUsers> | null>(null);
+
   const { data, refetch, isFetching, isError } = UsefetchAllUsers({
     DateRange: { startDate, endDate },
   });
 
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TUsers>(data?.users, 1, perPage);
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TUsers>(data?.users, 1, perPage);
 
   const handleView = (id: string) => {
     console.log("view:", id);
@@ -120,7 +143,9 @@ function UsersPage() {
 
   const columns = getUsers(handleView, handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -138,7 +163,10 @@ function UsersPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -154,12 +182,19 @@ function UsersPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -196,83 +231,31 @@ function UsersPage() {
     <>
       <PageTitle title={generatePageTitle("Users")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <BreadCramb className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">User</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ User</span>
-              </h4>
-            </div>
-            {/* <Link to={constant.ROUTING_URLS.CREATE_USERS}>  <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
-              <Plus className="text-[#515151]" />
-              <span className="text-[#515151] font-medium text-sm">Add User</span>
-            </Button>
-            </Link> */}
-          </div>
-        </BreadCramb>
+        <PageHeader
+          title="Users"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Users" }]}
+        />
 
-        <div className="flex justify-between gap-2.5">
-          <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                >
-                  {selectedStatus.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showStatus.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center rounded cursor-pointer justify-between focus:bg-gray-300 focus:text-black ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                      onClick={() => setSelectedStatus(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] `}
-                >
-                  {selectedTime.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showTime.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF]`}
-                      onClick={() => setSelectedTime(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        <div className="flex items-end justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <SelectDropDown
+              placeholder={selectedStatus}
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
+            <SelectDropDown
+              placeholder={selectedTime}
+              items={showTime}
+              value={selectedTime}
+              setSelectedItem={setSelectedTime}
+            />
           </div>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${
-                Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
                   ? "cursor-no-drop"
                   : "cursor-pointer"
               }`}
@@ -287,14 +270,18 @@ function UsersPage() {
                 tableRef={tableRef}
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div className="">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>
@@ -320,7 +307,9 @@ function UsersPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -330,7 +319,11 @@ function UsersPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

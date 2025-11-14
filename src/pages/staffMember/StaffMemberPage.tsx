@@ -55,12 +55,13 @@ const StaffMemberPage = () => {
     limit: 10,
   });
 
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TStaffMember>(
-    data?.staffMembers,
-    newPage,
-    10,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TStaffMember>(
+      data?.staffMembers,
+      newPage,
+      10,
+      data?.pagination,
+    );
 
   const handleEdit = useCallback(
     (id: string) => {
@@ -83,7 +84,8 @@ const StaffMemberPage = () => {
             if (res) refetch();
             return "Staff member deleted successfully";
           },
-          error: (e) => (e instanceof Error ? e.message : "An unknown error occurred"),
+          error: (e) =>
+            e instanceof Error ? e.message : "An unknown error occurred",
         });
       } catch (error) {
         if (error instanceof Error) {
@@ -121,7 +123,10 @@ const StaffMemberPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -137,12 +142,19 @@ const StaffMemberPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -179,20 +191,27 @@ const StaffMemberPage = () => {
     <>
       <PageTitle title={generatePageTitle("Staff Member")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Staff Members</h2>
               <h4>
                 <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Staff Members</span>
+                <span className="text-[#959595] w-[116px] h-4">
+                  / Staff Members
+                </span>
               </h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_STAFF_MEMBERS}>
               {" "}
-              <Button variant="secondary" className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant="secondary"
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Staff Member</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add Staff Member
+                </span>
               </Button>
             </Link>
           </div>
@@ -247,7 +266,9 @@ const StaffMemberPage = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -257,7 +278,11 @@ const StaffMemberPage = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

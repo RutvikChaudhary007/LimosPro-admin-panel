@@ -1,16 +1,4 @@
-/* .leaflet-container {
-  width: 100%;
-  height: 100%;
-} */
-
 .destructive {
   background-color: #dc2626; /* A solid red */
   color: white;
-}
-
-.custom-scrollbar-style {
-  scrollbar-width: none;
-}
-.custom-scrollbar-style::-webkit-scrollbar {
-  display: none;
 }

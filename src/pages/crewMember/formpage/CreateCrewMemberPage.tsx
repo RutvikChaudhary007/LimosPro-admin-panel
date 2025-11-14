@@ -1,6 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import CrewMemberForm, { type TCrewMemberForm } from "@/components/crewMember/crewMemberForm";
+import CrewMemberForm, {
+  type TCrewMemberForm,
+} from "@/components/crewMember/crewMemberForm";
 import Header from "@/components/layouts/BreadCramb";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -15,7 +17,8 @@ const CreateCrewMemberPage = () => {
       toastPromise(createCrewMemberMutation.mutateAsync(data), {
         loading: "Loading...",
         success: "Yeah!, crew member created successfully.",
-        error: (e) => (e instanceof Error ? e.message : "Failed to create crew member."),
+        error: (e) =>
+          e instanceof Error ? e.message : "Failed to create crew member.",
       });
     } catch (error) {
       console.error(error);
@@ -32,19 +35,26 @@ const CreateCrewMemberPage = () => {
           <ArrowLeft /> Back
         </Button>
       </Link>
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md mt-4 mb-5">
         <div className="w-full h-full flex items-center justify-between">
           <div>
             <h2 className="font-medium text-xl text-black">Crew Member</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Crew Member</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                LIMOSPRO
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Create Crew Member
+              </span>
             </h4>
           </div>
         </div>
       </Header>
-      <CrewMemberForm onSubmit={handleCreateCrewMember} type={"Create Crew Member"} />
+      <CrewMemberForm
+        onSubmit={handleCreateCrewMember}
+        type={"Create Crew Member"}
+      />
     </div>
   );
 };

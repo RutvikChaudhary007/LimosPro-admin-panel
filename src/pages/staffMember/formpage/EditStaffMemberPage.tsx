@@ -40,7 +40,10 @@ const EditStaffMemberPage = () => {
             if (res) navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
             return "Yeah! Staff member updated successfully";
           },
-          error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update staff member"),
+          error: (e) =>
+            e instanceof Error
+              ? e.message
+              : "Opps! Failed to update staff member",
         },
       );
     } catch (error) {
@@ -61,19 +64,25 @@ const EditStaffMemberPage = () => {
           <ArrowLeft /> Back
         </Button>
       </Link>
-      <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
+      <Header className="p-4 h-[79px] rounded-[6px] bg-[#FDFDFD] shadow-base-md mt-4 mb-5">
         <div className="">
           <h2 className="font-medium text-xl text-black">Staff Members</h2>
           <h4>
             <span className="text-[#959595] w-14 h-4">Staff Members</span>{" "}
-            <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Create Staff Members</span>
+            <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+              / Create Staff Members
+            </span>
           </h4>
         </div>
       </Header>
       {isFetching ? (
         <Spinner />
       ) : (
-        <StaffMemberForm initialData={data} onSubmit={onSubmit} type={"Edit Staff Members"} />
+        <StaffMemberForm
+          initialData={data}
+          onSubmit={onSubmit}
+          type={"Edit Staff Members"}
+        />
       )}
     </div>
   );

@@ -3,7 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import IntlTelInput from "intl-tel-input/react";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "intl-tel-input/styles";
 import { useForm } from "react-hook-form";
@@ -11,7 +18,13 @@ import z from "zod";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const formSchema = z.object({
   firstName: z
@@ -39,7 +52,9 @@ const formSchema = z.object({
     })
     .min(3, { message: "Password must be at least 3 characters" }),
   email: z.email(),
-  affiliateId: z.string().min(3, { message: "Affiliate ID must be at least 3 characters" }),
+  affiliateId: z
+    .string()
+    .min(3, { message: "Affiliate ID must be at least 3 characters" }),
   phone: z
     .string()
     .refine((value) => value.trim() !== "", {
@@ -61,7 +76,8 @@ const CrewMemberForm = ({
   disabledFields?: [];
   type: string;
 }) => {
-  const { data: affiliateData, isFetching: isFetchingAffiliate } = useFetchAllAffiliate({ DateRange: {} });
+  const { data: affiliateData, isFetching: isFetchingAffiliate } =
+    useFetchAllAffiliate({ DateRange: {} });
   const transformInitialData = (data?: z.infer<typeof formSchema>) => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
@@ -98,7 +114,7 @@ const CrewMemberForm = ({
           }
         })}
       >
-        <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-light">
+        <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-md">
           <CardHeader>
             <CardTitle>{type}</CardTitle>
           </CardHeader>
@@ -194,7 +210,9 @@ const CrewMemberForm = ({
                           initialCountry: "us",
 
                           loadUtils: () =>
-                            import("https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.1/build/js/utils.js"),
+                            import(
+                              "https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.1/build/js/utils.js"
+                            ),
                         }}
                       />
                     </div>
@@ -229,7 +247,9 @@ const CrewMemberForm = ({
                 name="affiliateId"
                 render={({ field }) => (
                   <FormItem className="w-full col-span-2 col-start-1">
-                    <FormLabel className="placeholder-[#E6E6E6] font-medium">Select Affiliate</FormLabel>
+                    <FormLabel className="placeholder-[#E6E6E6] font-medium">
+                      Select Affiliate
+                    </FormLabel>
                     <Select
                       value={field.value}
                       onValueChange={(v) => {
@@ -248,7 +268,11 @@ const CrewMemberForm = ({
                       </FormControl>
                       <SelectContent className="">
                         {affiliateData?.affiliates?.map((option) => (
-                          <SelectItem className="cursor-pointer" key={option.id} value={option.id}>
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={option.id}
+                            value={option.id}
+                          >
                             {option.companyName}
                           </SelectItem>
                         ))}
@@ -256,7 +280,9 @@ const CrewMemberForm = ({
                     </Select>
                     <FormMessage
                       className={`mt-1 h-5 ${
-                        form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"
+                        form.formState.errors.affiliateId
+                          ? "visible text-red-600"
+                          : "invisible"
                       } `}
                     >
                       {form.formState.errors.affiliateId?.message}

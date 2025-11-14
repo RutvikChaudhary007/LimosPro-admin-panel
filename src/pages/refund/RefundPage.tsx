@@ -8,7 +8,11 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
-import { getRefund, getStatusColor, type TRefund } from "@/components/table/column";
+import {
+  getRefund,
+  getStatusColor,
+  type TRefund,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -68,11 +72,8 @@ const RefundPage = () => {
     page: newPage,
     limit: selectedOption.value,
   });
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TRefund>(
-    data?.payments,
-    newPage,
-    selectedOption.value,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TRefund>(data?.payments, newPage, selectedOption.value);
 
   const handleView = useCallback(
     (id: string) => {
@@ -101,7 +102,10 @@ const RefundPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -117,12 +121,19 @@ const RefundPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -159,14 +170,18 @@ const RefundPage = () => {
     <>
       <PageTitle title={generatePageTitle("Refund")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Refund</h2>
               <h4>
                 {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Refund</span>
+                <span className="text-[#515151] w-[116px] h-4 text-xs">
+                  LIMOSPRO
+                </span>{" "}
+                <span className="text-xs text-[#939393] w-[50px] h-4">
+                  / Refund
+                </span>
               </h4>
             </div>
           </div>
@@ -209,14 +224,19 @@ const RefundPage = () => {
               <Button
                 variant={"outline"}
                 className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                disabled={Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
                 onClick={() => {
                   // setData((prev) =>prev.filter((row,i) => !rowSelection[i])
                   // );
                   // setRowSelection({});
                 }}
               >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">Export</span>
+                <span className="text-[#959595] text-sm w-[93px] h-[19px]">
+                  Export
+                </span>
                 <Download size={14} className="text-[#959595] cursor-pointer" />
               </Button>
             </span>
@@ -242,7 +262,9 @@ const RefundPage = () => {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -252,7 +274,11 @@ const RefundPage = () => {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

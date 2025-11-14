@@ -1,14 +1,13 @@
 import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { IconFileDownload, IconFileInfo } from "@tabler/icons-react";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import UsefetchAffiliateById from "@/api/getAffiliateById.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { getStatusColor } from "@/components/table/column";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,13 +19,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
@@ -35,16 +27,9 @@ import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { generatePageTitle } from "@/utils/seo";
 
-const showStatus = [
-  { label: "Active", value: "active" },
-  { label: "Pending", value: "pending" },
-  { label: "Inactive", value: "inactive" },
-  { label: "Suspended", value: "suspended" },
-];
 const libraries = ["places", "geocoding"];
 
 const ViewAffiliatePage = () => {
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
   const { id } = useParams();
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
@@ -91,8 +76,7 @@ const ViewAffiliatePage = () => {
   const documentsLength = data?.documents?.length;
   const docJsx = data?.documents?.map((doc: { fileUrl: string }, i: number) => (
     <div key={i} className="flex items-center gap-6">
-      <Label className="font-semibold w-full max-w-max">
-        {" "}
+      <Label className="font-montserrat font-semibold w-full max-w-max">
         Document {i + 1}:
       </Label>
       <div
@@ -145,7 +129,7 @@ const ViewAffiliatePage = () => {
       <PageTitle title={generatePageTitle("Affiliate")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <PageHeader
-          title="Affiliate"
+          title="Affiliate Details"
           breadcrumbs={[
             { label: "Home", path: "/" },
             { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
@@ -174,57 +158,40 @@ const ViewAffiliatePage = () => {
                     ]
                   }
                 </CardDescription>
-                <CardAction>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="black">{selectedStatus.label}</Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      className={cn(`w-full max-w-56`)}
-                      align="start"
-                    >
-                      <DropdownMenuGroup>
-                        {showStatus.map((option) => (
-                          <DropdownMenuItem
-                            key={option.value}
-                            className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-base-white"}`}
-                            onClick={() => setSelectedStatus(option)}
-                          >
-                            {option.label}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </CardAction>
+                {data?.status && (
+                  <CardAction>
+                    <Button variant="black" className="capitalize">
+                      {data.status}
+                    </Button>
+                  </CardAction>
+                )}
               </CardHeader>
               <FieldSeparator />
               <CardContent>
-                <div className="w-full space-y-4 mb-4">
-                  <h6 className="font-montserrat font-bold text-base-black text-sm my-4">
+                <div className="w-full mb-4">
+                  <h6 className="font-montserrat font-bold text-base-black text-sm mb-4">
                     Company
                   </h6>
-                  {Object.entries(data as Record<string, React.ReactNode>)?.map(
-                    ([key, val]) => {
-                      if (
+
+                  <div className="grid grid-cols-[max-content_1fr] gap-4 items-center">
+                    {Object.entries(data as Record<string, React.ReactNode>)
+                      ?.filter(([key]) =>
                         [
                           "businessemail",
                           "businesscontactnumber",
                           "entitytype",
                           "businessaddress",
-                        ].includes(key?.toLowerCase())
-                      ) {
-                        return (
-                          <div key={key} className="flex items-center gap-6">
-                            <Label>
-                              {key}:{val}
-                            </Label>
-                          </div>
-                        );
-                      }
-                      return <></>;
-                    },
-                  )}
+                        ].includes(key?.toLowerCase()),
+                      )
+                      .map(([key, val]) => (
+                        <React.Fragment key={key}>
+                          <Label className="font-montserrat font-semibold capitalize">
+                            {key}:
+                          </Label>
+                          <Label className="">{val}</Label>
+                        </React.Fragment>
+                      ))}
+                  </div>
                 </div>
                 <FieldSeparator />
                 <div className="space-y-4">

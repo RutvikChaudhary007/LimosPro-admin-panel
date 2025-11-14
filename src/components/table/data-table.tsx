@@ -9,7 +9,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,7 +46,9 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: onGlobalFilterChange ? getFilteredRowModel() : undefined,
+    getFilteredRowModel: onGlobalFilterChange
+      ? getFilteredRowModel()
+      : undefined,
     state: {
       rowSelection: rowSelection ?? internalSelection,
       globalFilter: globalFilter ?? internalFilter,
@@ -53,7 +62,7 @@ export function DataTable<TData, TValue>({
     if (onTableReady) onTableReady(table);
   }, [table, onTableReady]);
   return (
-    <div className="rounded border border-base-light-gray shadow-base-light overflow-auto">
+    <div className="rounded border border-base-light-gray shadow-base-md overflow-auto">
       <Table className="">
         <TableHeader className="bg-base-light-gray">
           {table?.getHeaderGroups()?.map((headerGroup) => (
@@ -64,7 +73,12 @@ export function DataTable<TData, TValue>({
                     className="py-4 font-montserrat font-semibold text-lg text-base-black leading-[100%] tracking-normal"
                     key={header.id}
                   >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 );
               })}
@@ -74,7 +88,10 @@ export function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     className="font-quicksand font-medium text-[16px] text-base-black leading-[100%] tracking-normal"

@@ -57,11 +57,8 @@ const SeoPage = () => {
   const [perPage, _setPerPage] = useState(10);
   const [data, setData] = useState<THomeContent[]>(tableData);
   const [_activeBtn, _setActiveBtn] = useState<string>("Home");
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<THomeContent>(
-    data,
-    1,
-    perPage,
-  );
+  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } =
+    usePagination<THomeContent>(data, 1, perPage);
 
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
@@ -90,7 +87,10 @@ const SeoPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -106,12 +106,19 @@ const SeoPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -145,10 +152,12 @@ const SeoPage = () => {
   };
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
         <div className="w-full h-full flex items-center justify-between">
           <div>
-            <h2 className="font-medium text-xl text-black">Content Management</h2>
+            <h2 className="font-medium text-xl text-black">
+              Content Management
+            </h2>
             <h4>
               <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
               <span className="text-[#959595] w-[116px] h-4">/ Seo</span>
@@ -156,7 +165,10 @@ const SeoPage = () => {
           </div>
           <Link to={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT}>
             {" "}
-            <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+            <Button
+              variant={"outline"}
+              className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+            >
               <Plus className="text-[#515151]" />
               <span className="text-[#515151] font-medium text-sm">Add</span>
             </Button>
@@ -195,7 +207,9 @@ const SeoPage = () => {
               <PaginationPrevious
                 href={`?page=${currentPage}`}
                 onClick={prevPage}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
               />
             </PaginationItem>
 
@@ -205,7 +219,11 @@ const SeoPage = () => {
               <PaginationNext
                 href={`?page=${currentPage}`}
                 onClick={nextPage}
-                className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                className={
+                  currentPage === calculatedTotalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>

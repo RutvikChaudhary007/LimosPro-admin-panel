@@ -5,9 +5,29 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import type { IUserFormData, TUserFormProps } from "@/types/user.type";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Card,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 // import { useEffect, useState } from 'react';
 
@@ -43,8 +63,15 @@ const statusAction = [
 ];
 
 type TUserForm = z.infer<typeof formSchema>;
-const UserForm = ({ initialData, onSubmit, disabledFields: _disabledFields, type }: TUserFormProps) => {
-  const transformInitialData = (data?: IUserFormData): TUserForm | undefined => {
+const UserForm = ({
+  initialData,
+  onSubmit,
+  disabledFields: _disabledFields,
+  type,
+}: TUserFormProps) => {
+  const transformInitialData = (
+    data?: IUserFormData,
+  ): TUserForm | undefined => {
     if (!data) return undefined;
     return {
       // firstName: data.firstName,
@@ -79,12 +106,13 @@ const UserForm = ({ initialData, onSubmit, disabledFields: _disabledFields, type
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        <Card className="rounded space-y-6 pb-[68px] p-4">
-          <CardHeader>
-            <CardTitle className="text-lg">{type}</CardTitle>
-          </CardHeader>
-          <CardContent className="w-full grid grid-cols-6 space-x-5 space-y-5">
-            {/* <FormField
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>{type}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-3 gap-4">
+              {/* <FormField
                             control={form.control}
                             name='firstName'
                             render={({ field }) => (
@@ -251,45 +279,49 @@ const UserForm = ({ initialData, onSubmit, disabledFields: _disabledFields, type
                                 </FormItem>
                             )}
                         /> */}
-            <FormField
-              name="status"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className="col-span-2  mr-5 mb-5">
-                  <FormLabel className="text-sm h-3.5">Status</FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={(v) => {
-                      field.onChange(v);
-                      // setStatusValue({ ...statusValue, affiliate: v })
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl className="w-full min-w-full rounded">
-                      <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
-                        <SelectValue
-                          className="before:placeholder:text-[#E6E6E6] font-medium"
-                          placeholder="select affiliate"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="">
-                      {statusAction?.map((option) => (
-                        <SelectItem className="cursor-pointer" key={option.label} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.status ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.status?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            {/* <FormField
+              <FormField
+                name="status"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm h-3.5">Status</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={(v) => {
+                        field.onChange(v);
+                        // setStatusValue({ ...statusValue, affiliate: v })
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl className="w-full min-w-full rounded">
+                        <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
+                          <SelectValue
+                            className="before:placeholder:text-[#E6E6E6] font-medium"
+                            placeholder="select affiliate"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="">
+                        {statusAction?.map((option) => (
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={option.label}
+                            value={option.value}
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.status ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.status?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              {/* <FormField
                         control={form.control}
                         name="address"
                         render={({ field }) => (
@@ -319,38 +351,33 @@ const UserForm = ({ initialData, onSubmit, disabledFields: _disabledFields, type
                             </FormItem>
                         )}
                         /> */}
-          </CardContent>
-          <div className="flex items-center justify-start rounded px-6 space-x-2.5">
-            <Button
-              className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-              variant={"secondary"}
-              type="button"
-              onClick={() => {
-                form.reset({
-                  // firstName: "",
-                  // lastName: "",
-                  // email: "",
-                  // phone: "",
-                  // gender: null,
-                  // dateOfBirth: null,
-                  // password: "",
-                  status: "",
-                });
-                // setGender("");
-                // setStatusValue({ status: "", affiliate: "" });
-              }}
-            >
-              Clear Alls
-            </Button>
-            <Button
-              className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-              variant={"secondary"}
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? "Saving..." : "Save Details"}
-            </Button>
-          </div>
+            </CardContent>
+            <CardFooter className="flex items-center justify-start space-x-2.5">
+              <Button
+                variant={"outlinePrimary"}
+                type="button"
+                onClick={() => {
+                  form.reset({
+                    // firstName: "",
+                    // lastName: "",
+                    // email: "",
+                    // phone: "",
+                    // gender: null,
+                    // dateOfBirth: null,
+                    // password: "",
+                    status: "",
+                  });
+                  // setGender("");
+                  // setStatusValue({ status: "", affiliate: "" });
+                }}
+              >
+                Clear Alls
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              </Button>
+            </CardFooter>
+          </CardBody>
         </Card>
       </form>
     </Form>

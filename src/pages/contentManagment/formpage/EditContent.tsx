@@ -3,7 +3,9 @@ import type React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchContentBlockById } from "@/api/contentBlock.api";
-import ContentManagementForm, { type TContentForm } from "@/components/contentManagement/ContentManagementForm";
+import ContentManagementForm, {
+  type TContentForm,
+} from "@/components/contentManagement/ContentManagementForm";
 import Header from "@/components/layouts/BreadCramb";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
@@ -25,7 +27,8 @@ const EditContent: React.FC = () => {
           if (res) navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
           return "Yeah! Content edited successfully.";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update content."),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to update content.",
       });
     } catch (error) {
       if (error instanceof Error) console.error(error.message);
@@ -42,14 +45,20 @@ const EditContent: React.FC = () => {
           <ArrowLeft /> Back
         </Button>
       </Link>
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md mt-4 mb-5">
         <div className="w-full h-full flex items-center justify-between">
           <div>
-            <h2 className="font-medium text-xl text-black">Content Management</h2>
+            <h2 className="font-medium text-xl text-black">
+              Content Management
+            </h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">All Pages</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Page</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                All Pages
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit Page
+              </span>
             </h4>
           </div>
           {/* <Button className="text-white bg-[#5A5A5A]">Manage Field</Button> */}
@@ -58,7 +67,11 @@ const EditContent: React.FC = () => {
       {isFetching ? (
         <Spinner />
       ) : (
-        <ContentManagementForm initialData={data} onSubmit={handleEditSubmit} type="Edit Page" />
+        <ContentManagementForm
+          initialData={data}
+          onSubmit={handleEditSubmit}
+          type="Edit Page"
+        />
       )}
     </div>
   );

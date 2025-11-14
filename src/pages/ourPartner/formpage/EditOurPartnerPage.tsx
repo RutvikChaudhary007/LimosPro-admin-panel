@@ -3,7 +3,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchPartnerById } from "@/api/ourPartners.api";
 import Header from "@/components/layouts/BreadCramb";
-import OurPartnerForm, { type TOurPartnerForm } from "@/components/OurPartner/OurPartnerForm";
+import OurPartnerForm, {
+  type TOurPartnerForm,
+} from "@/components/OurPartner/OurPartnerForm";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { toastPromise } from "@/hooks/use-toast";
@@ -29,7 +31,8 @@ const EditOurPartnerPage = () => {
           }
           return "Yeah! Partner updated successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to update partner"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to update partner",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -49,19 +52,31 @@ const EditOurPartnerPage = () => {
           <ArrowLeft /> Back
         </Button>
       </Link>
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light mt-4 mb-5">
+      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md mt-4 mb-5">
         <div className="w-full h-full flex items-center justify-between">
           <div>
             <h2 className="font-medium text-xl text-black">Our Partner</h2>
             <h4>
               {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">Our Partners</span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">/ Edit Partner</span>
+              <span className="text-[#959595] w-[116px] h-4 text-xs">
+                Our Partners
+              </span>{" "}
+              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
+                / Edit Partner
+              </span>
             </h4>
           </div>
         </div>
       </Header>
-      {isFetching ? <Spinner /> : <OurPartnerForm initialData={data} onSubmit={handleSubmit} type="Edit Partners" />}
+      {isFetching ? (
+        <Spinner />
+      ) : (
+        <OurPartnerForm
+          initialData={data}
+          onSubmit={handleSubmit}
+          type="Edit Partners"
+        />
+      )}
     </div>
   );
 };

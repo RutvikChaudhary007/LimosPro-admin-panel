@@ -228,12 +228,8 @@ const OurPartnerPage = () => {
   const [selected, setSelected] = useState(showOptions[0]);
   // const [data, setData] = useState<TOurPartner[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchALLPartners();
-  const { currentPage, setPage, totalPages, currentItems } = usePagination<TOurPartner>(
-    data?.items,
-    1,
-    perPage,
-    data?.pagination,
-  );
+  const { currentPage, setPage, totalPages, currentItems } =
+    usePagination<TOurPartner>(data?.items, 1, perPage, data?.pagination);
 
   useEffect(() => {
     setPerPage(selected.value);
@@ -252,7 +248,8 @@ const OurPartnerPage = () => {
           if (res) refetch();
           return "Yeah! Partner deleted successfully";
         },
-        error: (e) => (e instanceof Error ? e.message : "Opps! Failed to delete partner"),
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to delete partner",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -282,7 +279,10 @@ const OurPartnerPage = () => {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -298,12 +298,19 @@ const OurPartnerPage = () => {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -341,20 +348,27 @@ const OurPartnerPage = () => {
     <>
       <PageTitle title={generatePageTitle("Our Partner")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
+        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
           <div className="w-full h-full flex items-center justify-between">
             <div>
               <h2 className="font-medium text-xl text-black">Our Partners</h2>
               <h4>
                 <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Our Partners</span>
+                <span className="text-[#959595] w-[116px] h-4">
+                  / Our Partners
+                </span>
               </h4>
             </div>
             <Link to={constant.ROUTING_URLS.CREATE_OUR_PARTNERS}>
               {" "}
-              <Button variant={"outline"} className="cursor-pointer bg-[#E4E4E4] flex items-center rounded">
+              <Button
+                variant={"outline"}
+                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
+              >
                 <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">Add Partners</span>
+                <span className="text-[#515151] font-medium text-sm">
+                  Add Partners
+                </span>
               </Button>
             </Link>
           </div>
@@ -434,7 +448,9 @@ const OurPartnerPage = () => {
                 <PaginationPrevious
                   href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -444,7 +460,11 @@ const OurPartnerPage = () => {
                 <PaginationNext
                   href={`?page=${currentPage}`}
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

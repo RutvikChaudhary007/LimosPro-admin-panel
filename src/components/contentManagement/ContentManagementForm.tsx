@@ -3,7 +3,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "react-quill/dist/quill.snow.css"; // or 'quill.bubble.css'
 // import { Plus } from "lucide-react";
@@ -51,7 +58,10 @@ const formSchema = z.object({
       message: "Section name cannot be empty or just whitespace.",
     })
     .min(3, { message: "Section name must be at least 3 characters" }),
-  sortOrder: z.string().regex(/^\d+$/, "Only digits are allowed").transform(Number),
+  sortOrder: z
+    .string()
+    .regex(/^\d+$/, "Only digits are allowed")
+    .transform(Number),
   //   .transform((val:string):number => Number(val)),
   content: z
     .string()
@@ -112,7 +122,12 @@ const ContentManagementForm = ({
       [{ header: "1" }, { header: "2" }, { font: [] }],
       [{ size: [] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
       ["link", "image", "video"],
       ["clean"],
     ],
@@ -137,7 +152,7 @@ const ContentManagementForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        <Card className="rounded  bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-light">
+        <Card className="rounded  bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-md">
           <CardHeader className="flex items-center justify-between">
             <CardTitle>{type}</CardTitle>
             <div className="w-[258px] flex items-center justify-between">

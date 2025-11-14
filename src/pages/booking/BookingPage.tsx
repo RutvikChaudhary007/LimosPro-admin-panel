@@ -1,24 +1,21 @@
 // @ts-nocheck
 
-import { ChevronDown, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UsefetchAllBookings from "@/api/getAllBookings.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { formatDate, getBooking, type TBooking } from "@/components/table/column";
+import {
+  formatDate,
+  getBooking,
+  type TBooking,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -28,86 +25,16 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { exportToCsv } from "@/utils/export";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
-  { label: "Mark As", value: "" },
+  { label: "Mark As", value: "Mark As" },
   { label: "Completed", value: "completed" },
 ];
-
-// const tableData: TBooking[] = [
-//     {
-//         "id": "550e8400-e29b-41d4-a716-446655440000",
-//         "userId": "550e8400-e29b-41d4-a716-446655440000",
-//         "affiliateId": "550e8400-e29b-41d4-a716-446655440000",
-//         "bookingType": "twoWay",
-//         "pickupLocation": {
-//             "latitude": 40.712776,
-//             "longitude": -74.005974
-//         },
-//         "dropoffLocation": {
-//             "latitude": 34.052235,
-//             "longitude": -118.243683
-//         },
-//         "isThirdPartyUser": true,
-//         "thirdPartyUser": {
-//             "name": "test",
-//             "email": "test@mailinator.com",
-//             "phone": "9876543210"
-//         },
-//         "scheduledTime": "2025-04-16T15:30:00Z",
-//         "fare": 99.99,
-//         "status": "pending",
-//         "createdAt": "2025-04-16T15:30:00Z",
-//         "updatedAt": "2025-04-16T15:30:00Z"
-//     },
-//     {
-//         "id": "550e8400-e29b-41d4-a716-446655440000",
-//         "userId": "550e8400-e29b-41d4-a716-446655440000",
-//         "affiliateId": "550e8400-e29b-41d4-a716-446655440000",
-//         "bookingType": "twoWay",
-//         "pickupLocation": {
-//             "latitude": 40.712776,
-//             "longitude": -74.005974
-//         },
-//         "dropoffLocation": {
-//             "latitude": 34.052235,
-//             "longitude": -118.243683
-//         },
-//         "isThirdPartyUser": true,
-//         "thirdPartyUser": {
-//             "name": "test",
-//             "email": "test@mailinator.com",
-//             "phone": "9876543210"
-//         },
-//         "scheduledTime": "2025-04-16T15:30:00Z",
-//         "fare": 99.99,
-//         "status": "pending",
-//         "createdAt": "2025-04-16T15:30:00Z",
-//         "updatedAt": "2025-04-16T15:30:00Z"
-//     }
-// ];
-
-// type BookingStatus = "pending" | "accepted" | "canceled" | "completed";
-
-// function countByStatus(bookings: TBooking[]) {
-//     return bookings.reduce<Record<BookingStatus, number>>(
-//         (acc, booking) => {
-//             const status = booking.status as BookingStatus;
-//             acc[status] = (acc[status] || 0) + 1;
-//             return acc;
-//         },
-//         {
-//             pending: 0,
-//             accepted: 0,
-//             canceled: 0,
-//             completed: 0,
-//         }
-//     );
-// }
 
 type RowData = {
   affiliateId: string;
@@ -117,10 +44,11 @@ type RowData = {
   updatedAt: string | Date;
 };
 function BookingPage() {
+  const [{ value: statusDefaultValue }] = showStatus;
   const perPage = 10;
   const navigate = useNavigate();
   const [newPage, setNewPage] = useState<number>(1);
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
+  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
 
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
@@ -147,7 +75,9 @@ function BookingPage() {
   };
   const columns = getBooking(handleView);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
 
   // Filter data
   const filterData = data?.bookings?.filter((row: RowData) => {
@@ -160,7 +90,10 @@ function BookingPage() {
       return false;
     }
 
-    if (selectedStatus && row.status.toLowerCase() !== selectedStatus.value.toLowerCase()) {
+    if (
+      selectedStatus &&
+      row.status.toLowerCase() !== selectedStatus.value.toLowerCase()
+    ) {
       return false;
     }
 
@@ -201,7 +134,15 @@ function BookingPage() {
 
   // Handle CSV export
   const handleExportCsv = () => {
-    const headers = ["ID", "Affiliate Id", "bookingType", "scheduledTime", "price", "Status", "Created At"];
+    const headers = [
+      "ID",
+      "Affiliate Id",
+      "bookingType",
+      "scheduledTime",
+      "price",
+      "Status",
+      "Created At",
+    ];
 
     const csvData = data?.bookings?.map((v) => [
       v?.id || "",
@@ -238,7 +179,10 @@ function BookingPage() {
     // Always show first page
     items.push(
       <PaginationItem key="first">
-        <PaginationLink isActive={currentPage === 1} onClick={() => handlePageChange(1)}>
+        <PaginationLink
+          isActive={currentPage === 1}
+          onClick={() => handlePageChange(1)}
+        >
           1
         </PaginationLink>
       </PaginationItem>,
@@ -254,12 +198,19 @@ function BookingPage() {
     }
 
     // Show nearby pages
-    for (let i = Math.max(2, currentPage - 1); i <= Math.min(calculatedTotalPages - 1, currentPage + 1); i++) {
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
+      i++
+    ) {
       if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
 
       items.push(
         <PaginationItem key={i}>
-          <PaginationLink isActive={currentPage === i} onClick={() => handlePageChange(i)}>
+          <PaginationLink
+            isActive={currentPage === i}
+            onClick={() => handlePageChange(i)}
+          >
             {i}
           </PaginationLink>
         </PaginationItem>,
@@ -296,87 +247,35 @@ function BookingPage() {
     <>
       <PageTitle title={generatePageTitle("Booking")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-light">
-          <div className="w-full h-full flex items-center justify-between">
-            <div className="w-[416px] h-[47px]">
-              <h2 className="font-medium text-xl text-black">Bookings</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">LIMOSPRO</span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">/ Bookings</span>
-              </h4>
-            </div>
-            <div className="w-[612px] h-[47px] flex gap-[50px]  items-center justify-between">
-              <div className="flex flex-col gap-1">
-                <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
-                  {statusCounts?.accepted}
-                </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Accepted</div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
-                  {statusCounts?.pending}
-                </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Pending</div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
-                  {statusCounts?.cancelled}
-                </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Cancelled</div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="text-center text-[#5D5D5D] h-[27px] w-[79px] font-medium text-xl">
-                  {statusCounts?.completed}
-                </div>
-                <div className="text-center text-black h-4 text-xs w-[79px]">Completed</div>
-              </div>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Bookings"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Bookings" }]}
+          actionDetails={{
+            stats: [
+              { label: "Accepted", value: statusCounts?.accepted },
+              { label: "Pending", value: statusCounts?.pending },
+              { label: "Cancelled", value: statusCounts?.cancelled },
+              { label: "Completed", value: statusCounts?.completed },
+            ],
+          }}
+        />
 
-        <div className="flex items-end justify-between gap-2.5">
-          <div className="flex items-center gap-3 ">
+        <div className="flex items-end justify-between gap-4">
+          <div className="flex items-center gap-4 ">
             <Calendar28 dateRange={dateRange} setDateRange={setDateRange} />
           </div>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] `}
-                >
-                  {selectedStatus.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showStatus.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF]`}
-                      onClick={() => setSelectedStatus(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
+            <SelectDropDown
+              placeholder={selectedStatus}
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
 
-            <div className="p-2.5 w-[97px] h-full flex items-center focus-visible:border-none focus-visible:outline-none   rounded">
-              <Button
-                onClick={handleExportCsv}
-                type="button"
-                variant={"ghost"}
-                className="cursor-pointer rounded p-0 bg-[#FDFDFD] inset-shadow-xs inset-shadow-[#F1F1F1] text-[#959595] text-sm"
-              >
-                Export <Download />
-              </Button>
-            </div>
+            <Button onClick={handleExportCsv} type="button" variant={"black"}>
+              <span>Export</span>
+              <Download />
+            </Button>
           </div>
         </div>
         {isFetching ? (
@@ -400,7 +299,9 @@ function BookingPage() {
                 <PaginationPrevious
                   href="#"
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
                 />
               </PaginationItem>
 
@@ -410,7 +311,11 @@ function BookingPage() {
                 <PaginationNext
                   href="#"
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage === calculatedTotalPages ? "pointer-events-none opacity-50" : ""}
+                  className={
+                    currentPage === calculatedTotalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
                 />
               </PaginationItem>
             </PaginationContent>

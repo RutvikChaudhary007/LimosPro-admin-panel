@@ -69,7 +69,8 @@
 
   --background-image-base-blue-cream: var(--base-blue-cream);
 
-  --shadow-base-light: var(--base-shadow-light);
+  --shadow-base-sm: var(--base-shadow-sm);
+  --shadow-base-md: var(--base-shadow-md);
 
   /* Font Families */
   --font-family: var(--font-family);
@@ -134,7 +135,8 @@
   --base-background: #fdfdfd;
   --base-background-light: #fefefe;
   --base-blue-cream: linear-gradient(90deg, #e4f3ff 0%, #fff8ef 100%);
-  --base-shadow-light: 0px 0px 20px 0px #0000000d;
+  --base-shadow-sm: 0px 0px 16px 0px #0000000d;
+  --base-shadow-md: 2px 0px 20px 0px #0000000d;
 }
 
 .dark {
@@ -180,28 +182,17 @@
   }
   svg.lucide,
   svg.tabler-icon {
-    stroke-width: 1.5;
-    transform-origin: center;
+    @apply stroke-[1.5] origin-center;
   }
   .loader {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: inline-block;
+    @apply w-12 h-12 rounded-full inline-block box-border;
     border-top: 4px solid #fff;
     border-right: 4px solid transparent;
-    box-sizing: border-box;
     animation: rotation 1s linear infinite;
   }
   .loader::after {
     content: "";
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    @apply absolute left-0 top-0 w-12 h-12 rounded-full box-border;
     border-left: 4px solid var(--base-primary);
     border-bottom: 4px solid transparent;
     animation: rotation 0.5s linear infinite reverse;
