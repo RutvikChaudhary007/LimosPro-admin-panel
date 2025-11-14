@@ -56,6 +56,7 @@ export function DataTable<TData, TValue>({
     onRowSelectionChange: onRowSelectionChange ?? setInternalSelection,
     onGlobalFilterChange: onGlobalFilterChange ?? setInternalFilter,
     enableRowSelection: true,
+    enableMultiRowSelection: true,
   });
 
   useEffect(() => {

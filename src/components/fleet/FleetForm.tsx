@@ -5,15 +5,28 @@ import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardBody, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 const maxSize = 10 * 1024 * 1024;
@@ -157,9 +170,12 @@ const formSchema = z.object({
     .refine((files) => files.every((f) => f.size <= maxSize), {
       message: `Max size ${maxSize / (1024 * 1024)}MB`,
     })
-    .refine((files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)), {
-      message: "Invalid file types detected",
-    }),
+    .refine(
+      (files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)),
+      {
+        message: "Invalid file types detected",
+      },
+    ),
   status: z.string().optional(),
 });
 
@@ -193,16 +209,30 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
     vehicleType: data?.vehicleType,
     vehicleImages: data?.vehicleImages,
     status: data?.status,
-    baseFair: data?.servicePricings?.[0]?.basePrice ? Number(data?.servicePricings?.[0]?.basePrice) : 0,
-    minHour: data?.servicePricings?.[0]?.minHour ? Number(data?.servicePricings?.[0]?.minHour) : 0,
-    pricePerMile: data?.servicePricings?.[0]?.pricePerMile ? Number(data?.servicePricings?.[0]?.pricePerMile) : 0,
-    pricePerHour: data?.servicePricings?.[0]?.ratePerHour ? Number(data?.servicePricings?.[0]?.ratePerHour) : 0,
-    pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute ? Number(data?.servicePricings?.[0]?.ratePerMinute) : 0,
-    minFair: data?.servicePricings?.[0]?.minPrice ? Number(data?.servicePricings?.[0]?.minPrice) : 0,
+    baseFair: data?.servicePricings?.[0]?.basePrice
+      ? Number(data?.servicePricings?.[0]?.basePrice)
+      : 0,
+    minHour: data?.servicePricings?.[0]?.minHour
+      ? Number(data?.servicePricings?.[0]?.minHour)
+      : 0,
+    pricePerMile: data?.servicePricings?.[0]?.pricePerMile
+      ? Number(data?.servicePricings?.[0]?.pricePerMile)
+      : 0,
+    pricePerHour: data?.servicePricings?.[0]?.ratePerHour
+      ? Number(data?.servicePricings?.[0]?.ratePerHour)
+      : 0,
+    pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute
+      ? Number(data?.servicePricings?.[0]?.ratePerMinute)
+      : 0,
+    minFair: data?.servicePricings?.[0]?.minPrice
+      ? Number(data?.servicePricings?.[0]?.minPrice)
+      : 0,
     cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate
       ? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate)
       : 0,
-    extraTime: data?.servicePricings?.[0]?.extraTime ? Number(data?.servicePricings?.[0]?.extraTime) : 0,
+    extraTime: data?.servicePricings?.[0]?.extraTime
+      ? Number(data?.servicePricings?.[0]?.extraTime)
+      : 0,
     zonePricings: data?.servicePricings?.[0]?.zonePricings?.map((zone) => {
       return {
         zoneStart: zone?.zoneStart,
@@ -261,7 +291,9 @@ const FleetForm = ({
 
   useEffect(() => {
     if (initialData?.servicePricings?.[0]?.zonePricingEnabled) {
-      setIsZoneActive(Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false));
+      setIsZoneActive(
+        Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false),
+      );
     }
     if (initialData?.servicePricings?.[0]?.zonePricings) {
       setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
@@ -274,7 +306,10 @@ const FleetForm = ({
     }
   }, [initialData, form]);
 
-  const handleFilesChange = (files: FileList | null, onChange: (files: File[]) => void) => {
+  const handleFilesChange = (
+    files: FileList | null,
+    onChange: (files: File[]) => void,
+  ) => {
     form.clearErrors();
     if (!files) return;
     if (files.length > 3) {
@@ -377,61 +412,475 @@ const FleetForm = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
         {/* fleet Details */}
-        <Card className="overflow-y-auto rounded">
-          <CardHeader>
-            <CardTitle>{type}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-6 gap-5">
-            <FormField
-              control={form.control}
-              name="regionId"
-              render={({ field }) => (
-                <FormItem className="col-span-3 col-start-1">
-                  <FormLabel>Region Id</FormLabel>
-                  {isRegionFetching ? (
-                    <h1>Loading...</h1>
-                  ) : (
-                    <Select
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v);
-                        // setStatusValue({ ...statusValue, affiliate: v })
-                      }}
-                      defaultValue={field.value}
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>{type}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="regionId"
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>Region Id</FormLabel>
+                    {isRegionFetching ? (
+                      <h1>Loading...</h1>
+                    ) : (
+                      <Select
+                        value={field.value}
+                        onValueChange={(v) => {
+                          field.onChange(v);
+                          // setStatusValue({ ...statusValue, affiliate: v })
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <FormControl className="w-full min-w-full rounded">
+                          <SelectTrigger className="cursor-pointer w-full">
+                            <SelectValue
+                              className="placeholder:text-[#E6E6E6] font-medium"
+                              placeholder="select region"
+                            />
+                            {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="">
+                          {RegionData?.regions?.map((option) => (
+                            <SelectItem
+                              className="cursor-pointer capitalize"
+                              key={option.id}
+                              value={option.id}
+                            >
+                              {option.regionName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.name ? "visible text-red-600" : "invisible"}`}
                     >
-                      <FormControl className="w-full min-w-full rounded">
-                        <SelectTrigger className="cursor-pointer w-full">
-                          <SelectValue className="placeholder:text-[#E6E6E6] font-medium" placeholder="select region" />
-                          {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
+                      {form.formState.errors.regionId?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="affiliateId"
+                render={({ field }) => (
+                  <FormItem className="w-full ">
+                    <FormLabel className="">Affiliate</FormLabel>
+                    {isAffiliateFetching ? (
+                      <h1>Loading...</h1>
+                    ) : (
+                      <Select
+                        value={field.value}
+                        onValueChange={(v) => {
+                          field.onChange(v);
+                          // setStatusValue({ ...statusValue, affiliate: v })
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <FormControl className="w-full min-w-full rounded">
+                          <SelectTrigger className="cursor-pointer w-full">
+                            <SelectValue
+                              className="placeholder:text-[#E6E6E6] font-medium"
+                              placeholder="select affiliate"
+                            />
+                            {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="">
+                          {affiliateData?.affiliates?.map((option) => (
+                            <SelectItem
+                              className="cursor-pointer"
+                              key={option.id}
+                              value={option.id}
+                            >
+                              {option.companyName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"} `}
+                    >
+                      {form.formState.errors.affiliateId?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Description</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Textarea
+                        placeholder="Write Full Description"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "description",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.description ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.description?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="bagsCapacity"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Bags</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        type="number"
+                        // placeholder="Plate Number"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "bagsCapacity",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.bagsCapacity ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.bagsCapacity?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="capacity"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium ">
+                    <FormLabel>Capacity</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        type="number"
+                        disabled={isFieldDisabled(disabledFields, "capacity")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.capacity ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.capacity?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="baseFair"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Base Fair</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        type="number"
+                        disabled={isFieldDisabled(disabledFields, "baseFair")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.baseFair ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.baseFair?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="minFair"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Min Fair</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        type="number"
+                        disabled={isFieldDisabled(disabledFields, "minFair")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.minFair ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.minFair?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="minHour"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Min Hour</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        type="number"
+                        // placeholder="Plate Number"
+                        disabled={isFieldDisabled(disabledFields, "minHour")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.minHour ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.minHour?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pricePerHour"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Price per hour</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "pricePerHour",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.pricePerHour?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pricePerMile"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Price per mile</FormLabel>
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="0"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "pricePerMile",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.pricePerMile?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pricePerMinute"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Price per minute</FormLabel>
+                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="0"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "pricePerMinute",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${
+                        form.formState.errors.pricePerMinute
+                          ? "visible text-red-600"
+                          : "invisible"
+                      }`}
+                    >
+                      {form.formState.errors.pricePerMinute?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cityToCityHourlyRate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>City To City Hourly Rate</FormLabel>
+                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="0"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "cityToCityHourlyRate",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${
+                        form.formState.errors.cityToCityHourlyRate
+                          ? "visible text-red-600"
+                          : "invisible"
+                      }`}
+                    >
+                      {form.formState.errors.cityToCityHourlyRate?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="plateNumber"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Plate Number</FormLabel>
+                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="Plate Number"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "plateNumber",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.plateNumber ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.plateNumber?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="brand"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Brand</FormLabel>
+                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="Brand"
+                        disabled={isFieldDisabled(disabledFields, "brand")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.brand ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.brand?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="model"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Model</FormLabel>
+                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="Model"
+                        disabled={isFieldDisabled(disabledFields, "model")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.model ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.model?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Color</FormLabel>
+                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                      <Input
+                        placeholder="Color"
+                        disabled={isFieldDisabled(disabledFields, "color")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.color ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.color?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="year"
+                render={({ _field }) => (
+                  <FormItem className="flex flex-col   placeholder:text-[#E6E6E6] font-medium">
+                    <FormLabel>Year</FormLabel>
+                    <Select
+                      onValueChange={onYearChange}
+                      value={getYear(date).toString()}
+                    >
+                      <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
+                        <SelectTrigger className="w-full cursor-pointer">
+                          {getYear(date)}
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="">
-                        {RegionData?.regions?.map((option) => (
-                          <SelectItem className="cursor-pointer capitalize" key={option.id} value={option.id}>
-                            {option.regionName}
+
+                      <SelectContent>
+                        {years.map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  )}
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.name ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.regionId?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="affiliateId"
-              render={({ field }) => (
-                <FormItem className="w-full col-span-3 col-start-4">
-                  <FormLabel className="">Affiliate</FormLabel>
-                  {isAffiliateFetching ? (
-                    <h1>Loading...</h1>
-                  ) : (
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.year ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.year?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="vehicleType"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel className="">Vehicle Type</FormLabel>
+
                     <Select
                       value={field.value}
                       onValueChange={(v) => {
@@ -450,690 +899,414 @@ const FleetForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="">
-                        {affiliateData?.affiliates?.map((option) => (
-                          <SelectItem className="cursor-pointer" key={option.id} value={option.id}>
-                            {option.companyName}
+                        {FleetOptions?.map((option, i) => (
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={`${i}-${option}`}
+                            value={option}
+                          >
+                            {option}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  )}
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"} `}
-                  >
-                    {form.formState.errors.affiliateId?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"} `}
+                    >
+                      {form.formState.errors.affiliateId?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-6 col-start-1 placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Description</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Textarea
-                      placeholder="Write Full Description"
-                      disabled={isFieldDisabled(disabledFields, "description")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.description ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.description?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="bagsCapacity"
-              render={({ field }) => (
-                <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Bags</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input
-                      type="number"
-                      // placeholder="Plate Number"
-                      disabled={isFieldDisabled(disabledFields, "bagsCapacity")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.bagsCapacity ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.bagsCapacity?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="zonePricings"
+                render={({ _field }) => (
+                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium cursor-pointer">
+                    <FormLabel>Zone Pricing</FormLabel>
 
-            <FormField
-              control={form.control}
-              name="capacity"
-              render={({ field }) => (
-                <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium ">
-                  <FormLabel>Capacity</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input type="number" disabled={isFieldDisabled(disabledFields, "capacity")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.capacity ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.capacity?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="baseFair"
-              render={({ field }) => (
-                <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Base Fair</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input type="number" disabled={isFieldDisabled(disabledFields, "baseFair")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.baseFair ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.baseFair?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="minFair"
-              render={({ field }) => (
-                <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Min Fair</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input type="number" disabled={isFieldDisabled(disabledFields, "minFair")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.minFair ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.minFair?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="minHour"
-              render={({ field }) => (
-                <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Min Hour</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input
-                      type="number"
-                      // placeholder="Plate Number"
-                      disabled={isFieldDisabled(disabledFields, "minHour")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.minHour ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.minHour?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pricePerHour"
-              render={({ field }) => (
-                <FormItem className="flex flex-col placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Price per hour</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input disabled={isFieldDisabled(disabledFields, "pricePerHour")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.pricePerHour?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pricePerMile"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-2 col-start-1 placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Price per mile</FormLabel>
-                  <FormControl className="px-3 py-4 rounded col-span-3 col-start-4 placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="0" disabled={isFieldDisabled(disabledFields, "pricePerMile")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.pricePerHour ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.pricePerMile?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pricePerMinute"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-2 col-start-3 placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Price per minute</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="0" disabled={isFieldDisabled(disabledFields, "pricePerMinute")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${
-                      form.formState.errors.pricePerMinute ? "visible text-red-600" : "invisible"
-                    }`}
-                  >
-                    {form.formState.errors.pricePerMinute?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cityToCityHourlyRate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-2 col-start-5 placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>City To City Hourly Rate</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input
-                      placeholder="0"
-                      disabled={isFieldDisabled(disabledFields, "cityToCityHourlyRate")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${
-                      form.formState.errors.cityToCityHourlyRate ? "visible text-red-600" : "invisible"
-                    }`}
-                  >
-                    {form.formState.errors.cityToCityHourlyRate?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="plateNumber"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Plate Number</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input
-                      placeholder="Plate Number"
-                      disabled={isFieldDisabled(disabledFields, "plateNumber")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.plateNumber ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.plateNumber?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="brand"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Brand</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Brand" disabled={isFieldDisabled(disabledFields, "brand")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.brand ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.brand?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="model"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Model</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Model" disabled={isFieldDisabled(disabledFields, "model")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.model ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.model?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem className="flex flex-col col-span-3  placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Color</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input placeholder="Color" disabled={isFieldDisabled(disabledFields, "color")} {...field} />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.color ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.color?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="year"
-              render={({ _field }) => (
-                <FormItem className="flex flex-col   placeholder:text-[#E6E6E6] font-medium">
-                  <FormLabel>Year</FormLabel>
-                  <Select onValueChange={onYearChange} value={getYear(date).toString()}>
-                    <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                      <SelectTrigger className="w-full cursor-pointer">{getYear(date)}</SelectTrigger>
-                    </FormControl>
-
-                    <SelectContent>
-                      {years.map((year) => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.year ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.year?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="vehicleType"
-              render={({ field }) => (
-                <FormItem className="w-full col-span-3 col-start-2">
-                  <FormLabel className="">Vehicle Type</FormLabel>
-
-                  <Select
-                    value={field.value}
-                    onValueChange={(v) => {
-                      field.onChange(v);
-                      // setStatusValue({ ...statusValue, affiliate: v })
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl className="w-full min-w-full rounded">
-                      <SelectTrigger className="cursor-pointer w-full">
-                        <SelectValue
-                          className="placeholder:text-[#E6E6E6] font-medium"
-                          placeholder="select affiliate"
-                        />
-                        {/* <SelectValueContext className="before:placeholder:text-[#E6E6E6] font-medium" placeholder="select affiliate" /> */}
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="">
-                      {FleetOptions?.map((option, i) => (
-                        <SelectItem className="cursor-pointer" key={`${i}-${option}`} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.affiliateId ? "visible text-red-600" : "invisible"} `}
-                  >
-                    {form.formState.errors.affiliateId?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="zonePricings"
-              render={({ _field }) => (
-                <FormItem className="flex flex-col col-start-1 col-span-6  placeholder:text-[#E6E6E6] font-medium cursor-pointer">
-                  <FormLabel>Zone Pricing</FormLabel>
-
-                  <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                    <Card>
-                      <CardHeader className={"flex flext start items-center my-5 mx-2.5"}>
-                        <input
-                          className="cursor-pointer"
-                          type="checkbox"
-                          checked={isZoneActive}
-                          onChange={() => setIsZoneActive(!isZoneActive)}
-                          id="zoneToggle"
-                        />
-                        <label
-                          htmlFor="zoneToggle"
-                          className="cursor-pointer font-semibold ml-2.5 text-[#343434] select-none"
-                          style={{
-                            letterSpacing: "0px",
-                            opacity: "1",
-                          }}
+                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
+                      <Card>
+                        <CardHeader
+                          className={
+                            "flex flext start items-center my-5 mx-2.5"
+                          }
                         >
-                          Activate Zone Based Pricing
-                        </label>
-                      </CardHeader>
-
-                      <CardContent>
-                        {isZoneActive &&
-                          zonePricing?.map((zone, index) => (
-                            <div
-                              // className={styles.zoneGroup}
-                              className={cn("flex flex-col items-start mb-4 ")}
-                              key={`${index}-${zone.end}`}
-                            >
-                              <label
-                                htmlFor="zone"
-                                style={{
-                                  fontWeight: "600",
-                                  marginBottom: "8px",
-                                  // font: "normal normal normal 16px / 20px ProximaNovaBold",
-                                  textAlign: "left",
-                                  letterSpacing: "0px",
-                                  color: "#343434",
-                                  opacity: "1",
-                                }}
-                              >
-                                Zone {index + 1}
-                              </label>
-
-                              {/* <div className={styles.zoneFieldGroup}> */}
-                              <div className={"flex gap-2 mb-5 items-start flex-col w-full"}>
-                                <div
-                                  // className={styles.labeledInput}
-                                  className={"flex flex-col w-full"}
-                                >
-                                  <label htmlFor="zoneStart" className="mb-1.5 text-[#343434] font-medium">
-                                    Zone Start (mile)
-                                  </label>
-                                  <input
-                                    className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                    type="number"
-                                    placeholder="Start Mile"
-                                    value={zone.start}
-                                    step="0.01"
-                                    min={index === 0 ? 0.01 : zonePricing?.[index - 1]?.end}
-                                    onChange={(e) => {
-                                      const newZones = [...zonePricing];
-                                      newZones[index].start = parseFloat(e.target.value);
-                                      setZonePricing(newZones);
-                                    }}
-                                  />
-                                </div>
-                                <div
-                                  // className={styles.labeledInput}
-                                  className={"flex flex-col w-full"}
-                                >
-                                  <label htmlFor="zoneEnd" className="mb-1.5 text-[#343434] font-medium">
-                                    Zone End (mile)
-                                  </label>
-                                  <input
-                                    className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                    type="number"
-                                    placeholder="End Mile"
-                                    value={zone.end}
-                                    step="0.01"
-                                    max={globalAirportLimit}
-                                    onChange={(e) => {
-                                      const newZones = [...zonePricing];
-                                      newZones[index].end = parseFloat(e.target.value);
-                                      setZonePricing(newZones);
-                                    }}
-                                  />
-                                </div>
-                                <div
-                                  // className={styles.labeledInput}
-                                  className={"flex flex-col w-full"}
-                                >
-                                  <label htmlFor="pricePerPMile" className="mb-1.5 text-[#343434] font-medium">
-                                    Price per Mile
-                                  </label>
-                                  <input
-                                    className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                    type="number"
-                                    placeholder="Price Per Mile"
-                                    value={zone.pricePerMile}
-                                    step="0.01"
-                                    onChange={(e) => {
-                                      const newZones = [...zonePricing];
-                                      newZones[index].pricePerMile = parseFloat(e.target.value);
-                                      setZonePricing(newZones);
-                                    }}
-                                  />
-                                </div>
-                                <div
-                                  // className={styles.labeledInput}
-                                  className={"flex flex-col w-full"}
-                                >
-                                  <label htmlFor="pricePerPMin" className="mb-1.5 text-[#343434] font-medium">
-                                    Price per Minute
-                                  </label>
-                                  <input
-                                    className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                    type="number"
-                                    placeholder="Price Per Minute"
-                                    step="0.01"
-                                    value={zone.pricePerDistance}
-                                    onChange={(e) => {
-                                      const newZones = [...zonePricing];
-                                      newZones[index].pricePerDistance = parseFloat(e.target.value);
-                                      setZonePricing(newZones);
-                                    }}
-                                  />
-                                </div>
-                                <Button
-                                  type="button"
-                                  className="ml-2.5 py-1.5 px-2.5"
-                                  padding="6px 10px"
-                                  onClick={() => {
-                                    const newZones = zonePricing?.filter((_, i) => i !== index);
-                                    setZonePricing(newZones);
-                                  }}
-                                >
-                                  Remove
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-
-                        {isZoneActive && (
-                          <Button
-                            type="button"
-                            className="mt-2.5 mr-2.5 py-1.6 px-4 space-x-4"
-                            onClick={() => {
-                              if (zonePricing.length === 0) {
-                                setZonePricing([
-                                  {
-                                    start: 0.01,
-                                    end: 0,
-                                    pricePerMile: 0,
-                                    pricePerDistance: 0,
-                                  },
-                                ]);
-                              } else {
-                                const lastEnd = zonePricing?.[zonePricing.length - 1].end;
-                                if (lastEnd >= globalAirportLimit) {
-                                  toast({
-                                    title: "Global Airport Limit",
-                                    description: `Maximum limit of ${globalAirportLimit} miles reached`,
-                                    variant: "destructive",
-                                  });
-                                  return;
-                                }
-                                let finalLastEnd = lastEnd + 10;
-                                if (finalLastEnd >= globalAirportLimit) {
-                                  finalLastEnd = globalAirportLimit;
-                                }
-                                setZonePricing([
-                                  ...zonePricing,
-                                  {
-                                    start: 0.01,
-                                    end: parseInt(finalLastEnd, 10),
-                                    pricePerMile: 0,
-                                    pricePerDistance: 0,
-                                  },
-                                ]);
-                              }
+                          <input
+                            className="cursor-pointer"
+                            type="checkbox"
+                            checked={isZoneActive}
+                            onChange={() => setIsZoneActive(!isZoneActive)}
+                            id="zoneToggle"
+                          />
+                          <label
+                            htmlFor="zoneToggle"
+                            className="cursor-pointer font-semibold ml-2.5 text-[#343434] select-none"
+                            style={{
+                              letterSpacing: "0px",
+                              opacity: "1",
                             }}
                           >
-                            Add New Zone
-                          </Button>
-                        )}
-                        {isZoneActive && zonePricing.length > 0 && (
-                          <Button type="button" className="my-2.5 py-1.5 px-4" onClick={() => setZonePricing([])}>
-                            Clear All Zones
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.year ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.year?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="vehicleImages"
-              defaultValue={[]}
-              render={({ field }) => (
-                <FormItem className="col-span-6 rounded">
-                  <FormLabel>Upload Vehicle Images (max 3)</FormLabel>
-                  <FormControl>
-                    {/* Hidden File Input */}
-                    <Input
-                      ref={imagesRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      value={undefined}
-                      onChange={(e) => handleFilesChange(e.target.files, field.onChange)}
-                    />
-                  </FormControl>
+                            Activate Zone Based Pricing
+                          </label>
+                        </CardHeader>
 
-                  {/* Image Previews */}
-                  <div className="mt-2 flex gap-3">
-                    {previews.map((src, index) => (
-                      <div
-                        key={`${index}-${src.slice(0, 3)}`}
-                        className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden"
-                      >
-                        <img src={src} alt="preview" className="object-cover w-full h-full" />
-                        {/* Camera / Clear Icon */}
-                        <button
-                          type="button"
-                          onClick={() => removeImage(index, field)}
-                          className="cursor-pointer absolute top-1 right-1 bg-white rounded p-1"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </button>
-                      </div>
-                    ))}
+                        <CardContent>
+                          {isZoneActive &&
+                            zonePricing?.map((zone, index) => (
+                              <div
+                                // className={styles.zoneGroup}
+                                className={cn(
+                                  "flex flex-col items-start mb-4 ",
+                                )}
+                                key={`${index}-${zone.end}`}
+                              >
+                                <label
+                                  htmlFor="zone"
+                                  style={{
+                                    fontWeight: "600",
+                                    marginBottom: "8px",
+                                    // font: "normal normal normal 16px / 20px ProximaNovaBold",
+                                    textAlign: "left",
+                                    letterSpacing: "0px",
+                                    color: "#343434",
+                                    opacity: "1",
+                                  }}
+                                >
+                                  Zone {index + 1}
+                                </label>
 
-                    {/* Add new placeholder */}
-                    <button
-                      type="button"
-                      onClick={() => imagesRef.current?.click()}
-                      className="w-28 h-28 cursor-pointer border border-dashed border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100"
+                                {/* <div className={styles.zoneFieldGroup}> */}
+                                <div
+                                  className={
+                                    "flex gap-2 mb-5 items-start flex-col w-full"
+                                  }
+                                >
+                                  <div
+                                    // className={styles.labeledInput}
+                                    className={"flex flex-col w-full"}
+                                  >
+                                    <label
+                                      htmlFor="zoneStart"
+                                      className="mb-1.5 text-[#343434] font-medium"
+                                    >
+                                      Zone Start (mile)
+                                    </label>
+                                    <input
+                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
+                                      type="number"
+                                      placeholder="Start Mile"
+                                      value={zone.start}
+                                      step="0.01"
+                                      min={
+                                        index === 0
+                                          ? 0.01
+                                          : zonePricing?.[index - 1]?.end
+                                      }
+                                      onChange={(e) => {
+                                        const newZones = [...zonePricing];
+                                        newZones[index].start = parseFloat(
+                                          e.target.value,
+                                        );
+                                        setZonePricing(newZones);
+                                      }}
+                                    />
+                                  </div>
+                                  <div
+                                    // className={styles.labeledInput}
+                                    className={"flex flex-col w-full"}
+                                  >
+                                    <label
+                                      htmlFor="zoneEnd"
+                                      className="mb-1.5 text-[#343434] font-medium"
+                                    >
+                                      Zone End (mile)
+                                    </label>
+                                    <input
+                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
+                                      type="number"
+                                      placeholder="End Mile"
+                                      value={zone.end}
+                                      step="0.01"
+                                      max={globalAirportLimit}
+                                      onChange={(e) => {
+                                        const newZones = [...zonePricing];
+                                        newZones[index].end = parseFloat(
+                                          e.target.value,
+                                        );
+                                        setZonePricing(newZones);
+                                      }}
+                                    />
+                                  </div>
+                                  <div
+                                    // className={styles.labeledInput}
+                                    className={"flex flex-col w-full"}
+                                  >
+                                    <label
+                                      htmlFor="pricePerPMile"
+                                      className="mb-1.5 text-[#343434] font-medium"
+                                    >
+                                      Price per Mile
+                                    </label>
+                                    <input
+                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
+                                      type="number"
+                                      placeholder="Price Per Mile"
+                                      value={zone.pricePerMile}
+                                      step="0.01"
+                                      onChange={(e) => {
+                                        const newZones = [...zonePricing];
+                                        newZones[index].pricePerMile =
+                                          parseFloat(e.target.value);
+                                        setZonePricing(newZones);
+                                      }}
+                                    />
+                                  </div>
+                                  <div
+                                    // className={styles.labeledInput}
+                                    className={"flex flex-col w-full"}
+                                  >
+                                    <label
+                                      htmlFor="pricePerPMin"
+                                      className="mb-1.5 text-[#343434] font-medium"
+                                    >
+                                      Price per Minute
+                                    </label>
+                                    <input
+                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
+                                      type="number"
+                                      placeholder="Price Per Minute"
+                                      step="0.01"
+                                      value={zone.pricePerDistance}
+                                      onChange={(e) => {
+                                        const newZones = [...zonePricing];
+                                        newZones[index].pricePerDistance =
+                                          parseFloat(e.target.value);
+                                        setZonePricing(newZones);
+                                      }}
+                                    />
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    className="ml-2.5 py-1.5 px-2.5"
+                                    padding="6px 10px"
+                                    onClick={() => {
+                                      const newZones = zonePricing?.filter(
+                                        (_, i) => i !== index,
+                                      );
+                                      setZonePricing(newZones);
+                                    }}
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+
+                          {isZoneActive && (
+                            <Button
+                              type="button"
+                              className="mt-2.5 mr-2.5 py-1.6 px-4 space-x-4"
+                              onClick={() => {
+                                if (zonePricing.length === 0) {
+                                  setZonePricing([
+                                    {
+                                      start: 0.01,
+                                      end: 0,
+                                      pricePerMile: 0,
+                                      pricePerDistance: 0,
+                                    },
+                                  ]);
+                                } else {
+                                  const lastEnd =
+                                    zonePricing?.[zonePricing.length - 1].end;
+                                  if (lastEnd >= globalAirportLimit) {
+                                    toast({
+                                      title: "Global Airport Limit",
+                                      description: `Maximum limit of ${globalAirportLimit} miles reached`,
+                                      variant: "destructive",
+                                    });
+                                    return;
+                                  }
+                                  let finalLastEnd = lastEnd + 10;
+                                  if (finalLastEnd >= globalAirportLimit) {
+                                    finalLastEnd = globalAirportLimit;
+                                  }
+                                  setZonePricing([
+                                    ...zonePricing,
+                                    {
+                                      start: 0.01,
+                                      end: parseInt(finalLastEnd, 10),
+                                      pricePerMile: 0,
+                                      pricePerDistance: 0,
+                                    },
+                                  ]);
+                                }
+                              }}
+                            >
+                              Add New Zone
+                            </Button>
+                          )}
+                          {isZoneActive && zonePricing.length > 0 && (
+                            <Button
+                              type="button"
+                              className="my-2.5 py-1.5 px-4"
+                              onClick={() => setZonePricing([])}
+                            >
+                              Clear All Zones
+                            </Button>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </FormControl>
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.year ? "visible text-red-600" : "invisible"}`}
                     >
-                      <Plus className="h-6 w-6 text-gray-500" />
-                    </button>
-                  </div>
+                      {form.formState.errors.year?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="vehicleImages"
+                defaultValue={[]}
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>Upload Vehicle Images (max 3)</FormLabel>
+                    <FormControl>
+                      {/* Hidden File Input */}
+                      <Input
+                        ref={imagesRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        value={undefined}
+                        onChange={(e) =>
+                          handleFilesChange(e.target.files, field.onChange)
+                        }
+                      />
+                    </FormControl>
 
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.vehicleImages ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.vehicleImages?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="documents"
-              defaultValue={[]}
-              render={({ field }) => (
-                <FormItem className="col-span-6 rounded ">
-                  <FormLabel>
-                    Upload Documents:{" "}
-                    {["Document 1*", "Document 2*", "Document 3*", "Document 4*"].map((text, idx) => (
-                      <span
-                        key={`${idx}-${text}`}
-                        className={idx < field.value.length ? "text-gray-700 underline" : "text-gray-300"}
+                    {/* Image Previews */}
+                    <div className="mt-2 flex gap-3">
+                      {previews.map((src, index) => (
+                        <div
+                          key={`${index}-${src.slice(0, 3)}`}
+                          className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden"
+                        >
+                          <img
+                            src={src}
+                            alt="preview"
+                            className="object-cover w-full h-full"
+                          />
+                          {/* Camera / Clear Icon */}
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index, field)}
+                            className="cursor-pointer absolute top-1 right-1 bg-white rounded p-1"
+                          >
+                            <X className="h-4 w-4 text-red-500" />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Add new placeholder */}
+                      <button
+                        type="button"
+                        onClick={() => imagesRef.current?.click()}
+                        className="w-28 h-28 cursor-pointer border border-dashed border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100"
                       >
-                        {text}{" "}
-                      </span>
-                    ))}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="rounded cursor-pointer placeholder-[#E6E6E6]"
-                      type="file"
-                      ref={fileRef}
-                      multiple
-                      accept="image/jpeg,image/png,application/pdf"
-                      value={undefined}
-                      onChange={(e) => {
-                        const newFiles = Array.from(e.target.files ?? []);
-                        // Filter out File objects from current value (keep only document objects with url)
-                        const existingDocs = field.value.filter(
-                          (doc: File | { url: string }) => !(doc instanceof File) && (doc?.url ?? doc?.fileUrl),
-                        );
-                        field.onChange([...existingDocs, ...newFiles]);
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <div className="flex items-center justify-start rounded px-6 space-x-2.5">
-            <Button
-              className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-              variant={"secondary"}
-              type="button"
-              onClick={() => {
-                form.reset({
-                  affiliateId: "",
-                  vehicleImages: [],
-                  status: "",
-                });
-              }}
-            >
-              Clear Alls
-            </Button>
-            <Button
-              className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-              variant={"secondary"}
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? "Saving..." : "Save Details"}
-            </Button>
-          </div>
+                        <Plus className="h-6 w-6 text-gray-500" />
+                      </button>
+                    </div>
+
+                    <FormMessage
+                      className={`mt-1 h-5 ${form.formState.errors.vehicleImages ? "visible text-red-600" : "invisible"}`}
+                    >
+                      {form.formState.errors.vehicleImages?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="documents"
+                defaultValue={[]}
+                render={({ field }) => (
+                  <FormItem className=" ">
+                    <FormLabel>
+                      Upload Documents:{" "}
+                      {[
+                        "Document 1*",
+                        "Document 2*",
+                        "Document 3*",
+                        "Document 4*",
+                      ].map((text, idx) => (
+                        <span
+                          key={`${idx}-${text}`}
+                          className={
+                            idx < field.value.length
+                              ? "text-gray-700 underline"
+                              : "text-gray-300"
+                          }
+                        >
+                          {text}{" "}
+                        </span>
+                      ))}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="rounded cursor-pointer placeholder-[#E6E6E6]"
+                        type="file"
+                        ref={fileRef}
+                        multiple
+                        accept="image/jpeg,image/png,application/pdf"
+                        value={undefined}
+                        onChange={(e) => {
+                          const newFiles = Array.from(e.target.files ?? []);
+                          // Filter out File objects from current value (keep only document objects with url)
+                          const existingDocs = field.value.filter(
+                            (doc: File | { url: string }) =>
+                              !(doc instanceof File) &&
+                              (doc?.url ?? doc?.fileUrl),
+                          );
+                          field.onChange([...existingDocs, ...newFiles]);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <div className="flex items-center justify-start rounded px-6 space-x-2.5">
+              <Button
+                className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
+                variant={"secondary"}
+                type="button"
+                onClick={() => {
+                  form.reset({
+                    affiliateId: "",
+                    vehicleImages: [],
+                    status: "",
+                  });
+                }}
+              >
+                Clear Alls
+              </Button>
+              <Button
+                className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
+                variant={"secondary"}
+                type="submit"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              </Button>
+            </div>
+          </CardBody>
         </Card>
       </form>
     </Form>

@@ -37,9 +37,6 @@ export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="USERS" />
       ),
-      // cell: ({row})=>(<>
-      // {row.original.firstName} {row.original.lastName}
-      // </>),
       enableSorting: false,
     },
     {
@@ -96,7 +93,6 @@ export function getRegionColumns(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -107,7 +103,6 @@ export function getRegionColumns(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -182,7 +177,6 @@ export function getRegionAdminColumns(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -193,7 +187,6 @@ export function getRegionAdminColumns(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -315,7 +308,6 @@ export function getAffiliate(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -326,7 +318,6 @@ export function getAffiliate(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -478,7 +469,6 @@ export function getChauffeur(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -489,7 +479,6 @@ export function getChauffeur(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -642,7 +631,6 @@ export function getUsers(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -653,7 +641,6 @@ export function getUsers(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -769,12 +756,6 @@ export function getUsers(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="outlineNavBtnBlack" size="xl" spacing="lg"
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -821,7 +802,6 @@ export function getBooking(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -832,7 +812,6 @@ export function getBooking(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -962,7 +941,6 @@ export function getFleets(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -973,7 +951,6 @@ export function getFleets(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1029,6 +1006,7 @@ export function getFleets(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="View Fleet"
           >
             <Eye />
           </Button>
@@ -1037,12 +1015,18 @@ export function getFleets(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="Edit Fleet"
           >
             <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete Fleet"
+              >
                 <Trash2 />
               </Button>
             </DialogTrigger>
@@ -1073,12 +1057,6 @@ export function getFleets(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            variant="outlineNavBtnBlack" size="xl" spacing="lg"
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -1110,7 +1088,6 @@ export function getTrips(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1121,7 +1098,6 @@ export function getTrips(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1220,7 +1196,6 @@ export function getNotification(): ColumnDef<TNotification>[] {
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1231,7 +1206,6 @@ export function getNotification(): ColumnDef<TNotification>[] {
       ),
       cell: ({ row }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1286,7 +1260,6 @@ export function getPayments(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1297,7 +1270,6 @@ export function getPayments(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1389,7 +1361,6 @@ export function getRefund(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1400,7 +1371,6 @@ export function getRefund(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1486,7 +1456,6 @@ export function getRefundRequest(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1497,7 +1466,6 @@ export function getRefundRequest(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1594,7 +1562,6 @@ export function getCrewMember(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1605,7 +1572,6 @@ export function getCrewMember(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1722,7 +1688,6 @@ export function getStaffMember(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1733,7 +1698,6 @@ export function getStaffMember(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1845,7 +1809,6 @@ export function getContactRequest(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1856,7 +1819,6 @@ export function getContactRequest(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -1924,7 +1886,6 @@ export function getTestimonial(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -1935,7 +1896,6 @@ export function getTestimonial(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -2050,7 +2010,6 @@ export function getOurPartner(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -2061,7 +2020,6 @@ export function getOurPartner(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -2174,7 +2132,6 @@ export function getNews(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -2185,7 +2142,6 @@ export function getNews(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -2284,7 +2240,6 @@ export function getSettings(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -2295,7 +2250,6 @@ export function getSettings(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -2348,7 +2302,6 @@ export function getIpWhiteList(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -2359,7 +2312,6 @@ export function getIpWhiteList(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -2456,7 +2408,6 @@ export function getFaqs(
       id: "select",
       header: ({ table }) => (
         <Checkbox
-          className="font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A] "
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
@@ -2467,7 +2418,6 @@ export function getFaqs(
       ),
       cell: ({ row }) => (
         <Checkbox
-          className=" font-medium data-[state=checked]:bg-[#d6d6d6] data-[state=checked]:border-[#d6d6d6] [&_[data-state=checked]>svg]:text-[#5A5A5A]"
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
@@ -2660,11 +2610,6 @@ export function getChauffeurAvailablility(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-           >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2677,14 +2622,6 @@ export type THomeContent = {
   content: string;
   description: string;
 };
-// home: object[],
-//   about: object[],
-//   service: object[],
-//   cities: object[],
-//   fleets: object[],
-//   faqs: object[],
-//   contact_us: object[],
-//   blog: object[],
 export function getHomeContent(
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
@@ -2876,94 +2813,9 @@ export function getContent(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
     },
   ];
 }
-
-// import { type ColumnDef } from "@tanstack/react-table"
-// import { DataTableColumnHeader } from "./DataTableColumnHeader";
-// import { Checkbox } from "@/components/ui/checkbox"
-// import { Button } from "../ui/button";
-// import { Edit, Trash2 } from "lucide-react";
-
-// // This type is used to define the shape of our data.
-// // You can use a Zod schema here if you want.
-// export type TRegion = {
-//   id: string;
-//   regionName: string;
-//   admin: string;
-//   onAccess: (id:string)=> void;
-//   onEdit: (id:string)=> void;
-//   onDelete: (id:string)=> void;
-// }
-
-// export const columns: ColumnDef<TRegion>[] = [
-//   {
-//     id: "select",
-//     header: ({ table }) => (
-//       <Checkbox
-//         checked={
-//           table.getIsAllPageRowsSelected() ||
-//           (table.getIsSomePageRowsSelected() && "indeterminate")
-//         }
-//         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//         aria-label="Select all"
-//       />
-//     ),
-//     cell: ({ row }) => (
-//       <Checkbox
-//         checked={row.getIsSelected()}
-//         onCheckedChange={(value) => row.toggleSelected(!!value)}
-//         aria-label="Select row"
-//       />
-//     ),
-//     enableSorting: false,
-//     enableHiding: false,
-//   },
-//   {
-//     accessorKey: "regionName",
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Region Name" />
-//     ),
-//   },
-//   {
-//     accessorKey: "admin",
-//     header: ({ column }) => (
-//       <DataTableColumnHeader column={column} title="Admin" />
-//     ),
-//   },
-//   {
-//     accessorKey: "access",
-//     header: ({ column }) =>(
-//       <DataTableColumnHeader column={column} title="Access" />
-//     ),
-//     cell: ({ row }) => {
-//         const {id} = row.original;
-//         return (<div className=""><Button variant={"outline"} >Manage Access</Button></div>);
-//     },
-//     enableSorting: false,
-//     enableHiding: false,
-//   },
-//   {
-//     accessorKey: "onEdit",
-//     header: ({ column }) =>(
-//       <DataTableColumnHeader column={column} title="Action" />
-//     ),
-//     cell: ({ row }) => {
-//         return (<div className="text-right flex gap-2 items-center"><Button onClick={()=>row.original.onEdit(row.original.id)} variant={"outline"} className='cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]'><Edit className='text-[#5A5A5A]' /></Button>
-//                     <Button onClick={()=>row.original.onDelete(row.original.id)} variant={"outline"} className='cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px]'><Trash2 className='text-[#5A5A5A]' /></Button></div>);
-//     },
-//     enableSorting: false,
-//     enableHiding: false,
-//   },
-// ]
