@@ -4,61 +4,26 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetchTripById from "@/api/getTripById.api";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { getStatusColor } from "@/components/table/column";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Card,
+  CardAction,
+  CardBody,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
-import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 
-const showStatus = [
-  { label: "Completed", value: "completed" },
-  { label: "In-Progress", value: "inProgress" },
-  { label: "Cancelled", value: "cancelled" },
-  { label: "Pending", value: "pending" },
-];
-
-const newStatus = [
-  {
-    label: "Payment Done",
-    css: "bg-[#444444] text-white",
-    value: "paymentDone",
-  },
-  { label: "Payment Pending", css: "bg-[#959595]", value: "paymentPending" },
-  {
-    label: "Refund In-progress",
-    css: "bg-[#959595]",
-    value: "RefundInProgress",
-  },
-  { label: "Refund Done", css: "bg-[#959595]", value: "RefundDone" },
-  { label: "Refund Requested", css: "bg-[#959595]", value: "RefundRequested" },
-];
 const libraries = ["places", "geocoding"];
-const getNewStatusColor = (value: string) => {
-  console.log(value.toLowerCase().trim());
-  console.log(
-    "newStatus:",
-    newStatus.find(
-      (status) =>
-        status.value.toLowerCase().trim() === value.toLowerCase().trim(),
-    ),
-  );
-  return newStatus.find(
-    (status) =>
-      status.value.toLowerCase().trim() === value.toLowerCase().trim(),
-  );
-};
+
 const ViewTripsPage = () => {
   const { id } = useParams();
   const [googleMapsApiKey] = useState<string | null>(
@@ -114,191 +79,126 @@ const ViewTripsPage = () => {
       isMounted = false;
     };
   }, [isLoaded, loadError, data]);
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
 
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-      <Link to={constant.ROUTING_URLS.TRIPS}>
-        <Button
-          variant="outline"
-          className="py-3 px-1.5 rounded bg-[#D9D9D9] w-[80px] h-[31px] flex items-center justify-center cursor-pointer text-[#5A5A5A]"
-        >
-          <ArrowLeft /> Back
-        </Button>
-      </Link>
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md mt-4 mb-5">
-        <div className="w-full h-full flex items-center justify-between">
-          <div>
-            <h2 className="font-medium text-xl text-black">Trips</h2>
-            <h4>
-              {" "}
-              <span className="text-[#959595] w-[116px] h-4 text-xs">
-                Trips
-              </span>{" "}
-              <span className="text-xs text-[#3A3A3A] w-[50px] h-4">
-                / View Trips
-              </span>
-            </h4>
-          </div>
-        </div>
-      </Header>
+      <PageHeader
+        title="Trip Details"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Trips", path: constant.ROUTING_URLS.TRIPS },
+          { label: "View Trip" },
+        ]}
+        action={{
+          variant: "outlineBlack",
+          label: "Back",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.TRIPS,
+        }}
+      />
       {isFetching ? (
         <Spinner />
       ) : (
-        <Card className="inset-shadow-xs inset-shadow-[#F1F1F1] bg-[#FDFDFD] rounded-[6px] px-5 space-y-6">
-          <CardHeader className="w-full  flex items-center justify-between">
-            <div className="w-full h-full space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-semibold text-xl text-[#000000]">
-                    Booking ID: AA57329144.
-                  </h4>
-                  <h5 className="text-[#5A5A5A] font-semibold">
-                    Created on:{" "}
-                    {formatDate(data?.createdAt || "", "dd-MM-yyyy hh:mm a")}
-                  </h5>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`w-[180px] h-[39px] flex items-center justify-between rounded shadow-inner shadow-[#F1F1F1] cursor-pointer bg-[#FFFFFF] ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                    >
-                      {selectedStatus.label}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    className={cn(
-                      `w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer rounded space-y-1`,
-                    )}
-                    align="start"
-                  >
-                    <DropdownMenuGroup>
-                      {showStatus.map((option) => (
-                        <DropdownMenuItem
-                          key={option.value}
-                          className={`flex items-center justify-between cursor-pointer bg-[#FFFFFF] ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                          onClick={() => setSelectedStatus(option)}
-                        >
-                          {option.label}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <Link to={constant.ROUTING_URLS.TRIPS_MAP.replace(":id", id!)}>
-                <Button type="button" variant={"secondary"}>
-                  View Live Location
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>Booking ID: {data?.bookingId}</CardTitle>
+              <CardDescription className="text-sm font-bold">
+                Created on: {formatDate(
+                  data?.createdAt,
+                  "dd-MM-yyyy hh:mm a",
+                )}{" "}
+              </CardDescription>
+              <CardAction className="flex flex-wrap gap-2">
+                <Button type="button" variant="black" className="capitalize">
+                  {data?.tripStatus}
                 </Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-            <div className="w-full h-full space-y-4">
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
+                <Link
+                  to={constant.ROUTING_URLS.TRIPS_MAP.replace(":id", id!)}
+                  className="block"
+                >
+                  <Button type="button">View Live Location</Button>
+                </Link>
+              </CardAction>
+            </CardHeader>
+            <FieldSeparator />
+            <CardContent>
+              <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
                 Passenger
               </h6>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+              <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
+                <Label className="font-montserrat font-semibold capitalize">
                   Name:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
+                <Label>
                   {data?.user?.firstName} {data?.user?.lastName}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                </Label>
+                <Label className="font-montserrat font-semibold capitalize">
                   Email:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
-                  {data?.user?.email}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
-                  phone:
+                <Label>{data?.user?.email}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Phone:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
-                  {data?.user?.phoneNumber}
-                </span>
-              </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">
-                Car and Chauffeur
-              </h6>
+                <Label>{data?.user?.phoneNumber}</Label>
 
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                <div className="col-span-2">
+                  <FieldSeparator />
+                </div>
+
+                <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
+                  Car and Chauffeur
+                </h6>
+
+                <Label className="font-montserrat font-semibold capitalize">
                   Car Name:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
+                <Label>
                   {data?.vehicle?.make} {data?.vehicle?.model}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                </Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
                   Chauffeur:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
+                <Label>
                   {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
-                </span>
-              </div>
-              <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-              <h6 className="text-sm text-[#5A5A5A] h-[19px] w-full">Trip</h6>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
-                  Price:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
-                  ${data?.fare}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
-                  Status:
+
+                <div className="col-span-2">
+                  <FieldSeparator />
+                </div>
+
+                <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
+                  Trip
+                </h6>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  Trip Id:
                 </Label>
-                <span
-                  className={`text-[#3A3A3A] font-medium ${getNewStatusColor(data?.tripStatus)?.css} px-2 py-0.5 rounded`}
-                >
-                  {data?.tripStatus}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                <Label>{data?.id}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  price:
+                </Label>
+                <Label>${data.fare}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
                   Type:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
-                  {data?.tripType}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
+                <Label className="capitalize">{data?.tripType}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
                   From:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
-                  {loadError
-                    ? "Error map api loading"
-                    : !pickUpAddress
-                      ? "Error fetching address"
-                      : pickUpAddress}
-                </span>
-              </div>
-              <div className="flex items-center gap-6">
-                <Label className="min-w-[153px] text-sm font-semibold capitalize">
-                  To:
+                <Label>{pickUpAddress}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  to:
                 </Label>
-                <span className="text-[#3A3A3A] font-medium">
-                  {loadError
-                    ? "Error map api loading"
-                    : !dropOffAddress
-                      ? "Error fetching address"
-                      : dropOffAddress}
-                </span>
+                <Label>{dropOffAddress}</Label>
               </div>
-            </div>
-          </CardContent>
+            </CardContent>
+          </CardBody>
         </Card>
       )}
     </div>

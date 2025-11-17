@@ -208,6 +208,7 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
+import { Spinner } from "../Spinner";
 
 const containerStyle: React.CSSProperties = { width: "100%", height: "100%" };
 
@@ -421,7 +422,7 @@ const LiveTracking: React.FC<Props> = ({
   //   return () => animationRef.current && cancelAnimationFrame(animationRef.current);
   // }, [isLoaded, routePath, carPosition, externalCarPosition]);
 
-  if (!isLoaded) return <div>Loading…</div>;
+  if (!isLoaded) return <Spinner />;
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>

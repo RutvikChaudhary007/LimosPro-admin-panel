@@ -1,28 +1,20 @@
 import type { Table } from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
+import { Search } from "lucide-react";
 import { type JSX, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useFetchAllTrips from "@/api/getAllTrips.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import {
-  getStatusColor,
-  getTrips,
-  type TTrips,
-} from "@/components/table/column";
+import { getTrips, type TTrips } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -32,6 +24,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
@@ -44,42 +37,12 @@ const showStatus = [
   { label: "Cancelled", value: "cancelled" },
 ];
 
-// const tableData: TTrips[] = [
-// {
-//     id: "12345",
-//     bookingId: "67890",
-//     chaufferId: "67890",
-//     tripType: "oneWay",
-//     tripStatus: "inProgress",
-//     tripStartTime: "2025-04-16T10:00:00Z",
-//     tripEndTime: "2025-04-16T12:00:00Z",
-//     distanceInKm: 15.5,
-//     gratuity: 5,
-//     paymentStatus: "pending",
-//     createdAt: "2025-04-16T10:00:00Z",
-//     updatedAt: "2025-04-16T10:00:00Z"
-// },
-// {
-//     id: "67890",
-//     bookingId: "12345",
-//     chaufferId: "12345",
-//     tripType: "roundTrip",
-//     tripStatus: "completed",
-//     tripStartTime: "2025-04-17T08:00:00Z",
-//     tripEndTime: "2025-04-17T10:00:00Z",
-//     distanceInKm: 20,
-//     gratuity: 10,
-//     paymentStatus: "paid",
-//     createdAt: "2025-04-17T08:00:00Z",
-//     updatedAt: "2025-04-17T10:00:00Z"
-// }
-// ];
-
 function TripsPage(): JSX.Element {
+  const [{ value: statusDefaultValue }] = showStatus;
   const navigate = useNavigate();
   const perPage = 10;
   const [tableRef, setTableRef] = useState<Table<TTrips> | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
+  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
   // const [data, setData] = useState<TTrips[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllTrips();
   const { currentPage, setPage, totalPages, currentItems } =
@@ -97,7 +60,7 @@ function TripsPage(): JSX.Element {
 
   const columns = getTrips(handleView, handleMap);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
   const bulkDeleteTripsMutation = queries.useBulkDeleteTripsMutation();
 
@@ -185,63 +148,23 @@ function TripsPage(): JSX.Element {
     <>
       <PageTitle title={generatePageTitle("Trips")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Trips</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">
-                  LIMOSPRO
-                </span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">
-                  / Trips
-                </span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Trips"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Trips" }]}
+        />
 
-        <div className="flex justify-between gap-2.5">
-          <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer ${getStatusColor(selectedStatus.label)} ${selectedStatus.label === "Active" && "text-white"}`}
-                >
-                  {selectedStatus.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showStatus.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                      onClick={() => setSelectedStatus(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        <div className="flex justify-between">
+          <div className="flex items-center gap-4">
+            <SelectDropDown
+              placeholder={selectedStatus}
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
           </div>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
-              className={`${
-                Object.keys(rowSelection).filter(
-                  (k) =>
-                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                    rowSelection[k],
-                ).length === 0
-                  ? "cursor-no-drop"
-                  : "cursor-pointer"
-              }`}
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
               <BulkDeleteBtn
                 rowSelection={rowSelection}
@@ -251,14 +174,18 @@ function TripsPage(): JSX.Element {
                 tableRef={tableRef}
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div className="">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>

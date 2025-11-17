@@ -60,32 +60,30 @@ const ViewUserPage = () => {
             </CardHeader>
             <FieldSeparator />
             <CardContent>
-              <div className="w-full mb-4">
-                <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
-                  All Details
-                </h6>
-                <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
-                  <Label className="font-montserrat font-semibold capitalize">
-                    DOB:
-                  </Label>
-                  <Label>{data?.dateOfBirth}</Label>
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Gender:
-                  </Label>
-                  <Label>{data?.gender}</Label>
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Email:
-                  </Label>
-                  <Label>{data?.email}</Label>
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Payment Method:
-                  </Label>
-                  <Label>{data?.paymentMethod}</Label>
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Phone:
-                  </Label>
-                  <Label>{data?.phoneNumber}</Label>
-                </div>
+              <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
+                All Details
+              </h6>
+              <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
+                <Label className="font-montserrat font-semibold capitalize">
+                  DOB:
+                </Label>
+                <Label>{data?.dateOfBirth}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Gender:
+                </Label>
+                <Label>{data?.gender}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Email:
+                </Label>
+                <Label>{data?.email}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Payment Method:
+                </Label>
+                <Label>{data?.paymentMethod}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Phone:
+                </Label>
+                <Label>{data?.phoneNumber}</Label>
               </div>
             </CardContent>
           </CardBody>

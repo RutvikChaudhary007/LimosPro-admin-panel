@@ -1,6 +1,16 @@
+import { IconMapPin } from "@tabler/icons-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { Edit, Eye, Mail, Phone, Reply, Star, Trash2 } from "lucide-react";
+import {
+  CreditCardIcon,
+  Edit,
+  Eye,
+  Mail,
+  Phone,
+  Reply,
+  Star,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -15,7 +25,6 @@ import {
 import { cn } from "@/lib/utils";
 import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
-import Icons from "../common/Icons";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";
 import { Label } from "../ui/label";
@@ -1157,16 +1166,18 @@ export function getTrips(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="View Trip Details"
           >
             <Eye />
           </Button>
           <Button
             onClick={() => onMap(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px] p-0"
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View On Map"
           >
-            <Icons path="/Location.svg" alt="map icon" />
-            {/* <Icons path="/mapPin.svg" alt="map icon" className="text-[#5A5A5A] w-4 h-4" /> */}
+            <IconMapPin />
           </Button>
         </div>
       ),
@@ -1326,17 +1337,18 @@ export function getPayments(
             variant="outlineNavBtnBlack"
             size="xl"
             spacing="lg"
+            tooltip="View Details"
           >
             <Eye />
           </Button>
           <Button
             onClick={() => onMap(row.original.id)}
-            variant="outline"
-            className="cursor-pointer bg-[#F1F1F1] rounded w-[34px] h-[33px] p-0"
-            // disabled={true}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Card"
           >
-            <Icons path="/card.svg" alt="card icon" />
-            {/* <Icons path="/mapPin.svg" alt="map icon" className="text-[#5A5A5A] w-4 h-4" /> */}
+            <CreditCardIcon />
           </Button>
         </div>
       ),

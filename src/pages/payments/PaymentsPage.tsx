@@ -1,27 +1,16 @@
 // @ts-nocheck
 
-import { ChevronDown, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useFetchAllPayments from "@/api/payment.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import {
-  getPayments,
-  getStatusColor,
-  type TPayments,
-} from "@/components/table/column";
+import { getPayments, type TPayments } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -31,12 +20,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
-  { label: "Select Status", value: "" },
   { label: "Pending", value: "pending" },
   { label: "Failed", value: "failed" },
   { label: "Completed", value: "completed" },
@@ -70,23 +59,23 @@ const tableData: TPayments[] = [
   },
 ];
 const PaymentsPage = () => {
+  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
-
   const [newPage, setNewPage] = useState<number>(1);
-  const [selectedStatus, setSelectedStatus] = useState(showStatus[0]);
-  const [selectedOption, setSelectedOption] = useState(showOptions[0]);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedOption, setSelectedOption] = useState(optionDefaultValue);
   // const [data, setData] = useState<TPayments[]>(tableData);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data, 1, perPage);
   const { data, isFetching, isError, refetch } = useFetchAllPayments({
     page: newPage,
-    limit: selectedOption.value,
+    limit: selectedOption,
     status: selectedStatus.value,
   });
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TPayments>(
       data?.payments,
       newPage,
-      selectedOption.value,
+      selectedOption,
       data?.pagination,
     );
 
@@ -196,102 +185,44 @@ const PaymentsPage = () => {
     <>
       <PageTitle title={generatePageTitle("Payments")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Payments</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">
-                  LIMOSPRO
-                </span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">
-                  / Payments
-                </span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Payments"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Payments" }]}
+        />
 
-        <div className="flex justify-between gap-2.5">
-          <div className="flex items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] cursor-pointer `}
-                >
-                  {selectedOption.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showOptions.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                      onClick={() => setSelectedOption(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+        <div className="flex justify-between">
+          <SelectDropDown
+            placeholder={selectedOption}
+            items={showOptions}
+            value={selectedOption}
+            setSelectedItem={setSelectedOption}
+          />
 
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={`w-[180px] h-[39px] flex items-center justify-between rounded shadow-inner shadow-[#F1F1F1] cursor-pointer `}
-                >
-                  {selectedStatus.label} <ChevronDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-                align="start"
-              >
-                <DropdownMenuGroup>
-                  {showStatus.map((option) => (
-                    <DropdownMenuItem
-                      key={option.value}
-                      className={`flex items-center justify-between cursor-pointer ${getStatusColor(option.label)} ${option.label === "Active" && "text-white"}`}
-                      onClick={() => setSelectedStatus(option)}
-                    >
-                      {option.label} <ChevronDown className="ml-2" />
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
+            <SelectDropDown
+              placeholder="Select Status"
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
             <span
               // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
               <Button
-                variant={"outline"}
-                className="p-2.5 w-[137px] h-full rounded flex items-center justify-evenly  cursor-pointer bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] hover:bg-none outline-0"
-                // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+                variant="outlineBlack"
+                type="button"
                 disabled={
                   Object.keys(rowSelection).filter((k) => rowSelection[k])
                     .length === 0
                 }
                 onClick={() => {
-                  // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
                   setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                   setRowSelection({});
                 }}
               >
-                <span className="text-[#959595] text-sm w-[93px] h-[19px]">
-                  Export
-                </span>
-                <Download size={14} className="text-[#959595] cursor-pointer" />
+                Export
+                <Download />
               </Button>
             </span>
           </div>

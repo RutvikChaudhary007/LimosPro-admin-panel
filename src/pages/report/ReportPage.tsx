@@ -6,7 +6,6 @@ import {
   Tooltip as chartJsToolTip,
   Legend,
 } from "chart.js";
-import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import {
@@ -19,15 +18,8 @@ import {
   YAxis,
 } from "recharts";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { PageHeader } from "@/components/layouts/PageHeader";
+import { SelectDropDown } from "@/components/ui/select";
 import WorldMap from "@/components/worldmap/WorldMap";
 import { generatePageTitle } from "@/utils/seo";
 
@@ -102,7 +94,8 @@ const CustomDot = ({ cx, cy }) => {
 };
 
 const ReportPage = () => {
-  const [selected, setSelected] = useState(showOptions[0]);
+  const [{ value: optionDefaultValue }] = showOptions;
+  const [selected, setSelected] = useState(optionDefaultValue);
   ChartJS.register(ArcElement, chartJsToolTip, Legend);
   const Chartdata = {
     labels: [
@@ -125,74 +118,43 @@ const ReportPage = () => {
     <>
       <PageTitle title={generatePageTitle("Report")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Reports</h2>
-              <h4>
-                <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Reports</span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Reports"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Reports" }]}
+        />
 
-        <div className="flex justify-between">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                className="w-56 h-10 flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] bg-[#FDFDFD] cursor-pointer"
-              >
-                {selected.label} <ChevronDown className="ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-              align="start"
-            >
-              <DropdownMenuGroup>
-                {showOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    className="flex items-center justify-between hover:bg-[#F1F1F1]"
-                    onClick={() => setSelected(option)}
-                  >
-                    {option.label} <ChevronDown className="ml-2" />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <SelectDropDown
+          placeholder={selected}
+          items={showOptions}
+          value={selected}
+          setSelectedItem={setSelected}
+        />
 
         {/* Graph data */}
-        <div className="w-full grid grid-cols-2 gap-5">
-          <div className="w-[520px] h-[400px] rounded border inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-md p-4">
-            <div className="w-full h-full">
-              <h2 className="font-semibold text-black pb-1">Total Revenue</h2>
-              <ResponsiveContainer width="100%" height={355}>
-                <LineChart
-                  data={data}
-                  margin={{ top: 15, right: 30, left: 0, bottom: 5 }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#000000"
-                    strokeWidth={2}
-                    activeDot={<CustomDot cx={""} cy={""} />}
-                    dot={<CustomDot cx={""} cy={""} />}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+        <div className="w-full flex gap-8">
+          <div className="w-full h-[400px] rounded border border-base-light-gray shadow-base-md p-4">
+            <h2 className="font-semibold text-black pb-1">Total Revenue</h2>
+            <ResponsiveContainer width="100%" height={355}>
+              <LineChart
+                data={data}
+                margin={{ top: 15, right: 30, left: 0, bottom: 5 }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#000000"
+                  strokeWidth={2}
+                  activeDot={<CustomDot cx={""} cy={""} />}
+                  dot={<CustomDot cx={""} cy={""} />}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-          <div className="w-[520px] h-[400px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-md p-4">
+          <div className="w-full h-[400px] rounded border border-base-light-gray shadow-base-md p-4">
             <h2 className="font-semibold text-black pb-1">Total Bookings</h2>
             <ResponsiveContainer width="100%" height={355}>
               <LineChart
@@ -215,9 +177,8 @@ const ReportPage = () => {
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="w-full flex gap-5 mt-5">
-          {/* Doughnut data */}
-          <div className="w-[420px] h-[473px] rounded-[6px] inset-shadow-xs inset-shadow-[#F1F1F1]  shadow-base-md p-4">
+        <div className="w-full flex gap-8">
+          <div className="w-full h-[473px] rounded border border-base-light-gray shadow-base-md p-4">
             <Doughnut
               data={Chartdata}
               options={{
@@ -225,9 +186,10 @@ const ReportPage = () => {
                 maintainAspectRatio: true, // or false depending on aspect needs
               }}
             />
-            {/* Map data */}
           </div>
-          <WorldMap />
+          <div className="w-full h-[473px] rounded border border-base-light-gray shadow-base-md p-4 overflow-hidden">
+            <WorldMap />
+          </div>
         </div>
       </div>
     </>

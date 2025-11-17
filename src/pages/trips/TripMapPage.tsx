@@ -1,44 +1,42 @@
 //@ts-nocheck
 
-import { MessageSquareMore, Phone, Route, Send } from "lucide-react";
+import { ArrowLeft, MessageSquareMore, Phone, Route, Send } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetchTripById from "@/api/getTripById.api";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import LiveTracking from "@/components/liveTracking/LiveTracking";
 import { Spinner } from "@/components/Spinner";
 import { Label } from "@/components/ui/label";
+import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 
 const TripMapPage = () => {
   const { id } = useParams();
-
   const { data, isFetching } = useFetchTripById({ id: id! });
-
-  //  const pickup = { lat: 30.2672, lng: -97.7431 }; // Austin
-  // const drop = { lat: 40.7128, lng: -74.006 };   // NYC
-  // const car = { lat: 35.0, lng: -90.0 }; // Somewhere on route
 
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8 relative">
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-        <div className="w-full h-full flex items-center justify-between">
-          <div>
-            <h2 className="font-medium text-xl text-black">
-              Track Live Location
-            </h2>
-            <h4 className="text-[#959595] text-sm mt-1">
-              Trips / Track Live Location
-            </h4>
-          </div>
-        </div>
-      </Header>
+      <PageHeader
+        title="Live Trip Tracking"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Trips", path: constant.ROUTING_URLS.TRIPS },
+          { label: "Live Trip Tracking" },
+        ]}
+        action={{
+          variant: "outlineBlack",
+          label: "Back",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.TRIPS,
+        }}
+      />
 
       {isFetching ? (
         <Spinner />
       ) : (
         <>
-          <div className="w-full h-[684px] mt-5 rounded overflow-hidden shadow">
+          <div className="w-full h-[600px] mt-5 rounded overflow-hidden shadow-base-md">
             <LiveTracking
               dropPosition={data?.dropoffLocation}
               pickPosition={data?.pickupLocation}

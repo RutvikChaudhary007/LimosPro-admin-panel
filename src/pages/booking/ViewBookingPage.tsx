@@ -119,79 +119,77 @@ const ViewBookingPage = () => {
             </CardHeader>
             <FieldSeparator />
             <CardContent>
-              <div className="w-full mb-4">
-                <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
-                  Passenger
-                </h6>
-                <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Name:
-                  </Label>
-                  <Label>{data?.thirdPartyUser?.name}</Label>
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Email:
-                  </Label>
-                  <Label>{data?.thirdPartyUser?.email}</Label>
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Phone:
-                  </Label>
-                  <Label>{data?.thirdPartyUser?.phone}</Label>
+              <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
+                Passenger
+              </h6>
+              <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
+                <Label className="font-montserrat font-semibold capitalize">
+                  Name:
+                </Label>
+                <Label>{data?.thirdPartyUser?.name}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Email:
+                </Label>
+                <Label>{data?.thirdPartyUser?.email}</Label>
+                <Label className="font-montserrat font-semibold capitalize">
+                  Phone:
+                </Label>
+                <Label>{data?.thirdPartyUser?.phone}</Label>
 
-                  <div className="col-span-2">
-                    <FieldSeparator />
-                  </div>
-
-                  <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
-                    Car and Chauffeur
-                  </h6>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Car Name:
-                  </Label>
-                  <Label>
-                    {data?.vehicle?.make} {data?.vehicle?.model}
-                  </Label>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Chauffeur:
-                  </Label>
-                  <Label>
-                    {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
-                  </Label>
-
-                  <div className="col-span-2">
-                    <FieldSeparator />
-                  </div>
-
-                  <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
-                    Ride
-                  </h6>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Status:
-                  </Label>
-                  <Badge variant="black">{data?.status}</Badge>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    Type:
-                  </Label>
-                  <Label>{data?.bookingType}</Label>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    From:
-                  </Label>
-                  <Label>{Locations?.pickUpAddress}</Label>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    to:
-                  </Label>
-                  <Label>{Locations?.dropOffAddress}</Label>
-
-                  <Label className="font-montserrat font-semibold capitalize">
-                    price:
-                  </Label>
-                  <Label>{"N/A"}</Label>
+                <div className="col-span-2">
+                  <FieldSeparator />
                 </div>
+
+                <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
+                  Car and Chauffeur
+                </h6>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  Car Name:
+                </Label>
+                <Label>
+                  {data?.vehicle?.make} {data?.vehicle?.model}
+                </Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  Chauffeur:
+                </Label>
+                <Label>
+                  {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
+                </Label>
+
+                <div className="col-span-2">
+                  <FieldSeparator />
+                </div>
+
+                <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
+                  Ride
+                </h6>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  Status:
+                </Label>
+                <Badge variant="black">{data?.status}</Badge>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  Type:
+                </Label>
+                <Label>{data?.bookingType}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  From:
+                </Label>
+                <Label>{Locations?.pickUpAddress}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  to:
+                </Label>
+                <Label>{Locations?.dropOffAddress}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  price:
+                </Label>
+                <Label>{"N/A"}</Label>
               </div>
             </CardContent>
           </CardBody>

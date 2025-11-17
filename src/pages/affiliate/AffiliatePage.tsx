@@ -4,9 +4,6 @@ import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-// import type { ApiErrorResponse } from '@/types/global/ErrorResponse';
-// import { useMutation } from '@tanstack/react-query';
-// import type { AxiosError } from 'axios';
 import UsefetchAllAffiliate, {
   getAllAffiliate,
 } from "@/api/getAllAffiliate.api";
