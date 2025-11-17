@@ -6,24 +6,19 @@ import {
   IconClock,
   IconCreditCard,
   IconCurrencyDollar,
+  IconFlag,
   IconPackage,
   IconPalette,
+  IconRuler,
+  IconTimeDuration0,
   IconUsers,
 } from "@tabler/icons-react";
 import { getYear, setYear } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Spinner } from "../Spinner";
@@ -45,7 +40,6 @@ import {
 import { SelectDropDown } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 import FilesUpload from "../ui/upload-files";
-import ImagesUpload from "../ui/upload-images";
 
 const maxSize = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];
@@ -272,13 +266,12 @@ const FleetForm = ({
   type,
 }: IFleetFormProps) => {
   const { toast } = useToast();
-  //   console.log("affiliateData:", affiliateData);
   const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
   const [zonePricing, setZonePricing] = useState([]);
   const [isZoneActive, setIsZoneActive] = useState(false);
   const [previews, setPreviews] = useState<string[]>([]);
   const [date, setDate] = useState(new Date());
-  const years = Array.from({ length: 200 }, (_, i) => 1900 + i); // Example range from 1925 to 2024
+  const years = Array.from({ length: 200 }, (_, i) => 1900 + i);
 
   function onYearChange(year: string) {
     const newDate = setYear(date, parseInt(year, 10));
@@ -291,7 +284,6 @@ const FleetForm = ({
   const form = useForm<TFleetForm>({
     // resolver: zodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
-      // name: "",
       regionId: "",
       plateNumber: "",
       affiliateId: "",
@@ -303,7 +295,6 @@ const FleetForm = ({
       model: "",
       vehicleType: "",
       status: "",
-      //   status: "",
     },
   });
 
@@ -1120,178 +1111,204 @@ const FleetForm = ({
                 )}
               </Field>
 
-              <FormField
-                control={form.control}
-                name="zonePricings"
-                render={({ _field }) => (
-                  <FormItem className="flex flex-col  placeholder:text-[#E6E6E6] font-medium cursor-pointer">
-                    <FormLabel>Zone Pricing</FormLabel>
+              <Field className="col-span-full">
+                <FieldLabel
+                  htmlFor="zonePricings"
+                  className="text-base-black gap-0"
+                >
+                  Zone Pricing
+                </FieldLabel>
 
-                    <FormControl className="px-3 py-4 rounded  placeholder:text-[#E6E6E6] font-medium">
-                      <Card>
-                        <CardHeader
-                          className={
-                            "flex flext start items-center my-5 mx-2.5"
-                          }
+                <Controller
+                  control={form.control}
+                  name="zonePricings"
+                  render={({ field }) => (
+                    <div className="grid grid-cols-2 gap-4 mt-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          id="zoneToggle"
+                          type="checkbox"
+                          checked={isZoneActive}
+                          onChange={() => {
+                            const enabled = !isZoneActive;
+                            setIsZoneActive(enabled);
+                            field.onChange({ ...field.value, enabled });
+
+                            if (enabled && zonePricing.length === 0) {
+                              setZonePricing([
+                                {
+                                  start: 0.01,
+                                  end: 0,
+                                  pricePerMile: 0,
+                                  pricePerDistance: 0,
+                                },
+                              ]);
+                            }
+
+                            if (!enabled) setZonePricing([]);
+                          }}
+                          className="w-4 h-4"
+                        />
+
+                        <FieldLabel
+                          htmlFor="zoneToggle"
+                          className="text-base-black gap-0 cursor-pointer"
                         >
-                          <input
-                            className="cursor-pointer"
-                            type="checkbox"
-                            checked={isZoneActive}
-                            onChange={() => setIsZoneActive(!isZoneActive)}
-                            id="zoneToggle"
-                          />
-                          <label
-                            htmlFor="zoneToggle"
-                            className="cursor-pointer font-semibold ml-2.5 text-[#343434] select-none"
-                            style={{
-                              letterSpacing: "0px",
-                              opacity: "1",
-                            }}
-                          >
-                            Activate Zone Based Pricing
-                          </label>
-                        </CardHeader>
+                          Activate Zone Based Pricing
+                        </FieldLabel>
+                      </div>
 
-                        <CardContent>
+                      {/* SHOW/HIDE DIV */}
+                      {isZoneActive && (
+                        <div className="col-span-full p-4 border border-base-gray rounded bg-base-light-gray">
                           {isZoneActive &&
                             zonePricing?.map((zone, index) => (
-                              <div
-                                // className={styles.zoneGroup}
-                                className={cn(
-                                  "flex flex-col items-start mb-4 ",
-                                )}
-                                key={`${index}-${zone.end}`}
-                              >
-                                <label
-                                  htmlFor="zone"
-                                  style={{
-                                    fontWeight: "600",
-                                    marginBottom: "8px",
-                                    // font: "normal normal normal 16px / 20px ProximaNovaBold",
-                                    textAlign: "left",
-                                    letterSpacing: "0px",
-                                    color: "#343434",
-                                    opacity: "1",
-                                  }}
-                                >
+                              <Field className="" key={`${index}-${zone.end}`}>
+                                <FieldLabel className="mb-2 text-xl">
                                   Zone {index + 1}
-                                </label>
+                                </FieldLabel>
 
-                                {/* <div className={styles.zoneFieldGroup}> */}
-                                <div
-                                  className={
-                                    "flex gap-2 mb-5 items-start flex-col w-full"
-                                  }
-                                >
-                                  <div
-                                    // className={styles.labeledInput}
-                                    className={"flex flex-col w-full"}
-                                  >
-                                    <label
-                                      htmlFor="zoneStart"
-                                      className="mb-1.5 text-[#343434] font-medium"
-                                    >
+                                <div className="space-y-4 w-full mb-4">
+                                  {/* ---- Zone Start ---- */}
+                                  <Field>
+                                    <FieldLabel htmlFor={`zoneStart-${index}`}>
                                       Zone Start (mile)
-                                    </label>
-                                    <input
-                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                      type="number"
-                                      placeholder="Start Mile"
-                                      value={zone.start}
-                                      step="0.01"
-                                      min={
-                                        index === 0
-                                          ? 0.01
-                                          : zonePricing?.[index - 1]?.end
-                                      }
-                                      onChange={(e) => {
-                                        const newZones = [...zonePricing];
-                                        newZones[index].start = parseFloat(
-                                          e.target.value,
-                                        );
-                                        setZonePricing(newZones);
-                                      }}
-                                    />
-                                  </div>
-                                  <div
-                                    // className={styles.labeledInput}
-                                    className={"flex flex-col w-full"}
-                                  >
-                                    <label
-                                      htmlFor="zoneEnd"
-                                      className="mb-1.5 text-[#343434] font-medium"
-                                    >
+                                    </FieldLabel>
+
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        id={`zoneStart-${index}`}
+                                        type="number"
+                                        placeholder="Start Mile"
+                                        value={zone.start}
+                                        step="0.01"
+                                        min={
+                                          index === 0
+                                            ? 0.01
+                                            : zonePricing?.[index - 1]?.end
+                                        }
+                                        onChange={(e) => {
+                                          const newZones = [...zonePricing];
+                                          newZones[index].start = parseFloat(
+                                            e.target.value,
+                                          );
+                                          setZonePricing(newZones);
+                                        }}
+                                      />
+
+                                      {/* optional icon */}
+                                      <InputGroupAddon>
+                                        <IconRuler />
+                                      </InputGroupAddon>
+                                    </InputGroup>
+
+                                    <FieldDescription>
+                                      Enter the starting mile of the zone.
+                                    </FieldDescription>
+                                  </Field>
+
+                                  {/* ---- Zone End ---- */}
+                                  <Field>
+                                    <FieldLabel htmlFor={`zoneEnd-${index}`}>
                                       Zone End (mile)
-                                    </label>
-                                    <input
-                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                      type="number"
-                                      placeholder="End Mile"
-                                      value={zone.end}
-                                      step="0.01"
-                                      max={globalAirportLimit}
-                                      onChange={(e) => {
-                                        const newZones = [...zonePricing];
-                                        newZones[index].end = parseFloat(
-                                          e.target.value,
-                                        );
-                                        setZonePricing(newZones);
-                                      }}
-                                    />
-                                  </div>
-                                  <div
-                                    // className={styles.labeledInput}
-                                    className={"flex flex-col w-full"}
-                                  >
-                                    <label
-                                      htmlFor="pricePerPMile"
-                                      className="mb-1.5 text-[#343434] font-medium"
+                                    </FieldLabel>
+
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        id={`zoneEnd-${index}`}
+                                        type="number"
+                                        placeholder="End Mile"
+                                        value={zone.end}
+                                        max={globalAirportLimit}
+                                        step="0.01"
+                                        onChange={(e) => {
+                                          const newZones = [...zonePricing];
+                                          newZones[index].end = parseFloat(
+                                            e.target.value,
+                                          );
+                                          setZonePricing(newZones);
+                                        }}
+                                      />
+                                      <InputGroupAddon>
+                                        <IconFlag />
+                                      </InputGroupAddon>
+                                    </InputGroup>
+
+                                    <FieldDescription>
+                                      Enter the ending mile for this zone.
+                                    </FieldDescription>
+                                  </Field>
+
+                                  {/* ---- Price Per Mile ---- */}
+                                  <Field>
+                                    <FieldLabel
+                                      htmlFor={`pricePerMile-${index}`}
                                     >
                                       Price per Mile
-                                    </label>
-                                    <input
-                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                      type="number"
-                                      placeholder="Price Per Mile"
-                                      value={zone.pricePerMile}
-                                      step="0.01"
-                                      onChange={(e) => {
-                                        const newZones = [...zonePricing];
-                                        newZones[index].pricePerMile =
-                                          parseFloat(e.target.value);
-                                        setZonePricing(newZones);
-                                      }}
-                                    />
-                                  </div>
-                                  <div
-                                    // className={styles.labeledInput}
-                                    className={"flex flex-col w-full"}
-                                  >
-                                    <label
-                                      htmlFor="pricePerPMin"
-                                      className="mb-1.5 text-[#343434] font-medium"
+                                    </FieldLabel>
+
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        id={`pricePerMile-${index}`}
+                                        type="number"
+                                        placeholder="Price Per Mile"
+                                        step="0.01"
+                                        value={zone.pricePerMile}
+                                        onChange={(e) => {
+                                          const newZones = [...zonePricing];
+                                          newZones[index].pricePerMile =
+                                            parseFloat(e.target.value);
+                                          setZonePricing(newZones);
+                                        }}
+                                      />
+
+                                      <InputGroupAddon>
+                                        <IconCurrencyDollar />
+                                      </InputGroupAddon>
+                                    </InputGroup>
+
+                                    <FieldDescription>
+                                      Enter the rate per mile.
+                                    </FieldDescription>
+                                  </Field>
+
+                                  {/* ---- Price Per Minute ---- */}
+                                  <Field>
+                                    <FieldLabel
+                                      htmlFor={`pricePerMinute-${index}`}
                                     >
                                       Price per Minute
-                                    </label>
-                                    <input
-                                      className="py-3 px-4 rounded-md bg-[#2f4f5 0% 0% no-repeat padding-box] opacity-[1] border-2 outline-0 text-left text-[#707070]"
-                                      type="number"
-                                      placeholder="Price Per Minute"
-                                      step="0.01"
-                                      value={zone.pricePerDistance}
-                                      onChange={(e) => {
-                                        const newZones = [...zonePricing];
-                                        newZones[index].pricePerDistance =
-                                          parseFloat(e.target.value);
-                                        setZonePricing(newZones);
-                                      }}
-                                    />
-                                  </div>
+                                    </FieldLabel>
+
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        id={`pricePerMinute-${index}`}
+                                        type="number"
+                                        placeholder="Price Per Minute"
+                                        step="0.01"
+                                        value={zone.pricePerDistance}
+                                        onChange={(e) => {
+                                          const newZones = [...zonePricing];
+                                          newZones[index].pricePerDistance =
+                                            parseFloat(e.target.value);
+                                          setZonePricing(newZones);
+                                        }}
+                                      />
+                                      <InputGroupAddon>
+                                        <IconTimeDuration0 />
+                                      </InputGroupAddon>
+                                    </InputGroup>
+
+                                    <FieldDescription>
+                                      Enter the rate per minute.
+                                    </FieldDescription>
+                                  </Field>
+
+                                  {/* ---- Remove Button ---- */}
                                   <Button
                                     type="button"
                                     onClick={() => {
-                                      const newZones = zonePricing?.filter(
+                                      const newZones = zonePricing.filter(
                                         (_, i) => i !== index,
                                       );
                                       setZonePricing(newZones);
@@ -1300,7 +1317,7 @@ const FleetForm = ({
                                     Remove
                                   </Button>
                                 </div>
-                              </div>
+                              </Field>
                             ))}
 
                           {isZoneActive && (
@@ -1350,46 +1367,28 @@ const FleetForm = ({
                             <Button
                               type="button"
                               onClick={() => setZonePricing([])}
+                              className="ml-4"
                             >
                               Clear All Zones
                             </Button>
                           )}
-                        </CardContent>
-                      </Card>
-                    </FormControl>
-                    <FormMessage
-                      className={`mt-1 h-5 ${form.formState.errors.year ? "visible text-red-600" : "invisible"}`}
-                    >
-                      {form.formState.errors.year?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
-              <Field className="col-span-full">
-                <Controller
-                  control={form.control}
-                  name="vehicleImages"
-                  render={({ field }) => (
-                    <ImagesUpload
-                      title="Upload Vehicle Images"
-                      maxSize={10}
-                      multiple
-                      value={field.value}
-                      onChange={field.onChange}
-                      disabled={isFieldDisabled(
-                        disabledFields,
-                        "vehicleImages",
+                        </div>
                       )}
-                    />
+                    </div>
                   )}
                 />
 
-                {form.formState.errors.vehicleImages && (
+                <FieldDescription className="mt-1">
+                  Select the zones for which pricing applies.
+                </FieldDescription>
+
+                {form.formState.errors.zonePricings && (
                   <p className="text-base-danger mt-1">
-                    {form.formState.errors.vehicleImages.message}
+                    {form.formState.errors.zonePricings.message}
                   </p>
                 )}
               </Field>
+
               <Field className="col-span-full">
                 <Controller
                   control={form.control}
