@@ -79,13 +79,13 @@ export default function ImagesUpload({
       // Create date string like DDMMYYYY
       const now = new Date();
       const pad = (n: number) => n.toString().padStart(2, "0");
-      const dateStamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}`;
+      const timestamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 
       const dotIndex = f.name.lastIndexOf(".");
       const namePart = dotIndex !== -1 ? f.name.slice(0, dotIndex) : f.name;
       const extPart = dotIndex !== -1 ? f.name.slice(dotIndex) : "";
 
-      const newFileName = `${namePart}_${dateStamp}${extPart}`;
+      const newFileName = `${namePart}_${timestamp}${extPart}`;
 
       const newFile: FileWithPreview = new File([f], newFileName, {
         type: f.type,
@@ -162,6 +162,7 @@ export default function ImagesUpload({
               className="w-full h-full object-cover rounded"
             />
             <Button
+              type="button"
               className="absolute top-2.5 right-2.5 bg-base-white"
               variant="outlineNavBtnBlack"
               size="xl"
