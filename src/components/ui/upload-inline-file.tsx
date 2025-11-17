@@ -28,6 +28,7 @@ const uploadBoxVariants = cva(
       },
     },
     compoundVariants: [
+      // Has file conditions
       {
         variant: "primary",
         hasFile: true,
@@ -42,6 +43,27 @@ const uploadBoxVariants = cva(
       {
         variant: "light",
         hasFile: true,
+        class: "text-base-white border-base-white",
+      },
+      // drag conditions
+      {
+        variant: "primary",
+        drag: true,
+        className: "text-base-primary-dark border-base-primary-dark",
+      },
+      {
+        variant: "secondary",
+        drag: true,
+        className: "text-base-secondary-dark border-base-secondary-dark",
+      },
+      {
+        variant: "dark",
+        drag: true,
+        className: "text-black border-black",
+      },
+      {
+        variant: "light",
+        drag: true,
         class: "text-base-white border-base-white",
       },
     ],

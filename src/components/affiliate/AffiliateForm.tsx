@@ -931,7 +931,6 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                       title="Upload Documents"
                       accept="image/jpeg,image/png,application/pdf"
                       maxSize={10}
-                      multiple
                       value={field.value}
                       onChange={field.onChange}
                       disabled={isFieldDisabled(disabledFields, "documents")}

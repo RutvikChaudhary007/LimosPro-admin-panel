@@ -1,3 +1,9 @@
+import {
+  IconFileExcel,
+  IconFileTypePdf,
+  IconFileTypeTxt,
+  IconFileWord,
+} from "@tabler/icons-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -59,9 +65,9 @@ type FileWithPreview = File & {
   fileUrl?: string;
   mimetype?: string;
   originalName?: string;
-  name?: string; // For browser File objects
+  name?: string;
   size: number;
-  status?: "pending" | "uploaded" | "error";
+  status?: "loading" | "ready";
   preview?: string;
   type?: string;
 };
@@ -81,6 +87,7 @@ export default function FilesUpload({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const maxFileBytes = maxSize * 1024 * 1024;
 
   // Sync internal state with external value prop
@@ -88,7 +95,6 @@ export default function FilesUpload({
     if (value) {
       const filesWithPreviews = value.map((f: FileWithPreview) => {
         const file = f as FileWithPreview;
-        console.log("file preview:", file);
         if (f?.type?.startsWith("image/") && !file.preview) {
           file.preview = URL.createObjectURL(f);
         }
@@ -101,28 +107,109 @@ export default function FilesUpload({
     }
   }, [value]);
 
+  const getFileIcon = (type: string) => {
+    if (type.includes("pdf")) return <IconFileTypePdf className="size-10" />;
+    if (type.includes("word") || type.includes("doc"))
+      return <IconFileWord className="size-10" />;
+    if (type.includes("excel") || type.includes("sheet"))
+      return <IconFileExcel className="size-10" />;
+    if (type.includes("text") || type.includes("plain"))
+      return <IconFileTypeTxt className="size-10" />;
+    return <IconFilesUpload className="size-10" />;
+  };
+
   function addFiles(list: FileList | null) {
     if (!list || disabled) return;
+
     const arr = Array.from(list);
     const validated: FileWithPreview[] = [];
 
     for (const f of arr) {
-      if (f.size > maxFileBytes) continue;
-      if (accept !== "*" && !matchesAccept(f, accept)) continue;
+      // ❌ Size check
+      if (f.size > maxFileBytes) {
+        setError(`"${f.name}" is too large. Max size is ${maxSize} MB.`);
+        continue;
+      }
 
-      // Add date DDMMYYYY before extension
+      // ❌ Accept check
+      if (accept !== "*" && !matchesAccept(f, accept)) {
+        setError(`"${f.name}" format is not allowed.`);
+        continue;
+      }
+
+      // ----- ADD TIMESTAMP -----
       const now = new Date();
       const pad = (n: number) => n.toString().padStart(2, "0");
-      const timestamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      const timestamp = `${pad(now.getDate())}${pad(
+        now.getMonth() + 1,
+      )}${now.getFullYear()}_${pad(now.getHours())}${pad(
+        now.getMinutes(),
+      )}${pad(now.getSeconds())}`;
 
       const dotIndex = f.name.lastIndexOf(".");
       const namePart = dotIndex !== -1 ? f.name.slice(0, dotIndex) : f.name;
       const extPart = dotIndex !== -1 ? f.name.slice(dotIndex) : "";
-
       const newFileName = `${namePart}_${timestamp}${extPart}`;
 
       const x: FileWithPreview = new File([f], newFileName, { type: f.type });
-      if (f.type.startsWith("image/")) x.preview = URL.createObjectURL(x);
+      x.status = "loading";
+
+      const objectURL = URL.createObjectURL(x);
+
+      // -------------------------------------------------
+      //  IMAGE LOADING
+      // -------------------------------------------------
+      if (f.type.startsWith("image/")) {
+        const img = new Image();
+        img.src = objectURL;
+
+        img.onload = () => {
+          x.preview = objectURL;
+          x.status = "ready";
+          setFiles((prev) => [...prev]);
+        };
+
+        validated.push(x);
+        continue;
+      }
+
+      // -------------------------------------------------
+      //  VIDEO LOADING
+      // -------------------------------------------------
+      if (f.type.startsWith("video/")) {
+        const video = document.createElement("video");
+        video.src = objectURL;
+
+        video.onloadeddata = () => {
+          x.preview = objectURL; // optional preview
+          x.status = "ready";
+          setFiles((prev) => [...prev]);
+        };
+
+        validated.push(x);
+        continue;
+      }
+
+      // -------------------------------------------------
+      //  AUDIO LOADING
+      // -------------------------------------------------
+      if (f.type.startsWith("audio/")) {
+        const audio = document.createElement("audio");
+        audio.src = objectURL;
+
+        audio.onloadeddata = () => {
+          x.status = "ready";
+          setFiles((prev) => [...prev]);
+        };
+
+        validated.push(x);
+        continue;
+      }
+
+      // -------------------------------------------------
+      //  OTHER DOC TYPES: PDF, DOC, XLS, ZIP, TXT, SVG...
+      // -------------------------------------------------
+      x.status = "ready"; // no preview needed
       validated.push(x);
     }
 
@@ -174,7 +261,10 @@ export default function FilesUpload({
       <div
         role="button"
         tabIndex={disabled ? -1 : 0}
-        className={`${uploadBoxVariants({ variant, drag: dragOver })} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`${uploadBoxVariants({
+          variant,
+          drag: dragOver,
+        })} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
         onClick={() => !disabled && inputRef.current?.click()}
         onDragOver={(e) => {
           if (disabled) return;
@@ -186,6 +276,7 @@ export default function FilesUpload({
           if (disabled) return;
           e.preventDefault();
           setDragOver(false);
+          setError(null);
           addFiles(e.dataTransfer.files);
         }}
         onKeyDown={(e) =>
@@ -206,6 +297,7 @@ export default function FilesUpload({
         </div>
 
         <Button
+          type="button"
           variant={
             variant === "primary"
               ? "outlinePrimary"
@@ -230,6 +322,7 @@ export default function FilesUpload({
           accept={accept}
           disabled={disabled}
           onChange={(e) => {
+            setError(null);
             addFiles(e.target.files);
             if (inputRef.current) inputRef.current.value = "";
           }}
@@ -247,20 +340,22 @@ export default function FilesUpload({
         {files.map((f, i) => (
           <div
             key={i}
-            className="flex items-center justify-between border border-base-gray rounded px-2 py-2.5 bg-base-white"
+            className="flex items-center justify-between border border-base-gray rounded px-2 py-2.5 bg-base-white overflow-hidden w-full"
           >
-            <div className="flex items-center gap-2">
-              {f.preview ? (
-                <img
-                  src={f.preview}
-                  alt={f.name}
-                  className="w-10 h-10 object-contain"
-                />
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              {/* 👇 IMAGE LOADER */}
+              {f.status === "loading" ? (
+                <div className="w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10 rounded-full border-2 border-base-gray border-t-base-primary box-border overflow-hidden animate-spin"></div>
+              ) : f.preview && f.type.startsWith("image/") ? (
+                <img src={f.preview} className="w-10 h-10 rounded" />
               ) : (
-                <IconFilesUpload className="size-10" />
+                getFileIcon(f.type)
               )}
-              <div className="text-xs">
-                <div className="font-bold text-base-black mb-1">{f.name}</div>
+
+              <div className="text-xs flex-1 min-w-0">
+                <div className="font-bold text-base-black mb-1 truncate w-full max-w-full">
+                  {f.name}
+                </div>
                 <div className="font-medium text-base-gray">
                   {formatFileSize(f.size)}
                 </div>
@@ -279,6 +374,9 @@ export default function FilesUpload({
             </Button>
           </div>
         ))}
+        {error && (
+          <div className="text-base-danger text-xs font-bold mt-2">{error}</div>
+        )}
       </div>
     </div>
   );
