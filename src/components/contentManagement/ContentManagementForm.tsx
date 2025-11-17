@@ -1,25 +1,36 @@
 //@ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "react-quill/dist/quill.snow.css"; // or 'quill.bubble.css'
 // import { Plus } from "lucide-react";
 // import { Label } from "../ui/label";
+import { IconFileText, IconGridPattern, IconSort09 } from "@tabler/icons-react";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Input } from "../ui/input";
+import {
+  Card,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldSeparator,
+} from "../ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
 
 const formSchema = z.object({
   pageTitle: z
@@ -152,178 +163,312 @@ const ContentManagementForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        <Card className="rounded  bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-md">
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle>{type}</CardTitle>
-            <div className="w-[258px] flex items-center justify-between">
-              <Button
-                type="button"
-                onClick={() => form.clearErrors()}
-                className="bg-[#E4E4E4] text-[#515151] hover:text-white w-[124px] h-[39px] px-2.5 py-6 font-medium"
-              >
-                Clear All
-              </Button>
-              <Button
-                disabled={form.formState.isSubmitting}
-                type="submit"
-                variant="secondary"
-                className="text-[#515151] rounded text-center px-2.5 py-6 bg-[#E4E4E4] text-sm font-medium  border-none cursor-pointer select-none mx-6 w-[124px] h-[39px]"
-              >
-                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-5">
-            <FormField
-              control={form.control}
-              name="pageTitle"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] ">
-                  <FormLabel>Page Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Page Title"
-                      disabled={isFieldDisabled(disabledFields, "pageTitle")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="metaTitle"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]  ">
-                  <FormLabel>Meta Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Meta Title"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="metaDescription"
-              render={({ field }) => (
-                <FormItem className="flex flex-col  gap-3 mb-[31px] col-span-2">
-                  <FormLabel>Meta Description</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Meta Description"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <hr className="broder bg-black col-span-2" />
-            <FormField
-              control={form.control}
-              name="blockType"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] col-span-2">
-                  <FormLabel>Block Type</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Block Type"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pageName"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] col-span-2">
-                  <FormLabel>Page Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Home"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="sectionName"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] col-span-2">
-                  <FormLabel>Section Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="sectionName"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="sortOrder"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] col-span-2">
-                  <FormLabel>Sort Order</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="1"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[60px] col-span-2">
-                  <FormLabel>Content</FormLabel>
-                  <FormControl>
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>{type}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-6 gap-4">
+              <Field className="col-span-3">
+                <FieldLabel
+                  htmlFor="pageTitle"
+                  className="text-base-black gap-0"
+                >
+                  Page Title
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="pageTitle"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="pageTitle"
+                        type="text"
+                        placeholder="Page Title"
+                        disabled={isFieldDisabled(disabledFields, "pageTitle")}
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the page title.</FieldDescription>
+
+                {form.formState.errors.pageTitle && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.pageTitle.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field className="col-span-3">
+                <FieldLabel
+                  htmlFor="metaTitle"
+                  className="text-base-black gap-0"
+                >
+                  Meta Title
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="metaTitle"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="metaTitle"
+                        type="text"
+                        placeholder="Meta Title"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText /> {/* Example icon for meta title */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Enter the meta title for SEO.
+                </FieldDescription>
+
+                {form.formState.errors.metaTitle && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.metaTitle.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field className="col-span-full">
+                <FieldLabel
+                  htmlFor="metaDescription"
+                  className="text-base-black gap-0"
+                >
+                  Meta Description
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="metaDescription"
+                        type="text"
+                        placeholder="Meta Description"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />{" "}
+                        {/* Example icon for meta description */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Enter the meta description for SEO.
+                </FieldDescription>
+
+                {form.formState.errors.metaDescription && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.metaDescription.message}
+                  </p>
+                )}
+              </Field>
+
+              <FieldSeparator className="col-span-full" />
+
+              <Field className="col-span-3">
+                <FieldLabel
+                  htmlFor="blockType"
+                  className="text-base-black gap-0"
+                >
+                  Block Type
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="blockType"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="blockType"
+                        type="text"
+                        placeholder="Block Type"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconGridPattern />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the block type.</FieldDescription>
+
+                {form.formState.errors.blockType && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.blockType.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field className="col-span-3">
+                <FieldLabel
+                  htmlFor="pageName"
+                  className="text-base-black gap-0"
+                >
+                  Page Name
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="pageName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="pageName"
+                        type="text"
+                        placeholder="Home"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the page name.</FieldDescription>
+
+                {form.formState.errors.pageName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.pageName.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field className="col-span-3">
+                <FieldLabel
+                  htmlFor="sectionName"
+                  className="text-base-black gap-0"
+                >
+                  Section Name
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="sectionName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="sectionName"
+                        type="text"
+                        placeholder="sectionName"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText /> {/* Example icon for section name */}
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the section name.</FieldDescription>
+
+                {form.formState.errors.sectionName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.sectionName.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field className="col-span-3">
+                <FieldLabel
+                  htmlFor="sortOrder"
+                  className="text-base-black gap-0"
+                >
+                  Sort Order
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="sortOrder"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="sortOrder"
+                        type="number"
+                        placeholder="1"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconSort09 />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Enter the sort order number.
+                </FieldDescription>
+
+                {form.formState.errors.sortOrder && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.sortOrder.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field className="col-span-full">
+                <FieldLabel htmlFor="content" className="text-base-black gap-0">
+                  Content
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
                     <ReactQuill
-                      className="col-span-2"
+                      id="content"
                       theme="snow"
                       value={field.value}
                       onChange={field.onChange}
                       modules={modules}
                       formats={formats}
+                      className="min-h-[200px] pb-10"
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* <Label className="font-medium h-[22px]"><Plus className="w-5 h-5" /> <span className="">Add Field</span></Label> */}
-          </CardContent>
+                  )}
+                />
+
+                <FieldDescription>
+                  Enter the full content here.
+                </FieldDescription>
+
+                {form.formState.errors.content && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.content.message}
+                  </p>
+                )}
+              </Field>
+            </CardContent>
+            <CardFooter className="flex items-center justify-start space-x-2.5">
+              <Button
+                type="button"
+                variant="outlinePrimary"
+                onClick={() => form.clearErrors()}
+              >
+                Clear All
+              </Button>
+              <Button disabled={form.formState.isSubmitting} type="submit">
+                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              </Button>
+            </CardFooter>
+          </CardBody>
         </Card>
       </form>
     </Form>

@@ -307,7 +307,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your given name as it appears on official records.
                 </FieldDescription>
 
@@ -345,7 +345,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your family or surname as it appears officially.
                 </FieldDescription>
 
@@ -385,9 +385,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     )}
                   />
 
-                  <FieldDescription className="mt-1">
-                    Select Affiliate
-                  </FieldDescription>
+                  <FieldDescription>Select Affiliate</FieldDescription>
 
                   {form.formState.errors.affiliateId && (
                     <p className="text-base-danger mt-1">
@@ -422,9 +420,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Select Status
-                </FieldDescription>
+                <FieldDescription>Select Status</FieldDescription>
 
                 {form.formState.errors.status && (
                   <p className="text-base-danger mt-1">
@@ -457,7 +453,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your valid email address for account communication.
                 </FieldDescription>
 
@@ -501,7 +497,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Choose a strong password with at least 8 characters.
                 </FieldDescription>
 
@@ -540,7 +536,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your business location.
                 </FieldDescription>
 
@@ -578,7 +574,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your 10-character PAN number.
                 </FieldDescription>
 
@@ -619,7 +615,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your official license number.
                 </FieldDescription>
 
@@ -662,7 +658,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     }
                   />
 
-                  <FieldDescription className="mt-1">
+                  <FieldDescription>
                     Choose the vehicle assigned from fleet.
                   </FieldDescription>
 
@@ -700,9 +696,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     )}
                   />
 
-                  <FieldDescription className="mt-1">
-                    Enter gratuity amount.
-                  </FieldDescription>
+                  <FieldDescription>Enter gratuity amount.</FieldDescription>
 
                   {form.formState.errors.gratuity && (
                     <p className="text-base-danger mt-1">

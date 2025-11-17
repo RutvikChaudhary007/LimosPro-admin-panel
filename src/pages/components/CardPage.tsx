@@ -23,7 +23,7 @@ function CardPage() {
   return (
     <div className="p-2 space-y-4">
       {/* Matric Card Component [Dashboard] */}
-      <div className="hidden w-full p-2">
+      <div className="flex gap-4 w-full p-2">
         <MetricCard
           title="Total Revenue"
           value="$45,231.89"
@@ -46,7 +46,7 @@ function CardPage() {
           icon={<TrendingDown />}
         />
       </div>
-      <div className="hidden space-y-4">
+      <div className=" space-y-4">
         {/* Card Component */}
         <Card>
           <CardBody>

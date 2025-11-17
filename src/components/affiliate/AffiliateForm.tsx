@@ -438,7 +438,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your registered company name here.
                 </FieldDescription>
 
@@ -476,7 +476,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your given name as it appears on official records.
                 </FieldDescription>
 
@@ -514,7 +514,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your family or surname as it appears officially.
                 </FieldDescription>
 
@@ -559,7 +559,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Choose a strong password with at least 8 characters.
                 </FieldDescription>
 
@@ -594,7 +594,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your valid email address for account communication.
                 </FieldDescription>
 
@@ -639,7 +639,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your business contact number including country code.
                 </FieldDescription>
 
@@ -677,7 +677,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your complete business address for verification and
                   contact purposes.
                 </FieldDescription>
@@ -716,7 +716,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Specify your business structure (e.g., Corporation, LLC,
                   Partnership).
                 </FieldDescription>
@@ -752,7 +752,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your registered tax identification number.
                 </FieldDescription>
 
@@ -795,7 +795,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter the commission percentage applicable for this seller.
                 </FieldDescription>
 
@@ -851,7 +851,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Choose the current operational status for this seller.
                 </FieldDescription>
 
@@ -892,7 +892,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter your official business email address.
                 </FieldDescription>
 
@@ -928,7 +928,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                         />
                       </FormControl>
 
-                      <FieldDescription className="mt-1">
+                      <FieldDescription>
                         Toggle to enable chauffeur privileges.
                       </FieldDescription>
 

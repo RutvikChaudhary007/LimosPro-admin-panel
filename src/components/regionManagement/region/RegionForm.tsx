@@ -73,9 +73,7 @@ function RegionForm({ initialData, title, onSubmit }: TRegionFormProps) {
                 )}
               />
 
-              <FieldDescription className="mt-1">
-                Provide region name here.
-              </FieldDescription>
+              <FieldDescription>Provide region name here.</FieldDescription>
 
               {form.formState.errors.regionName && (
                 <p className="text-danger text-sm mt-1">

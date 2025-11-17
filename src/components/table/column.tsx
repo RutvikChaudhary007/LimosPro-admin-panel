@@ -2662,12 +2662,23 @@ export function getHomeContent(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button onClick={() => onEdit(row.original.id)}>
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            onClick={() => onEdit(row.original.id)}
+            tooltip="Edit"
+          >
             <Edit />
           </Button>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete"
+              >
                 <Trash2 />
               </Button>
             </DialogTrigger>
@@ -2698,13 +2709,6 @@ export function getHomeContent(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,

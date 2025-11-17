@@ -1,13 +1,16 @@
 // @ts-nocheck
 
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Header from "@/components/layouts/BreadCramb";
+import { useNavigate } from "react-router-dom";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { getHomeContent, type THomeContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -152,42 +155,32 @@ const SeoPage = () => {
   };
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-      <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-        <div className="w-full h-full flex items-center justify-between">
-          <div>
-            <h2 className="font-medium text-xl text-black">
-              Content Management
-            </h2>
-            <h4>
-              <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-              <span className="text-[#959595] w-[116px] h-4">/ Seo</span>
-            </h4>
-          </div>
-          <Link to={constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT}>
-            {" "}
-            <Button
-              variant={"outline"}
-              className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-            >
-              <Plus className="text-[#515151]" />
-              <span className="text-[#515151] font-medium text-sm">Add</span>
-            </Button>
-          </Link>
-        </div>
-      </Header>
+      <PageHeader
+        title="Seo"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Content Management" },
+          { label: "Seo" },
+        ]}
+        action={{
+          label: "Add New SEO",
+          icon: <Plus />,
+          link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT,
+        }}
+      />
 
-      <div className="flex items-center justify-between">
-        <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
-          <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none  rounded">
-            <Input
-              type="search"
-              placeholder="search"
-              className="text-[#959595] rounded"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-          </div>
-        </div>
+      <div className="w-full max-w-2xs">
+        <InputGroup>
+          <InputGroupInput
+            type="search"
+            placeholder="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+        </InputGroup>
       </div>
 
       <DataTable

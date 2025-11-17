@@ -457,9 +457,7 @@ const FleetForm = ({
                   }
                 />
 
-                <FieldDescription className="mt-1">
-                  Select your region.
-                </FieldDescription>
+                <FieldDescription>Select your region.</FieldDescription>
 
                 {form.formState.errors.regionId && (
                   <p className="text-base-danger mt-1">
@@ -498,9 +496,7 @@ const FleetForm = ({
                   }
                 />
 
-                <FieldDescription className="mt-1">
-                  Select Affiliate
-                </FieldDescription>
+                <FieldDescription>Select Affiliate</FieldDescription>
 
                 {form.formState.errors.affiliateId && (
                   <p className="text-base-danger mt-1">
@@ -530,7 +526,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter a detailed description.
                 </FieldDescription>
 
@@ -571,9 +567,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the bag capacity.
-                </FieldDescription>
+                <FieldDescription>Enter the bag capacity.</FieldDescription>
 
                 {form.formState.errors.bagsCapacity && (
                   <p className="text-base-danger mt-1">
@@ -610,9 +604,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the vehicle capacity.
-                </FieldDescription>
+                <FieldDescription>Enter the vehicle capacity.</FieldDescription>
 
                 {form.formState.errors.capacity && (
                   <p className="text-base-danger mt-1">
@@ -648,9 +640,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the base fare amount.
-                </FieldDescription>
+                <FieldDescription>Enter the base fare amount.</FieldDescription>
 
                 {form.formState.errors.baseFair && (
                   <p className="text-base-danger mt-1">
@@ -683,7 +673,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter the minimum fare amount.
                 </FieldDescription>
 
@@ -718,7 +708,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter the minimum number of hours.
                 </FieldDescription>
 
@@ -759,9 +749,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the price per hour.
-                </FieldDescription>
+                <FieldDescription>Enter the price per hour.</FieldDescription>
 
                 {form.formState.errors.pricePerHour && (
                   <p className="text-base-danger mt-1">
@@ -801,9 +789,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the price per mile.
-                </FieldDescription>
+                <FieldDescription>Enter the price per mile.</FieldDescription>
 
                 {form.formState.errors.pricePerMile && (
                   <p className="text-base-danger mt-1">
@@ -843,9 +829,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the price per minute.
-                </FieldDescription>
+                <FieldDescription>Enter the price per minute.</FieldDescription>
 
                 {form.formState.errors.pricePerMinute && (
                   <p className="text-base-danger mt-1">
@@ -885,7 +869,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter the city-to-city hourly rate.
                 </FieldDescription>
 
@@ -926,7 +910,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Enter the vehicle plate number.
                 </FieldDescription>
 
@@ -961,9 +945,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the vehicle brand.
-                </FieldDescription>
+                <FieldDescription>Enter the vehicle brand.</FieldDescription>
 
                 {form.formState.errors.brand && (
                   <p className="text-base-danger mt-1">
@@ -996,9 +978,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the vehicle model.
-                </FieldDescription>
+                <FieldDescription>Enter the vehicle model.</FieldDescription>
 
                 {form.formState.errors.model && (
                   <p className="text-base-danger mt-1">
@@ -1031,9 +1011,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Enter the vehicle color.
-                </FieldDescription>
+                <FieldDescription>Enter the vehicle color.</FieldDescription>
 
                 {form.formState.errors.color && (
                   <p className="text-base-danger mt-1">
@@ -1063,9 +1041,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Select the vehicle year.
-                </FieldDescription>
+                <FieldDescription>Select the vehicle year.</FieldDescription>
 
                 {form.formState.errors.year && (
                   <p className="text-base-danger mt-1">
@@ -1100,9 +1076,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
-                  Select the type of vehicle.
-                </FieldDescription>
+                <FieldDescription>Select the type of vehicle.</FieldDescription>
 
                 {form.formState.errors.vehicleType && (
                   <p className="text-base-danger mt-1">
@@ -1378,7 +1352,7 @@ const FleetForm = ({
                   )}
                 />
 
-                <FieldDescription className="mt-1">
+                <FieldDescription>
                   Select the zones for which pricing applies.
                 </FieldDescription>
 
