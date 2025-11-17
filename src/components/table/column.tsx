@@ -13,8 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { IAffiliate } from "@/types/affiliate.type";
-import type { TChauffeur } from "@/types/chauffeur.type";
+import type { IAffiliate } from "@/types/affiliate/affiliate.type";
+import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import Icons from "../common/Icons";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";

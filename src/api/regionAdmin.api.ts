@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import type { TRegion } from "@/components/regionManagement/region/RegionForm";
 import type { TRegionAdmin } from "@/components/table/column";
-import type { TRegion } from "@/pages/region/formpage/AddRegionPage";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
@@ -33,7 +33,7 @@ export default useFetchAllRegionAdmins;
 
 export const getSingleRegionAdmin = async (id: string) => {
   const response = await axiosInstance.get(
-    `${API_ENDPOINTS.GET_REGION_BY_ID.replace(":region_id", id)}`,
+    `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ONE.replace(":id", id)}`,
   );
 
   return response?.data?.data;

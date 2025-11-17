@@ -1,4 +1,4 @@
-import type { Tfilters, TPagination } from "./global/ApiResponse.type";
+import type { Tfilters, TPagination } from "../global/ApiResponse.type";
 
 type TBusinessLocation = {
   latitude: number | null;

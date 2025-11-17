@@ -58,6 +58,15 @@ const AddressInput = <T extends FieldValues>({
     },
   });
 
+  useEffect(() => {
+    if (value && !fields.address) {
+      // When form defaultValues load
+      setFields((prev) => ({
+        ...prev,
+        address: value,
+      }));
+    }
+  }, [value, fields.address]);
   // Update parent when fields change
   useEffect(() => {
     const hasContent = Object.values(fields).some((field) => {
@@ -163,14 +172,16 @@ const AddressInput = <T extends FieldValues>({
   return (
     <InputGroup>
       <InputGroupInput
-        placeholder="Start typing your address..."
-        {...field}
         {...props}
         value={value}
         onChange={(e) => {
-          onChange(e.target.value);
+          field.onChange(e.target.value); // Update RHF
+          onChange(e.target.value); // Update your parent
         }}
-        ref={addressInputRef}
+        ref={(el) => {
+          field.ref(el); // Keep RHF ref
+          addressInputRef.current = el; // Keep autocomplete ref
+        }}
       />
       <InputGroupAddon>
         <Building2Icon />

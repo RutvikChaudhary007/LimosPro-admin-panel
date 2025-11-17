@@ -24,10 +24,21 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
+          // default
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
           "--border-radius": "var(--radius)",
+
+          // 🚀 override success color
+          "--success-bg": "var(--base-success)",
+          "--success-border": "var(--base-success)",
+          "--success-text": "white",
+
+          // 🚨 override error color
+          "--error-bg": "var(--base-danger)",
+          "--error-border": "var(--base-danger)",
+          "--error-text": "white",
         } as React.CSSProperties
       }
       {...props}

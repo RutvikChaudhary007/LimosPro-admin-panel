@@ -76,8 +76,7 @@ function RegionAdminPage() {
 
   const handleEdit = useCallback(
     (id: string) => {
-      console.log("Edit:", id);
-      navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN);
+      navigate(constant.ROUTING_URLS.EDIT_REGION_ADMIN.replace(":id", id));
     },
     [navigate],
   );

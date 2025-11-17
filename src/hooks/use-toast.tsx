@@ -186,74 +186,54 @@ type PromiseMessages<T> = {
   error?: React.ReactNode | ((error: unknown) => React.ReactNode);
 };
 
+// export function toastPromise<T>(
+//   promise: Promise<T>,
+//   messages: PromiseMessages<T>,
+// ) {
+//   return sonnerToast.promise<T>(promise, {
+//     loading: messages.loading,
+//     success:
+//       typeof messages.success === "function"
+//         ? (data: T) => (messages.success as (data: T) => React.ReactNode)(data)
+//         : messages.success,
+//     // Apply the destructive class only to the error toast
+//     error: messages.error
+//       ? typeof messages.error === "function"
+//         ? (error: unknown) => {
+//             const content = (
+//               messages.error as (error: unknown) => React.ReactNode
+//             )(error);
+//             // The className is now handled at the toast level, not here
+//             return content;
+//           }
+//         : messages.error
+//       : undefined,
+//     // Add classNames for different states
+//     classNames: {
+//       error: "destructive", // This only targets the error toast
+//     },
+//   });
+// }
+
 export function toastPromise<T>(
   promise: Promise<T>,
   messages: PromiseMessages<T>,
 ) {
   return sonnerToast.promise<T>(promise, {
     loading: messages.loading,
-    success:
+
+    success: (data) =>
       typeof messages.success === "function"
-        ? (data: T) => (messages.success as (data: T) => React.ReactNode)(data)
+        ? messages.success(data)
         : messages.success,
-    // Apply the destructive class only to the error toast
-    error: messages.error
-      ? typeof messages.error === "function"
-        ? (error: unknown) => {
-            const content = (
-              messages.error as (error: unknown) => React.ReactNode
-            )(error);
-            // The className is now handled at the toast level, not here
-            return content;
-          }
-        : messages.error
-      : undefined,
-    // Add classNames for different states
+
+    error: (err) =>
+      typeof messages.error === "function"
+        ? messages.error(err)
+        : (messages.error ?? "Something went wrong"),
+
     classNames: {
-      error: "destructive", // This only targets the error toast
+      error: "destructive", // This will now apply correctly
     },
   });
 }
-
-// export function toastPromise<T>(
-//   promise: Promise<T>,
-//   messages: PromiseMessages<T>
-// ) {
-//   return sonnerToast.promise<T>(promise, {
-//     loading: messages.loading,
-
-//     success:
-//       typeof messages.success === "function"
-//         ? (data: T) => (messages.success as (data: T) => React.ReactNode)(data)
-//         : messages.success,
-
-//     error: messages.error
-//       ? typeof messages.error === "function"
-//         ? (error: unknown): React.ReactNode => {
-//             const content = (messages.error as (error: unknown) => React.ReactNode)(error)
-//             return (<span className="destructive">{content}</span>)
-//           }
-//         :  (() => <span className="destructive">{messages.error}</span>)
-//       : undefined,
-//     classNames: {
-//       error: 'destructive', // This only targets the error toast
-//     },
-//   })
-// }
-
-// export function toastPromise<T>(
-//   promise: Promise<T>,
-//   messages: PromiseMessages<T>
-// ) {
-//   return sonnerToast.promise(
-//     promise,
-//     messages as {
-//       loading: React.ReactNode
-//       success: React.ReactNode | ((data: T) => React.ReactNode)
-//       error: React.ReactNode | ((error: unknown) => React.ReactNode),
-//       classNames: {
-//         error: 'destructive', // This only targets the error toast
-//       },
-//     },
-//   )
-// }

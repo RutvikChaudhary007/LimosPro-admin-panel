@@ -93,6 +93,7 @@ export default function FilesUpload({
   // Sync internal state with external value prop
   useEffect(() => {
     if (value) {
+      // console.log("fileupload value:",value)
       const filesWithPreviews = value.map((f: FileWithPreview) => {
         const file = f as FileWithPreview;
         if (f?.type?.startsWith("image/") && !file.preview) {
@@ -346,7 +347,8 @@ export default function FilesUpload({
               {/* 👇 IMAGE LOADER */}
               {f.status === "loading" ? (
                 <div className="w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10 rounded-full border-2 border-base-gray border-t-base-primary box-border overflow-hidden animate-spin"></div>
-              ) : f.preview && f.type.startsWith("image/") ? (
+              ) : (f.preview && f?.type?.startsWith("image/")) ||
+                f?.mimetype?.startsWith("image/") ? (
                 <img src={f.preview} className="w-10 h-10 rounded" />
               ) : (
                 getFileIcon(f.type)

@@ -1,36 +1,17 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, MapPinned } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { z } from "zod";
+
 import { PageHeader } from "@/components/layouts/PageHeader";
-import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardFooter, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import type { TRegion } from "@/components/regionManagement/region/RegionForm";
+import RegionForm from "@/components/regionManagement/region/RegionForm";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 
-const formSchema = z.object({
-  regionName: z.string().min(2, {
-    message: "Region name must be at least 2 characters.",
-  }),
-});
-export type TRegion = z.infer<typeof formSchema>;
 function AddRegionPage() {
   const navigate = useNavigate();
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      regionName: "",
-    },
-  });
+
   const createRegion = queries.useCreateRegionMutation();
   async function onSubmit(values: TRegion) {
     try {
@@ -70,57 +51,7 @@ function AddRegionPage() {
         }}
       />
 
-      <Card>
-        <CardBody>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardTitle>Create Regions</CardTitle>
-            <div className="space-y-4 my-4">
-              <Field>
-                <FieldLabel
-                  htmlFor="regionName"
-                  className="text-base-black gap-0"
-                >
-                  Region
-                </FieldLabel>
-
-                <Controller
-                  control={form.control}
-                  name="regionName"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        id="regionName"
-                        type="text"
-                        placeholder="Add Region"
-                      />
-                      <InputGroupAddon>
-                        <MapPinned />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-                />
-
-                <FieldDescription className="mt-1">
-                  Provide region name here.
-                </FieldDescription>
-
-                {form.formState.errors.regionName && (
-                  <p className="text-danger text-sm mt-1">
-                    {form.formState.errors.regionName.message}
-                  </p>
-                )}
-              </Field>
-            </div>
-
-            <CardFooter>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Saving..." : "Save Region"}
-              </Button>
-            </CardFooter>
-          </form>
-        </CardBody>
-      </Card>
+      <RegionForm title="Create Regions" onSubmit={onSubmit} />
     </div>
   );
 }

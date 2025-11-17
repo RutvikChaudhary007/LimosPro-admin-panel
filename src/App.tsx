@@ -184,7 +184,7 @@ function App() {
 
   return (
     <TooltipProvider>
-      <Sonner position="top-right" />
+      <Sonner position="top-right" richColors />
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <ErrorBoundary>

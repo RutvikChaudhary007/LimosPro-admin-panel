@@ -14,7 +14,10 @@ import { type FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
-import type { IAffiliate, IEditAffiliateRes } from "@/types/affiliate.type";
+import type {
+  IAffiliate,
+  IEditAffiliateRes,
+} from "@/types/affiliate/affiliate.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import AddressInput from "../AddressInput";
 import { Button } from "../ui/button";
@@ -42,8 +45,8 @@ import {
 import { Switch } from "../ui/switch";
 import FilesUpload from "../ui/upload-files";
 
-const maxSize = 10 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = ["application/pdf", "image/jpeg", "image/png"];
+const maxSize = 10;
+const ALLOWED_MIME_TYPES = ["application/pdf", "image/*"];
 
 const formSchema = z.object({
   firstName: z
@@ -64,9 +67,7 @@ const formSchema = z.object({
   }),
   businessAddress: z
     .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Business Address cannot be empty or just whitespace.",
-    })
+    .trim()
     .min(3, { message: "Business Address must be at least 3 characters" }),
   companyName: z
     .string()
@@ -127,7 +128,7 @@ const formSchema = z.object({
         const fileObjects = files.filter((f) => f instanceof File);
         return (
           fileObjects.length === 0 ||
-          fileObjects.every((f) => f.size <= maxSize)
+          fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
         );
       },
       {
@@ -140,7 +141,14 @@ const formSchema = z.object({
         const fileObjects = files.filter((f) => f instanceof File);
         return (
           fileObjects.length === 0 ||
-          fileObjects.every((f) => ALLOWED_MIME_TYPES.includes(f.type))
+          fileObjects.every((f) =>
+            ALLOWED_MIME_TYPES.some((allowed) => {
+              if (allowed.endsWith("/*")) {
+                return f.type.startsWith(allowed.replace("/*", ""));
+              }
+              return f.type === allowed;
+            }),
+          )
         );
       },
       {
@@ -183,6 +191,8 @@ const transformInitialData = (
 ): TAffiliateForm | undefined => {
   if (!data) return undefined;
   console.log("initial data:", data?.businessAddress);
+  console.log("business Location:", data?.businessLocation);
+  console.log("initial status:", data?.status); // Add this debug log
 
   return {
     firstName: data?.user?.firstName || "",
@@ -204,9 +214,12 @@ const transformInitialData = (
       ? Number(data.commissionRate).toString()
       : "0",
     documents: data.documents || [],
-    status: data.status || "",
+    // Make sure status is properly normalized and matches the select options
+    status: data?.status ? data.status.toLowerCase().trim() : "",
   };
 };
+
+let isEdit = false;
 
 const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   initialData,
@@ -215,7 +228,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   type,
   businessAddress,
 }) => {
-  console.log("businessAddress:", businessAddress);
+  // console.log("businessAddress:", businessAddress);
   const formatPhoneNumber = (value: string): string => {
     if (!value) return "";
 
@@ -294,7 +307,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
 
   const form = useForm<TAffiliateForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: transformInitialData(initialData) ?? {
       firstName: "",
       lastName: "",
       email: "",
@@ -318,28 +331,28 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
 
   useEffect(() => {
     if (initialData) {
-      const transformedData = transformInitialData(initialData);
-      if (transformedData) {
-        form.reset(transformedData);
-        console.log(
-          "Form reset with businessAddress:",
-          transformedData.businessAddress,
-        );
-      }
+      isEdit = true;
     }
-  }, [initialData, form]);
+  }, [initialData]);
+
   const handleAddressChange = useCallback(
     (value: string) => {
       if (form.formState.errors.businessAddress) {
         form.clearErrors("businessAddress");
       }
-      form.setValue("businessAddress", value);
+      form.setValue("businessAddress", value, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     },
     [form],
   );
-  // const documents = form.watch("documents");
+
   const handleFormSubmit = async (values: IAffiliate) => {
     try {
+      if (isEdit) {
+      }
       const formData = new FormData();
       if (addressObj) {
         console.log("addressObj:", addressObj);
@@ -355,7 +368,10 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
       formData.append("password", values.password);
       formData.append("companyName", values.companyName);
       formData.append("businessEmail", values.businessEmail);
-      formData.append("businessContactNumber", values.businessContactNumber);
+      formData.append(
+        "businessContactNumber",
+        values.businessContactNumber.replace(/\D/g, ""),
+      );
       formData.append("businessAddress", values.businessAddress);
       formData.append("entityType", values.entityType);
       formData.append(
@@ -648,7 +664,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   render={({ field }) => (
                     <div className="w-full">
                       <AddressInput
-                        value={field.value}
+                        value={field.value || ""} // Ensure it's always a string
                         field={field}
                         onChange={handleAddressChange}
                         onUpdate={setAddressObj}
@@ -802,13 +818,20 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                     <Select
                       value={field.value}
                       onValueChange={(v) => {
+                        // console.log("onChange triggered with:", v);
                         field.onChange(v);
                       }}
                       disabled={isFieldDisabled(disabledFields, "status")}
                     >
                       <FormControl className="w-full min-w-full rounded">
                         <SelectTrigger className="cursor-pointer">
-                          <SelectValue placeholder="Select status" />
+                          <SelectValue placeholder="Select status">
+                            {/* Force display the selected value */}
+                            {/* {field.value &&
+                                  showStatus.find(
+                                    (s) => s.value === field.value,
+                                  )?.label} */}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
 
@@ -820,6 +843,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                             value={option.value}
                           >
                             {option.label}
+                            {/* {field.value === option.value && "✓"} */}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -929,9 +953,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   render={({ field }) => (
                     <FilesUpload
                       title="Upload Documents"
-                      accept="image/jpeg,image/png,application/pdf"
-                      maxSize={10}
-                      value={field.value}
+                      accept={ALLOWED_MIME_TYPES.join()}
+                      maxSize={maxSize}
+                      value={field.value ?? []}
                       onChange={field.onChange}
                       disabled={isFieldDisabled(disabledFields, "documents")}
                     />

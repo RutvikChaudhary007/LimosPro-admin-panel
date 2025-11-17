@@ -30,7 +30,7 @@ import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import type { TChauffeur } from "@/types/chauffeur.type";
+import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import { generatePageTitle } from "@/utils/seo";
 

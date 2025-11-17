@@ -173,7 +173,7 @@ export const API_ENDPOINTS = {
   },
   REGIONAL_ADMIN: {
     GET_ALL: `${ADMIN_SERVICE_URL}/regional-admins`,
-    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admins`,
+    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admin/:id`,
     CREATE: `${ADMIN_SERVICE_URL}/regional-admin/:regionId`,
     EDIT: `${ADMIN_SERVICE_URL}/regional-admins`,
     DELETE: `${ADMIN_SERVICE_URL}/regional-admins`,
