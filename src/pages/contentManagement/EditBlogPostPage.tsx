@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconFileText } from "@tabler/icons-react";
 import { ArrowLeft, Loader, Plus, Save, X } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -9,23 +10,28 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import * as z from "zod";
 import { blogService } from "@/api/contentServices.api";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import ImageUpload from "@/components/ui/image-upload";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import MultipleImageUpload from "@/components/ui/multiple-image-upload";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Card,
+  CardBody,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import ImageUpload from "@/components/ui/image-upload";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import MultipleImageUpload from "@/components/ui/multiple-image-upload";
 import { Textarea } from "@/components/ui/textarea";
 import { constant } from "@/lib/constant";
 import type { BlogPost, BlogPostFormData } from "@/types/content";
+import { SelectDropDown } from "../../components/ui/select";
 
 const blogPostSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
@@ -42,39 +48,7 @@ const blogPostSchema = z.object({
 
 type BlogPostForm = z.infer<typeof blogPostSchema>;
 
-const fetchBlogPost = async () => {
-  try {
-    setFetchLoading(true);
-    const response = await blogService.getById(id!);
-    const post = response?.data;
-    setBlogPost(post);
-
-    // Set form values
-    reset({
-      title: post.title,
-      content: post.content,
-      excerpt: post.excerpt || "",
-      featuredImage: post.featuredImage || "",
-      slug: post.slug,
-      status: post.status as any,
-      author: post.author || "",
-      metaTitle: post.seo?.metaTitle || "",
-      metaDescription: post.seo?.metaDescription || "",
-      ogImage: post.seo?.ogImage || "",
-    });
-
-    setTags(post.tags || []);
-    setMetaKeywords(post.seo?.metaKeywords || []);
-    setBlogImages(post.images || []);
-  } catch (error) {
-    console.error("Error fetching blog post:", error);
-    toast.error("Failed to fetch blog post");
-    navigate(constant.ROUTING_URLS.BLOG_POSTS);
-  } finally {
-    setFetchLoading(false);
-  }
-};
-
+// `fetchBlogPost` moved inside the component so it can access state and setters
 const EditBlogPostPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -99,6 +73,39 @@ const EditBlogPostPage: React.FC = () => {
   });
 
   // const title = watch('title');
+
+  const fetchBlogPost = async () => {
+    try {
+      setFetchLoading(true);
+      const response = await blogService.getById(id!);
+      const post = response?.data;
+      setBlogPost(post ?? null);
+
+      // Set form values
+      reset({
+        title: post?.title ?? "",
+        content: post?.content ?? "",
+        excerpt: post?.excerpt ?? "",
+        featuredImage: post?.featuredImage ?? "",
+        slug: post?.slug ?? "",
+        status: (post?.status ?? "draft") as any,
+        author: post?.author ?? "",
+        metaTitle: post?.seo?.metaTitle ?? "",
+        metaDescription: post?.seo?.metaDescription ?? "",
+        ogImage: post?.seo?.ogImage ?? "",
+      });
+
+      setTags(post?.tags ?? []);
+      setMetaKeywords(post?.seo?.metaKeywords ?? []);
+      setBlogImages(post?.images ?? []);
+    } catch (error) {
+      console.error("Error fetching blog post:", error);
+      toast.error("Failed to fetch blog post");
+      navigate(constant.ROUTING_URLS.BLOG_POSTS);
+    } finally {
+      setFetchLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (id) {
@@ -193,155 +200,280 @@ const EditBlogPostPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(constant.ROUTING_URLS.BLOG_POSTS)}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Posts
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Edit Blog Post</h1>
-            <p className="text-gray-600">Update blog post details</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Edit Blog Post"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Content Management" },
+          {
+            label: "Blog Posts",
+            path: constant.ROUTING_URLS.BLOG_POSTS,
+          },
+          { label: "Edit Blog Post" },
+        ]}
+        action={{
+          variant: "outlineBlack",
+          label: "Back",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.BLOG_POSTS,
+        }}
+      />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    {...register("title")}
-                    onChange={handleTitleChange}
-                    placeholder="Enter blog post title"
-                    className={errors.title ? "border-red-500" : ""}
-                  />
-                  {errors.title && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {errors.title.message}
-                    </p>
-                  )}
-                </div>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="title"
+                      className="text-base-black gap-0"
+                    >
+                      Title <span className="text-base-danger">*</span>
+                    </FieldLabel>
 
-                <div>
-                  <Label htmlFor="slug">Slug *</Label>
-                  <Input
-                    id="slug"
-                    {...register("slug")}
-                    placeholder="blog-post-slug"
-                    className={errors.slug ? "border-red-500" : ""}
-                  />
-                  {errors.slug && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {errors.slug.message}
-                    </p>
-                  )}
-                </div>
+                    <InputGroup>
+                      <InputGroupInput
+                        id="title"
+                        type="text"
+                        placeholder="Enter blog post title"
+                        {...register("title")}
+                        onChange={handleTitleChange}
+                        className={errors.title ? "border-base-danger" : ""}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />
+                      </InputGroupAddon>
+                    </InputGroup>
 
-                <div>
-                  <Label htmlFor="excerpt">Excerpt</Label>
-                  <Textarea
-                    id="excerpt"
-                    {...register("excerpt")}
-                    placeholder="Brief description of the blog post"
-                    rows={3}
-                  />
-                </div>
+                    <FieldDescription>Enter the Title here.</FieldDescription>
 
-                <div>
-                  <Label htmlFor="content">Content *</Label>
-                  <Textarea
-                    id="content"
-                    {...register("content")}
-                    placeholder="Write your blog post content here..."
-                    rows={15}
-                    className={errors.content ? "border-red-500" : ""}
-                  />
-                  {errors.content && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {errors.content.message}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
+                    {errors.title && (
+                      <p className="text-base-danger mt-1">
+                        {errors.title.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel
+                      htmlFor="slug"
+                      className="text-base-black gap-0"
+                    >
+                      Slug <span className="text-base-danger">*</span>
+                    </FieldLabel>
+
+                    <InputGroup>
+                      <InputGroupInput
+                        id="slug"
+                        type="text"
+                        placeholder="Enter blog post slug"
+                        {...register("slug")}
+                        className={errors.slug ? "border-base-danger" : ""}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />
+                      </InputGroupAddon>
+                    </InputGroup>
+
+                    <FieldDescription>Enter the Slug here.</FieldDescription>
+
+                    {errors.slug && (
+                      <p className="text-base-danger mt-1">
+                        {errors.slug.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel
+                      htmlFor="excerpt"
+                      className="text-base-black gap-0"
+                    >
+                      Excerpt<span className="text-base-danger">*</span>
+                    </FieldLabel>
+
+                    <Textarea
+                      id="excerpt"
+                      {...register("excerpt")}
+                      placeholder="Brief description of the blog post"
+                      rows={3}
+                      className={errors.excerpt ? "border-base-danger" : ""}
+                    />
+
+                    <FieldDescription>
+                      Enter a short description of the blog post.
+                    </FieldDescription>
+
+                    {errors.excerpt && (
+                      <p className="text-base-danger mt-1">
+                        {errors.excerpt.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel
+                      htmlFor="content"
+                      className="text-base-black gap-0"
+                    >
+                      Content <span className="text-base-danger">*</span>
+                    </FieldLabel>
+
+                    <Textarea
+                      id="content"
+                      {...register("content")}
+                      placeholder="Write your blog post content here..."
+                      rows={15}
+                      className={errors.content ? "border-base-danger" : ""}
+                    />
+
+                    <FieldDescription>
+                      Enter the full blog content here.
+                    </FieldDescription>
+
+                    {errors.content && (
+                      <p className="text-base-danger mt-1">
+                        {errors.content.message}
+                      </p>
+                    )}
+                  </Field>
+                </CardContent>
+              </CardBody>
             </Card>
 
             {/* SEO Settings */}
             <Card>
-              <CardHeader>
-                <CardTitle>SEO Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="metaTitle">Meta Title</Label>
-                  <Input
-                    id="metaTitle"
-                    {...register("metaTitle")}
-                    placeholder="SEO title for search engines"
-                  />
-                </div>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>SEO Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="metaTitle"
+                      className="text-base-black gap-0"
+                    >
+                      Meta Title
+                    </FieldLabel>
 
-                <div>
-                  <Label htmlFor="metaDescription">Meta Description</Label>
-                  <Textarea
-                    id="metaDescription"
-                    {...register("metaDescription")}
-                    placeholder="Brief description for search engines"
-                    rows={3}
-                  />
-                </div>
+                    <InputGroup>
+                      <InputGroupInput
+                        id="metaTitle"
+                        type="text"
+                        placeholder="SEO title for search engines"
+                        {...register("metaTitle")}
+                        className={errors.metaTitle ? "border-base-danger" : ""}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />
+                      </InputGroupAddon>
+                    </InputGroup>
 
-                <div>
-                  <Label>Meta Keywords</Label>
-                  <div className="flex gap-2 mb-2">
-                    <Input
-                      value={keywordInput}
-                      onChange={(e) => setKeywordInput(e.target.value)}
-                      placeholder="Add keyword"
-                      onKeyPress={(e) =>
-                        e.key === "Enter" && (e.preventDefault(), addKeyword())
+                    <FieldDescription>
+                      Enter the SEO title for this blog post.
+                    </FieldDescription>
+
+                    {errors.metaTitle && (
+                      <p className="text-base-danger mt-1">
+                        {errors.metaTitle.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel
+                      htmlFor="metaDescription"
+                      className="text-base-black gap-0"
+                    >
+                      Meta Description
+                    </FieldLabel>
+
+                    <Textarea
+                      id="metaDescription"
+                      {...register("metaDescription")}
+                      placeholder="Brief description for search engines"
+                      rows={3}
+                      className={
+                        errors.metaDescription ? "border-base-danger" : ""
                       }
                     />
-                    <Button type="button" onClick={addKeyword}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {metaKeywords.map((keyword, index) => (
-                      <Badge key={index} variant="secondary">
-                        {keyword}
-                        <button
-                          type="button"
-                          onClick={() => removeKeyword(index)}
-                          className="ml-1"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
 
-                <ImageUpload
-                  label="Open Graph Image"
-                  placeholder="Enter OG image URL or upload file"
-                  value={watch("ogImage") || ""}
-                  onChange={(url) => setValue("ogImage", url)}
-                />
-              </CardContent>
+                    <FieldDescription>
+                      Enter the SEO meta description for this blog post.
+                    </FieldDescription>
+
+                    {errors.metaDescription && (
+                      <p className="text-base-danger mt-1">
+                        {errors.metaDescription.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel className="text-base-black gap-0">
+                      Meta Keywords
+                    </FieldLabel>
+
+                    {/* Input + Add Button */}
+                    <InputGroup>
+                      <InputGroupInput
+                        type="text"
+                        placeholder="Add keyword"
+                        value={keywordInput}
+                        onChange={(e) => setKeywordInput(e.target.value)}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" &&
+                          (e.preventDefault(), addKeyword())
+                        }
+                      />
+                      <InputGroupAddon align={"inline-end"}>
+                        <Button
+                          type="button"
+                          onClick={addKeyword}
+                          size="xl"
+                          spacing="lg"
+                        >
+                          <Plus />
+                        </Button>
+                      </InputGroupAddon>
+                    </InputGroup>
+
+                    <FieldDescription>
+                      Add SEO keywords here (press Enter or click +).
+                    </FieldDescription>
+
+                    {/* Keywords List */}
+                    <div className="flex flex-wrap gap-2">
+                      {metaKeywords.map((keyword, index) => (
+                        <Badge key={index}>
+                          <span>{keyword}</span>
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => removeKeyword(index)}
+                          >
+                            <X className="size-4" />
+                          </span>
+                        </Badge>
+                      ))}
+                    </div>
+                  </Field>
+
+                  <ImageUpload
+                    label="Open Graph Image"
+                    placeholder="Enter OG image URL or upload file"
+                    value={watch("ogImage") || ""}
+                    onChange={(url) => setValue("ogImage", url)}
+                  />
+                </CardContent>
+              </CardBody>
             </Card>
           </div>
 
@@ -349,109 +481,173 @@ const EditBlogPostPage: React.FC = () => {
           <div className="space-y-6">
             {/* Publish Settings */}
             <Card>
-              <CardHeader>
-                <CardTitle>Publish Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    onValueChange={(value) => setValue("status", value as any)}
-                    value={watch("status")}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Publish Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="status"
+                      className="text-base-black gap-0"
+                    >
+                      Status
+                    </FieldLabel>
 
-                <div>
-                  <Label htmlFor="author">Author</Label>
-                  <Input
-                    id="author"
-                    {...register("author")}
-                    placeholder="Author name"
-                  />
-                </div>
+                    <SelectDropDown
+                      placeholder="Select Status"
+                      items={[
+                        { label: "Draft", value: "draft" },
+                        { label: "Published", value: "published" },
+                        { label: "Archived", value: "archived" },
+                      ]}
+                      value={watch("status")}
+                      setSelectedItem={(v) =>
+                        setValue(
+                          "status",
+                          v as "draft" | "published" | "archived",
+                          { shouldValidate: true },
+                        )
+                      }
+                    />
 
-                <div className="pt-4">
-                  <Button type="submit" disabled={loading} className="w-full">
-                    <Save className="mr-2 h-4 w-4" />
+                    {errors.status && (
+                      <p className="text-base-danger mt-1">
+                        {errors.status.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel
+                      htmlFor="author"
+                      className="text-base-black gap-0"
+                    >
+                      Author
+                    </FieldLabel>
+
+                    <InputGroup>
+                      <InputGroupInput
+                        id="author"
+                        type="text"
+                        placeholder="Author name"
+                        {...register("author")}
+                        className={errors.author ? "border-base-danger" : ""}
+                      />
+                      <InputGroupAddon>
+                        <IconFileText />
+                      </InputGroupAddon>
+                    </InputGroup>
+
+                    <FieldDescription>
+                      Enter the author's name.
+                    </FieldDescription>
+
+                    {errors.author && (
+                      <p className="text-base-danger mt-1">
+                        {errors.author.message}
+                      </p>
+                    )}
+                  </Field>
+
+                  <Button type="submit" disabled={loading}>
+                    <Save />
                     {loading ? "Updating..." : "Update Post"}
                   </Button>
-                </div>
-              </CardContent>
+                </CardContent>
+              </CardBody>
             </Card>
 
             {/* Featured Image */}
             <Card>
-              <CardHeader>
-                <CardTitle>Featured Image</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ImageUpload
-                  label="Featured Image"
-                  placeholder="Enter featured image URL or upload file"
-                  value={watch("featuredImage") || ""}
-                  onChange={(url) => setValue("featuredImage", url)}
-                />
-              </CardContent>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Featured Image</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ImageUpload
+                    label="Featured Image"
+                    placeholder="Enter featured image URL or upload file"
+                    value={watch("featuredImage") || ""}
+                    onChange={(url) => setValue("featuredImage", url)}
+                  />
+                </CardContent>
+              </CardBody>
             </Card>
 
             {/* Blog Images */}
             <Card>
-              <CardHeader>
-                <CardTitle>Blog Images</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MultipleImageUpload
-                  label="Additional Images"
-                  value={blogImages}
-                  onChange={setBlogImages}
-                  maxImages={10}
-                />
-              </CardContent>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Blog Images</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MultipleImageUpload
+                    label="Additional Images"
+                    value={blogImages}
+                    onChange={setBlogImages}
+                    maxImages={10}
+                  />
+                </CardContent>
+              </CardBody>
             </Card>
 
             {/* Tags */}
             <Card>
-              <CardHeader>
-                <CardTitle>Tags</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-2 mb-2">
-                  <Input
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    placeholder="Add tag"
-                    onKeyPress={(e) =>
-                      e.key === "Enter" && (e.preventDefault(), addTag())
-                    }
-                  />
-                  <Button type="button" onClick={addTag}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary">
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(index)}
-                        className="ml-1"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Tags</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Field>
+                    <FieldLabel className="text-base-black gap-0">
+                      Tags
+                    </FieldLabel>
+
+                    {/* Input + Add Button */}
+                    <InputGroup>
+                      <InputGroupInput
+                        type="text"
+                        placeholder="Add tag"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && (e.preventDefault(), addTag())
+                        }
+                      />
+                      <InputGroupAddon align={"inline-end"}>
+                        <Button
+                          type="button"
+                          onClick={addTag}
+                          size="xl"
+                          spacing="lg"
+                        >
+                          <Plus />
+                        </Button>
+                      </InputGroupAddon>
+                    </InputGroup>
+
+                    <FieldDescription>
+                      Add tags for this blog post (press Enter or click +).
+                    </FieldDescription>
+
+                    {/* Tags List */}
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag, index) => (
+                        <Badge key={index}>
+                          <span>{tag}</span>
+                          <span
+                            className="cursor-pointer"
+                            onClick={() => removeTag(index)}
+                          >
+                            <X className="size-4" />
+                          </span>
+                        </Badge>
+                      ))}
+                    </div>
+                  </Field>
+                </CardContent>
+              </CardBody>
             </Card>
           </div>
         </div>

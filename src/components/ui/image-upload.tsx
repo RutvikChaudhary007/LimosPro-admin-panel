@@ -12,9 +12,9 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { mediaService } from "@/api/contentServices.api";
 import { Button } from "./button";
-import { Card, CardContent } from "./card";
+import { Card, CardBody, CardContent } from "./card";
+import { Field, FieldDescription, FieldLabel } from "./field";
 import { Input } from "./input";
-import { Label } from "./label";
 
 interface ImageUploadProps {
   value?: string;
@@ -126,29 +126,35 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div>
-        <Label>{label}</Label>
-        <div className="flex gap-2 mt-2 mb-4">
+      <Field>
+        <FieldLabel className="text-base-black gap-0">{label}</FieldLabel>
+
+        <div className="flex gap-2">
           <Button
             type="button"
-            variant={uploadMode === "url" ? "default" : "outline"}
-            size="sm"
+            variant={uploadMode === "url" ? "" : "outlineBlack"}
             onClick={() => setUploadMode("url")}
+            className="flex items-center gap-1"
           >
-            <LinkIcon className="h-4 w-4 mr-1" />
+            <LinkIcon />
             URL
           </Button>
+
           <Button
             type="button"
-            variant={uploadMode === "upload" ? "default" : "outline"}
-            size="sm"
+            variant={uploadMode === "upload" ? "" : "outlineBlack"}
             onClick={() => setUploadMode("upload")}
+            className="flex items-center gap-1"
           >
-            <Upload className="h-4 w-4 mr-1" />
+            <Upload />
             Upload
           </Button>
         </div>
-      </div>
+
+        <FieldDescription>
+          Select how you want to add the image.
+        </FieldDescription>
+      </Field>
 
       {uploadMode === "url" ? (
         <div>
@@ -161,85 +167,93 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         </div>
       ) : (
         <Card>
-          <CardContent className="p-4">
-            <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onClick={() => {
-                const input = document.createElement("input");
-                input.type = "file";
-                input.accept = "image/*";
-                input.onchange = handleFileInputChange;
-                input.click();
-              }}
-            >
-              {uploading ? (
-                <div className="space-y-2">
-                  <Loader className="h-8 w-8 animate-spin mx-auto text-gray-400" />
-                  <p className="text-sm text-gray-600">Uploading image...</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Upload className="h-8 w-8 mx-auto text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Click to upload</span> or
-                      drag and drop
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      PNG, JPG, GIF up to 5MB
+          <CardBody>
+            <CardContent>
+              <div
+                className="border-2 border-dashed border-base-light-gray p-6 text-center hover:border-base-gray transition-colors cursor-pointer"
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onClick={() => {
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.accept = "image/*";
+                  input.onchange = handleFileInputChange;
+                  input.click();
+                }}
+              >
+                {uploading ? (
+                  <div className="space-y-2">
+                    <Loader className="h-8 w-8 animate-spin mx-auto text-base-gray" />
+                    <p className="text-sm text-base-black">
+                      Uploading image...
                     </p>
                   </div>
-                </div>
-              )}
-            </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileInputChange}
-              className="hidden"
-            />
-          </CardContent>
+                ) : (
+                  <div className="space-y-2">
+                    <Upload className="h-8 w-8 mx-auto text-base-gray" />
+                    <div>
+                      <p className="text-sm text-base-black">
+                        <span className="font-medium">Click to upload</span> or
+                        drag and drop
+                      </p>
+                      <p className="text-xs text-base-black">
+                        PNG, JPG, GIF up to 5MB
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
+            </CardContent>
+          </CardBody>
         </Card>
       )}
 
       {/* Image Preview */}
       {value && (
         <Card>
-          <CardContent className="p-4">
-            <div className="relative">
-              <img
-                src={value}
-                alt="Preview"
-                className="w-full h-48 object-cover rounded-lg"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  e.currentTarget.nextElementSibling?.classList.remove(
-                    "hidden",
-                  );
-                }}
-              />
-              <div className="hidden flex items-center justify-center w-full h-48 bg-gray-100 rounded-lg">
-                <div className="text-center">
-                  <ImageIcon className="h-8 w-8 mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-500">Failed to load image</p>
+          <CardBody>
+            <CardContent>
+              <div className="relative">
+                <img
+                  src={value}
+                  alt="Preview"
+                  className="w-full h-48 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.nextElementSibling?.classList.remove(
+                      "hidden",
+                    );
+                  }}
+                />
+                <div className="hidden flex items-center justify-center w-full h-48 bg-base-light-gray">
+                  <div className="text-center">
+                    <ImageIcon className="h-8 w-8 mx-auto text-base-gray mb-2" />
+                    <p className="text-sm text-base-black">
+                      Failed to load image
+                    </p>
+                  </div>
                 </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-2 right-2"
+                  onClick={clearImage}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={clearImage}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="mt-2">
-              <p className="text-xs text-gray-500 break-all">{value}</p>
-            </div>
-          </CardContent>
+              <div className="mt-2">
+                <p className="text-xs text-gray-500 break-all">{value}</p>
+              </div>
+            </CardContent>
+          </CardBody>
         </Card>
       )}
     </div>

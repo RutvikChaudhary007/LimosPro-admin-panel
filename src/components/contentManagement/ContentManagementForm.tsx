@@ -1,14 +1,12 @@
 //@ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconFileText, IconGridPattern, IconSort09 } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import { Form } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
-import "react-quill/dist/quill.snow.css"; // or 'quill.bubble.css'
-// import { Plus } from "lucide-react";
-// import { Label } from "../ui/label";
-import { IconFileText, IconGridPattern, IconSort09 } from "@tabler/icons-react";
+import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "../ui/button";
