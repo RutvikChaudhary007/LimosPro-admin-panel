@@ -49,6 +49,7 @@ interface ImagesUploadProps extends VariantProps<typeof uploadBoxVariants> {
   title?: string;
   info?: boolean;
   disabled?: boolean;
+  onFilesSelected?: (files: FileWithPreview[]) => void;
 }
 
 type FileWithPreview = File & { preview?: string };
@@ -61,6 +62,7 @@ export default function ImagesUpload({
   title = "Upload Images",
   info = true,
   disabled = false,
+  onFilesSelected,
 }: ImagesUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
@@ -97,6 +99,11 @@ export default function ImagesUpload({
     setFiles((prev) =>
       multiple ? [...prev, ...validated] : validated.slice(0, 1),
     );
+
+    // Call callback if provided
+    if (onFilesSelected) {
+      onFilesSelected(multiple ? [...validated] : validated.slice(0, 1));
+    }
   }
 
   const removeFile = (name: string) => {

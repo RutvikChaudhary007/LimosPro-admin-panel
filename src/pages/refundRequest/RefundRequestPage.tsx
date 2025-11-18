@@ -2,7 +2,8 @@ import { ChevronDown, Download } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+// import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { PageHeader } from "@/components/layouts/PageHeader";
 import {
   getRefundRequest,
   getStatusColor,
@@ -23,7 +24,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Label } from "@/components/ui/label";
 import {
   Pagination,
@@ -200,22 +200,13 @@ const RefundRequestPage = () => {
     <>
       <PageTitle title={generatePageTitle("Refund Request")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Refund Request</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">
-                  LIMOSPRO
-                </span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">
-                  / Refund Request
-                </span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Refund Request"
+          breadcrumbs={[
+            { label: "Home", path: "/" },
+            { label: "Refund Request" },
+          ]}
+        />
 
         <div className="flex justify-between gap-2.5">
           <div className="flex items-center gap-3">
@@ -247,7 +238,7 @@ const RefundRequestPage = () => {
             </DropdownMenu>
           </div>
 
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

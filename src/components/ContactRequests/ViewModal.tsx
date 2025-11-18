@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Spinner } from "../Spinner";
+import { FieldSeparator } from "../ui/field";
 
 function ViewModal({
   id,
@@ -23,15 +24,15 @@ function ViewModal({
       {isFetching ? (
         <Spinner />
       ) : (
-        <DialogContent className="overflow-y-scroll min-w-[640px] max-h-screen">
+        <DialogContent className="font-quicksand w-full max-w-3xl max-h-screen rounded">
           <DialogHeader>
             <div className="w-full h-full space-y-6 ">
               <div className="flex items-center justify-between">
                 <DialogTitle className="space-y-3">
-                  <h4 className="font-semibold text-xl text-[#000000]">
+                  <h4 className="font-montserrat font-semibold text-xl text-base-black">
                     {data?.email}
                   </h4>
-                  <h5 className="text-[#5A5A5A] font-semibold">
+                  <h5 className="font-montserrat text-base text-base-gray font-semibold">
                     {data?.phone}
                   </h5>
                 </DialogTitle>
@@ -39,7 +40,7 @@ function ViewModal({
             </div>
           </DialogHeader>
 
-          <hr className="w-full h-[1px] bg-[#EEEEEE]" />
+          <FieldSeparator />
           {data?.message}
         </DialogContent>
       )}

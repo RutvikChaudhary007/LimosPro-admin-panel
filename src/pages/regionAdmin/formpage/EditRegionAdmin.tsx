@@ -1,13 +1,11 @@
 import { ArrowLeft } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useFetchRegionAdminById } from "@/api/regionAdmin.api";
-import Header from "@/components/layouts/BreadCramb";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import RegionAdminForm, {
   type TRegionAdmin,
 } from "@/components/regionManagement/regionAdmin/RegionAdminForm";
 import { Spinner } from "@/components/Spinner";
-import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
 
 const EditRegionAdmin = () => {

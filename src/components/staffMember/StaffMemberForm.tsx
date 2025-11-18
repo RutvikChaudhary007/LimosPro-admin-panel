@@ -1,31 +1,31 @@
 // @ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconLock, IconMail, IconUser } from "@tabler/icons-react";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import useFetchAllRegions from "@/api/region.api";
 import useFetchAllStaffRoles from "@/api/role.api";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+  Card,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Field, FieldDescription, FieldLabel } from "../ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { SelectDropDown } from "../ui/select";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -97,187 +97,225 @@ const StaffMemberForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-md">
-          <CardHeader>
-            <CardTitle>{type}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-5">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] ">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Frist Name"
-                      disabled={isFieldDisabled(disabledFields, "firstName")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]  ">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Last Name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem className="w-full col-span-full">
-                  <FormLabel className="placeholder-[#E6E6E6] font-medium">
-                    Select Role
-                  </FormLabel>
-                  {isFetchingRoles ? (
-                    <p>Loading...</p>
-                  ) : (
-                    <Select
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v);
-                      }}
-                    >
-                      <FormControl className="w-full min-w-full rounded">
-                        <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
-                          <SelectValue
-                            className="before:placeholder:text-[#E6E6E6] font-medium"
-                            placeholder="select role"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="">
-                        {rolesData?.map((option) => (
-                          <SelectItem
-                            className="cursor-pointer"
-                            key={option?.id}
-                            value={option?.roleName}
-                          >
-                            {option?.roleName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>{type}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel
+                  htmlFor="firstName"
+                  className="text-base-black gap-0"
+                >
+                  First Name
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="firstName"
+                        type="text"
+                        placeholder="First Name"
+                        disabled={isFieldDisabled(disabledFields, "firstName")}
+                        {...field}
+                      />
+
+                      <InputGroupAddon>
+                        <IconUser />
+                      </InputGroupAddon>
+                    </InputGroup>
                   )}
+                />
 
-                  <FormMessage
-                    className={`mt-1 h-5 
-                                            ${form.formState.errors.role ? "visible text-red-600" : "invisible"} `}
-                  >
-                    {form.formState.errors.role?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
+                <FieldDescription>Enter the First Name.</FieldDescription>
 
-            <FormField
-              control={form.control}
-              name="region"
-              render={({ field }) => (
-                <FormItem className="w-full col-span-full">
-                  <FormLabel className="placeholder-[#E6E6E6] font-medium">
-                    Select Region
-                  </FormLabel>
-                  {isFetchingRegions ? (
-                    <p>Loading...</p>
-                  ) : (
-                    <Select
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v);
-                      }}
-                    >
-                      <FormControl className="w-full min-w-full rounded">
-                        <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
-                          <SelectValue
-                            className="before:placeholder:text-[#E6E6E6] font-medium"
-                            placeholder="select region"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="">
-                        {regionsData?.regions?.map((option) => (
-                          <SelectItem
-                            className="cursor-pointer"
-                            key={option?.id}
-                            value={option?.id}
-                          >
-                            {option?.regionName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                {form.formState.errors.firstName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.firstName.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="lastName"
+                  className="text-base-black gap-0"
+                >
+                  Last Name
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="lastName"
+                        type="text"
+                        placeholder="Last Name"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconUser />
+                      </InputGroupAddon>
+                    </InputGroup>
                   )}
+                />
 
-                  <FormMessage
-                    className={`mt-1 h-5 
-                                            ${form.formState.errors.region ? "visible text-red-600" : "invisible"} `}
-                  >
-                    {form.formState.errors.region?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
+                <FieldDescription>Enter the Last Name.</FieldDescription>
 
-            <Button
-              disabled={form.formState.isSubmitting}
-              type="submit"
-              variant="secondary"
-              className="text-[#515151] rounded text-center px-2.5 py-6 bg-[#E4E4E4] text-sm font-medium w-[124px] h-[39px] border-none cursor-pointer select-none"
-            >
-              {form.formState.isSubmitting ? "Saving..." : "Save Staff Member"}
-            </Button>
-          </CardContent>
+                {form.formState.errors.lastName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.lastName.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="email" className="text-base-black gap-0">
+                  Email Address
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="email"
+                        type="email"
+                        placeholder="Email Address"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconMail />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the Email Address.</FieldDescription>
+
+                {form.formState.errors.lastName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.lastName.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="password"
+                  className="text-base-black gap-0"
+                >
+                  Password
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="password"
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
+
+                      <InputGroupAddon>
+                        <IconLock />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter your password.</FieldDescription>
+
+                {form.formState.errors.password && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.password.message}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="role" className="text-base-black gap-0">
+                  Role
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <SelectDropDown
+                      placeholder="Select Role"
+                      items={
+                        rolesData?.map((option) => ({
+                          label: option?.roleName,
+                          value: option?.id,
+                        })) || []
+                      }
+                      value={field.value || ""}
+                      setSelectedItem={(val) => field.onChange(val)}
+                    />
+                  )}
+                />
+
+                <FieldDescription>Select the Role.</FieldDescription>
+
+                {form.formState.errors.role && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.role.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="region" className="text-base-black gap-0">
+                  Select Region
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="region"
+                  render={({ field }) => (
+                    <SelectDropDown
+                      placeholder="Select Region"
+                      items={
+                        regionsData?.regions?.map((option) => ({
+                          label: option?.regionName,
+                          value: option?.id,
+                        })) || []
+                      }
+                      value={field.value || ""}
+                      setSelectedItem={(val) => field.onChange(val)}
+                    />
+                  )}
+                />
+
+                <FieldDescription>
+                  Select the region for the user.
+                </FieldDescription>
+
+                {form.formState.errors.region && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.region.message}
+                  </p>
+                )}
+              </Field>
+            </CardContent>
+            <CardFooter>
+              <Button disabled={form.formState.isSubmitting} type="submit">
+                {form.formState.isSubmitting
+                  ? "Saving..."
+                  : "Save Staff Member"}
+              </Button>
+            </CardFooter>
+          </CardBody>
         </Card>
       </form>
     </Form>

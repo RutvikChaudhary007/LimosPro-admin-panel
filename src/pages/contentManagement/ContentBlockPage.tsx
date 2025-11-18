@@ -2,18 +2,16 @@
 
 import { Plus } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchAllContentBlock from "@/api/contentBlock.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -172,38 +170,20 @@ function ContentBlockPage() {
     <>
       <PageTitle title={generatePageTitle("ContentBlock")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Content Block</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">
-                  LIMOSPRO
-                </span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">
-                  / Content Block
-                </span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
-              {" "}
-              <Button
-                variant={"outline"}
-                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-              >
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">
-                  Add Content Block
-                </span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="Content Block"
+          breadcrumbs={[
+            { label: "Home", path: "/" },
+            { label: "Content Block" },
+          ]}
+          action={{
+            label: "Add Content Block",
+            icon: <Plus />,
+          }}
+        />
 
-        <div className="flex justify-between gap-2.5">
-          <div className="flex items-center gap-3"></div>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
+        <div className="flex justify-between gap-4">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
@@ -217,14 +197,18 @@ function ContentBlockPage() {
                 descTitle="chauffeur"
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div className="">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>

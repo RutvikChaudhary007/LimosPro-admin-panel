@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import useFetchAllRefund from "@/api/getAllRefund.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import {
   getRefund,
@@ -170,22 +170,10 @@ const RefundPage = () => {
     <>
       <PageTitle title={generatePageTitle("Refund")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Refund</h2>
-              <h4>
-                {" "}
-                <span className="text-[#515151] w-[116px] h-4 text-xs">
-                  LIMOSPRO
-                </span>{" "}
-                <span className="text-xs text-[#939393] w-[50px] h-4">
-                  / Refund
-                </span>
-              </h4>
-            </div>
-          </div>
-        </Header>
+        <PageHeader
+          title="Refund"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Refund" }]}
+        />
 
         <div className="flex justify-between gap-2.5">
           <div className="flex items-center gap-3">
@@ -217,7 +205,7 @@ const RefundPage = () => {
             </DropdownMenu>
           </div>
 
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-end gap-3">
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >

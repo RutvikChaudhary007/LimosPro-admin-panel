@@ -1,7 +1,6 @@
 import { Reply } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Field, FieldLabel, FieldSeparator } from "../ui/field";
 import { Textarea } from "../ui/textarea";
 
 const ReplyFC = ({
@@ -13,13 +12,13 @@ const ReplyFC = ({
 }) => {
   return (
     <Dialog open={isModal} onOpenChange={setIsModal}>
-      <DialogContent className="overflow-y-scroll min-w-[680px] max-h-screen px-5">
+      <DialogContent className="font-quicksand w-full max-w-3xl max-h-screen rounded">
         <DialogHeader>
-          <div className="w-full h-full space-y-6 ">
+          <div className="w-full space-y-6 ">
             <div className="flex items-center justify-between">
-              <DialogTitle className="space-y-1">
-                <Reply className="text-[#5A5A5A]" />
-                <h4 className="font-semibold text-xl text-[#000000]">
+              <DialogTitle className="space-y-1 flex gap-2">
+                <Reply className="text-base-gray" />
+                <h4 className="font-montserrat font-semibold text-xl text-base-black">
                   name@email.com
                 </h4>
               </DialogTitle>
@@ -27,20 +26,16 @@ const ReplyFC = ({
           </div>
         </DialogHeader>
 
-        <hr className="w-full h-[1px] bg-[#EEEEEE]" />
-        <div className="h-[85px] w-[600px]">
-          <Label className="text-sm pb-3">Subject</Label>
-          <Input
-            className="h-full rounded placeholder:text-[#E6E6E6]"
-            placeholder="Write Subject here"
-          />
-        </div>
-        <div className="h-[217px] w-[600px] mt-10">
-          <Label className="text-sm  pb-3">Message</Label>
-          <Textarea
-            className="h-full rounded placeholder:text-[#E6E6E6] font-medium"
-            placeholder="Write Subject here"
-          />
+        <FieldSeparator />
+        <div className="space-y-4">
+          <Field>
+            <FieldLabel>Subject</FieldLabel>
+            <Textarea placeholder="Write subject here" />
+          </Field>
+          <Field>
+            <FieldLabel>Message</FieldLabel>
+            <Textarea placeholder="Write your message here" />
+          </Field>
         </div>
       </DialogContent>
     </Dialog>

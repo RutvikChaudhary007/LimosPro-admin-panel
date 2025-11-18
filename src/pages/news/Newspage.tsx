@@ -1,27 +1,23 @@
 // @ts-nocheck
 
 import type { Table } from "@tanstack/react-table";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchALLNews from "@/api/news.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getNews, type TNews } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -31,6 +27,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -38,38 +35,17 @@ import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
 const showOptions = [
-  { value: 10, label: "Show 10" },
-  { value: 20, label: "Show 20" },
-  { value: 30, label: "Show 30" },
+  { value: "10", label: "Show 10" },
+  { value: "20", label: "Show 20" },
+  { value: "30", label: "Show 30" },
 ];
-
-// const tableData: TNews[] = [
-//     {
-//         id: "1",
-//         news: "You can book online the hourly service for the Houston rodeo on our website. If you are looking for a point-point one-way or round trip for the Houston rodeo, please call us to book by phone because the regular online point-point rates are not valid for Houston rodeo one-way or round trip."
-//     },
-//     {
-//         id: "2",
-//         news: "Special rates may apply during the events seasons and sports games in the Houston greater areas such as Houston rodeo, Christmas lights, new year's night, and big sports games."
-//     },
-//     {
-//         id: "3",
-//         news: "The rate is subject to change at any time without advanced announcement but it will not reflect in the reservations that are under processing or already booked."
-//     },
-//     {
-//         id: "4",
-//         news: "Office times: Monday – Sunday  8:00 AM – 10:00 PM."
-//     },
-//     {
-//         id: "5",
-//         news: "Transportation between Houston Airports, Houston greater area, and Galveston Cruise Port, Galveston Hotels, please book online by clicking on the Houston – Galveston button at the Online Quote & Booking and start from there."
-//     },
-// ]
 const Newspage = () => {
+  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [tableRef, setTableRef] = useState<Table<TNews> | null>(null);
   const [perPage, setPerPage] = useState(10);
-  const [selected, setSelected] = useState(showOptions[0]);
+  const [selectedOption, setSelectedOption] =
+    useState<string>(optionDefaultValue);
   // const [data, setData] = useState<TNews[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchALLNews();
   const { currentPage, setPage, totalPages, currentItems } =
@@ -77,8 +53,8 @@ const Newspage = () => {
   // console.log("currentItems:", currentItems);
 
   useEffect(() => {
-    setPerPage(selected.value);
-  }, [selected]);
+    setPerPage(Number(selectedOption));
+  }, [selectedOption]);
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_NEWS.replace(":id", id));
@@ -193,58 +169,24 @@ const Newspage = () => {
     <>
       <PageTitle title={generatePageTitle("News")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">News</h2>
-              <h4>
-                <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ News</span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_NEWS}>
-              {" "}
-              <Button
-                variant="secondary"
-                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-              >
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">
-                  Add News
-                </span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="News"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "News" }]}
+          action={{
+            label: "Add News",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_NEWS,
+          }}
+        />
 
         <div className="flex justify-between">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                className="w-56 h-10 flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] bg-[#FDFDFD] cursor-pointer"
-              >
-                {selected.label} <ChevronDown className="ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-              align="start"
-            >
-              <DropdownMenuGroup>
-                {showOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    className="flex items-center justify-between hover:bg-[#F1F1F1]"
-                    onClick={() => setSelected(option)}
-                  >
-                    {option.label} <ChevronDown className="ml-2" />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+          <SelectDropDown
+            placeholder={selectedOption}
+            items={showOptions}
+            value={selectedOption}
+            setSelectedItem={setSelectedOption}
+          />
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
@@ -258,14 +200,18 @@ const Newspage = () => {
                 descTitle="news"
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div className="">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>

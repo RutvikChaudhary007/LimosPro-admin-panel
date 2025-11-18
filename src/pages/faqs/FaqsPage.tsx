@@ -1,25 +1,21 @@
 // @ts-nocheck
 
-import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { ChevronDown, Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useFetchALLFAQs from "@/api/faq.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getFaqs, type TFaqs } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -29,6 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise, useToast } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -36,9 +33,9 @@ import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
 const showOptions = [
-  { value: 10, label: "Show 10" },
-  { value: 20, label: "Show 20" },
-  { value: 30, label: "Show 30" },
+  { value: "10", label: "Show 10" },
+  { value: "20", label: "Show 20" },
+  { value: "30", label: "Show 30" },
 ];
 
 // const tableData: TFaqs[] = [
@@ -55,19 +52,21 @@ const showOptions = [
 // ];
 
 const FaqsPage = () => {
+  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const { toast } = useToast();
   const [tableRef, setTableRef] = useState<any>(null);
   const [perPage, setPerPage] = useState(10);
-  const [selected, setSelected] = useState(showOptions[0]);
+  const [selectedOption, setSelectedOption] =
+    useState<string>(optionDefaultValue);
   // const [data, setData] = useState<TFaqs[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchALLFAQs(perPage);
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TFaqs>(data?.items, 1, perPage, data?.pagination);
 
   useEffect(() => {
-    setPerPage(selected.value);
-  }, [selected]);
+    setPerPage(Number(selectedOption));
+  }, [selectedOption]);
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_FAQ.replace(":id", id));
@@ -189,60 +188,24 @@ const FaqsPage = () => {
     <>
       <PageTitle title={generatePageTitle("Faq")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">
-                Frequently Asked Question
-              </h2>
-              <h4>
-                <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">/ Faq</span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_FAQ}>
-              {" "}
-              <Button
-                variant="secondary"
-                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-              >
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">
-                  Add Faq
-                </span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="Frequently Asked Question"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Faq" }]}
+          action={{
+            label: "Add Faq",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_FAQ,
+          }}
+        />
 
         <div className="flex justify-between">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                className="w-56 h-10 flex items-center justify-between rounded mt-5 shadow-inner shadow-[#F1F1F1] bg-[#FDFDFD] cursor-pointer"
-              >
-                {selected.label} <ChevronDown className="ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-56 bg-[#FDFDFD] shadow-inner shadow-[#F1F1F1] cursor-pointer"
-              align="start"
-            >
-              <DropdownMenuGroup>
-                {showOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    className="flex items-center justify-between hover:bg-[#F1F1F1]"
-                    onClick={() => setSelected(option)}
-                  >
-                    {option.label} <ChevronDown className="ml-2" />
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="w-[369px] h-[39px] mt-5 flex items-center justify-between gap-3">
+          <SelectDropDown
+            placeholder={selectedOption}
+            items={showOptions}
+            value={selectedOption}
+            setSelectedItem={setSelectedOption}
+          />
+          <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
@@ -256,14 +219,18 @@ const FaqsPage = () => {
                 descTitle="faqs"
               />
             </span>
-            <div className="p-2.5 w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-              <Input
-                type="search"
-                placeholder="search"
-                className="text-[#959595]"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
+            <div className="">
+              <InputGroup>
+                <InputGroupInput
+                  type="search"
+                  placeholder="search"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                <InputGroupAddon>
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
             </div>
           </div>
         </div>

@@ -1,0 +1,24 @@
+.iti__tel-input,
+.iti__tel-input * {
+  box-sizing: border-box !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.iti__tel-input:hover,
+.iti__tel-input *:hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.iti__tel-input:focus,
+.iti__tel-input *:focus {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}

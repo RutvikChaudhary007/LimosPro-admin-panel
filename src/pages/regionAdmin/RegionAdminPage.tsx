@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useFetchAllRegionAdmins from "@/api/regionAdmin.api";
 import PageTitle from "@/components/common/PageTitle";
-// import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import {
@@ -12,7 +11,6 @@ import {
 } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-// import { Checkbox } from '@/components/ui/checkbox';
 import {
   InputGroup,
   InputGroupAddon,

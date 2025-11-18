@@ -1,30 +1,37 @@
 //@ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  IconAlignLeft,
+  IconLock,
+  IconMail,
+  IconUser,
+} from "@tabler/icons-react";
 import IntlTelInput from "intl-tel-input/react";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "intl-tel-input/styles";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
+import "../../assets/css/IntlTelInput.css";
+import { Spinner } from "../Spinner";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Input } from "../ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+  Card,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Field, FieldDescription, FieldLabel } from "../ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import { SelectDropDown } from "../ui/select";
 
 const formSchema = z.object({
   firstName: z
@@ -114,196 +121,270 @@ const CrewMemberForm = ({
           }
         })}
       >
-        <Card className="rounded  overflow-auto bg-[#FDFDFD] hover:outline-none shadow-[#F1F1F1] shadow-base-md">
-          <CardHeader>
-            <CardTitle>{type}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-5">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px] ">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Frist Name"
-                      disabled={isFieldDisabled(disabledFields, "firstName")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]  ">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Last Name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Description"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormControl>
-                    {/* <Input type='text' className='bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]' placeholder='phone' {...field} /> */}
-                    <div className="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 border  px-3 py-1 text-base  transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-[#FFFFFF] rounded shadow shadow-[#D9D9D9] p-[2px]">
-                      <IntlTelInput
-                        containerClassName="w-full h-full"
-                        className="w-full"
-                        inputClassName="min-w-full"
-                        initialValue={field.value}
-                        // onChangeNumber={setNumber}
-                        // onChangeValidity={setIsValid}
-                        // onChangeErrorCode={setErrorCode}
-                        // any initialisation options from the readme will work here
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>{type}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-3 gap-4">
+              <Field>
+                <FieldLabel
+                  htmlFor="firstName"
+                  className="text-base-black gap-0"
+                >
+                  First Name
+                </FieldLabel>
 
+                <Controller
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="firstName"
+                        type="text"
+                        placeholder="First Name"
+                        disabled={isFieldDisabled(disabledFields, "firstName")}
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconUser />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription> Enter the First Name. </FieldDescription>
+
+                {form.formState.errors.firstName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.firstName.message}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel
+                  htmlFor="lastName"
+                  className="text-base-black gap-0"
+                >
+                  Last Name
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="lastName"
+                        type="text"
+                        placeholder="Last Name"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconUser />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription> Enter the Last Name. </FieldDescription>
+
+                {form.formState.errors.lastName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.lastName.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="description"
+                  className="text-base-black gap-0"
+                >
+                  Description
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="description"
+                        type="text"
+                        placeholder="Description"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconAlignLeft />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the description.</FieldDescription>
+
+                {form.formState.errors.description && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.description.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="email" className="text-base-black gap-0">
+                  Email
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="email"
+                        type="email"
+                        placeholder="Email"
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconMail />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter the email address.</FieldDescription>
+
+                {form.formState.errors.email && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.email.message}
+                  </p>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="phone" className="text-base-black gap-0">
+                  Phone
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <IntlTelInput
+                        initialValue={field.value}
+                        onChangeNumber={(number) => field.onChange(number)}
                         initOptions={{
                           initialCountry: "us",
-
                           loadUtils: () =>
                             import(
                               "https://cdn.jsdelivr.net/npm/intl-tel-input@25.12.1/build/js/utils.js"
                             ),
                         }}
                       />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-3 mb-[31px]">
-                  <FormControl>
-                    <Input
-                      type="text"
-                      className="bg-[#FFFFFF] placeholder:text-[#E6E6E6] rounded shadow shadow-[#D9D9D9]"
-                      placeholder="password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    </InputGroup>
+                  )}
+                />
 
-            {isFetchingAffiliate ? (
-              <p>Loading...</p>
-            ) : affiliateData?.affiliates.length > 0 ? (
-              <FormField
-                control={form.control}
-                name="affiliateId"
-                render={({ field }) => (
-                  <FormItem className="w-full col-span-2 col-start-1">
-                    <FormLabel className="placeholder-[#E6E6E6] font-medium">
-                      Select Affiliate
-                    </FormLabel>
-                    <Select
-                      value={field.value}
-                      onValueChange={(v) => {
-                        field.onChange(v);
-                        // setStatusValue({ ...statusValue, affiliate: v })
-                      }}
-                      defaultValue={field.value}
-                    >
-                      <FormControl className="w-full min-w-full rounded">
-                        <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
-                          <SelectValue
-                            className="before:placeholder:text-[#E6E6E6] font-medium"
-                            placeholder="select affiliate"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="">
-                        {affiliateData?.affiliates?.map((option) => (
-                          <SelectItem
-                            className="cursor-pointer"
-                            key={option.id}
-                            value={option.id}
-                          >
-                            {option.companyName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage
-                      className={`mt-1 h-5 ${
-                        form.formState.errors.affiliateId
-                          ? "visible text-red-600"
-                          : "invisible"
-                      } `}
-                    >
-                      {form.formState.errors.affiliateId?.message}
-                    </FormMessage>
-                  </FormItem>
+                <FieldDescription>Enter your phone number.</FieldDescription>
+
+                {form.formState.errors.phone && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.phone.message}
+                  </p>
                 )}
-              />
-            ) : (
-              <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
-                <Label>Add Affiliate</Label>
-              </Link>
-            )}
-          </CardContent>
-          <Button
-            disabled={form.formState.isSubmitting}
-            type="submit"
-            variant="secondary"
-            className="text-[#515151] rounded text-center px-2.5 py-6 bg-[#E4E4E4] text-sm font-medium w-[124px] h-[39px] border-none cursor-pointer select-none mx-6"
-          >
-            {form.formState.isSubmitting ? "Saving..." : "Save Staff Member"}
-          </Button>
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="password"
+                  className="text-base-black gap-0"
+                >
+                  Password
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="password"
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
+
+                      <InputGroupAddon>
+                        <IconLock />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter your password.</FieldDescription>
+
+                {form.formState.errors.password && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.password.message}
+                  </p>
+                )}
+              </Field>
+
+              {isFetchingAffiliate ? (
+                <Spinner />
+              ) : affiliateData?.affiliates.length > 0 ? (
+                <Field>
+                  <FieldLabel
+                    htmlFor="affiliateId"
+                    className="text-base-black gap-0"
+                  >
+                    Select Affiliate
+                  </FieldLabel>
+
+                  <Controller
+                    control={form.control}
+                    name="affiliateId"
+                    render={({ field }) => (
+                      <SelectDropDown
+                        placeholder="Select Affiliate"
+                        items={
+                          affiliateData?.affiliates?.map((a) => ({
+                            label: a.companyName,
+                            value: a.id,
+                          })) || []
+                        }
+                        value={field.value}
+                        setSelectedItem={(v) => field.onChange(v)}
+                      />
+                    )}
+                  />
+
+                  <FieldDescription>Select an affiliate.</FieldDescription>
+
+                  {form.formState.errors.affiliateId && (
+                    <p className="text-base-danger mt-1">
+                      {form.formState.errors.affiliateId.message}
+                    </p>
+                  )}
+                </Field>
+              ) : (
+                <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
+                  <Label>Add Affiliate</Label>
+                </Link>
+              )}
+            </CardContent>
+            <CardFooter>
+              <Button disabled={form.formState.isSubmitting} type="submit">
+                {form.formState.isSubmitting
+                  ? "Saving..."
+                  : "Save Staff Member"}
+              </Button>
+            </CardFooter>
+          </CardBody>
         </Card>
       </form>
     </Form>

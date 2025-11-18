@@ -1,20 +1,22 @@
 //@ts-nocheck
 
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchAllStaffMember from "@/api/staffMember.api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
-import Header from "@/components/layouts/BreadCramb";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
-// import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -30,25 +32,11 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
-// const tableData: TStaffMember [] = [
-//   { id: "1", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com",  },
-//   { id: "2", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
-//   { id: "3", lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker",  email: "name@email.com", },
-//   { id: "4", lastName:"adf", password:"dfa", role:"dfa", firstName: "Casey Walker", email: "name@email.com",},
-//   { id: "5", lastName:"adf", password:"dfa", role:"dfa", firstName: "Jordon Lee", email: "name@email.com",},
-//   { id: "6", lastName:"adf", password:"dfa", role:"dfa", firstName: "Taylor Morgan", email: "name@email.com", },
-//   { id: "7", lastName:"adf", password:"dfa", role:"dfa", firstName: "Sam Patel",  email: "name@email.com", },
-//   { id: "8", lastName:"adf", password:"dfa", role:"dfa", firstName: "Chris Johnson",  email: "name@email.com", },
-//   { id: "9", lastName:"adf", password:"dfa", role:"dfa", firstName: "Ovi Smith",  email: "name@email.com", },
-//   { id: "10",lastName:"adf", password:"dfa", role:"dfa", firstName: "June Parker", email: "name@email.com", },
-
-// ];
-
 const StaffMemberPage = () => {
   const navigate = useNavigate();
   // const [perPage] = useState(10);
-  const [tableRef, setTableRef] = useState < Table<TStaffMember>(null);
   const [newPage, setNewPage] = useState(1);
+  const [tableRef, setTableRef] = useState<any>(null);
   // const [data, setData] = useState<TStaffMember[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllStaffMember({
     page: newPage,
@@ -191,44 +179,35 @@ const StaffMemberPage = () => {
     <>
       <PageTitle title={generatePageTitle("Staff Member")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-        <Header className="p-4 h-[79px] bg-[#FDFDFD] shadow-base-md">
-          <div className="w-full h-full flex items-center justify-between">
-            <div>
-              <h2 className="font-medium text-xl text-black">Staff Members</h2>
-              <h4>
-                <span className="text-[#959595] w-14 h-4">LIMOSPRO</span>{" "}
-                <span className="text-[#959595] w-[116px] h-4">
-                  / Staff Members
-                </span>
-              </h4>
-            </div>
-            <Link to={constant.ROUTING_URLS.CREATE_STAFF_MEMBERS}>
-              {" "}
-              <Button
-                variant="secondary"
-                className="cursor-pointer bg-[#E4E4E4] flex items-center rounded"
-              >
-                <Plus className="text-[#515151]" />
-                <span className="text-[#515151] font-medium text-sm">
-                  Add Staff Member
-                </span>
-              </Button>
-            </Link>
-          </div>
-        </Header>
+        <PageHeader
+          title="Staff Member"
+          breadcrumbs={[
+            { label: "Home", path: "/" },
+            { label: "Staff Member" },
+          ]}
+          action={{
+            label: "Add Staff Member",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_STAFF_MEMBERS,
+          }}
+        />
 
-        <div className="flex justify-between mt-5">
-          <div className=" w-[220px] h-full flex items-center focus-visible:border-none focus-visible:outline-none">
-            <Input
-              type="search"
-              placeholder="search"
-              className="text-[#959595]"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
+        <div className="flex justify-between">
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
 
-          <div className="w-[369px] h-[39px] flex items-center justify-end gap-3">
+          <div className="">
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >

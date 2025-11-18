@@ -1,23 +1,29 @@
 // @ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, X } from "lucide-react";
+import { IconBuilding } from "@tabler/icons-react";
 import { useRef, useState } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import type { IOurPartnerFormProps } from "@/types/ourPartner.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
+  Card,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { Field, FieldDescription, FieldLabel } from "../ui/field";
+import { Form, FormControl, FormItem, FormMessage } from "../ui/form";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
+import ImagesUpload from "../ui/upload-images";
 
 const MAX_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];
@@ -90,143 +96,128 @@ const OurPartnerForm = ({
     <Form {...form}>
       <form onSubmit={(e) => void form.handleSubmit(handleFormSubmit)(e)}>
         {/* fleet Details */}
-        <Card className="overflow-y-auto rounded">
-          <CardHeader>
-            <CardTitle>{type}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-6 gap-5">
-            <FormField
-              control={form.control}
-              name="companyName"
-              render={({ field }) => (
-                <FormItem className="col-span-3 col-start-1">
-                  <FormLabel>Company Name</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input
-                      placeholder="Company Name"
-                      disabled={isFieldDisabled(disabledFields, "companyName")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.companyName ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.companyName?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="url"
-              render={({ field }) => (
-                <FormItem className="col-span-3 col-start-1">
-                  <FormLabel>URL</FormLabel>
-                  <FormControl className="px-3 py-4 rounded placeholder:text-[#E6E6E6] font-medium">
-                    <Input
-                      placeholder="https://biz.yelp.com/biz_info/7uwU7YiWZo6xjrSCrLV9pg"
-                      disabled={isFieldDisabled(disabledFields, "url")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors?.url ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.url?.message}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>{type}</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel
+                  htmlFor="companyName"
+                  className="text-base-black gap-0"
+                >
+                  Company Name
+                </FieldLabel>
 
-            <FormField
-              control={form.control}
-              name="photo"
-              defaultValue={null}
-              render={({ field }) => (
-                <FormItem className="col-span-6 rounded">
-                  <FormLabel>Upload Image</FormLabel>
-                  <FormControl>
-                    {/* Hidden File Input */}
-                    <Input
-                      ref={fileRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          field.onChange(file); // Sync with react-hook-form
-                          form.trigger("photo");
-                          const url = URL.createObjectURL(file);
-                          setPreviews(url);
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  {/* Image Previews */}
-                  <div className="mt-2 flex gap-3">
-                    {previews && (
-                      <div className="relative w-28 h-28 bg-[#D9D9D9] flex items-center justify-center rounded-md overflow-hidden">
-                        <img
-                          src={previews}
-                          alt="preview"
-                          className="object-cover w-full h-full"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPreviews(null);
-                            field.onChange(null); // Clear file in form
-                            if (previews) URL.revokeObjectURL(previews); // Free memory
-                          }}
-                          className="cursor-pointer absolute top-1 right-1 bg-white rounded p-1"
-                        >
-                          <X className="h-4 w-4 text-red-500" />
-                        </button>
-                      </div>
-                    )}
-                    {!previews && (
-                      <button
-                        type="button"
-                        onClick={() => fileRef.current?.click()}
-                        className="w-28 h-28 cursor-pointer border border-dashed border-gray-300 rounded-md flex items-center justify-center hover:bg-gray-100"
-                      >
-                        <Plus className="h-6 w-6 text-gray-500" />
-                      </button>
-                    )}
-                  </div>
-                  <FormMessage
-                    className={`mt-1 h-5 ${form.formState.errors.photo ? "visible text-red-600" : "invisible"}`}
-                  >
-                    {form.formState.errors.photo &&
-                    typeof form.formState.errors.photo.message === "string"
-                      ? form.formState.errors.photo.message
-                      : null}
-                  </FormMessage>
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <div className="flex items-center justify-start rounded px-6 space-x-2.5">
-            <Button
-              className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-              variant={"secondary"}
-              type="button"
-              onClick={() => {
-                form.reset();
-              }}
-            >
-              Clear Alls
-            </Button>
-            <Button
-              className="cursor-pointer rounded w-[124px] h-[39px] px-6 py-2.5 bg-[#E4E4E4] active:scale-50"
-              variant={"secondary"}
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? "Saving..." : "Save Details"}
-            </Button>
-          </div>
+                <Controller
+                  control={form.control}
+                  name="companyName"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="companyName"
+                        type="text"
+                        placeholder="Enter a Company Name"
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "companyName",
+                        )}
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconBuilding />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Enter your CompanyName here.
+                </FieldDescription>
+
+                {form.formState.errors.CompanyName && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.CompanyName.message}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="url" className="text-base-black gap-0">
+                  URL
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="url"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="url"
+                        type="text"
+                        placeholder="Enter a URL"
+                        disabled={isFieldDisabled(disabledFields, "url")}
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconBuilding />
+                      </InputGroupAddon>
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>Enter your Url here.</FieldDescription>
+
+                {form.formState.errors.url && (
+                  <p className="text-base-danger mt-1">
+                    {form.formState.errors.url.message}
+                  </p>
+                )}
+              </Field>
+
+              <Controller
+                control={form.control}
+                name="photo"
+                render={({ field }) => (
+                  <FormItem className="col-span-full">
+                    <FormControl>
+                      <ImagesUpload
+                        accept="image/*"
+                        title="Upload Image"
+                        maxSize={10}
+                        multiple={true}
+                        onFilesSelected={(files) => {
+                          if (files && files.length > 0) {
+                            const file = files[0];
+                            field.onChange(file);
+                            form.trigger("photo");
+                            setPreviews(file.preview || null);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage className="mt-1 text-base-danger">
+                      {form.formState.errors.photo?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter className="flex items-center justify-start space-x-2.5">
+              <Button
+                variant="outlinePrimary"
+                type="button"
+                onClick={() => {
+                  form.reset();
+                }}
+              >
+                Clear Alls
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              </Button>
+            </CardFooter>
+          </CardBody>
         </Card>
       </form>
     </Form>
