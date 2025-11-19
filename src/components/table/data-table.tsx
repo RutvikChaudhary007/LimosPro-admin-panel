@@ -37,11 +37,6 @@ export function DataTable<TData, TValue>({
   onGlobalFilterChange,
   onTableReady,
 }: DataTableProps<TData, TValue>) {
-  const [internalSelection, setInternalSelection] = useState({});
-
-  const [internalFilter, setInternalFilter] = useState("");
-  // console.log("globalFilter:",globalFilter)
-  // console.log("internalFilter:",internalFilter)
   const table = useReactTable({
     data,
     columns,
@@ -50,11 +45,11 @@ export function DataTable<TData, TValue>({
       ? getFilteredRowModel()
       : undefined,
     state: {
-      rowSelection: rowSelection ?? internalSelection,
-      globalFilter: globalFilter ?? internalFilter,
+      rowSelection: rowSelection,
+      globalFilter: globalFilter,
     },
-    onRowSelectionChange: onRowSelectionChange ?? setInternalSelection,
-    onGlobalFilterChange: onGlobalFilterChange ?? setInternalFilter,
+    onRowSelectionChange: onRowSelectionChange,
+    onGlobalFilterChange: onGlobalFilterChange,
     enableRowSelection: true,
     enableMultiRowSelection: true,
   });
@@ -64,15 +59,17 @@ export function DataTable<TData, TValue>({
   }, [table, onTableReady]);
   return (
     <div className="rounded border border-base-light-gray shadow-base-md overflow-auto">
-      <Table className="">
+      <Table>
         <TableHeader className="bg-base-light-gray">
           {table?.getHeaderGroups()?.map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+                // console.log("header:",header)
                 return (
                   <TableHead
                     className="py-4 font-montserrat font-semibold text-lg text-base-black leading-[100%] tracking-normal"
                     key={header.id}
+                    colSpan={header.colSpan}
                   >
                     {header.isPlaceholder
                       ? null

@@ -142,11 +142,7 @@ function AffiliatePage() {
       setNewPage(currentPage);
     }
   }, [currentPage]);
-  useEffect(() => {
-    if (currentItems) {
-      console.log("currentItems:", currentItems);
-    }
-  }, [currentItems]);
+
   const handleView = (id: string) => {
     navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id", id));
   };
@@ -179,6 +175,12 @@ function AffiliatePage() {
   const columns = getAffiliate(handleView, handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  useEffect(() => {
+    if (currentPage) {
+      console.log("currentPage:", currentPage);
+      setRowSelection({});
+    }
+  }, [currentPage]);
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);

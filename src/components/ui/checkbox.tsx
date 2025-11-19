@@ -4,9 +4,10 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 type CheckboxRef = React.ComponentRef<typeof CheckboxPrimitive.Root>;
-type CheckboxProps = React.ComponentPropsWithoutRef<
-  typeof CheckboxPrimitive.Root
->;
+type CheckboxProps = {
+  checked?: CheckboxPrimitive.CheckedState; // <-- FIX
+  onCheckedChange?: (state: CheckboxPrimitive.CheckedState) => void; // <-- FIX
+} & React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>;
 
 const Checkbox = React.forwardRef<CheckboxRef, CheckboxProps>(
   ({ className, ...props }, ref) => {

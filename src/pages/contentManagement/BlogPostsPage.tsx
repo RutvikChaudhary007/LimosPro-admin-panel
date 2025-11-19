@@ -28,6 +28,72 @@ import { constant } from "@/lib/constant";
 import type { BlogPost, BlogQueryParams } from "@/types/content";
 import { generatePageTitle } from "@/utils/seo";
 
+const fetchBlogPosts = async ({ ...rest }) => {
+  console.log(rest);
+  const {
+    setLoading,
+    searchTerm,
+    statusFilter,
+    setBlogPosts,
+    pagination,
+    setPagination,
+  } = rest;
+  try {
+    setLoading(true);
+    const params: BlogQueryParams = {
+      page: pagination.page,
+      limit: pagination.limit,
+      ...(searchTerm && { search: searchTerm }),
+      ...(statusFilter && statusFilter !== "all" && { status: statusFilter }),
+      sortBy: "createdAt",
+      sortOrder: "DESC",
+    };
+
+    const response = await blogService.getAll(params);
+    setBlogPosts(response.data);
+    setPagination(response.pagination);
+  } catch (error) {
+    console.error("❌ Error fetching blog posts:", error);
+
+    let errorTitle = "Error Loading Blog Posts";
+    let errorDescription =
+      "Failed to fetch blog posts. Please try again later.";
+
+    if (error instanceof Error) {
+      if (error.message.includes("404")) {
+        errorTitle = "Blog Feature Not Available";
+        errorDescription =
+          "The blog management feature is not yet implemented in the backend. Please contact your administrator.";
+      } else if (error.message.includes("401")) {
+        errorTitle = "Authentication Required";
+        errorDescription = "Please log in again to access blog posts.";
+      } else if (error.message.includes("403")) {
+        errorTitle = "Access Denied";
+        errorDescription = "You do not have permission to access blog posts.";
+      } else if (error.message.includes("500")) {
+        errorTitle = "Server Error";
+        errorDescription =
+          "The server encountered an error. Please try again later.";
+      } else if (error.message.includes("Failed to fetch")) {
+        errorTitle = "Connection Error";
+        errorDescription =
+          "Cannot connect to the server. Please check if the admin service is running on port 3001.";
+      } else {
+        errorDescription = error.message;
+      }
+    }
+
+    toast.error(errorTitle, {
+      description: errorDescription,
+      duration: 6000,
+    });
+
+    setBlogPosts([]); // Set empty array to show the "no posts" state
+  } finally {
+    setLoading(false);
+  }
+};
+
 const BlogPostsPage: React.FC = () => {
   const navigate = useNavigate();
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -41,65 +107,15 @@ const BlogPostsPage: React.FC = () => {
     totalPages: 0,
   });
 
-  const fetchBlogPosts = async () => {
-    try {
-      setLoading(true);
-      const params: BlogQueryParams = {
-        page: pagination.page,
-        limit: pagination.limit,
-        ...(searchTerm && { search: searchTerm }),
-        ...(statusFilter && statusFilter !== "all" && { status: statusFilter }),
-        sortBy: "createdAt",
-        sortOrder: "DESC",
-      };
-
-      const response = await blogService.getAll(params);
-      setBlogPosts(response.data);
-      setPagination(response.pagination);
-    } catch (error) {
-      console.error("❌ Error fetching blog posts:", error);
-
-      let errorTitle = "Error Loading Blog Posts";
-      let errorDescription =
-        "Failed to fetch blog posts. Please try again later.";
-
-      if (error instanceof Error) {
-        if (error.message.includes("404")) {
-          errorTitle = "Blog Feature Not Available";
-          errorDescription =
-            "The blog management feature is not yet implemented in the backend. Please contact your administrator.";
-        } else if (error.message.includes("401")) {
-          errorTitle = "Authentication Required";
-          errorDescription = "Please log in again to access blog posts.";
-        } else if (error.message.includes("403")) {
-          errorTitle = "Access Denied";
-          errorDescription = "You do not have permission to access blog posts.";
-        } else if (error.message.includes("500")) {
-          errorTitle = "Server Error";
-          errorDescription =
-            "The server encountered an error. Please try again later.";
-        } else if (error.message.includes("Failed to fetch")) {
-          errorTitle = "Connection Error";
-          errorDescription =
-            "Cannot connect to the server. Please check if the admin service is running on port 3001.";
-        } else {
-          errorDescription = error.message;
-        }
-      }
-
-      toast.error(errorTitle, {
-        description: errorDescription,
-        duration: 6000,
-      });
-
-      setBlogPosts([]); // Set empty array to show the "no posts" state
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchBlogPosts();
+    fetchBlogPosts({
+      setLoading,
+      searchTerm,
+      statusFilter,
+      setBlogPosts,
+      pagination,
+      setPagination,
+    });
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {

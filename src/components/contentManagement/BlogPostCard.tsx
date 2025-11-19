@@ -59,7 +59,7 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
                   {blogPost.status}
                 </Badge>
                 {blogPost.tags && blogPost.tags.length > 0 && (
-                  <div className="flex gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {blogPost.tags.slice(0, 2).map((tag, index) => (
                       <Badge
                         key={`${index}-${tag}`}

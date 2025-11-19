@@ -12,6 +12,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -316,16 +317,50 @@ export function getAffiliate(
   return [
     {
       id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
+      header: ({ table }) => {
+        useEffect(() => {
+          console.log(
+            "Page rows selected:",
+            table.getSelectedRowModel().rows.length,
+          );
+          console.log("selected page row:", table.getIsAllPageRowsSelected());
+          console.log(
+            "some selected page row:",
+            table.getIsSomePageRowsSelected(),
+          );
+          console.log(
+            "changed:",
+            table.getIsAllPageRowsSelected()
+              ? true
+              : table.getIsSomePageRowsSelected()
+                ? "indeterminate"
+                : false,
+          );
+          console.log(
+            "old:",
             table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
+              (table.getIsSomePageRowsSelected() && "indeterminate"),
+          );
+        }, [
+          table.getSelectedRowModel().rows.length,
+          table.getIsAllPageRowsSelected(),
+          table.getIsSomePageRowsSelected(),
+          table.getIsAllRowsSelected(),
+        ]);
+
+        return (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => {
+              return table.toggleAllPageRowsSelected(!!value);
+            }}
+            aria-label="Select all"
+          />
+        );
+      },
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}

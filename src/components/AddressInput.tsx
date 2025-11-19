@@ -9,7 +9,10 @@ import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import { FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { env } from "@/utils/env";
-import { initializeGooglePlacesAutocomplete } from "@/utils/googleMaps";
+import {
+  geoDecoding,
+  initializeGooglePlacesAutocomplete,
+} from "@/utils/googleMaps";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 interface AddressFields {
@@ -57,10 +60,25 @@ const AddressInput = <T extends FieldValues>({
       longitude: null,
     },
   });
-
+  console.log("value:");
   useEffect(() => {
     if (value && !fields.address) {
       // When form defaultValues load
+      // ;(async()=>
+      //   {
+      //   const coords = await JSON.parse(JSON.stringify(value))
+      //       if(typeof coords === "object" && coords?.latitude){
+      //       await geoDecoding({
+      //           lat: coords?.latitude,
+      //           lng: coords?.longitude,
+      //         }).then(coor=>{
+      //           console.log("coor:",coor)
+      //           setFields((prev)=> ({
+      //           ...prev,
+      //           address: coor
+      //         }))})
+      //       }
+      //     })();
       setFields((prev) => ({
         ...prev,
         address: value,
