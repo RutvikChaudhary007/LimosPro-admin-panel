@@ -226,7 +226,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   onSubmit,
   disabledFields,
   type,
-  businessAddress,
+  // businessAddress,
 }) => {
   // console.log("businessAddress:", businessAddress);
   const formatPhoneNumber = (value: string): string => {

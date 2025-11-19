@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import type { TRegion } from "@/pages/region/formpage/AddRegionPage";
+import type { TRegion } from "@/components/regionManagement/region/RegionForm";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
