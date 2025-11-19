@@ -122,25 +122,125 @@ export const initializeGooglePlacesAutocomplete = (
   }
 };
 
+// export const geoDecoding = ({ lat, lng }: { lat: string; lng: string }) => {
+//   return new Promise((resolve, reject) => {
+//     if (!window.google?.maps?.Geocoder) {
+//       reject("Google Maps API not loaded");
+//       return;
+//     }
+//     const geocoder = new window.google.maps.Geocoder();
+//     const latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+//     console.log("latlng:",latlng)
+//     geocoder.geocode({ location: latlng, result_type: ["street_address", "premise", "subpremise"], }, (results, status) => {
+//       if (status === "OK" && results && results[0]) {
+//         console.log("results:>", results[0]);
+//         resolve(results[0].formatted_address);
+//       } else {
+//         reject(
+//           status === "OK"
+//             ? "No address results"
+//             : `Geocoder failed due to: ${status}`,
+//         );
+//       }
+//     });
+//   });
+// };
+
+// export const geoDecoding = ({ lat, lng }: { lat: string; lng: string }) => {
+//   return new Promise((resolve, reject) => {
+//     if (!window.google?.maps?.places?.PlacesService) {
+//       reject("Google Places API not loaded");
+//       return;
+//     }
+
+//     const location = {
+//       lat: parseFloat(lat),
+//       lng: parseFloat(lng),
+//     };
+
+//     // If you don't have a map, create a hidden div for PlacesService
+//     const dummyDiv = document.createElement("div");
+
+//     const service = new window.google.maps.places.PlacesService(dummyDiv);
+
+//     // Step 1: Find nearest POI (building, landmark, business, etc.)
+//     service.nearbySearch(
+//       {
+//         location,
+//         radius: 30, // adjust if needed (20–40 meters is ideal)
+//       },
+//       (results, status) => {
+//         if (
+//           status !== window.google.maps.places.PlacesServiceStatus.OK ||
+//           !results?.length
+//         ) {
+//           reject("No place found near the coordinates");
+//           return;
+//         }
+
+//         const placeId = results[0].place_id;
+
+//         // Step 2: Get full place details to obtain accurate address
+//         service.getDetails({ placeId }, (details, statusDetails) => {
+//           if (
+//             statusDetails === window.google.maps.places.PlacesServiceStatus.OK &&
+//             details?.formatted_address
+//           ) {
+//             resolve(details.formatted_address);
+//           } else {
+//             reject("Failed to fetch place details");
+//           }
+//         });
+//       }
+//     );
+//   });
+// };
+
 export const geoDecoding = ({ lat, lng }: { lat: string; lng: string }) => {
   return new Promise((resolve, reject) => {
-    if (!window.google?.maps?.Geocoder) {
-      reject("Google Maps API not loaded");
+    if (!window.google?.maps?.places?.PlacesService) {
+      reject("Google Places API not loaded");
       return;
     }
-    const geocoder = new window.google.maps.Geocoder();
-    const latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      console.log("results:>", results);
-      if (status === "OK" && results && results[0]) {
-        resolve(results[0].formatted_address);
-      } else {
-        reject(
-          status === "OK"
-            ? "No address results"
-            : `Geocoder failed due to: ${status}`,
-        );
-      }
-    });
+
+    const location = {
+      lat: parseFloat(lat),
+      lng: parseFloat(lng),
+    };
+
+    // Required by PlacesService constructor
+    const dummyDiv = document.createElement("div");
+
+    const service = new window.google.maps.places.PlacesService(dummyDiv);
+
+    service.nearbySearch(
+      {
+        location,
+        radius: 30, // usually good for entrance address
+      },
+      (results, status) => {
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !results?.length
+        ) {
+          reject("No place found near the coordinates");
+          return;
+        }
+
+        const placeId = results?.[0]?.place_id;
+
+        if (!placeId) return reject("Failed to retrieve place details");
+        service.getDetails({ placeId }, (details, status2) => {
+          if (
+            status2 === google.maps.places.PlacesServiceStatus.OK &&
+            details?.formatted_address
+          ) {
+            resolve(details.formatted_address);
+          } else {
+            reject("Failed to retrieve place details");
+          }
+        });
+      },
+    );
   });
 };

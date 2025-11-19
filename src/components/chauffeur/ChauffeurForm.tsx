@@ -10,14 +10,16 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { DollarSign } from "lucide-react";
-import { type FC, useEffect, useState } from "react";
+import { type FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import useFetchAllFleets from "@/api/getAllFleets.api";
 import { Form } from "@/components/ui/form";
+import { toast } from "@/hooks/use-toast";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { geoDecoding } from "@/utils/googleMaps";
 import AddressInput from "../AddressInput";
 import { Spinner } from "../Spinner";
 import type { TChauffeur } from "../table/column";
@@ -44,8 +46,8 @@ const statusValues = [
   { label: "Inactive", value: "Inactive" },
   { label: "Suspended", value: "Suspended" },
 ];
-const maxSize = 10 * 1024 * 1024;
-const ALLOWED_MIME_TYPES = ["application/pdf", "image/jpeg", "image/png"];
+const maxSize = 10;
+const ALLOWED_MIME_TYPES = ["application/pdf", "image/*"];
 
 const formSchema = z.object({
   firstName: z
@@ -64,12 +66,19 @@ const formSchema = z.object({
   //     latitude: z.number(),
   //     longitude: z.number(),
   // }),
-  businessAddress: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Business Address cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Business Address must be at least 3 characters" }),
+  businessAddress: z.union([
+    z
+      .string()
+      .trim()
+      // .refine((value) => value.trim() !== "", {
+      //   message: "Business Address cannot be empty or just whitespace.",
+      // })
+      .min(3, { message: "Business Address must be at least 3 characters" }),
+    z.object({
+      latitude: z.number(),
+      longitude: z.number(),
+    }),
+  ]),
   email: z.email(),
   affiliateId: z.string().refine((value) => value.trim() !== "", {
     message: "Affiliate Id cannot be empty or just whitespace.",
@@ -118,7 +127,7 @@ const formSchema = z.object({
         const fileObjects = files.filter((f) => f instanceof File);
         return (
           fileObjects.length === 0 ||
-          fileObjects.every((f) => f.size <= maxSize)
+          fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
         );
       },
       {
@@ -131,7 +140,14 @@ const formSchema = z.object({
         const fileObjects = files.filter((f) => f instanceof File);
         return (
           fileObjects.length === 0 ||
-          fileObjects.every((f) => ALLOWED_MIME_TYPES.includes(f.type))
+          fileObjects.every((f) =>
+            ALLOWED_MIME_TYPES.some((allowed) => {
+              if (allowed.endsWith("/*")) {
+                return f.type.startsWith(allowed.replace("/*", ""));
+              }
+              return f.type === allowed;
+            }),
+          )
         );
       },
       {
@@ -163,11 +179,10 @@ const transformInitialData = (
     lastName: data?.userLastName || "",
     email: data?.userEmail || "",
     password: data?.password?.replaceAll(/./g, "*") || "*************",
-    businessAddress: data.businessAddress || "",
-    location: data.Address || { latitude: 0, longitude: 0 },
+    businessAddress: data?.location,
     documents:
       data.documents?.map((file) => {
-        console.log("file:", file);
+        // console.log("file:", file);
         return file;
       }) || [],
     status: data.status || "",
@@ -192,11 +207,8 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
     DateRange: {},
   });
-  const [_newAddress, setNewAddress] = useState(
-    "11 Greenwich Street, New York, NY, 10124, US",
-  );
+
   const [addressObj, setAddressObj] = useState<IAddressObj>();
-  const [_isAddressValid, setIsAddressValid] = useState(false);
 
   //   const fileRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<TChauffeurForm>({
@@ -215,15 +227,22 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       status: "",
     },
   });
-  useEffect(() => {
-    if (initialData) {
-      form.reset(transformInitialData(initialData));
-      setNewAddress(initialData.businessAddress || "");
-    }
-  }, [initialData, form]);
-  // const documents = form.watch("documents");
-  // const fileCount = documents?.length || 0;
 
+  const handleAddressChange = useCallback(
+    (value: string) => {
+      console.log("lllvalue:", value);
+      if (form.formState.errors.businessAddress) {
+        form.clearErrors("businessAddress");
+      }
+
+      form.setValue("businessAddress", value, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    },
+    [form],
+  );
   const handleFormSubmit = async (values: unknown) => {
     try {
       const formData = new FormData();
@@ -231,12 +250,12 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       // Append all scalar values
       formData.append("firstName", values.firstName);
       formData.append("lastName", values.lastName);
-      // formData.append("businessAddress", values.businessAddress);
       formData.append("email", values.email);
       formData.append("affiliateId", values.affiliateId);
       formData.append("panNumber", values.panNumber);
       formData.append("licenseNumber", values.licenseNumber);
       formData.append("vehicleId", values.vehicleId);
+      formData.append("gratuity", values.gratuity);
       if (values.password && values.password !== "*************") {
         formData.append("password", values.password);
       }
@@ -249,6 +268,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       });
       formData.append("status", values.status);
       // console.log("data:>>", values);
+      console.log("addressObj1:", addressObj);
       if (addressObj) {
         formData.append(
           "location",
@@ -519,21 +539,21 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 <Controller
                   control={form.control}
                   name="businessAddress"
-                  render={({ field }) => (
-                    <AddressInput
-                      value={field.value}
-                      field={field}
-                      onChange={(value) => {
-                        setNewAddress(value);
-                        if (form.formState.errors.businessAddress) {
-                          form.clearErrors("businessAddress");
-                        }
-                        field.onChange(value);
-                      }}
-                      onUpdate={setAddressObj}
-                      onValidityChange={setIsAddressValid}
-                    />
-                  )}
+                  render={({ field }) => {
+                    console.log("businessAddress", field.value);
+                    return (
+                      <AddressInput
+                        value={field.value || ""}
+                        field={field}
+                        onChange={handleAddressChange}
+                        onUpdate={setAddressObj}
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "businessAddress",
+                        )}
+                      />
+                    );
+                  }}
                 />
 
                 <FieldDescription>
@@ -751,9 +771,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   });
                   setStatusValue({ status: "", affiliate: "" });
                   // if (fileRef.current) fileRef.current.value = "";
-                  setNewAddress("");
                   setAddressObj(undefined);
-                  setIsAddressValid(false);
                   // form.reset();
                   // form.setValue("status", "")
                   // form.resetField('documents');

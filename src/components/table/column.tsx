@@ -299,12 +299,12 @@ export const getStatusColor = (status: string): string => {
 };
 export const getStatusVariant = (status: string) => {
   const map = {
-    active: "black",
-    inactive: "white",
+    active: "default",
+    inactive: "black",
     suspended: "outline",
     completed: "default",
     ongoing: "outline",
-    canceled: "white",
+    canceled: "destructive",
   } as const;
 
   return map[status?.toLowerCase() as keyof typeof map] || "default";
@@ -345,7 +345,7 @@ export function getAffiliate(
           table.getSelectedRowModel().rows.length,
           table.getIsAllPageRowsSelected(),
           table.getIsSomePageRowsSelected(),
-          table.getIsAllRowsSelected(),
+          // table.getIsAllRowsSelected(),
         ]);
 
         return (
