@@ -1,9 +1,17 @@
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import type React from "react";
 import type { BlogPost } from "@/types/content";
+import { TitleWithTooltip } from "../TitleWithTooltip";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Card, CardBody, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardAction,
+  CardBody,
+  CardContent,
+  CardHeader,
+  CardImage,
+} from "../ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,77 +55,64 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
 
   return (
     <Card>
+      {blogPost.featuredImage && (
+        <CardImage
+          src={blogPost.featuredImage}
+          alt={blogPost.title}
+          className="w-full h-40"
+        />
+      )}
       <CardBody>
         <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="text-lg line-clamp-2">
-                {blogPost.title}
-              </CardTitle>
-              <div className="flex items-center gap-2 mt-2">
-                <Badge className={getStatusColor(blogPost.status)}>
-                  {blogPost.status}
-                </Badge>
-                {blogPost.tags && blogPost.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
-                    {blogPost.tags.slice(0, 2).map((tag, index) => (
-                      <Badge
-                        key={`${index}-${tag}`}
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                    {blogPost.tags.length > 2 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{blogPost.tags.length - 2}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+          <TitleWithTooltip title={blogPost.title} />
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge className={getStatusColor(blogPost.status)}>
+              {blogPost.status}
+            </Badge>
+
+            {blogPost.tags?.slice(0, 2).map((tag, index) => (
+              <Badge key={`${index}-${tag}`} variant="outline">
+                {tag}
+              </Badge>
+            ))}
+
+            {blogPost.tags && blogPost.tags.length > 2 && (
+              <Badge variant="outline">+{blogPost.tags.length - 2}</Badge>
+            )}
+          </div>
+
+          <CardAction>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <MoreHorizontal className="h-4 w-4" />
+                <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+                  <MoreHorizontal />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onView(blogPost.id)}>
-                  <Eye className="mr-2 h-4 w-4" />
+                  <Eye className="size-4" />
                   View
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(blogPost.id)}>
-                  <Edit className="mr-2 h-4 w-4" />
+                  <Edit className="size-4" />
                   Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDelete(blogPost.id)}
-                  className="text-red-600"
+                  className="text-base-danger"
                 >
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className="size-4 text-base-danger" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
+          </CardAction>
         </CardHeader>
         <CardContent>
-          {blogPost.featuredImage && (
-            <img
-              src={blogPost.featuredImage}
-              alt={blogPost.title}
-              className="w-full h-32 object-cover rounded-md mb-3"
-            />
-          )}
           {blogPost.excerpt && (
-            <p className="text-sm text-gray-600 line-clamp-3 mb-3">
-              {blogPost.excerpt}
-            </p>
+            <p className="text-sm line-clamp-3 mb-4">{blogPost.excerpt}</p>
           )}
-          <div className="flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center justify-between text-xs">
             <div className="flex flex-col gap-1">
               {blogPost.author && <span>By {blogPost.author}</span>}
               <span>Created: {formatDate(blogPost.createdAt)}</span>

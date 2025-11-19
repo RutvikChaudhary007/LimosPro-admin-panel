@@ -143,6 +143,22 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/blog/posts/${id}`,
     GET_STATS: `${ADMIN_SERVICE_URL}/blog/stats`,
   },
+  META_KEY_WORD: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/meta-keywords`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/meta-keywords`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
+    BULK_DELETE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
+  },
+  TAG: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/tags`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/tags`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
+    BULK_DELETE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
+  },
   MEDIA: {
     GET_ALL: `${BOOKING_SERVICE_URL}/media/media`,
     GET_BY_ID: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,

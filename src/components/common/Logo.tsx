@@ -19,7 +19,7 @@ const Logo: React.FC<LogoProps> = ({
       )}
 
       {useSignupIcon ? (
-        <div className="relative h-full w-full flex items-center justify-center">
+        <div className="relative size-full flex items-center justify-center">
           <UserPlus size={36} className="text-brand-blue stroke-[1.5px]" />
         </div>
       ) : (

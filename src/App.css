@@ -2,3 +2,26 @@
   background-color: #dc2626; /* A solid red */
   color: white;
 }
+
+/* Make React Quill fill available vertical space inside its container.
+   The wrapper uses flex so the toolbar keeps its height and the editor
+   fills remaining space and becomes scrollable when content overflows. */
+.react-quill-full {
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+.react-quill-full .ql-toolbar {
+  flex: 0 0 auto;
+}
+.react-quill-full .ql-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.react-quill-full .ql-editor {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}

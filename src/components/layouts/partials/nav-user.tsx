@@ -1,4 +1,4 @@
-import { IconCreditCard, IconLogout } from "@tabler/icons-react";
+import { IconChevronDown, IconLogout } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import IconBell from "@/assets/Icons/ic-bell.svg?react";
 import IconMail from "@/assets/Icons/ic-mail.svg?react";
@@ -29,15 +29,32 @@ export function NavUser({
   const navigate = useNavigate();
   return (
     <DropdownMenu>
-      {/* 👇 Your custom button becomes the trigger */}
       <DropdownMenuTrigger asChild>
-        <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
-          <IconUserCircle />
+        <Button
+          variant="outlineNavBtnBlack"
+          size="xl"
+          spacing="lg"
+          className="group"
+        >
+          <Avatar className="size-7">
+            <AvatarImage src={user?.avatar} alt={user?.name} />
+            <AvatarFallback className="group-hover:bg-base-black transition-all bg-base-primary/10 text-xs">
+              {(user?.name
+                ? user.name
+                    .split(" ")
+                    .map((w) => w[0])
+                    .join("")
+                : "N/A"
+              )
+                ?.toUpperCase()
+                .slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
           <span>{user?.name}</span>
+          <IconChevronDown />
         </Button>
       </DropdownMenuTrigger>
 
-      {/* 👇 Dropdown content */}
       <DropdownMenuContent
         className="font-quicksand min-w-56 rounded"
         side="bottom"
@@ -46,10 +63,18 @@ export function NavUser({
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar className="h-8 w-8 rounded">
+            <Avatar className="size-8 rounded">
               <AvatarImage src={user?.avatar} alt={user?.name} />
-              <AvatarFallback className="rounded">
-                {user?.name?.[0] ?? "N/A"}
+              <AvatarFallback className="rounded bg-base-primary/10">
+                {(user?.name
+                  ? user.name
+                      .split(" ")
+                      .map((w) => w[0])
+                      .join("")
+                  : "N/A"
+                )
+                  ?.toUpperCase()
+                  .slice(0, 2)}
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -67,10 +92,6 @@ export function NavUser({
           <DropdownMenuItem>
             <IconUserCircle />
             Account
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <IconCreditCard />
-            Billing
           </DropdownMenuItem>
           <DropdownMenuItem className="sm:hidden">
             <IconLanguage />

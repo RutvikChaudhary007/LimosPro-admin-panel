@@ -185,14 +185,14 @@
     @apply stroke-[1.5] origin-center;
   }
   .loader {
-    @apply w-12 h-12 rounded-full inline-block box-border;
+    @apply size-12 rounded-full inline-block box-border;
     border-top: 4px solid #fff;
     border-right: 4px solid transparent;
     animation: rotation 1s linear infinite;
   }
   .loader::after {
     content: "";
-    @apply absolute left-0 top-0 w-12 h-12 rounded-full box-border;
+    @apply absolute left-0 top-0 size-12 rounded-full box-border;
     border-left: 4px solid var(--base-primary);
     border-bottom: 4px solid transparent;
     animation: rotation 0.5s linear infinite reverse;

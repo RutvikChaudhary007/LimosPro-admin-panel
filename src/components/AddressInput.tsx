@@ -9,10 +9,7 @@ import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // import { FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { env } from "@/utils/env";
-import {
-  geoDecoding,
-  initializeGooglePlacesAutocomplete,
-} from "@/utils/googleMaps";
+import { initializeGooglePlacesAutocomplete } from "@/utils/googleMaps";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 interface AddressFields {
@@ -162,7 +159,7 @@ const AddressInput = <T extends FieldValues>({
   if (loadError) {
     return (
       <Alert variant="destructive" className="mb-6">
-        <AlertCircle className="h-4 w-4" />
+        <AlertCircle className="size-4" />
         <AlertTitle>Google Maps Error</AlertTitle>
         <AlertDescription>
           There was a problem loading Google Maps: {loadError.message}
@@ -176,7 +173,7 @@ const AddressInput = <T extends FieldValues>({
   if (addressAPIError) {
     return (
       <Alert variant="destructive" className="mb-6">
-        <AlertCircle className="h-4 w-4" />
+        <AlertCircle className="size-4" />
         <AlertTitle>Address API Error</AlertTitle>
         <AlertDescription>
           {addressAPIError}

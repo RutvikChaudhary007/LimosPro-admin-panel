@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
-import { ArrowLeft, Plus, Save, X } from "lucide-react";
-import type React from "react";
+import { ArrowLeft, Save, X } from "lucide-react";
+import type { FC } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import * as z from "zod";
+import ReactQuill from "react-quill-new";
+import useFetchAllMetaKeywords from "@/api/metaKeyWord.api";
+import { AutoCompleteInput } from "@/components/AutoCompleteInput";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {
@@ -14,6 +14,11 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { styledLog } from "@/utils/styledLog";
+import "react-quill/dist/quill.snow.css";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import * as z from "zod";
 import { blogService } from "../../api/contentServices.api";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
@@ -27,7 +32,6 @@ import {
 import ImageUpload from "../../components/ui/image-upload";
 import MultipleImageUpload from "../../components/ui/multiple-image-upload";
 import { SelectDropDown } from "../../components/ui/select";
-import { Textarea } from "../../components/ui/textarea";
 import { constant } from "../../lib/constant";
 import type { BlogPostFormData } from "../../types/content";
 
@@ -44,16 +48,111 @@ const blogPostSchema = z.object({
   ogImage: z.string().url().optional().or(z.literal("")),
 });
 
+const modules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link", "image", "video"],
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "indent",
+  "link",
+  "image",
+  "video",
+];
+
 type BlogPostForm = z.infer<typeof blogPostSchema>;
 
-const CreateBlogPostPage: React.FC = () => {
+const CreateBlogPostPage: FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
-  const [tagInput, setTagInput] = useState("");
+  const [blogImages, setBlogImages] = useState<string[]>([]);
+
   const [metaKeywords, setMetaKeywords] = useState<string[]>([]);
   const [keywordInput, setKeywordInput] = useState("");
-  const [blogImages, setBlogImages] = useState<string[]>([]);
+  const [keywordOpen, setKeywordOpen] = useState(false);
+  const [keywordTypingTimer, setKeywordTypingTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const { data } = useFetchAllMetaKeywords({});
+
+  styledLog(data, "Get Meta Key Words");
+
+  const keywordSuggestions = [
+    "SEO",
+    "Search Engine Optimization",
+    "Social Media",
+    "Social Marketing",
+    "Marketing",
+    "Market Research",
+    "Google",
+    "Google Ads",
+    "Google Analytics",
+    "Content",
+    "Content Writing",
+    "Content Strategy",
+    "Copywriting",
+    "Conversion Rate",
+    "Campaign Management",
+    "Customer Engagement",
+    "Email Marketing",
+    "Ecommerce",
+    "Brand Strategy",
+    "Business Growth",
+  ];
+
+  const [tagInput, setTagInput] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagOpen, setTagOpen] = useState<boolean>(false);
+  const [tagTypingTimer, setTagTypingTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+  const tagSuggestions = [
+    "Tech",
+    "Technology",
+    "Tech News",
+    "Trending",
+    "Trends",
+    "Travel",
+    "News",
+    "Networking",
+    "Nature",
+    "Sports",
+    "Soccer",
+    "Science",
+    "Startup",
+    "AI",
+    "Artificial Intelligence",
+    "Automation",
+    "Analytics",
+    "Lifestyle",
+    "Learning",
+    "Leadership",
+    "Local",
+    "Health",
+    "History",
+    "Finance",
+    "Food",
+  ];
 
   const {
     register,
@@ -67,8 +166,6 @@ const CreateBlogPostPage: React.FC = () => {
       status: "draft",
     },
   });
-
-  // const title = watch('title');
 
   // Generate slug from title
   const generateSlug = (title: string) => {
@@ -87,22 +184,22 @@ const CreateBlogPostPage: React.FC = () => {
     }
   };
 
-  const addTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput("");
-    }
+  const addTag = (t: string) => {
+    if (!t || tags.includes(t)) return;
+    setTags([...tags, t]);
   };
 
   const removeTag = (index: number) => {
     setTags(tags.filter((_, i) => i !== index));
   };
 
-  const addKeyword = () => {
-    if (keywordInput.trim() && !metaKeywords.includes(keywordInput.trim())) {
-      setMetaKeywords([...metaKeywords, keywordInput.trim()]);
-      setKeywordInput("");
-    }
+  const addKeyword = (kw: string = keywordInput) => {
+    if (!kw.trim()) return;
+    if (metaKeywords.includes(kw)) return;
+
+    setMetaKeywords([...metaKeywords, kw]);
+    setKeywordInput("");
+    setKeywordOpen(false);
   };
 
   const removeKeyword = (index: number) => {
@@ -239,15 +336,19 @@ const CreateBlogPostPage: React.FC = () => {
                       htmlFor="excerpt"
                       className="text-base-black gap-0"
                     >
-                      Excerpt<span className="text-base-danger">*</span>
+                      Excerpt <span className="text-base-danger">*</span>
                     </FieldLabel>
 
-                    <Textarea
+                    <ReactQuill
                       id="excerpt"
-                      {...register("excerpt")}
-                      placeholder="Brief description of the blog post"
-                      rows={3}
-                      className={errors.excerpt ? "border-base-danger" : ""}
+                      theme="snow"
+                      value={(watch("excerpt") as string) || ""}
+                      onChange={(val) => {
+                        setValue("excerpt", val, { shouldValidate: true });
+                      }}
+                      modules={modules}
+                      formats={formats}
+                      className={`react-quill-full ${errors.excerpt ? "border-base-danger" : ""}`}
                     />
 
                     <FieldDescription>
@@ -269,12 +370,16 @@ const CreateBlogPostPage: React.FC = () => {
                       Content <span className="text-base-danger">*</span>
                     </FieldLabel>
 
-                    <Textarea
+                    <ReactQuill
                       id="content"
-                      {...register("content")}
-                      placeholder="Write your blog post content here..."
-                      rows={15}
-                      className={errors.content ? "border-base-danger" : ""}
+                      theme="snow"
+                      value={(watch("content") as string) || ""}
+                      onChange={(val) => {
+                        setValue("content", val, { shouldValidate: true });
+                      }}
+                      modules={modules}
+                      formats={formats}
+                      className={`react-quill-full ${errors.content ? "border-base-danger" : ""}`}
                     />
 
                     <FieldDescription>
@@ -331,81 +436,44 @@ const CreateBlogPostPage: React.FC = () => {
                   </Field>
 
                   <Field>
-                    <FieldLabel
-                      htmlFor="metaDescription"
-                      className="text-base-black gap-0"
-                    >
-                      Meta Description
-                    </FieldLabel>
-
-                    <Textarea
-                      id="metaDescription"
-                      {...register("metaDescription")}
-                      placeholder="Brief description for search engines"
-                      rows={3}
-                      className={
-                        errors.metaDescription ? "border-base-danger" : ""
-                      }
-                    />
-
-                    <FieldDescription>
-                      Enter the SEO meta description for this blog post.
-                    </FieldDescription>
-
-                    {errors.metaDescription && (
-                      <p className="text-base-danger mt-1">
-                        {errors.metaDescription.message}
-                      </p>
-                    )}
-                  </Field>
-
-                  <Field>
                     <FieldLabel className="text-base-black gap-0">
                       Meta Keywords
                     </FieldLabel>
 
-                    {/* Input + Add Button */}
-                    <InputGroup>
-                      <InputGroupInput
-                        type="text"
-                        placeholder="Add keyword"
-                        value={keywordInput}
-                        onChange={(e) => setKeywordInput(e.target.value)}
-                        onKeyPress={(e) =>
-                          e.key === "Enter" &&
-                          (e.preventDefault(), addKeyword())
-                        }
-                      />
-                      <InputGroupAddon align={"inline-end"}>
-                        <Button
-                          type="button"
-                          onClick={addKeyword}
-                          size="xl"
-                          spacing="lg"
-                        >
-                          <Plus />
-                        </Button>
-                      </InputGroupAddon>
-                    </InputGroup>
+                    <AutoCompleteInput
+                      value={keywordInput}
+                      setValue={setKeywordInput}
+                      list={keywordSuggestions}
+                      onAdd={(kw) => addKeyword(kw)}
+                      open={keywordOpen}
+                      setOpen={setKeywordOpen}
+                      typingTimer={keywordTypingTimer}
+                      setTypingTimer={setKeywordTypingTimer}
+                      placeholder="Add keyword"
+                      inputId="keyword-input"
+                    />
 
                     <FieldDescription>
-                      Add SEO keywords here (press Enter or click +).
+                      Add SEO keywords here (type to search, press Enter, or
+                      click +).
                     </FieldDescription>
 
                     {/* Keywords List */}
-                    <div className="flex flex-wrap gap-2">
-                      {metaKeywords.map((keyword, index) => (
-                        <Badge key={index}>
-                          <span>{keyword}</span>
-                          <span
-                            className="cursor-pointer"
-                            onClick={() => removeKeyword(index)}
-                          >
-                            <X className="size-4" />
-                          </span>
-                        </Badge>
-                      ))}
-                    </div>
+                    {metaKeywords.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {metaKeywords.map((keyword, index) => (
+                          <Badge key={index}>
+                            <span>{keyword}</span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() => removeKeyword(index)}
+                            >
+                              <X className="size-4" />
+                            </span>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </Field>
 
                   <ImageUpload
@@ -546,47 +614,39 @@ const CreateBlogPostPage: React.FC = () => {
                       Tags
                     </FieldLabel>
 
-                    {/* Input + Add Button */}
-                    <InputGroup>
-                      <InputGroupInput
-                        type="text"
-                        placeholder="Add tag"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        onKeyPress={(e) =>
-                          e.key === "Enter" && (e.preventDefault(), addTag())
-                        }
-                      />
-                      <InputGroupAddon align={"inline-end"}>
-                        <Button
-                          type="button"
-                          onClick={addTag}
-                          size="xl"
-                          spacing="lg"
-                        >
-                          <Plus />
-                        </Button>
-                      </InputGroupAddon>
-                    </InputGroup>
+                    <AutoCompleteInput
+                      value={tagInput}
+                      setValue={setTagInput}
+                      list={tagSuggestions}
+                      onAdd={(t) => addTag(t)}
+                      open={tagOpen}
+                      setOpen={setTagOpen}
+                      typingTimer={tagTypingTimer}
+                      setTypingTimer={setTagTypingTimer}
+                      placeholder="Add tag"
+                      inputId="tag-input"
+                    />
 
                     <FieldDescription>
-                      Add tags for this blog post (press Enter or click +).
+                      Add tags for this blog post (type to search, press Enter,
+                      or click +)
                     </FieldDescription>
 
-                    {/* Tags List */}
-                    <div className="flex flex-wrap gap-2">
-                      {tags.map((tag, index) => (
-                        <Badge key={index}>
-                          <span>{tag}</span>
-                          <span
-                            className="cursor-pointer"
-                            onClick={() => removeTag(index)}
-                          >
-                            <X className="size-4" />
-                          </span>
-                        </Badge>
-                      ))}
-                    </div>
+                    {tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {tags.map((tag, index) => (
+                          <Badge key={index}>
+                            <span>{tag}</span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() => removeTag(index)}
+                            >
+                              <X className="size-4" />
+                            </span>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </Field>
                 </CardContent>
               </CardBody>

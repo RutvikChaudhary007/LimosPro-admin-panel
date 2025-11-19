@@ -125,6 +125,11 @@ function CardImage({ className, ...props }: React.ComponentProps<"img">) {
         "data-[variant=horizontal]:w-full data-[variant=horizontal]:h-auto",
         className,
       )}
+      onError={(e) => {
+        const img = e.currentTarget;
+        img.onerror = null;
+        img.src = `https://placehold.co/${img.clientWidth || 300}x${img.clientHeight || 200}`;
+      }}
       {...props}
     />
   );

@@ -152,7 +152,6 @@ const ContentManagementForm = ({
     "strike",
     "blockquote",
     "list",
-    "bullet",
     "indent",
     "link",
     "image",
@@ -260,8 +259,7 @@ const ContentManagementForm = ({
                         {...field}
                       />
                       <InputGroupAddon>
-                        <IconFileText />{" "}
-                        {/* Example icon for meta description */}
+                        <IconFileText />
                       </InputGroupAddon>
                     </InputGroup>
                   )}
@@ -438,7 +436,7 @@ const ContentManagementForm = ({
                       onChange={field.onChange}
                       modules={modules}
                       formats={formats}
-                      className="min-h-[200px] pb-10"
+                      className="react-quill-full"
                     />
                   )}
                 />
