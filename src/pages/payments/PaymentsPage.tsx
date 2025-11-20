@@ -217,7 +217,7 @@ const PaymentsPage = () => {
                     .length === 0
                 }
                 onClick={() => {
-                  setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
+                  // setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
                   setRowSelection({});
                 }}
               >

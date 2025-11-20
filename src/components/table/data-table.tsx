@@ -18,6 +18,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+// import { styledLog } from "@/utils/styledLog";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -39,6 +41,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const safeData = Array.isArray(data) ? data : [];
   const safeColumns = Array.isArray(columns) ? columns : [];
+  // styledLog(safeData,"safe data:","danger")
+  // styledLog(safeColumns,"safe column:","danger")
   const table = useReactTable({
     data: safeData,
     columns: safeColumns,
@@ -59,6 +63,7 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     if (onTableReady) onTableReady(table);
   }, [table, onTableReady]);
+  // styledLog(table.getRowModel(),"table blog","danger")
   return (
     <div className="rounded border border-base-light-gray shadow-base-md overflow-auto">
       <Table>
@@ -86,22 +91,28 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    className="font-quicksand font-medium text-[16px] text-base-black leading-[100%] tracking-normal"
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
+          {table.getRowModel().rows?.length > 0 ? (
+            table?.getRowModel()?.rows?.map((row) => {
+              // styledLog(row,"table row","alert")
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row?.getIsSelected() && "selected"}
+                >
+                  {row?.getVisibleCells().map((cell) => (
+                    <TableCell
+                      className="font-quicksand font-medium text-[16px] text-base-black leading-[100%] tracking-normal"
+                      key={cell.id}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">

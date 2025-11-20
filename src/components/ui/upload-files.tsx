@@ -8,6 +8,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import IconFilesUpload from "@/assets/Icons/ic-document-arrow-up.svg?react";
+import { styledLog } from "@/utils/styledLog";
 import { Button } from "./button";
 import { FieldSeparator } from "./field";
 
@@ -109,6 +110,7 @@ export default function FilesUpload({
   }, [value]);
 
   const getFileIcon = (type: string) => {
+    styledLog(type, "file type:", "danger");
     if (type.includes("pdf")) return <IconFileTypePdf className="size-10" />;
     if (type.includes("word") || type.includes("doc"))
       return <IconFileWord className="size-10" />;
@@ -340,7 +342,7 @@ export default function FilesUpload({
       <div className="space-y-2 mt-6">
         {files.map((f, i) => (
           <div
-            key={i}
+            key={`${i}-${f?.name}`}
             className="flex items-center justify-between border border-base-gray rounded px-2 py-2.5 bg-base-white overflow-hidden w-full"
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -349,9 +351,13 @@ export default function FilesUpload({
                 <div className="w-10 h-10 min-w-10 min-h-10 max-w-10 max-h-10 rounded-full border-2 border-base-gray border-t-base-primary box-border overflow-hidden animate-spin"></div>
               ) : (f.preview && f?.type?.startsWith("image/")) ||
                 f?.mimetype?.startsWith("image/") ? (
-                <img src={f.preview} className="w-10 h-10 rounded" />
+                <img
+                  src={f.preview}
+                  className="w-10 h-10 rounded"
+                  alt={f?.name}
+                />
               ) : (
-                getFileIcon(f.type)
+                getFileIcon(f.type ?? f.mimetype)
               )}
 
               <div className="text-xs flex-1 min-w-0">

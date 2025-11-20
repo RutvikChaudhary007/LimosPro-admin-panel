@@ -13,14 +13,15 @@ import {
   IconTimeDuration0,
   IconUsers,
 } from "@tabler/icons-react";
-import { getYear, setYear } from "date-fns";
-import { useEffect, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+
+import { useEffect, useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 import { Form } from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { styledLog } from "@/utils/styledLog";
 import { Spinner } from "../Spinner";
 import { Button } from "../ui/button";
 import {
@@ -31,6 +32,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 import {
   InputGroup,
@@ -44,152 +46,170 @@ import FilesUpload from "../ui/upload-files";
 const maxSize = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];
 
-const formSchema = z.object({
-  id: z.string().optional(),
-  year: z.date(),
-  // name: z.string().refine(value => value.trim() !== "", {
-  //     message: "Fleet name cannot be empty or just whitespace.",
-  // }).min(3, { message: "Fleet name must be at least 3 characters" }),
-  description: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Description  cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Description  must be at least 3 characters" }),
-  plateNumber: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Plate number  cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Plate number  must be at least 3 characters" }),
-  brand: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Brand cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Brand must be at least 3 characters" }),
-  extraTime: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "extra time cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Affiliate id must be at least 3 characters" }),
-  regionId: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Affiliate id cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Affiliate id must be at least 3 characters" }),
-  affiliateId: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Affiliate id cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Affiliate id must be at least 3 characters" }),
-  // zonePricings: z.string().refine(value => value.trim() !== "", {
-  //     message: "zonePricings id cannot be empty or just whitespace.",
-  // }).min(3, { message: "Affiliate id must be at least 3 characters" }),
-  model: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Model cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Model must be at least 3 characters" }),
-  color: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Color cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Color must be at least 3 characters" }),
-  cityToCityHourlyRate: z
-    .string()
-    .min(1, { message: "City to city hourly rate is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  capacity: z
-    .string()
-    .min(1, { message: "Capacity  is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  baseFair: z
-    .string()
-    .min(1, { message: "Base fair is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  minFair: z
-    .string()
-    .min(1, { message: "Min fair is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  minHour: z
-    .string()
-    .min(1, { message: "Min hour is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  pricePerMile: z
-    .string()
-    .min(1, { message: "Price per mile is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  pricePerHour: z
-    .string()
-    .min(1, { message: "Price per hour is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  pricePerMinute: z
-    .string()
-    .min(1, { message: "Price per minute is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
-    .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
-  vehicleType: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Vehicle type  cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Vehicle type must be at least 3 characters" }),
-  bagsCapacity: z.string().refine((value) => value.trim() !== "", {
-    message: "Bags capacity  cannot be empty or just whitespace.",
+const zonePricingSchema = z.discriminatedUnion("zonePricingEnabled", [
+  z.object({
+    zonePricingEnabled: z.literal(true),
+    zonePricings: z
+      .array(
+        z.object({
+          zoneStart: z.number().gt(0),
+          zoneEnd: z.number().gt(0),
+          pricePerMile: z.number(),
+          pricePerMinute: z.number(),
+        }),
+      )
+      .min(1),
   }),
-  vehicleImages: z
-    .custom<FileList>()
-    .check((ctx) => {
-      const list = ctx.value;
-      if (list.length < 1) {
-        ctx.issues.push({
-          code: "custom",
-          message: "Select at least 1 file",
-          input: list,
-        });
-      }
-      //   console.log("list:")
-      if (list.length > 4) {
-        ctx.issues.push({
-          code: "custom",
-          message: "You can upload up to 4 files",
-          input: list,
-        });
-      }
-    })
-    .transform((list) => Array.from(list))
-    .refine((files) => files.every((f) => f.size <= maxSize), {
-      message: `Max size ${maxSize / (1024 * 1024)}MB`,
-    })
-    .refine(
-      (files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)),
-      {
-        message: "Invalid file types detected",
-      },
-    ),
-  status: z.string().optional(),
-});
+  z.object({ zonePricingEnabled: z.literal(false) }),
+]);
+
+const formSchema = z
+  .object({
+    year: z.number(),
+    // name: z.string().refine(value => value.trim() !== "", {
+    //     message: "Fleet name cannot be empty or just whitespace.",
+    // }).min(3, { message: "Fleet name must be at least 3 characters" }),
+    description: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Description  cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Description  must be at least 3 characters" }),
+    plateNumber: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Plate number  cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Plate number  must be at least 3 characters" }),
+    brand: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Brand cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Brand must be at least 3 characters" }),
+    extraTime: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "extra time cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Affiliate id must be at least 3 characters" }),
+    regionId: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Affiliate id cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Affiliate id must be at least 3 characters" }),
+    affiliateId: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Affiliate id cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Affiliate id must be at least 3 characters" }),
+    // zonePricings: z.string().refine(value => value.trim() !== "", {
+    //     message: "zonePricings id cannot be empty or just whitespace.",
+    // }).min(3, { message: "Affiliate id must be at least 3 characters" }),
+    model: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Model cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Model must be at least 3 characters" }),
+    color: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Color cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Color must be at least 3 characters" }),
+    cityToCityHourlyRate: z
+      .string()
+      .min(1, { message: "City to city hourly rate is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    capacity: z
+      .string()
+      .min(1, { message: "Capacity  is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    baseFair: z
+      .string()
+      .min(1, { message: "Base fair is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    minFair: z
+      .string()
+      .min(1, { message: "Min fair is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    minHour: z
+      .string()
+      .min(1, { message: "Min hour is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    pricePerMile: z
+      .string()
+      .min(1, { message: "Price per mile is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    pricePerHour: z
+      .string()
+      .min(1, { message: "Price per hour is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    pricePerMinute: z
+      .string()
+      .min(1, { message: "Price per minute is required" })
+      .regex(/^\d+$/, { message: "Must be number" })
+      .transform((v) => Number(v))
+      .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    vehicleType: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Vehicle type  cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Vehicle type must be at least 3 characters" }),
+    bagsCapacity: z.string().refine((value) => value.trim() !== "", {
+      message: "Bags capacity  cannot be empty or just whitespace.",
+    }),
+    vehicleImages: z
+      .custom<FileList>()
+      .check((ctx) => {
+        const list = ctx.value;
+        if (list.length < 1) {
+          ctx.issues.push({
+            code: "custom",
+            message: "Select at least 1 file",
+            input: list,
+          });
+        }
+        //   console.log("list:")
+        if (list.length > 4) {
+          ctx.issues.push({
+            code: "custom",
+            message: "You can upload up to 4 files",
+            input: list,
+          });
+        }
+      })
+      .transform((list) => Array.from(list))
+      .refine((files) => files.every((f) => f.size <= maxSize), {
+        message: `Max size ${maxSize / (1024 * 1024)}MB`,
+      })
+      .refine(
+        (files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)),
+        {
+          message: "Invalid file types detected",
+        },
+      ),
+    status: z.string().optional(),
+  })
+  .and(zonePricingSchema);
 
 export type TFleetForm = z.infer<typeof formSchema>;
 
@@ -203,10 +223,79 @@ const FleetOptions = [
   "Executive Coach 40 Passenger",
 ];
 
+// const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
+// 	if (!data) return undefined;
+// 	// console.log("edit chauffeur formdata:>",data)
+// 	const base = {
+// 		regionId: data?.servicePricings?.[0]?.region?.id || "",
+// 		description: data?.servicePricings?.[0]?.description || "",
+// 		affiliateId: data?.affiliateId,
+// 		plateNumber: data?.plateNumber,
+// 		brand: data?.brand,
+// 		documents: data?.documents,
+// 		bagsCapacity: data?.bagsCapacity,
+// 		capacity: data?.capacity,
+// 		year: data?.year,
+// 		color: data?.color,
+// 		model: data?.model,
+// 		vehicleType: data?.vehicleType,
+// 		vehicleImages: data?.vehicleImages,
+// 		status: data?.status,
+// 		baseFair: data?.servicePricings?.[0]?.basePrice
+// 			? Number(data?.servicePricings?.[0]?.basePrice)
+// 			: 0,
+// 		minHour: data?.servicePricings?.[0]?.minHour
+// 			? Number(data?.servicePricings?.[0]?.minHour)
+// 			: 0,
+// 		pricePerMile: data?.servicePricings?.[0]?.pricePerMile
+// 			? Number(data?.servicePricings?.[0]?.pricePerMile)
+// 			: 0,
+// 		pricePerHour: data?.servicePricings?.[0]?.ratePerHour
+// 			? Number(data?.servicePricings?.[0]?.ratePerHour)
+// 			: 0,
+// 		pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute
+// 			? Number(data?.servicePricings?.[0]?.ratePerMinute)
+// 			: 0,
+// 		minFair: data?.servicePricings?.[0]?.minPrice
+// 			? Number(data?.servicePricings?.[0]?.minPrice)
+// 			: 0,
+// 		cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate
+// 			? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate)
+// 			: 0,
+// 		extraTime: data?.servicePricings?.[0]?.extraTime
+// 			? Number(data?.servicePricings?.[0]?.extraTime)
+// 			: 0,
+// 	};
+
+// 	const zonePricing =
+// 		data?.servicePricings?.[0]?.zonePricingEnabled === true
+// 			? {
+// 					zonePricingEnabled: true,
+// 					zonePricings: data?.servicePricings?.[0]?.zonePricings?.map(
+// 						(zone) => {
+// 							return {
+// 								zoneStart: zone?.zoneStart,
+// 								zoneEnd: zone?.zoneEnd,
+// 								pricePerMile: zone?.pricePerMile,
+// 								pricePerDistance: zone?.pricePerDistance,
+// 							};
+// 						},
+// 					),
+// 				}
+// 			: {
+// 					zonePricingEnabled: false,
+// 				};
+
+// 	return {
+// 		...base,
+// 		...zonePricing,
+// 	};
+// };
+
 const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
   if (!data) return undefined;
-  // console.log("edit chauffeur formdata:>",data)
-  return {
+  styledLog(data, "transform data:", "alert");
+  const base = {
     regionId: data?.servicePricings?.[0]?.region?.id || "",
     description: data?.servicePricings?.[0]?.description || "",
     affiliateId: data?.affiliateId,
@@ -221,40 +310,50 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
     vehicleType: data?.vehicleType,
     vehicleImages: data?.vehicleImages,
     status: data?.status,
-    baseFair: data?.servicePricings?.[0]?.basePrice
-      ? Number(data?.servicePricings?.[0]?.basePrice)
-      : 0,
-    minHour: data?.servicePricings?.[0]?.minHour
-      ? Number(data?.servicePricings?.[0]?.minHour)
-      : 0,
-    pricePerMile: data?.servicePricings?.[0]?.pricePerMile
-      ? Number(data?.servicePricings?.[0]?.pricePerMile)
-      : 0,
-    pricePerHour: data?.servicePricings?.[0]?.ratePerHour
-      ? Number(data?.servicePricings?.[0]?.ratePerHour)
-      : 0,
-    pricePerMinute: data?.servicePricings?.[0]?.ratePerMinute
-      ? Number(data?.servicePricings?.[0]?.ratePerMinute)
-      : 0,
-    minFair: data?.servicePricings?.[0]?.minPrice
-      ? Number(data?.servicePricings?.[0]?.minPrice)
-      : 0,
-    cityToCityHourlyRate: data?.servicePricings?.[0]?.cityToCityHourlyRate
-      ? Number(data?.servicePricings?.[0]?.cityToCityHourlyRate)
-      : 0,
-    extraTime: data?.servicePricings?.[0]?.extraTime
-      ? Number(data?.servicePricings?.[0]?.extraTime)
-      : 0,
-    zonePricings: data?.servicePricings?.[0]?.zonePricings?.map((zone) => {
-      return {
-        zoneStart: zone?.zoneStart,
-        zoneEnd: zone?.zoneEnd,
-        pricePerMile: zone?.pricePerMile,
-        pricePerDistance: zone?.pricePerDistance,
+    baseFair: Number(data?.servicePricings?.[0]?.basePrice ?? 0),
+    minHour: Number(data?.servicePricings?.[0]?.minHour ?? 0),
+    pricePerMile: Number(data?.servicePricings?.[0]?.pricePerMile ?? 0),
+    pricePerHour: Number(data?.servicePricings?.[0]?.ratePerHour ?? 0),
+    pricePerMinute: Number(data?.servicePricings?.[0]?.ratePerMinute ?? 0),
+    minFair: Number(data?.servicePricings?.[0]?.minPrice ?? 0),
+    cityToCityHourlyRate: Number(
+      data?.servicePricings?.[0]?.cityToCityHourlyRate ?? 0,
+    ),
+    extraTime: Number(data?.servicePricings?.[0]?.extraTime ?? 0),
+  };
+
+  const zoneEnabled = data?.servicePricings?.[0]?.zonePricingEnabled ?? false;
+
+  const zonePricing = zoneEnabled
+    ? {
+        zonePricingEnabled: true,
+        zonePricings:
+          data?.servicePricings?.[0]?.zonePricings?.map((zone) => ({
+            zoneStart: !Number.isNaN(zone.zoneStart)
+              ? Number(zone.zoneStart)?.toFixed(2)
+              : 0,
+            zoneEnd: !Number.isNaN(zone.zoneEnd)
+              ? Number(zone.zoneEnd)?.toFixed(2)
+              : 0,
+            pricePerMile: !Number.isNaN(zone.pricePerMile)
+              ? Number(zone.pricePerMile)?.toFixed(2)
+              : 0,
+            pricePerMinute: !Number.isNaN(zone.pricePerMinute)
+              ? Number(zone.pricePerMinute)?.toFixed(2)
+              : 0,
+          })) ?? [],
+      }
+    : {
+        zonePricingEnabled: false,
+        zonePricings: [],
       };
-    }),
+
+  return {
+    ...base,
+    ...zonePricing,
   };
 };
+
 const FleetForm = ({
   initialData,
   isAffiliateFetching,
@@ -265,22 +364,12 @@ const FleetForm = ({
   disabledFields,
   type,
 }: IFleetFormProps) => {
-  const { toast } = useToast();
   const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
-  const [zonePricing, setZonePricing] = useState([]);
-  const [isZoneActive, setIsZoneActive] = useState(false);
+
   const [previews, setPreviews] = useState<string[]>([]);
   const [date, setDate] = useState(new Date());
   const years = Array.from({ length: 200 }, (_, i) => 1900 + i);
 
-  function onYearChange(year: string) {
-    const newDate = setYear(date, parseInt(year, 10));
-    setDate(newDate);
-    form.setValue("year", newDate, { shouldValidate: true });
-  }
-
-  const imagesRef = useRef<HTMLInputElement | null>(null);
-  const fileRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<TFleetForm>({
     // resolver: zodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
@@ -295,18 +384,66 @@ const FleetForm = ({
       model: "",
       vehicleType: "",
       status: "",
+      zonePricingEnabled: false,
     },
   });
 
+  const {
+    fields: zonePricingsFields,
+    replace: replaceZonePricings,
+    append: appendZonePricings,
+    remove: removeZonePricings,
+  } = useFieldArray({
+    control: form.control,
+    name: "zonePricings",
+  });
+
+  const handleAddZone = () => {
+    const zones = form.watch("zonePricings") || [];
+
+    if (!zones || zones.length === 0) {
+      appendZonePricings({
+        zoneStart: 0.01,
+        zoneEnd: 10,
+        pricePerMile: 0,
+        pricePerMinute: 0,
+      });
+      return;
+    }
+
+    const numericEnds = zones.map((z) => Number(z.zoneEnd || 0));
+    // console.log("numericEnds:",numericEnds)
+    const lastEnd = Math.max(...numericEnds); // robust to deletes / reordering
+    // console.log("lastEnd:",lastEnd)
+    if (lastEnd >= globalAirportLimit) {
+      // optional: notify user that max limit reached
+      toast.error("Opps! global limit hit cannot add more zones");
+      return;
+    }
+
+    let newEnd = lastEnd + 10;
+
+    if (newEnd > globalAirportLimit) {
+      newEnd = globalAirportLimit;
+    }
+
+    appendZonePricings({
+      zoneStart: 0.01, // new zone start = previous zone end
+      zoneEnd: newEnd,
+      pricePerMile: 0,
+      pricePerMinute: 0,
+    });
+  };
+
   useEffect(() => {
-    if (initialData?.servicePricings?.[0]?.zonePricingEnabled) {
-      setIsZoneActive(
-        Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false),
-      );
-    }
-    if (initialData?.servicePricings?.[0]?.zonePricings) {
-      setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
-    }
+    // if (initialData?.servicePricings?.[0]?.zonePricingEnabled) {
+    //   setIsZoneActive(
+    //     Boolean(initialData?.servicePricings?.[0]?.zonePricingEnabled ?? false),
+    //   );
+    // }
+    // if (initialData?.servicePricings?.[0]?.zonePricings) {
+    //   setZonePricing(initialData?.servicePricings?.[0]?.zonePricings ?? []);
+    // }
     if (initialData?.year) {
       form.setValue("year", initialData?.year, { shouldValidate: true });
     }
@@ -351,31 +488,19 @@ const FleetForm = ({
 
   const handleFormSubmit = async (data: TFleetForm) => {
     try {
-      console.log("description:", typeof data?.year);
+      // console.log("description:", typeof data?.year);
       // console.log("description:",)
       const formData = new FormData();
 
-      if (isZoneActive) {
-        if (zonePricing && zonePricing.length > 0) {
-          const formDataZone = [];
-          zonePricing?.forEach((zone) => {
-            formDataZone.push({
-              zoneStart: zone.start,
-              zoneEnd: zone.end,
-              pricePerMile: zone.pricePerMile,
-              pricePerMinute: zone.pricePerDistance,
-            });
-          });
-          console.log(formDataZone);
-          formData.append("zonePricings", JSON.stringify(formDataZone));
+      if (data?.zonePricingEnabled) {
+        if (data?.zonePricings && data?.zonePricings?.length > 0) {
+          formData.append("zonePricings", JSON.stringify(data?.zonePricings));
         } else {
           formData.append("zonePricings", null);
         }
-      } else {
-        formData.append("zonePricings", null);
       }
-      //   formData.append("zonePricingEnabled", isZoneActive);
 
+      formData.append("zonePricingEnabled", data?.zonePricingEnabled);
       formData.append("affiliateId", data?.affiliateId);
       formData.append("regionId", data?.regionId);
       formData.append("bagsCapacity", data?.bagsCapacity);
@@ -1035,8 +1160,8 @@ const FleetForm = ({
                         label: y.toString(),
                         value: y.toString(),
                       }))}
-                      value={field.value || getYear(date).toString()}
-                      setSelectedItem={(val) => field.onChange(val)}
+                      value={field?.value?.toString()}
+                      setSelectedItem={(val) => field.onChange(Number(val))}
                     />
                   )}
                 />
@@ -1087,7 +1212,7 @@ const FleetForm = ({
 
               <Field className="col-span-full">
                 <FieldLabel
-                  htmlFor="zonePricings"
+                  htmlFor="zonePricingEnabled"
                   className="text-base-black gap-0"
                 >
                   Zone Pricing
@@ -1095,260 +1220,26 @@ const FleetForm = ({
 
                 <Controller
                   control={form.control}
-                  name="zonePricings"
+                  name="zonePricingEnabled"
                   render={({ field }) => (
-                    <div className="grid grid-cols-2 gap-4 mt-2">
-                      <div className="flex items-center gap-2">
-                        <input
-                          id="zoneToggle"
-                          type="checkbox"
-                          checked={isZoneActive}
-                          onChange={() => {
-                            const enabled = !isZoneActive;
-                            setIsZoneActive(enabled);
-                            field.onChange({ ...field.value, enabled });
-
-                            if (enabled && zonePricing.length === 0) {
-                              setZonePricing([
-                                {
-                                  start: 0.01,
-                                  end: 0,
-                                  pricePerMile: 0,
-                                  pricePerDistance: 0,
-                                },
-                              ]);
-                            }
-
-                            if (!enabled) setZonePricing([]);
-                          }}
-                          className="w-4 h-4"
-                        />
-
-                        <FieldLabel
-                          htmlFor="zoneToggle"
-                          className="text-base-black gap-0 cursor-pointer"
-                        >
-                          Activate Zone Based Pricing
-                        </FieldLabel>
-                      </div>
-
-                      {/* SHOW/HIDE DIV */}
-                      {isZoneActive && (
-                        <div className="col-span-full p-4 border border-base-gray rounded bg-base-light-gray">
-                          {isZoneActive &&
-                            zonePricing?.map((zone, index) => (
-                              <Field className="" key={`${index}-${zone.end}`}>
-                                <FieldLabel className="mb-2 text-xl">
-                                  Zone {index + 1}
-                                </FieldLabel>
-
-                                <div className="space-y-4 w-full mb-4">
-                                  {/* ---- Zone Start ---- */}
-                                  <Field>
-                                    <FieldLabel htmlFor={`zoneStart-${index}`}>
-                                      Zone Start (mile)
-                                    </FieldLabel>
-
-                                    <InputGroup>
-                                      <InputGroupInput
-                                        id={`zoneStart-${index}`}
-                                        type="number"
-                                        placeholder="Start Mile"
-                                        value={zone.start}
-                                        step="0.01"
-                                        min={
-                                          index === 0
-                                            ? 0.01
-                                            : zonePricing?.[index - 1]?.end
-                                        }
-                                        onChange={(e) => {
-                                          const newZones = [...zonePricing];
-                                          newZones[index].start = parseFloat(
-                                            e.target.value,
-                                          );
-                                          setZonePricing(newZones);
-                                        }}
-                                      />
-
-                                      {/* optional icon */}
-                                      <InputGroupAddon>
-                                        <IconRuler />
-                                      </InputGroupAddon>
-                                    </InputGroup>
-
-                                    <FieldDescription>
-                                      Enter the starting mile of the zone.
-                                    </FieldDescription>
-                                  </Field>
-
-                                  {/* ---- Zone End ---- */}
-                                  <Field>
-                                    <FieldLabel htmlFor={`zoneEnd-${index}`}>
-                                      Zone End (mile)
-                                    </FieldLabel>
-
-                                    <InputGroup>
-                                      <InputGroupInput
-                                        id={`zoneEnd-${index}`}
-                                        type="number"
-                                        placeholder="End Mile"
-                                        value={zone.end}
-                                        max={globalAirportLimit}
-                                        step="0.01"
-                                        onChange={(e) => {
-                                          const newZones = [...zonePricing];
-                                          newZones[index].end = parseFloat(
-                                            e.target.value,
-                                          );
-                                          setZonePricing(newZones);
-                                        }}
-                                      />
-                                      <InputGroupAddon>
-                                        <IconFlag />
-                                      </InputGroupAddon>
-                                    </InputGroup>
-
-                                    <FieldDescription>
-                                      Enter the ending mile for this zone.
-                                    </FieldDescription>
-                                  </Field>
-
-                                  {/* ---- Price Per Mile ---- */}
-                                  <Field>
-                                    <FieldLabel
-                                      htmlFor={`pricePerMile-${index}`}
-                                    >
-                                      Price per Mile
-                                    </FieldLabel>
-
-                                    <InputGroup>
-                                      <InputGroupInput
-                                        id={`pricePerMile-${index}`}
-                                        type="number"
-                                        placeholder="Price Per Mile"
-                                        step="0.01"
-                                        value={zone.pricePerMile}
-                                        onChange={(e) => {
-                                          const newZones = [...zonePricing];
-                                          newZones[index].pricePerMile =
-                                            parseFloat(e.target.value);
-                                          setZonePricing(newZones);
-                                        }}
-                                      />
-
-                                      <InputGroupAddon>
-                                        <IconCurrencyDollar />
-                                      </InputGroupAddon>
-                                    </InputGroup>
-
-                                    <FieldDescription>
-                                      Enter the rate per mile.
-                                    </FieldDescription>
-                                  </Field>
-
-                                  {/* ---- Price Per Minute ---- */}
-                                  <Field>
-                                    <FieldLabel
-                                      htmlFor={`pricePerMinute-${index}`}
-                                    >
-                                      Price per Minute
-                                    </FieldLabel>
-
-                                    <InputGroup>
-                                      <InputGroupInput
-                                        id={`pricePerMinute-${index}`}
-                                        type="number"
-                                        placeholder="Price Per Minute"
-                                        step="0.01"
-                                        value={zone.pricePerDistance}
-                                        onChange={(e) => {
-                                          const newZones = [...zonePricing];
-                                          newZones[index].pricePerDistance =
-                                            parseFloat(e.target.value);
-                                          setZonePricing(newZones);
-                                        }}
-                                      />
-                                      <InputGroupAddon>
-                                        <IconTimeDuration0 />
-                                      </InputGroupAddon>
-                                    </InputGroup>
-
-                                    <FieldDescription>
-                                      Enter the rate per minute.
-                                    </FieldDescription>
-                                  </Field>
-
-                                  {/* ---- Remove Button ---- */}
-                                  <Button
-                                    type="button"
-                                    onClick={() => {
-                                      const newZones = zonePricing.filter(
-                                        (_, i) => i !== index,
-                                      );
-                                      setZonePricing(newZones);
-                                    }}
-                                  >
-                                    Remove
-                                  </Button>
-                                </div>
-                              </Field>
-                            ))}
-
-                          {isZoneActive && (
-                            <Button
-                              type="button"
-                              onClick={() => {
-                                if (zonePricing.length === 0) {
-                                  setZonePricing([
-                                    {
-                                      start: 0.01,
-                                      end: 0,
-                                      pricePerMile: 0,
-                                      pricePerDistance: 0,
-                                    },
-                                  ]);
-                                } else {
-                                  const lastEnd =
-                                    zonePricing?.[zonePricing.length - 1].end;
-                                  if (lastEnd >= globalAirportLimit) {
-                                    toast({
-                                      title: "Global Airport Limit",
-                                      description: `Maximum limit of ${globalAirportLimit} miles reached`,
-                                      variant: "destructive",
-                                    });
-                                    return;
-                                  }
-                                  let finalLastEnd = lastEnd + 10;
-                                  if (finalLastEnd >= globalAirportLimit) {
-                                    finalLastEnd = globalAirportLimit;
-                                  }
-                                  setZonePricing([
-                                    ...zonePricing,
-                                    {
-                                      start: 0.01,
-                                      end: parseInt(finalLastEnd, 10),
-                                      pricePerMile: 0,
-                                      pricePerDistance: 0,
-                                    },
-                                  ]);
-                                }
-                              }}
-                            >
-                              Add New Zone
-                            </Button>
-                          )}
-                          {isZoneActive && zonePricing.length > 0 && (
-                            <Button
-                              type="button"
-                              onClick={() => setZonePricing([])}
-                              className="ml-4"
-                            >
-                              Clear All Zones
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <Checkbox
+                      id="zoneToggle"
+                      className="w-4 max-w-4"
+                      name={field.name}
+                      checked={field.value}
+                      onCheckedChange={(val) => {
+                        field.onChange(val);
+                        if (!val)
+                          replaceZonePricings([]); // Clear zone list
+                        else if (val && zonePricingsFields.length === 0)
+                          appendZonePricings({
+                            zoneStart: 0.01,
+                            zoneEnd: 10,
+                            pricePerMile: 0,
+                            pricePerMinute: 0,
+                          });
+                      }}
+                    />
                   )}
                 />
 
@@ -1358,10 +1249,243 @@ const FleetForm = ({
 
                 {form.formState.errors.zonePricings && (
                   <p className="text-base-danger mt-1">
-                    {form.formState.errors.zonePricings.message}
+                    {form.formState.errors.zonePricingEnabled.message}
                   </p>
                 )}
               </Field>
+
+              {/* SHOW/HIDE DIV */}
+              {form.watch("zonePricingEnabled") && (
+                <Field className="col-span-full">
+                  <FieldLabel
+                    htmlFor="zonePricings"
+                    className="text-base-black gap-0 cursor-pointer"
+                  >
+                    Activate Zone Based Pricing
+                  </FieldLabel>
+                  <Controller
+                    control={form.control}
+                    name="zonePricings"
+                    render={() => (
+                      <div className="grid grid-cols-2 gap-4 mt-2">
+                        <div className="col-span-full p-4 border border-base-gray rounded bg-base-light-gray">
+                          {zonePricingsFields?.map((zone, index) => (
+                            <Field className="" key={zone.id}>
+                              <FieldLabel className="mb-2 text-xl">
+                                Zone {index + 1}
+                              </FieldLabel>
+
+                              <div className="space-y-4 w-full mb-4">
+                                {/* ---- Zone Start ---- */}
+                                <Field>
+                                  <FieldLabel
+                                    htmlFor={`zonePricingsFields.${index}.zoneStart`}
+                                  >
+                                    Zone Start (mile)
+                                  </FieldLabel>
+
+                                  <InputGroup>
+                                    <Controller
+                                      control={form.control}
+                                      name={`zonePricings.${index}.zoneStart`}
+                                      render={({ field }) => (
+                                        <InputGroupInput
+                                          type="number"
+                                          onWheel={(e) =>
+                                            e.currentTarget.blur()
+                                          }
+                                          step="0.01"
+                                          {...field}
+                                        />
+                                      )}
+                                    />
+
+                                    {/* optional icon */}
+                                    <InputGroupAddon>
+                                      <IconRuler />
+                                    </InputGroupAddon>
+                                  </InputGroup>
+
+                                  <FieldDescription>
+                                    Enter the starting mile of the zone.
+                                  </FieldDescription>
+                                </Field>
+
+                                {/* ---- Zone End ---- */}
+                                <Field>
+                                  <FieldLabel
+                                    htmlFor={`zonePricingsFields${index}.zoneEnd`}
+                                  >
+                                    Zone End (mile)
+                                  </FieldLabel>
+
+                                  <InputGroup>
+                                    <Controller
+                                      control={form.control}
+                                      name={`zonePricings.${index}.zoneEnd`}
+                                      render={({ field }) => (
+                                        <InputGroupInput
+                                          type="number"
+                                          step="0.01"
+                                          onWheel={(e) =>
+                                            e.currentTarget.blur()
+                                          }
+                                          max={globalAirportLimit}
+                                          {...field}
+                                        />
+                                      )}
+                                    />
+                                    <InputGroupAddon>
+                                      <IconFlag />
+                                    </InputGroupAddon>
+                                  </InputGroup>
+
+                                  <FieldDescription>
+                                    Enter the ending mile for this zone.
+                                  </FieldDescription>
+                                </Field>
+
+                                {/* ---- Price Per Mile ---- */}
+                                <Field>
+                                  <FieldLabel htmlFor={`pricePerMile-${index}`}>
+                                    Price per Mile
+                                  </FieldLabel>
+
+                                  <InputGroup>
+                                    <Controller
+                                      control={form.control}
+                                      name={`zonePricings.${index}.pricePerMile`}
+                                      render={({ field }) => (
+                                        <InputGroupInput
+                                          type="number"
+                                          step="0.01"
+                                          onWheel={(e) =>
+                                            e.currentTarget.blur()
+                                          }
+                                          {...field}
+                                        />
+                                      )}
+                                    />
+                                    <InputGroupAddon>
+                                      <IconCurrencyDollar />
+                                    </InputGroupAddon>
+                                  </InputGroup>
+
+                                  <FieldDescription>
+                                    Enter the rate per mile.
+                                  </FieldDescription>
+                                </Field>
+
+                                {/* ---- Price Per Minute ---- */}
+                                <Field>
+                                  <FieldLabel
+                                    htmlFor={`pricePerMinute-${index}`}
+                                  >
+                                    Price per Minute
+                                  </FieldLabel>
+
+                                  <InputGroup>
+                                    <Controller
+                                      control={form.control}
+                                      name={`zonePricings.${index}.pricePerMinute`}
+                                      render={({ field }) => (
+                                        <InputGroupInput
+                                          type="number"
+                                          step="0.01"
+                                          onWheel={(e) =>
+                                            e.currentTarget.blur()
+                                          }
+                                          {...field}
+                                        />
+                                      )}
+                                    />
+                                    <InputGroupAddon>
+                                      <IconTimeDuration0 />
+                                    </InputGroupAddon>
+                                  </InputGroup>
+
+                                  <FieldDescription>
+                                    Enter the rate per minute.
+                                  </FieldDescription>
+                                </Field>
+
+                                {/* ---- Remove Button ---- */}
+                                <Button
+                                  type="button"
+                                  onClick={() => {
+                                    // const newZones = zonePricing.filter(
+                                    // 	(_, i) => i !== index,
+                                    // );
+                                    // setZonePricing(newZones);
+                                    removeZonePricings(index);
+                                  }}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </Field>
+                          ))}
+
+                          <Button
+                            type="button"
+                            onClick={handleAddZone}
+                            // onClick={() => {
+                            // 	// if (zonePricing.length === 0) {
+                            // 	// 	setZonePricing([
+                            // 	// 		{
+                            // 	// 			start: 0.01,
+                            // 	// 			end: 0,
+                            // 	// 			pricePerMile: 0,
+                            // 	// 			pricePerDistance: 0,
+                            // 	// 		},
+                            // 	// 	]);
+                            // 	// } else {
+                            // 	// 	const lastEnd =
+                            // 	// 		zonePricing?.[zonePricing.length - 1].end;
+                            // 	// 	if (lastEnd >= globalAirportLimit) {
+                            // 	// 		toast({
+                            // 	// 			title: "Global Airport Limit",
+                            // 	// 			description: `Maximum limit of ${globalAirportLimit} miles reached`,
+                            // 	// 			variant: "destructive",
+                            // 	// 		});
+                            // 	// 		return;
+                            // 	// 	}
+                            // 	// 	let finalLastEnd = lastEnd + 10;
+                            // 	// 	if (finalLastEnd >= globalAirportLimit) {
+                            // 	// 		finalLastEnd = globalAirportLimit;
+                            // 	// 	}
+                            // 	// 	setZonePricing([
+                            // 	// 		...zonePricing,
+                            // 	// 		{
+                            // 	// 			start: 0.01,
+                            // 	// 			end: parseInt(finalLastEnd, 10),
+                            // 	// 			pricePerMile: 0,
+                            // 	// 			pricePerDistance: 0,
+                            // 	// 		},
+                            // 	// 	]);
+                            // 	// }
+
+                            // }}
+                          >
+                            Add New Zone
+                          </Button>
+
+                          {zonePricingsFields.length > 0 && (
+                            <Button
+                              type="button"
+                              onClick={() => replaceZonePricings([])}
+                              className="ml-4"
+                            >
+                              Clear All Zones
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                      // </div>
+                    )}
+                  />
+                </Field>
+              )}
 
               <Field className="col-span-full">
                 <Controller

@@ -110,6 +110,11 @@ const BlogPostsPage: React.FC = () => {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const [tableRef, setTableRef] = useState<Table<BlogPost> | null>(null);
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [isGrid, setIsGrid] = useState(true);
   const [pagination, setPagination] = useState({
@@ -424,8 +429,13 @@ const BlogPostsPage: React.FC = () => {
                 </div>
               ) : (
                 <DataTable
-                  columns={columns || []}
-                  data={Array.isArray(currentItems) ? currentItems : []}
+                  columns={columns}
+                  data={blogPosts}
+                  rowSelection={rowSelection}
+                  onRowSelectionChange={setRowSelection}
+                  // onTableReady={setTableRef}
+                  // globalFilter={searchValue}
+                  // onGlobalFilterChange={setSearchValue}
                 />
               )}
             </>

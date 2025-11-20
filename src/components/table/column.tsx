@@ -3026,13 +3026,17 @@ export function getBlogColumns(
   return [
     {
       accessorKey: "title",
-      header: "Title",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Title" />
+      ),
       cell: ({ row }) => <span>{row.original.title}</span>,
       enableSorting: false,
     },
     {
       accessorKey: "blogAuthor",
-      header: "Author",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Author" />
+      ),
       cell: ({ row }) => (
         <span>{row.original.blogAuthor?.name || "Unknown"}</span>
       ),
@@ -3040,7 +3044,9 @@ export function getBlogColumns(
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="status" />
+      ),
       cell: ({ row }) => (
         <Label
           className={cn(
@@ -3058,7 +3064,9 @@ export function getBlogColumns(
     },
     {
       id: "action",
-      header: "Action",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action" />
+      ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
