@@ -2,6 +2,6 @@
 echo "🚀 Running lint-staged..."
 
 # Run lint + prettier only on staged files
-bunx lint-staged
+bun x lint-staged
 
 echo "👌 All check passed."
