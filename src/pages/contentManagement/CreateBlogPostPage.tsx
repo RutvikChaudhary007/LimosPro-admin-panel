@@ -5,6 +5,7 @@ import type { FC } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
+import UsefetchAllUsers from "@/api/getAllUser.api";
 import useFetchAllMetaKeywords from "@/api/metaKeyWord.api";
 import useFetchAllTags from "@/api/tag.api";
 import { AutoCompleteInput } from "@/components/AutoCompleteInput";
@@ -16,6 +17,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
+import { styledLog } from "@/utils/styledLog";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -153,6 +155,21 @@ const CreateBlogPostPage: FC = () => {
 
   const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
   const { data: tagsData } = useFetchAllTags({});
+  const { data: usersData } = UsefetchAllUsers({
+    DateRange: { startDate: undefined, endDate: undefined },
+    limit: 100,
+  });
+
+  styledLog(usersData, "User Data", "info");
+
+  interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    status: string;
+    roleName: string;
+  }
 
   const {
     register,
@@ -539,18 +556,42 @@ const CreateBlogPostPage: FC = () => {
                       Author
                     </FieldLabel>
 
-                    <InputGroup>
-                      <InputGroupInput
-                        id="author"
-                        type="text"
-                        placeholder="Author name"
-                        {...register("author")}
-                        className={errors.author ? "border-base-danger" : ""}
+                    {usersData?.users?.some(
+                      (user: User) => user.roleName === "SEO Agent",
+                    ) ? (
+                      <SelectDropDown
+                        placeholder="Author Name"
+                        items={
+                          usersData.users
+                            .filter(
+                              (user: User) => user.roleName === "SEO Agent",
+                            )
+                            .map((user: User) => ({
+                              label: `${user.firstName} ${user.lastName}`,
+                              value: user.id,
+                            })) || []
+                        }
+                        value={watch("author")}
+                        setSelectedItem={(v) =>
+                          setValue("author", v as string, {
+                            shouldValidate: true,
+                          })
+                        }
                       />
-                      <InputGroupAddon>
-                        <IconFileText />
-                      </InputGroupAddon>
-                    </InputGroup>
+                    ) : (
+                      <InputGroup>
+                        <InputGroupInput
+                          id="author"
+                          type="text"
+                          placeholder="Author name"
+                          {...register("author")}
+                          className={errors.author ? "border-base-danger" : ""}
+                        />
+                        <InputGroupAddon>
+                          <IconFileText />
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
 
                     <FieldDescription>
                       Enter the author's name.
@@ -563,9 +604,21 @@ const CreateBlogPostPage: FC = () => {
                     )}
                   </Field>
 
-                  <Button type="submit" disabled={loading} variant="black">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    variant={
+                      watch("status") === "published" ? "default" : "black"
+                    }
+                  >
                     <Save />
-                    {loading ? "Drafting..." : "Draft Post"}
+                    {watch("status") === "published"
+                      ? loading
+                        ? "Publishing..."
+                        : "Publish Post"
+                      : loading
+                        ? "Drafting..."
+                        : "Draft Post"}
                   </Button>
                 </CardContent>
               </CardBody>
