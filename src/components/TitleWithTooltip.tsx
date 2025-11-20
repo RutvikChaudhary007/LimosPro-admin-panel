@@ -10,12 +10,10 @@ import { useIsTruncated } from "@/hooks/useIsTruncated";
 export function TitleWithTooltip({ title }: { title: string }) {
   const { ref, isTruncated } = useIsTruncated();
 
-  console.log(isTruncated);
-
   const titleNode = (
     <CardTitle
       ref={ref as React.RefObject<HTMLDivElement>}
-      className="line-clamp-2 cursor-default"
+      className="truncate cursor-default"
     >
       {title}
     </CardTitle>

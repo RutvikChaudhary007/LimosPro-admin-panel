@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconFileText } from "@tabler/icons-react";
+import { IconArchive, IconFileText } from "@tabler/icons-react";
 import { ArrowLeft, Save, X } from "lucide-react";
 import type { FC } from "react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import useFetchAllMetaKeywords from "@/api/metaKeyWord.api";
+import useFetchAllTags from "@/api/tag.api";
 import { AutoCompleteInput } from "@/components/AutoCompleteInput";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
@@ -14,7 +15,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { styledLog } from "@/utils/styledLog";
+import { SelectDropDown } from "@/components/ui/select";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -31,7 +32,6 @@ import {
 } from "../../components/ui/card";
 import ImageUpload from "../../components/ui/image-upload";
 import MultipleImageUpload from "../../components/ui/multiple-image-upload";
-import { SelectDropDown } from "../../components/ui/select";
 import { constant } from "../../lib/constant";
 import type { BlogPostFormData } from "../../types/content";
 
@@ -93,9 +93,6 @@ const CreateBlogPostPage: FC = () => {
   const [keywordTypingTimer, setKeywordTypingTimer] = useState<ReturnType<
     typeof setTimeout
   > | null>(null);
-  const { data } = useFetchAllMetaKeywords({});
-
-  styledLog(data, "Get Meta Key Words");
 
   const keywordSuggestions = [
     "SEO",
@@ -153,6 +150,9 @@ const CreateBlogPostPage: FC = () => {
     "Finance",
     "Food",
   ];
+
+  const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
+  const { data: tagsData } = useFetchAllTags({});
 
   const {
     register,
@@ -252,12 +252,19 @@ const CreateBlogPostPage: FC = () => {
           },
           { label: "Create Blog Post" },
         ]}
-        action={{
-          variant: "outlineBlack",
-          label: "Back",
-          icon: <ArrowLeft />,
-          link: constant.ROUTING_URLS.BLOG_POSTS,
-        }}
+        action={[
+          {
+            variant: "outlineSecondary",
+            label: "Archive",
+            icon: <IconArchive />,
+          },
+          {
+            variant: "outlineBlack",
+            label: "Back",
+            icon: <ArrowLeft />,
+            link: constant.ROUTING_URLS.BLOG_POSTS,
+          },
+        ]}
       />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -443,7 +450,11 @@ const CreateBlogPostPage: FC = () => {
                     <AutoCompleteInput
                       value={keywordInput}
                       setValue={setKeywordInput}
-                      list={keywordSuggestions}
+                      list={
+                        metaKeywordsData?.metaKeywords?.map(
+                          (k: { keyword: string }) => k.keyword,
+                        ) || keywordSuggestions
+                      }
                       onAdd={(kw) => addKeyword(kw)}
                       open={keywordOpen}
                       setOpen={setKeywordOpen}
@@ -462,7 +473,7 @@ const CreateBlogPostPage: FC = () => {
                     {metaKeywords.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {metaKeywords.map((keyword, index) => (
-                          <Badge key={index}>
+                          <Badge key={index} className="capitalize">
                             <span>{keyword}</span>
                             <span
                               className="cursor-pointer"
@@ -489,27 +500,19 @@ const CreateBlogPostPage: FC = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Publish Settings */}
+            {/* Settings */}
             <Card>
               <CardBody>
                 <CardHeader>
-                  <CardTitle>Publish Settings</CardTitle>
+                  <CardTitle>Settings</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <Field>
-                    <FieldLabel
-                      htmlFor="status"
-                      className="text-base-black gap-0"
-                    >
-                      Status
-                    </FieldLabel>
-
                     <SelectDropDown
                       placeholder="Select Status"
                       items={[
                         { label: "Draft", value: "draft" },
-                        { label: "Published", value: "published" },
-                        { label: "Archived", value: "archived" },
+                        { label: "Publish", value: "published" },
                       ]}
                       value={watch("status")}
                       setSelectedItem={(v) =>
@@ -560,9 +563,9 @@ const CreateBlogPostPage: FC = () => {
                     )}
                   </Field>
 
-                  <Button type="submit" disabled={loading}>
+                  <Button type="submit" disabled={loading} variant="black">
                     <Save />
-                    {loading ? "Creating..." : "Create Post"}
+                    {loading ? "Drafting..." : "Draft Post"}
                   </Button>
                 </CardContent>
               </CardBody>
@@ -617,7 +620,10 @@ const CreateBlogPostPage: FC = () => {
                     <AutoCompleteInput
                       value={tagInput}
                       setValue={setTagInput}
-                      list={tagSuggestions}
+                      list={
+                        tagsData?.tags?.map((k: { name: string }) => k.name) ||
+                        tagSuggestions
+                      }
                       onAdd={(t) => addTag(t)}
                       open={tagOpen}
                       setOpen={setTagOpen}
@@ -635,7 +641,7 @@ const CreateBlogPostPage: FC = () => {
                     {tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {tags.map((tag, index) => (
-                          <Badge key={index}>
+                          <Badge key={index} className="capitalize">
                             <span>{tag}</span>
                             <span
                               className="cursor-pointer"

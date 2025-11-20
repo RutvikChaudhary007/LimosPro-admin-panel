@@ -128,7 +128,10 @@ function CardImage({ className, ...props }: React.ComponentProps<"img">) {
       onError={(e) => {
         const img = e.currentTarget;
         img.onerror = null;
-        img.src = `https://placehold.co/${img.clientWidth || 300}x${img.clientHeight || 200}`;
+        (function update() {
+          img.src = `https://placehold.co/${img.clientWidth || 300}x${img.clientHeight || 200}`;
+          globalThis.addEventListener("resize", update);
+        })();
       }}
       {...props}
     />

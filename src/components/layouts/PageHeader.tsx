@@ -19,28 +19,32 @@ import {
   CardTitle,
 } from "../ui/card";
 
+type ActionButton = {
+  label?: string;
+  icon?: React.ReactNode;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  link?: string;
+  variant?:
+    | "default"
+    | "secondary"
+    | "black"
+    | "outlinePrimary"
+    | "outlineSecondary"
+    | "outlineBlack"
+    | "outlineNavBtnPrimary"
+    | "outlineNavBtnSecondary"
+    | "outlineNavBtnBlack"
+    | "linkPrimary"
+    | "linkSecondary"
+    | "linkDark";
+  onClick?: () => void;
+};
+
 interface PageHeaderProps {
   title: string;
   breadcrumbs: { label: string; path?: string }[];
-  action?: {
-    label: string;
-    icon?: React.ReactNode;
-    link?: string;
-    variant?:
-      | "default"
-      | "secondary"
-      | "black"
-      | "outlinePrimary"
-      | "outlineSecondary"
-      | "outlineBlack"
-      | "outlineNavBtnPrimary"
-      | "outlineNavBtnSecondary"
-      | "outlineNavBtnBlack"
-      | "linkPrimary"
-      | "linkSecondary"
-      | "linkDark";
-    onClick?: () => void;
-  };
+  action?: ActionButton | ActionButton[];
   actionDetails?: {
     stats: { label: string; value: string | number }[];
   };
@@ -114,20 +118,29 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
                 ))}
               </div>
             )}
-            {action &&
-              (action.link ? (
-                <Link to={action.link}>
-                  <Button variant={action.variant}>
-                    {action.icon}
-                    {action.label}
-                  </Button>
-                </Link>
-              ) : (
-                <Button variant={action.variant} onClick={action.onClick}>
-                  {action.icon}
-                  {action.label}
-                </Button>
-              ))}
+            {action && (
+              <div className="flex flex-wrap items-center gap-2">
+                {(Array.isArray(action) ? action : [action]).map((a, i) => {
+                  const left = a.leftIcon || a.icon;
+
+                  const button = (
+                    <Button key={i} variant={a.variant} onClick={a.onClick}>
+                      {left && <span>{left}</span>}
+                      <span>{a.label}</span>
+                      {a.rightIcon && <span>{a.rightIcon}</span>}
+                    </Button>
+                  );
+
+                  return a.link ? (
+                    <Link to={a.link} key={i}>
+                      {button}
+                    </Link>
+                  ) : (
+                    button
+                  );
+                })}
+              </div>
+            )}
           </CardAction>
         </CardHeader>
       </CardBody>

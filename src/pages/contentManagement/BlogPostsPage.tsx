@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { Plus, Search } from "lucide-react";
+import { Grid, List, Plus, Search } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,12 +9,16 @@ import { blogService } from "@/api/contentServices.api";
 import PageTitle from "@/components/common/PageTitle";
 import BlogPostCard from "@/components/contentManagement/BlogPostCard";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { getBlogColumns } from "@/components/table/column";
+import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardBody,
   CardContent,
   CardHeader,
+  CardImage,
   CardTitle,
 } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -24,6 +28,13 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { constant } from "@/lib/constant";
 import type { BlogPost, BlogQueryParams } from "@/types/content";
 import { generatePageTitle } from "@/utils/seo";
@@ -50,7 +61,7 @@ const fetchBlogPosts = async ({ ...rest }) => {
     };
 
     const response = await blogService.getAll(params);
-    setBlogPosts(response.data);
+    setBlogPosts(response.data || []);
     setPagination(response.pagination);
   } catch (error) {
     console.error("❌ Error fetching blog posts:", error);
@@ -100,6 +111,7 @@ const BlogPostsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [isGrid, setIsGrid] = useState(true);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -121,7 +133,14 @@ const BlogPostsPage: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setPagination((prev) => ({ ...prev, page: 1 }));
-    fetchBlogPosts();
+    fetchBlogPosts({
+      setLoading,
+      searchTerm,
+      statusFilter,
+      setBlogPosts,
+      pagination: { ...pagination, page: 1 },
+      setPagination,
+    });
   };
 
   const handleEdit = (id: string) => {
@@ -138,7 +157,16 @@ const BlogPostsPage: React.FC = () => {
         await blogService.delete(id);
         toast.success("Blog post deleted successfully");
         setPagination((prev) => ({ ...prev, page: 1 }));
-        fetchBlogPosts();
+
+        const newPagination = { ...pagination, page: 1 };
+        fetchBlogPosts({
+          setLoading,
+          searchTerm,
+          statusFilter,
+          setBlogPosts,
+          pagination: newPagination,
+          setPagination,
+        });
       } catch (error) {
         console.error("Error deleting blog post:", error);
         toast.error("Failed to delete blog post");
@@ -146,14 +174,32 @@ const BlogPostsPage: React.FC = () => {
     }
   };
 
+  // simple pagination values driven by server pagination state
+  const currentPage = pagination.page;
+  const totalPages = pagination.totalPages;
+  const currentItems = blogPosts;
+  const calculatedTotalPages = Math.max(1, totalPages);
   const handlePageChange = (newPage: number) => {
-    setPagination({ ...pagination, page: newPage });
+    if (newPage < 1 || newPage > Math.max(1, pagination.totalPages)) return;
+    const newPagination = { ...pagination, page: newPage };
+    setPagination(newPagination);
+    fetchBlogPosts({
+      setLoading,
+      searchTerm,
+      statusFilter,
+      setBlogPosts,
+      pagination: newPagination,
+      setPagination,
+    });
+    window.scrollTo(0, 0);
   };
+
+  const columns = getBlogColumns(handleEdit, handleView, handleDelete);
 
   return (
     <>
       <PageTitle title={generatePageTitle("BlogPosts")} />
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <PageHeader
           title="Blog Posts"
           breadcrumbs={[
@@ -214,13 +260,11 @@ const BlogPostsPage: React.FC = () => {
           <Card>
             <CardBody>
               <CardHeader>
-                <CardTitle className="text-sm font-medium">
-                  Total Views
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Archive</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {blogPosts.reduce((sum, post) => sum + post.viewCount, 0)}
+                  {blogPosts.filter((post) => post.status === "archive").length}
                 </div>
               </CardContent>
             </CardBody>
@@ -275,63 +319,144 @@ const BlogPostsPage: React.FC = () => {
           </CardBody>
         </Card>
 
-        {/* Blog Posts Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, index) => (
-              <Card key={index} className="animate-pulse">
-                <CardBody>
-                  <CardHeader>
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-32 bg-gray-200 rounded mb-3"></div>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-                    </div>
-                  </CardContent>
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        ) : blogPosts.length === 0 ? (
-          <Card>
-            <CardBody>
-              <CardContent>
-                <div className="text-center">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No blog posts found
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    Get started by creating your first blog post.
-                  </p>
-                  <Button
-                    onClick={() =>
-                      navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)
-                    }
+        {/* Blog Posts Section */}
+        <div>
+          {/* 1. Loading Skeleton */}
+          {loading && (
+            <>
+              {/* Toggle Button Skeleton */}
+              <div className="flex justify-end mb-6 gap-2">
+                <div className="h-9 w-10 bg-gray-200 rounded-md animate-pulse" />
+                <div className="h-9 w-10 bg-gray-200 rounded-md animate-pulse" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, index) => (
+                  <Card key={index} className="animate-pulse">
+                    <CardImage
+                      src="https://via.placeholder.com/400x160?text=Loading..."
+                      alt="loading"
+                      className="w-full h-40 object-cover rounded-t"
+                    />
+                    <CardBody>
+                      <CardHeader>
+                        <div className="h-5 w-3/4 bg-gray-200 rounded mb-2" />
+                        <div className="flex items-center gap-1.5 flex-wrap mb-2">
+                          <div className="h-4 w-12 bg-gray-200 rounded" />
+                          <div className="h-4 w-12 bg-gray-200 rounded" />
+                          <div className="h-4 w-6 bg-gray-200 rounded" />
+                        </div>
+                        <CardAction>
+                          <div className="h-8 w-8 bg-gray-200 rounded ml-auto" />
+                        </CardAction>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2 mb-4">
+                          <div className="h-3 w-full bg-gray-200 rounded" />
+                          <div className="h-3 w-5/6 bg-gray-200 rounded" />
+                          <div className="h-3 w-3/4 bg-gray-200 rounded" />
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex flex-col gap-1">
+                            <div className="h-3 w-16 bg-gray-200 rounded" />
+                            <div className="h-3 w-24 bg-gray-200 rounded" />
+                            <div className="h-3 w-20 bg-gray-200 rounded" />
+                          </div>
+                          <div className="h-3 w-10 bg-gray-200 rounded" />
+                        </div>
+                      </CardContent>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* 2. Posts exist */}
+          {!loading && blogPosts.length > 0 && (
+            <>
+              {/* Toggle Button */}
+              <div className="flex justify-end mb-6">
+                <TooltipProvider>
+                  <ToggleGroup
+                    type="single"
+                    value={isGrid ? "grid" : "list"}
+                    onValueChange={(value) => {
+                      if (value && (value === "grid") !== isGrid) {
+                        setIsGrid(value === "grid");
+                      }
+                    }}
+                    variant="outline"
+                    className="rounded"
                   >
-                    <Plus />
-                    Create Post
-                  </Button>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ToggleGroupItem value="grid" aria-label="Grid View">
+                          <Grid />
+                        </ToggleGroupItem>
+                      </TooltipTrigger>
+                      <TooltipContent>Grid View</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <ToggleGroupItem value="list" aria-label="List View">
+                          <List />
+                        </ToggleGroupItem>
+                      </TooltipTrigger>
+                      <TooltipContent>List View</TooltipContent>
+                    </Tooltip>
+                  </ToggleGroup>
+                </TooltipProvider>
+              </div>
+
+              {/* Grid View */}
+              {isGrid ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {blogPosts.map((post) => (
+                    <BlogPostCard
+                      key={post.id}
+                      blogPost={post}
+                      onEdit={handleEdit}
+                      onView={handleView}
+                      onDelete={handleDelete}
+                    />
+                  ))}
                 </div>
-              </CardContent>
-            </CardBody>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogPosts.map((post) => (
-              <BlogPostCard
-                key={post.id}
-                blogPost={post}
-                onEdit={handleEdit}
-                onView={handleView}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
+              ) : (
+                <DataTable
+                  columns={columns || []}
+                  data={Array.isArray(currentItems) ? currentItems : []}
+                />
+              )}
+            </>
+          )}
+
+          {/* 3. No posts */}
+          {!loading && blogPosts.length === 0 && (
+            <Card>
+              <CardBody>
+                <CardContent>
+                  <div className="text-center">
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      No blog posts found
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Get started by creating your first blog post.
+                    </p>
+                    <Button
+                      onClick={() =>
+                        navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)
+                      }
+                    >
+                      <Plus />
+                      Create Post
+                    </Button>
+                  </div>
+                </CardContent>
+              </CardBody>
+            </Card>
+          )}
+        </div>
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (

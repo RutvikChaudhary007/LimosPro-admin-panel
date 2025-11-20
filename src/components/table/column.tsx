@@ -3003,3 +3003,123 @@ export function getContent(
     },
   ];
 }
+
+export type TBlog = {
+  id: string;
+  title: string;
+  status: string;
+  blogAuthor?: {
+    id: string;
+    name: string;
+    isActive: boolean;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+  featuredImage?: string | null;
+};
+
+export function getBlogColumns(
+  onView: (id: string) => void,
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TBlog>[] {
+  return [
+    {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => <span>{row.original.title}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "blogAuthor",
+      header: "Author",
+      cell: ({ row }) => (
+        <span>{row.original.blogAuthor?.name || "Unknown"}</span>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => (
+        <Label
+          className={cn(
+            "flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
+            row.original.status.toLowerCase() === "published" &&
+              "text-white bg-green-500",
+            row.original.status.toLowerCase() === "draft" &&
+              "text-black bg-yellow-200",
+          )}
+        >
+          {row.original.status}
+        </Label>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "action",
+      header: "Action",
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onView(row?.original?.id ?? "")}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View"
+          >
+            <Eye />
+          </Button>
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Edit Blog"
+          >
+            <Edit />
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete"
+              >
+                <Trash2 />
+              </Button>
+            </DialogTrigger>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
+              <DialogHeader>
+                <DialogTitle>Delete Blog</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this blog? This action cannot
+                  be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
+                </p>
+              </div>
+              <DialogFooter className="mt-6">
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
+                  Confirm Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ];
+}

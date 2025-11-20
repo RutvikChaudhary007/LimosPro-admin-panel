@@ -8,7 +8,7 @@ import {
   type Table as TanstackTable,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -37,9 +37,11 @@ export function DataTable<TData, TValue>({
   onGlobalFilterChange,
   onTableReady,
 }: DataTableProps<TData, TValue>) {
+  const safeData = Array.isArray(data) ? data : [];
+  const safeColumns = Array.isArray(columns) ? columns : [];
   const table = useReactTable({
-    data,
-    columns,
+    data: safeData,
+    columns: safeColumns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: onGlobalFilterChange
       ? getFilteredRowModel()

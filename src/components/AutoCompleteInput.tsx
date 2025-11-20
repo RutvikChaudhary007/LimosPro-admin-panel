@@ -150,7 +150,7 @@ export function AutoCompleteInput({
                     itemRefs.current[index] = el;
                   }}
                   className={cn(
-                    "rounded",
+                    "rounded capitalize",
                     activeIndex === index ? "bg-gray-200 text-black" : "",
                   )}
                   onFocus={() => setActiveIndex(index)}

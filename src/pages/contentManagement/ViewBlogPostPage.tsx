@@ -48,7 +48,7 @@ const ViewBlogPostPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="h-64 bg-gray-200 rounded mb-4"></div>
@@ -63,7 +63,7 @@ const ViewBlogPostPage: React.FC = () => {
 
   if (!blogPost) {
     return (
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <div className="text-center py-12">
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             Blog post not found
@@ -81,7 +81,7 @@ const ViewBlogPostPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">

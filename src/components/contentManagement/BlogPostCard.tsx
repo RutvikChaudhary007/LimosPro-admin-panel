@@ -1,5 +1,6 @@
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import type React from "react";
+import { cn } from "@/lib/utils";
 import type { BlogPost } from "@/types/content";
 import { TitleWithTooltip } from "../TitleWithTooltip";
 import { Badge } from "../ui/badge";
@@ -55,23 +56,31 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
 
   return (
     <Card>
-      {blogPost.featuredImage && (
-        <CardImage
-          src={blogPost.featuredImage}
-          alt={blogPost.title}
-          className="w-full h-40"
-        />
-      )}
+      <CardImage
+        src={
+          blogPost.featuredImage ||
+          "https://placehold.co/160?font=montserrat&text=No+Image"
+        }
+        alt={blogPost.title}
+        className="w-full h-40"
+      />
+
       <CardBody>
         <CardHeader>
           <TitleWithTooltip title={blogPost.title} />
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={getStatusColor(blogPost.status)}>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Badge
+              className={cn("capitalize", getStatusColor(blogPost.status))}
+            >
               {blogPost.status}
             </Badge>
 
             {blogPost.tags?.slice(0, 2).map((tag, index) => (
-              <Badge key={`${index}-${tag}`} variant="outline">
+              <Badge
+                key={`${index}-${tag}`}
+                variant="outline"
+                className="capitalize"
+              >
                 {tag}
               </Badge>
             ))}
