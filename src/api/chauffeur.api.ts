@@ -12,7 +12,11 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
  * @returns response data
  */
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
-export const getAllChauffeur = async (DateRange?: DateRange, page?: number) => {
+export const getAllChauffeur = async (
+  DateRange?: DateRange,
+  page?: number,
+  status?: string,
+) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -27,6 +31,10 @@ export const getAllChauffeur = async (DateRange?: DateRange, page?: number) => {
 
   if (page) {
     params.page = page;
+  }
+
+  if (status) {
+    params.status = status;
   }
 
   try {
@@ -49,13 +57,15 @@ export const getAllChauffeur = async (DateRange?: DateRange, page?: number) => {
 const useFetchAllChauffeur = ({
   DateRange,
   page,
+  status,
 }: {
   DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
   page?: number;
+  status?: string;
 }) =>
   useQuery({
-    queryKey: ["chauffeurs", DateRange, page],
-    queryFn: () => getAllChauffeur(DateRange, page),
+    queryKey: ["chauffeurs", DateRange, page, status],
+    queryFn: () => getAllChauffeur(DateRange, page, status),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

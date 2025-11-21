@@ -39,19 +39,17 @@ const showStatus = [
 ];
 
 const showTime = [
-  { label: "All Time", value: "all-time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
 ];
 
 function UsersPage() {
-  const [{ value: statusDefaultValue }] = showStatus;
-  const [{ value: timeDefaultValue }] = showTime;
   const navigate = useNavigate();
   const perPage = 10;
-  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
-  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
+  const [newPage, setNewPage] = useState<number>(1);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
@@ -96,12 +94,9 @@ function UsersPage() {
         start = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
         break;
       }
-      case "all-time": {
-        start = undefined;
-        return { startDate: undefined, endDate: undefined };
-      }
       default:
         start = undefined;
+        return { startDate: undefined, endDate: undefined };
     }
     return { startDate: start, endDate: end };
   }, [selectedTime]);
@@ -110,18 +105,20 @@ function UsersPage() {
 
   const { data, refetch, isFetching, isError } = UsefetchAllUsers({
     DateRange: { startDate, endDate },
+    page: newPage,
+    status: selectedStatus,
   });
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TUsers>(data?.users, 1, perPage);
 
   const handleView = (id: string) => {
-    console.log("view:", id);
+    // console.log("view:", id);
     navigate(constant.ROUTING_URLS.VIEW_USERS.replace(":id", id));
   };
 
   const handleEdit = (id: string) => {
-    console.log("Edit:", id);
+    // console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_USERS.replace(":id", id));
   };
   const deleteUserMutation = queries.useDeleteUserMutation();
@@ -152,6 +149,7 @@ function UsersPage() {
 
   // Handle page change
   const handlePageChange = (newPage: number) => {
+    setNewPage(newPage);
     setPage(newPage);
     window.scrollTo(0, 0);
   };
@@ -239,13 +237,13 @@ function UsersPage() {
         <div className="flex items-end justify-between gap-4">
           <div className="flex items-center gap-4">
             <SelectDropDown
-              placeholder={selectedStatus}
+              placeholder={"Select Status"}
               items={showStatus}
               value={selectedStatus}
               setSelectedItem={setSelectedStatus}
             />
             <SelectDropDown
-              placeholder={selectedTime}
+              placeholder={"Select Time"}
               items={showTime}
               value={selectedTime}
               setSelectedItem={setSelectedTime}
@@ -300,7 +298,7 @@ function UsersPage() {
         )}
 
         {/* Pagination */}
-        {data?.users?.length > 0 && calculatedTotalPages > 1 && (
+        {totalPages > 0 && calculatedTotalPages > 1 && (
           <Pagination className="justify-end mt-5 cursor-pointer">
             <PaginationContent>
               <PaginationItem>

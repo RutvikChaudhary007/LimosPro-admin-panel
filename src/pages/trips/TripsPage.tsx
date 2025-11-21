@@ -38,23 +38,24 @@ const showStatus = [
 ];
 
 function TripsPage(): JSX.Element {
-  const [{ value: statusDefaultValue }] = showStatus;
   const navigate = useNavigate();
   const perPage = 10;
   const [tableRef, setTableRef] = useState<Table<TTrips> | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
+  const [selectedStatus, setSelectedStatus] = useState("");
   // const [data, setData] = useState<TTrips[]>(tableData);
-  const { data, refetch, isFetching, isError } = useFetchAllTrips();
+  const { data, refetch, isFetching, isError } = useFetchAllTrips({
+    status: selectedStatus,
+  });
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TTrips>(data?.trips ?? data, 1, perPage);
   // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
 
   const handleView = (id: string) => {
-    console.log("view:", id);
+    // console.log("view:", id);
     navigate(constant.ROUTING_URLS.VIEW_TRIPS.replace(":id", id));
   };
   const handleMap = (id: string) => {
-    console.log("Edit:", id);
+    // console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.TRIPS_MAP.replace(":id", id));
   };
 
@@ -156,7 +157,7 @@ function TripsPage(): JSX.Element {
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
             <SelectDropDown
-              placeholder={selectedStatus}
+              placeholder={"Selected Status"}
               items={showStatus}
               value={selectedStatus}
               setSelectedItem={setSelectedStatus}

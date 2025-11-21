@@ -1,11 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { AxiosError, isAxiosError } from "axios";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 
-export const getAllUsers = async (DateRange: DateRange, limit?: number) => {
+export const getAllUsers = async (
+  DateRange: DateRange,
+  page?: number,
+  status?: string,
+) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -17,9 +21,14 @@ export const getAllUsers = async (DateRange: DateRange, limit?: number) => {
         : undefined,
     };
   }
-  if (limit !== undefined) {
-    params.limit = limit;
+  if (page) {
+    params.page = page;
   }
+
+  if (status) {
+    params.status = status;
+  }
+
   try {
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_USERS}`, {
       params,
@@ -28,24 +37,25 @@ export const getAllUsers = async (DateRange: DateRange, limit?: number) => {
 
     return response.data.data;
   } catch (error) {
-    if (error instanceof AxiosError && error?.status === 400) {
-      // Treat 400 as "no data" instead of an actual error
-      return [];
+    if (isAxiosError(error)) {
+      throw error;
     }
-    throw error;
+    throw new Error("An unexpected error occurred");
   }
 };
 
 const UsefetchAllUsers = ({
   DateRange,
-  limit,
+  page,
+  status,
 }: {
   DateRange: DateRange;
-  limit?: number;
+  page?: number;
+  status?: string;
 }) =>
   useQuery({
-    queryKey: ["users", limit],
-    queryFn: () => getAllUsers(DateRange, limit),
+    queryKey: ["users", page, status],
+    queryFn: () => getAllUsers(DateRange, page, status),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

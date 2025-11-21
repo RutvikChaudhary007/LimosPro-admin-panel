@@ -33,19 +33,17 @@ import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
 const showTime = [
-  { label: "All Time", value: "All Time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
 ];
 
 function FleetPage() {
-  const [{ value: timeDefaultValue }] = showTime;
   const navigate = useNavigate();
   const perPage = 10;
 
   const [tableRef, setTableRef] = useState<any>(null);
-  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
+  const [selectedTime, setSelectedTime] = useState("");
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
@@ -111,11 +109,11 @@ function FleetPage() {
   // }, [queryClient, currentPage, startDate, endDate]);
 
   const handleView = (id: string) => {
-    console.log("view:", id);
+    // console.log("view:", id);
     navigate(constant.ROUTING_URLS.VIEW_FLEET.replace(":id", id));
   };
   const handleEdit = (id: string) => {
-    console.log("Edit:", id);
+    // console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_FLEET.replace(":id", id));
   };
   const deleteMutation = queries.useDeletefleetMutation(refetch);
@@ -233,7 +231,7 @@ function FleetPage() {
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
             <SelectDropDown
-              placeholder={selectedTime}
+              placeholder={"Selected Time"}
               items={showTime}
               value={selectedTime}
               setSelectedItem={setSelectedTime}

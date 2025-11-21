@@ -38,26 +38,24 @@ import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
-  { label: "Active", value: "active" },
+  { label: "Approved", value: "approved" },
   { label: "Pending", value: "pending" },
-  { label: "Inactive", value: "inactive" },
-  { label: "Suspended", value: "suspended" },
+  { label: "Rejected", value: "rejected" },
 ];
 
 const showTime = [
-  { label: "All Time", value: "All Time" },
+  // { label: "All Time", value: "All Time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
 ];
 
 function AffiliatePage() {
-  const [{ value: statusDefaultValue }] = showStatus;
-  const [{ value: timeDefaultValue }] = showTime;
   const navigate = useNavigate();
   const perPage = 10;
-  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
-  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  console.log("🚀 ~ AffiliatePage ~ selectedTime:", selectedTime);
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
@@ -118,6 +116,7 @@ function AffiliatePage() {
   } = UsefetchAllAffiliate({
     DateRange: { startDate, endDate },
     page: newPage,
+    status: selectedStatus,
   });
   const [tableRef, setTableRef] = useState<Table<IAffiliate> | null>(null);
   const queryClient = useQueryClient();
@@ -125,10 +124,11 @@ function AffiliatePage() {
     if (FetchData?.pagination?.hasNextPage === true) {
       queryClient.prefetchQuery({
         queryKey: ["affiliate", { startDate, endDate }, newPage + 1],
-        queryFn: () => getAllAffiliate({ startDate, endDate }, newPage + 1),
+        queryFn: () =>
+          getAllAffiliate({ startDate, endDate }, newPage + 1, selectedStatus),
       });
     }
-  }, [queryClient, newPage, FetchData, startDate, endDate]);
+  }, [queryClient, newPage, FetchData, startDate, endDate, selectedStatus]);
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<IAffiliate>(
@@ -280,13 +280,13 @@ function AffiliatePage() {
         <div className="flex justify-between">
           <div className="flex items-center gap-4">
             <SelectDropDown
-              placeholder={selectedStatus}
+              placeholder={"Select Status"}
               items={showStatus}
               value={selectedStatus}
               setSelectedItem={setSelectedStatus}
             />
             <SelectDropDown
-              placeholder={selectedTime}
+              placeholder={"Select Time"}
               items={showTime}
               value={selectedTime}
               setSelectedItem={setSelectedTime}

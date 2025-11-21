@@ -3,6 +3,7 @@
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import UsefetchAllBookings from "@/api/getAllBookings.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -32,8 +33,10 @@ import { exportToCsv } from "@/utils/export";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
-  { label: "Mark As", value: "Mark As" },
+  { label: "Accepted", value: "accepted" },
   { label: "Completed", value: "completed" },
+  { label: "Pending", value: "pending" },
+  { label: "Cancelled", value: "cancelled" },
 ];
 
 type RowData = {
@@ -44,11 +47,10 @@ type RowData = {
   updatedAt: string | Date;
 };
 function BookingPage() {
-  const [{ value: statusDefaultValue }] = showStatus;
   const perPage = 10;
   const navigate = useNavigate();
   const [newPage, setNewPage] = useState<number>(1);
-  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const [dateRange, setDateRange] = useState<{
     from: Date | undefined;
@@ -58,19 +60,14 @@ function BookingPage() {
     to: undefined,
   });
   // const [data, setData] = useState<TBooking[]>(tableData);
-  const { data, isFetching, isError, refetch } = UsefetchAllBookings({
+  const { data, isFetching, error, isError } = UsefetchAllBookings({
     DateRange: dateRange,
     page: newPage,
+    status: selectedStatus,
   });
 
-  useEffect(() => {
-    if (data) {
-      console.log("fetchData:", data);
-    }
-  }, [data]);
-
   const handleView = (id: string) => {
-    console.log("view:", id);
+    // console.log("view:", id);
     navigate(constant.ROUTING_URLS.VIEW_BOOKING.replace(":id", id));
   };
   const columns = getBooking(handleView);
@@ -242,7 +239,12 @@ function BookingPage() {
 
     return items;
   };
-  if (isError) return <ErrorCard refetch={refetch} />;
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.response?.data?.message);
+    }
+  }, [isError, error]);
+
   return (
     <>
       <PageTitle title={generatePageTitle("Booking")} />
@@ -266,7 +268,7 @@ function BookingPage() {
           </div>
           <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <SelectDropDown
-              placeholder={selectedStatus}
+              placeholder={"Select Status"}
               items={showStatus}
               value={selectedStatus}
               setSelectedItem={setSelectedStatus}

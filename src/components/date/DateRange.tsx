@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { Calendar } from "lucide-react";
 import type React from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import {
@@ -37,10 +38,40 @@ interface CalendarProps {
 }
 
 export function Calendar28({ dateRange, setDateRange }: CalendarProps) {
+  const [fromOpen, setFromOpen] = useState(false);
+
+  const [toOpen, setToOpen] = useState(false);
+
+  const handleFromSelect = (date: Date | undefined) => {
+    if (date) {
+      setDateRange({
+        ...dateRange,
+
+        from: new Date(format(date, "yyyy-MM-dd")),
+      });
+
+      setFromOpen(false); // Close "from" popover
+
+      setToOpen(true); // Open "to" popover
+    }
+  };
+
+  const handleToSelect = (date: Date | undefined) => {
+    if (date) {
+      setDateRange({
+        ...dateRange,
+
+        to: new Date(format(date, "yyyy-MM-dd")),
+      });
+
+      setToOpen(false); // Close "to" popover
+    }
+  };
+
   return (
     <div className="space-y-2 col-span-1 md:col-span-2">
       <div className="flex items-center gap-2">
-        <Popover>
+        <Popover open={fromOpen} onOpenChange={setFromOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -58,19 +89,14 @@ export function Calendar28({ dateRange, setDateRange }: CalendarProps) {
             <CalendarComponent
               mode="single"
               selected={dateRange.from}
-              onSelect={(date) =>
-                setDateRange({
-                  ...dateRange,
-                  from: new Date(format(date, "yyyy-MM-dd")),
-                })
-              }
+              onSelect={handleFromSelect}
               initialFocus
               className="p-3 pointer-events-auto"
             />
           </PopoverContent>
         </Popover>
         <span></span>
-        <Popover>
+        <Popover open={toOpen} onOpenChange={setToOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -88,14 +114,14 @@ export function Calendar28({ dateRange, setDateRange }: CalendarProps) {
             <CalendarComponent
               mode="single"
               selected={dateRange.to}
-              onSelect={(date) =>
-                setDateRange({
-                  ...dateRange,
-                  to: new Date(format(date, "yyyy-MM-dd")),
-                })
-              }
+              onSelect={handleToSelect}
               initialFocus
               className="p-3 pointer-events-auto"
+              disabled={(date) => {
+                // Optionally disable dates before the "from" date
+
+                return dateRange.from ? date < dateRange.from : false;
+              }}
             />
           </PopoverContent>
         </Popover>

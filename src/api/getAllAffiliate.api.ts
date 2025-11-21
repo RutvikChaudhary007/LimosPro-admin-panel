@@ -5,7 +5,11 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 
-export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
+export const getAllAffiliate = async (
+  DateRange?: DateRange,
+  page?: number,
+  status?: string,
+) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -22,6 +26,9 @@ export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
     params.page = page;
   }
 
+  if (status) {
+    params.status = status;
+  }
   try {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.GET_ALL_AFFILIATE}`,
@@ -41,13 +48,15 @@ export const getAllAffiliate = async (DateRange?: DateRange, page?: number) => {
 const useFetchAllAffiliate = ({
   DateRange,
   page,
+  status,
 }: {
   DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
   page?: number;
+  status?: string;
 }) =>
   useQuery({
-    queryKey: ["affiliates", DateRange, page],
-    queryFn: () => getAllAffiliate(DateRange, page),
+    queryKey: ["affiliates", DateRange, page, status],
+    queryFn: () => getAllAffiliate(DateRange, page, status),
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 1000 * 60 * 5,

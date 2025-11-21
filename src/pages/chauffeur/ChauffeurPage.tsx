@@ -35,14 +35,13 @@ import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
-  { label: "Active", value: "active" },
-  { label: "Pending", value: "pending" },
-  { label: "Inactive", value: "inactive" },
-  { label: "Suspended", value: "suspended" },
+  { label: "Active", value: "Active" },
+  { label: "Pending", value: "Pending" },
+  { label: "Inactive", value: "Inactive" },
+  { label: "Suspended", value: "Suspended" },
 ];
 
 const showTime = [
-  { label: "All Time", value: "All Time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
   { label: "Yearly", value: "yearly" },
@@ -51,11 +50,10 @@ const showTime = [
 function ChauffeurPage() {
   const navigate = useNavigate();
   const perPage = 10;
-  const [{ value: statusDefaultValue }] = showStatus;
-  const [{ value: timeDefaultValue }] = showTime;
   const [newPage, setNewPage] = useState<number>(1);
-  const [selectedStatus, setSelectedStatus] = useState(statusDefaultValue);
-  const [selectedTime, setSelectedTime] = useState(timeDefaultValue);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
@@ -109,6 +107,7 @@ function ChauffeurPage() {
   const { data, refetch, isFetching, isError } = useFetchAllChauffeur({
     DateRange: { startDate, endDate },
     page: newPage,
+    status: selectedStatus,
   });
   const [tableRef, setTableRef] = useState<Table<TChauffeur> | null>(null);
   // console.log("fetchedData:",data)
@@ -153,7 +152,6 @@ function ChauffeurPage() {
   };
   const columns = getChauffeur(handleView, handleEdit, handleDelete);
 
-  const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {},
   );
@@ -271,13 +269,13 @@ function ChauffeurPage() {
         <div className="flex justify-between gap-4">
           <div className="flex items-center gap-4">
             <SelectDropDown
-              placeholder={selectedStatus}
+              placeholder={"Select Status"}
               items={showStatus}
               value={selectedStatus}
               setSelectedItem={setSelectedStatus}
             />
             <SelectDropDown
-              placeholder={selectedTime}
+              placeholder={"Select Time"}
               items={showTime}
               value={selectedTime}
               setSelectedItem={setSelectedTime}
