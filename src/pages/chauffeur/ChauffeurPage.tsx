@@ -1,3 +1,4 @@
+import { IconFilterX } from "@tabler/icons-react";
 import type { Table } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -259,11 +260,23 @@ function ChauffeurPage() {
         <PageHeader
           title="Chauffeur"
           breadcrumbs={[{ label: "Home", path: "/" }, { label: "Chauffeur" }]}
-          action={{
-            label: "Add Chauffeur",
-            icon: <Plus />,
-            link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
-          }}
+          action={[
+            {
+              label: "Clear Filter",
+              variant: "outlineSecondary",
+              icon: <IconFilterX />,
+              onClick: () => {
+                setSelectedStatus("");
+                setSelectedTime("");
+                setSearchValue("");
+              },
+            },
+            {
+              label: "Add Chauffeur",
+              icon: <Plus />,
+              link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
+            },
+          ]}
         />
 
         <div className="flex justify-between gap-4">

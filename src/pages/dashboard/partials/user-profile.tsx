@@ -5,7 +5,7 @@ import { useUserStore } from "@/stores/useAuthStore";
 
 function UserProfile() {
   const { user } = useUserStore();
-  const [selectedStatus, setSelectedStatus] = useState<string | undefined>("");
+  const [selectedTime, setSelectedTime] = useState<string | undefined>("");
 
   return (
     <div className="font-quicksand text-base-black flex items-center gap-4 px-4 text-left text-base leading-[100%] font-bold tracking-[0%] lg:px-8">
@@ -32,7 +32,7 @@ function UserProfile() {
       </div>
 
       <SelectDropDown
-        placeholder="All Time"
+        placeholder="Select Time"
         items={[
           { label: "All Time", value: "all" },
           { label: "Weekly", value: "weekly" },
@@ -41,8 +41,8 @@ function UserProfile() {
           { label: "6 Months", value: "6_months" },
           { label: "Yearly", value: "yearly" },
         ]}
-        value={selectedStatus}
-        setSelectedItem={(value) => setSelectedStatus(value)}
+        value={selectedTime}
+        setSelectedItem={(value) => setSelectedTime(value)}
       />
     </div>
   );

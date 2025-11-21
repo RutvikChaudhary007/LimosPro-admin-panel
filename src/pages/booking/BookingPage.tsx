@@ -1,11 +1,11 @@
 // @ts-nocheck
 
+import { IconFilterX } from "@tabler/icons-react";
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import UsefetchAllBookings from "@/api/getAllBookings.api";
-import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -273,6 +273,17 @@ function BookingPage() {
               value={selectedStatus}
               setSelectedItem={setSelectedStatus}
             />
+
+            <Button
+              onClick={() => {
+                setSelectedStatus("");
+                setDateRange({ from: undefined, to: undefined });
+              }}
+              type="button"
+              variant={"outlineSecondary"}
+            >
+              <IconFilterX /> <span>Clear Filter</span>
+            </Button>
 
             <Button onClick={handleExportCsv} type="button" variant={"black"}>
               <span>Export</span>

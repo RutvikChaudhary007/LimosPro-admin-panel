@@ -1,3 +1,4 @@
+import { IconFilterX } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { Table } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
@@ -14,6 +15,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getAffiliate } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
+import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -292,7 +294,18 @@ function AffiliatePage() {
               setSelectedItem={setSelectedTime}
             />
           </div>
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
+          <div className="w-full max-w-fit flex flex-wrap items-center justify-between gap-4">
+            <Button
+              onClick={() => {
+                setSelectedStatus("");
+                setSelectedTime("");
+                setSearchValue("");
+              }}
+              type="button"
+              variant={"outlineSecondary"}
+            >
+              <IconFilterX /> <span>Clear Filter</span>
+            </Button>
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
