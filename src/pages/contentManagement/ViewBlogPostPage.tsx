@@ -3,30 +3,24 @@
 import { ArrowLeft, Calendar, Edit, Eye, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { blogService } from "@/api/contentServices.api";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardBody,
+  CardContent,
+  CardHeader,
+  CardImage,
+  CardTitle,
+} from "@/components/ui/card";
+import { FieldLabel } from "@/components/ui/field";
 import { constant } from "@/lib/constant";
 import type { BlogPost } from "@/types/content";
 
-const fetchBlogPost = async (postId: string) => {
-  try {
-    setLoading(true);
-    const response = await blogService.getById(postId);
-    setBlogPost(response.data);
-  } catch (error) {
-    console.error("Error fetching blog post:", error);
-    toast.error("Error Loading Blog Post", {
-      description: "Failed to fetch blog post details.",
-      duration: 4000,
-    });
-  } finally {
-    setLoading(false);
-  }
-};
 const ViewBlogPostPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -34,16 +28,31 @@ const ViewBlogPostPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchBlogPost = async (postId: string) => {
+      try {
+        setLoading(true);
+        const response = await blogService.getById(postId);
+        console.log("🚀 ~ fetchBlogPost ~ response:", response);
+
+        setBlogPost(response.data);
+      } catch (error) {
+        console.error("Error fetching blog post:", error);
+        toast.error("Error Loading Blog Post", {
+          description: "Failed to fetch blog post details.",
+          duration: 4000,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (id) {
       fetchBlogPost(id);
     }
   }, [id]);
+
   const handleEdit = () => {
     navigate(constant.ROUTING_URLS.EDIT_BLOG_POST.replace(":id", id!));
-  };
-
-  const handleBack = () => {
-    navigate(constant.ROUTING_URLS.BLOG_POSTS);
   };
 
   if (loading) {
@@ -71,10 +80,12 @@ const ViewBlogPostPage: React.FC = () => {
           <p className="text-gray-600 mb-4">
             The blog post you're looking for doesn't exist.
           </p>
-          <Button onClick={handleBack}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Blog Posts
-          </Button>
+          <Link to={constant.ROUTING_URLS.BLOG_POSTS}>
+            <Button>
+              <ArrowLeft />
+              Back to Blog Posts
+            </Button>
+          </Link>
         </div>
       </div>
     );
@@ -82,23 +93,32 @@ const ViewBlogPostPage: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={handleBack}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">{blogPost.title}</h1>
-            <p className="text-gray-600">View blog post details</p>
-          </div>
-        </div>
-        <Button onClick={handleEdit}>
-          <Edit className="mr-2 h-4 w-4" />
-          Edit Post
-        </Button>
-      </div>
+      <PageHeader
+        title="View Blog Post Details"
+        breadcrumbs={[
+          { label: "Home", path: "/" },
+          { label: "Content Management" },
+          {
+            label: "Blog Posts",
+            path: constant.ROUTING_URLS.BLOG_POSTS,
+          },
+          { label: "View Blog Post" },
+        ]}
+        action={[
+          {
+            variant: "outlinePrimary",
+            label: "Edit Post",
+            icon: <Edit />,
+            onClick: handleEdit,
+          },
+          {
+            variant: "outlineBlack",
+            label: "Back",
+            icon: <ArrowLeft />,
+            link: constant.ROUTING_URLS.BLOG_POSTS,
+          },
+        ]}
+      />
 
       {/* Blog Post Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -107,47 +127,49 @@ const ViewBlogPostPage: React.FC = () => {
           {/* Featured Image */}
           {blogPost.featuredImage && (
             <Card>
-              <CardContent className="pt-6">
-                <img
-                  src={blogPost.featuredImage}
-                  alt={blogPost.title}
-                  className="w-full h-64 object-cover rounded-lg"
-                />
-              </CardContent>
+              <CardImage
+                src={blogPost.featuredImage}
+                alt={blogPost.title}
+                className="w-full h-64 object-cover rounded"
+              ></CardImage>
             </Card>
           )}
 
           {/* Content */}
           <Card>
-            <CardHeader>
-              <CardTitle>Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: blogPost.content }}
-              />
-            </CardContent>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>Content</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="prose max-w-none"
+                  dangerouslySetInnerHTML={{ __html: blogPost.content }}
+                />
+              </CardContent>
+            </CardBody>
           </Card>
 
           {/* Additional Images */}
           {blogPost.images && blogPost.images.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle>Additional Images</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {blogPost.images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={image}
-                      alt={`Blog-image-${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
-                  ))}
-                </div>
-              </CardContent>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Additional Images</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {blogPost.images.map((image, index) => (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`Blog-image-${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                    ))}
+                  </div>
+                </CardContent>
+              </CardBody>
             </Card>
           )}
         </div>
@@ -156,119 +178,108 @@ const ViewBlogPostPage: React.FC = () => {
         <div className="space-y-6">
           {/* Post Info */}
           <Card>
-            <CardHeader>
-              <CardTitle>Post Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Badge
-                  variant={
-                    blogPost.status === "published" ? "default" : "secondary"
-                  }
-                >
-                  {blogPost.status}
-                </Badge>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <User className="h-4 w-4" />
-                  <span>{blogPost.author || "Unknown Author"}</span>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>Post Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Badge
+                    variant={
+                      blogPost.status === "published" ? "default" : "secondary"
+                    }
+                  >
+                    {blogPost.status}
+                  </Badge>
                 </div>
 
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    {blogPost.publishedAt
-                      ? new Date(blogPost.publishedAt).toLocaleDateString()
-                      : "Not published"}
-                  </span>
-                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <User className="h-4 w-4" />
+                    <span>{blogPost.author || "Unknown Author"}</span>
+                  </div>
 
-                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                  <Eye className="h-4 w-4" />
-                  <span>{blogPost.viewCount || 0} views</span>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Calendar className="h-4 w-4" />
+                    <span>
+                      {blogPost.publishedAt
+                        ? new Date(blogPost.publishedAt).toLocaleDateString()
+                        : "Not published"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Eye className="h-4 w-4" />
+                    <span>{blogPost.viewCount || 0} views</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
+              </CardContent>
+            </CardBody>
           </Card>
 
           {/* Tags */}
           {blogPost.tags && blogPost.tags.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle>Tags</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {blogPost.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Tags</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {blogPost.tags.map((tag, index) => (
+                      <Badge key={index} variant="outline">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </CardBody>
             </Card>
           )}
 
           {/* SEO Info */}
           {blogPost.seo && (
             <Card>
-              <CardHeader>
-                <CardTitle>SEO Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {blogPost.seo.metaTitle && (
-                  <div>
-                    <label
-                      htmlFor="metaTitle"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Meta Title
-                    </label>
-                    <p className="text-sm text-gray-600">
-                      {blogPost.seo.metaTitle}
-                    </p>
-                  </div>
-                )}
-
-                {blogPost.seo.metaDescription && (
-                  <div>
-                    <label
-                      htmlFor="metaDesc"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Meta Description
-                    </label>
-                    <p className="text-sm text-gray-600">
-                      {blogPost.seo.metaDescription}
-                    </p>
-                  </div>
-                )}
-
-                {blogPost.seo.metaKeywords &&
-                  blogPost.seo.metaKeywords.length > 0 && (
-                    <div>
-                      <label
-                        htmlFor="meta"
-                        className="text-sm font-medium text-gray-700"
-                      >
-                        Meta Keywords
-                      </label>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {blogPost.seo.metaKeywords.map((keyword, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>SEO Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {blogPost.seo.metaTitle && (
+                    <div className="space-y-1">
+                      <FieldLabel htmlFor="metaTitle">Meta Title</FieldLabel>
+                      <p className="text-sm text-gray-600">
+                        {blogPost.seo.metaTitle}
+                      </p>
                     </div>
                   )}
-              </CardContent>
+
+                  {blogPost.seo.metaDescription && (
+                    <div className="space-y-1">
+                      <FieldLabel htmlFor="metaDesc">
+                        Meta Description
+                      </FieldLabel>
+                      <p className="text-sm text-gray-600">
+                        {blogPost.seo.metaDescription}
+                      </p>
+                    </div>
+                  )}
+
+                  {blogPost.seo.metaKeywords &&
+                    blogPost.seo.metaKeywords.length > 0 && (
+                      <div className="space-y-1">
+                        <FieldLabel htmlFor="meta">Meta Keywords</FieldLabel>
+                        <div className="flex flex-wrap gap-1">
+                          {blogPost.seo.metaKeywords.map((keyword, index) => (
+                            <Badge key={index} variant="outline">
+                              {keyword}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                </CardContent>
+              </CardBody>
             </Card>
           )}
         </div>

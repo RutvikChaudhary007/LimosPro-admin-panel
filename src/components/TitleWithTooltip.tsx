@@ -13,7 +13,7 @@ export function TitleWithTooltip({ title }: { title: string }) {
   const titleNode = (
     <CardTitle
       ref={ref as React.RefObject<HTMLDivElement>}
-      className="truncate cursor-default"
+      className="line-clamp-2 cursor-default"
     >
       {title}
     </CardTitle>

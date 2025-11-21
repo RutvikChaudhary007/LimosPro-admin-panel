@@ -155,7 +155,7 @@ const CreateBlogPostPage: FC = () => {
 
   const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
   const { data: tagsData } = useFetchAllTags({});
-  const { data: usersData } = UsefetchAllUsers({
+  const { data: usersData, isFetching: userIsFetching } = UsefetchAllUsers({
     DateRange: { startDate: undefined, endDate: undefined },
     limit: 100,
   });
@@ -556,9 +556,11 @@ const CreateBlogPostPage: FC = () => {
                       Author
                     </FieldLabel>
 
-                    {usersData?.users?.some(
-                      (user: User) => user.roleName === "SEO Agent",
-                    ) ? (
+                    {userIsFetching ? (
+                      <div className="w-full h-14 skeleton rounded"></div>
+                    ) : usersData?.users?.some(
+                        (user: User) => user.roleName === "SEO Agent",
+                      ) ? (
                       <SelectDropDown
                         placeholder="Author Name"
                         items={

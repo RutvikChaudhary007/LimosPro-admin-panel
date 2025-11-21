@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
-import { ArrowLeft, Loader, Plus, Save, X } from "lucide-react";
+import { ArrowLeft, Plus, Save, X } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { blogService } from "@/api/contentServices.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -174,14 +175,7 @@ const EditBlogPostPage: React.FC = () => {
   };
 
   if (fetchLoading) {
-    return (
-      <div className="p-6 flex items-center justify-center min-h-96">
-        <div className="text-center">
-          <Loader className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p>Loading blog post...</p>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (!blogPost) {

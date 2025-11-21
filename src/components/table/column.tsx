@@ -3037,9 +3037,7 @@ export function getBlogColumns(
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Author" />
       ),
-      cell: ({ row }) => (
-        <span>{row.original.blogAuthor?.name || "Unknown"}</span>
-      ),
+      cell: ({ row }) => <span>{row.original.blogAuthor?.name || "N/A"}</span>,
       enableSorting: false,
     },
     {
@@ -3048,17 +3046,12 @@ export function getBlogColumns(
         <DataTableColumnHeader column={column} title="status" />
       ),
       cell: ({ row }) => (
-        <Label
-          className={cn(
-            "flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
-            row.original.status.toLowerCase() === "published" &&
-              "text-white bg-green-500",
-            row.original.status.toLowerCase() === "draft" &&
-              "text-black bg-yellow-200",
-          )}
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
         >
           {row.original.status}
-        </Label>
+        </Badge>
       ),
       enableSorting: false,
     },
