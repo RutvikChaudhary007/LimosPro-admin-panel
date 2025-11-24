@@ -110,7 +110,7 @@ function UsersPage() {
   });
 
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TUsers>(data?.users, 1, perPage);
+    usePagination<TUsers>(data?.users, 1, perPage, data?.pagination);
 
   const handleView = (id: string) => {
     // console.log("view:", id);

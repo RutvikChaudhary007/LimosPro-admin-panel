@@ -18,8 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// import { styledLog } from "@/utils/styledLog";
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -39,13 +37,9 @@ export function DataTable<TData, TValue>({
   onGlobalFilterChange,
   onTableReady,
 }: DataTableProps<TData, TValue>) {
-  const safeData = Array.isArray(data) ? data : [];
-  const safeColumns = Array.isArray(columns) ? columns : [];
-  // styledLog(safeData,"safe data:","danger")
-  // styledLog(safeColumns,"safe column:","danger")
   const table = useReactTable({
-    data: safeData,
-    columns: safeColumns,
+    data,
+    columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: onGlobalFilterChange
       ? getFilteredRowModel()
@@ -63,7 +57,6 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     if (onTableReady) onTableReady(table);
   }, [table, onTableReady]);
-  // styledLog(table.getRowModel(),"table blog","danger")
   return (
     <div className="rounded border border-base-light-gray shadow-base-md overflow-auto">
       <Table>
@@ -101,7 +94,7 @@ export function DataTable<TData, TValue>({
                 >
                   {row?.getVisibleCells().map((cell) => (
                     <TableCell
-                      className="font-quicksand font-medium text-[16px] text-base-black leading-[100%] tracking-normal"
+                      className="font-quicksand font-medium text-base text-base-black leading-[100%] tracking-normal"
                       key={cell.id}
                     >
                       {flexRender(

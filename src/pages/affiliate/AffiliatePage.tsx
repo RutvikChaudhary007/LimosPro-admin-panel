@@ -294,7 +294,7 @@ function AffiliatePage() {
               setSelectedItem={setSelectedTime}
             />
           </div>
-          <div className="w-full max-w-fit flex flex-wrap items-center justify-between gap-4">
+          <div className="w-full max-w-fit flex flex-wrap items-center justify-end gap-4">
             <Button
               onClick={() => {
                 setSelectedStatus("");

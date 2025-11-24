@@ -1,11 +1,38 @@
-import { useState } from "react";
+import { IconFilterX } from "@tabler/icons-react";
+import type React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { SelectDropDown } from "@/components/ui/select";
 import { useUserStore } from "@/stores/useAuthStore";
 
-function UserProfile() {
+function UserProfile({
+  selectedTime,
+  setSelectedTime,
+  selectedYear,
+  setSelectedYear,
+}: {
+  selectedTime: string | undefined;
+  setSelectedTime: React.Dispatch<React.SetStateAction<string | undefined>>;
+  selectedYear: string | undefined;
+  setSelectedYear: React.Dispatch<React.SetStateAction<string | undefined>>;
+}) {
   const { user } = useUserStore();
-  const [selectedTime, setSelectedTime] = useState<string | undefined>("");
+
+  const getYearOptions = (
+    startYear = 2021,
+  ): { label: string; value: string }[] => {
+    const currentYear = new Date().getFullYear();
+    const options = [];
+
+    for (let year = startYear; year <= currentYear; year++) {
+      options.push({
+        label: `${year}`,
+        value: `${year}`,
+      });
+    }
+
+    return options;
+  };
 
   return (
     <div className="font-quicksand text-base-black flex items-center gap-4 px-4 text-left text-base leading-[100%] font-bold tracking-[0%] lg:px-8">
@@ -31,10 +58,28 @@ function UserProfile() {
         </p>
       </div>
 
+      <Button
+        onClick={() => {
+          setSelectedTime("");
+          setSelectedYear("");
+        }}
+        type="button"
+        variant={"outlineSecondary"}
+      >
+        <IconFilterX /> <span>Clear Filter</span>
+      </Button>
+
+      <SelectDropDown
+        placeholder="Select Year"
+        items={getYearOptions()}
+        value={selectedYear}
+        setSelectedItem={setSelectedYear}
+        onChange={() => setSelectedTime("")}
+      />
+
       <SelectDropDown
         placeholder="Select Time"
         items={[
-          { label: "All Time", value: "all" },
           { label: "Weekly", value: "weekly" },
           { label: "Monthly", value: "monthly" },
           { label: "Quarterly", value: "quarterly" },
@@ -43,6 +88,7 @@ function UserProfile() {
         ]}
         value={selectedTime}
         setSelectedItem={(value) => setSelectedTime(value)}
+        onChange={() => setSelectedYear("")}
       />
     </div>
   );

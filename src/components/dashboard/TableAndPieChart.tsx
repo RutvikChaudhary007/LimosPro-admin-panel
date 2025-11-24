@@ -1,14 +1,24 @@
 //@ts-nocheck
 
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
-import { ArrowRight, Plus } from "lucide-react";
-import React, { useMemo } from "react";
+import { Eye, Plus } from "lucide-react";
+import React, { useMemo, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from "react-router-dom";
 import { constant } from "@/lib/constant";
 import { getChauffeurAvailablility } from "../table/column";
 import { DataTable } from "../table/data-table";
 import { Button } from "../ui/button";
+import {
+  Card,
+  CardAction,
+  CardBody,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { FieldLabel } from "../ui/field";
 
 // const tableData: TChauffeurAvailablility[] = [
 //   {
@@ -28,7 +38,7 @@ import { Button } from "../ui/button";
 //     status: "Active"
 //   },
 // ];
-type FleetStat = {
+export type FleetStat = {
   id?: string;
   name: string;
   count: number;
@@ -51,6 +61,7 @@ function TableAndPieChart({
     // setData((prev) =>
     //   prev.filter((row) => row.id !== id))
   };
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const columns = getChauffeurAvailablility(handleEdit, handleDelete);
   ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -122,43 +133,57 @@ function TableAndPieChart({
   );
 
   return (
-    <div className="flex justify-between">
+    <div className="grid grid-cols-12 gap-6">
       {/* table */}
-      <div className="1xl:w-[718px] 1xl:h-[415px] p-4">
-        <div className="w-full h-6 flex justify-between items-center bg-[#FDFDFD]">
-          <div>Chauffeurs Availability</div>
-          <div className="flex space-x-1">
-            <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
-              <Button
-                variant="secondary"
-                className="flex justify-between rounded cursor-pointer"
-              >
-                <span className="text-[#959595]">Add New</span>
-                <Plus className="text-[#959595]" />
-              </Button>
-            </Link>
-            <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
-              <Button
-                variant="secondary"
-                className="flex justify-between rounded cursor-pointer"
-              >
-                <span className="text-[#959595]">View All</span>
-                <ArrowRight className="text-[#959595]" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-        <DataTable columns={columns} data={chauffeurAvailability} />
+      <div className="col-span-9">
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>Chauffeurs Availability</CardTitle>
+              <CardAction className="flex gap-1">
+                <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
+                  <Button
+                    variant="outlinePrimary"
+                    size="xl"
+                    spacing="lg"
+                    tooltip="Add New"
+                    className="hover:bg-base-primary hover:text-base-white transition-all"
+                  >
+                    <Plus />
+                  </Button>
+                </Link>
+                <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
+                  <Button
+                    variant="outlineBlack"
+                    size="xl"
+                    spacing="lg"
+                    tooltip="View All"
+                    className="hover:bg-base-black hover:text-base-white transition-all"
+                  >
+                    <Eye />
+                  </Button>
+                </Link>
+              </CardAction>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={columns}
+                data={chauffeurAvailability}
+                rowSelection={rowSelection}
+                onRowSelectionChange={setRowSelection}
+              />
+            </CardContent>
+          </CardBody>
+        </Card>
       </div>
       {/* pie */}
-      <div className="1xl:w-[322px] 1xl:h-[415px] space-y-6  bg-[#EEEEEE] rounded inset-shadow-xs inset-shadow-[#EEEEEE]  shadow-base-md overflow-y-auto custom-scrollbar-style">
-        <div className="min-w-full">
-          <div className="p-4">Fleet Availability & Demand Ratio</div>
-          <hr className="min-w-full border-[#D9D9D9] p-0 pb-0" />
-        </div>
-        <div className="px-4 w-[290px] h-fit">
-          <div className="w-full h-full px-2.5 py-3">
-            <div className="shadow-md shadow-[#B6B6B6] border rounded p-2.5">
+      <div className="col-span-3">
+        <Card>
+          <CardBody>
+            <CardHeader>
+              <CardTitle>Fleet Availability & Demand Ratio</CardTitle>
+            </CardHeader>
+            <CardContent>
               <Doughnut
                 data={Chartdata}
                 options={{
@@ -167,7 +192,6 @@ function TableAndPieChart({
                   plugins: {
                     tooltip: {
                       callbacks: {
-                        // Use API data for tooltip: show fleet name
                         label: (ctx) => {
                           const idx = ctx.dataIndex ?? 0;
                           const item = topAndBottom[idx];
@@ -181,49 +205,27 @@ function TableAndPieChart({
                   },
                 }}
               />
-            </div>
-          </div>
-        </div>
-        <div className="px-4 w-[290px] h-[155px]">
-          <div className="w-full">
-            {fleetDistribution?.fleets?.length > 0 ? (
-              fleetDistribution?.fleets?.map((content, i) => (
-                <React.Fragment key={`${i}-${content.fleet}`}>
-                  <div className="w-full flex justify-between items-center">
-                    <p className="text-[#3A3A3A] font-bold text-sm">
-                      {content.fleet}
-                    </p>
-                    <p className="text-[#3A3A3A] text-sm">
-                      <span>$ {content.price}</span>{" "}
-                      <span>{content.duration}</span>
-                    </p>
-                  </div>
-                  <hr className="w-full text-sm border mt-2.5 mb-2.5" />
-                </React.Fragment>
-              ))
-            ) : (
-              <p>Results not found!</p>
-            )}
-          </div>
-          <div className="flex items-center justify-end gap-1 min-w-full">
-            <Link to={constant.ROUTING_URLS.CREATE_FLEET}>
-              <Button
-                className="bg-[#FFFFFF]  text-[#959595] rounded"
-                variant="secondary"
-              >
-                Add New <Plus />
-              </Button>
-            </Link>
-            <Link to={constant.ROUTING_URLS.FLEETS}>
-              <Button
-                className="bg-[#FFFFFF]  text-[#959595] rounded"
-                variant="secondary"
-              >
-                View All <ArrowRight />
-              </Button>
-            </Link>
-          </div>
-        </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-2">
+              {fleetDistribution?.fleets?.length > 0 ? (
+                fleetDistribution?.fleets?.map((content, i) => (
+                  <React.Fragment key={`${i}-${content.fleet}`}>
+                    <div className="w-full flex justify-between items-center">
+                      <FieldLabel>{content.fleet}</FieldLabel>
+                      <p className="text-base-black text-sm">
+                        <span>$ {content.price}</span>{" "}
+                        <span>{content.duration}</span>
+                      </p>
+                    </div>
+                    <hr className="w-full border" />
+                  </React.Fragment>
+                ))
+              ) : (
+                <p>Results not found!</p>
+              )}
+            </CardFooter>
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

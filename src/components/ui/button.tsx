@@ -13,31 +13,63 @@ export const buttonVariants = cva(
         secondary:
           "bg-base-secondary text-base-white hover:bg-base-secondary-dark",
         black: "bg-base-black text-base-white hover:bg-base-black/90",
+        info: "bg-base-info text-base-white hover:bg-base-info/90",
+        success: "bg-base-success text-base-white hover:bg-base-success/90",
+        warning: "bg-base-warning text-base-white hover:bg-base-warning/90",
+
         outlinePrimary:
           "border border-base-primary text-base-primary bg-transparent hover:border-base-primary-dark hover:text-base-primary-dark",
         outlineSecondary:
           "border border-base-secondary text-base-secondary bg-transparent hover:border-base-secondary-dark hover:text-base-secondary-dark",
         outlineBlack:
           "border border-base-black text-base-black bg-transparent hover:text-base-black/90",
+        outlineDestructive:
+          "border border-base-danger text-base-danger bg-transparent hover:text-base-danger/90",
+        outlineInfo:
+          "border border-base-info text-base-info bg-transparent hover:text-base-info/90",
+        outlineSuccess:
+          "border border-base-success text-base-success bg-transparent hover:text-base-success/90",
+        outlineWarning:
+          "border border-base-warning text-base-warning bg-transparent hover:text-base-warning/90",
+
         outlineNavBtnPrimary:
           "border-0 bg-transparent text-base-primary hover:text-base-white hover:bg-base-primary",
         outlineNavBtnSecondary:
           "border-0 bg-transparent text-base-secondary hover:text-base-white hover:bg-base-secondary",
         outlineNavBtnBlack:
           "border-0 bg-transparent text-base-black hover:text-base-white hover:bg-base-black",
+        outlineNavBtnDestructive:
+          "border-0 bg-transparent text-base-danger hover:text-base-white hover:bg-base-danger",
+        outlineNavBtnInfo:
+          "border-0 bg-transparent text-base-info hover:text-base-white hover:bg-base-info",
+        outlineNavBtnSuccess:
+          "border-0 bg-transparent text-base-success hover:text-base-white hover:bg-base-success",
+        outlineNavBtnWarning:
+          "border-0 bg-transparent text-base-warning hover:text-base-white hover:bg-base-warning",
+
         linkPrimary:
           "text-base-primary underline underline-offset-4 hover:no-underline",
         linkSecondary:
           "text-base-secondary underline underline-offset-4 hover:no-underline",
         linkDark:
           "text-base-dark underline underline-offset-4 hover:no-underline",
+        linkDestructive:
+          "text-base-danger underline underline-offset-4 hover:no-underline",
+        linkInfo:
+          "text-base-info underline underline-offset-4 hover:no-underline",
+        linkSuccess:
+          "text-base-success underline underline-offset-4 hover:no-underline",
+        linkWarning:
+          "text-base-warning underline underline-offset-4 hover:no-underline",
+
         menuItem: cn(
           "text-lg hover:bg-base-primary/10 transition-colors",
           "data-[state=active]:bg-base-primary data-[state=active]:text-base-white",
           "data-[group-state=active]:bg-base-primary/20 data-[group-state=active]:text-base-primary",
         ),
+
         destructive:
-          "bg-destructive text-base-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-base-danger text-base-white hover:bg-base-danger/90 focus-visible:ring-base-danger/20 dark:focus-visible:ring-base-danger/40 dark:bg-base-danger/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         ghost:

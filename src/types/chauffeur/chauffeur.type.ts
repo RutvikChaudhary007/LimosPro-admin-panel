@@ -6,7 +6,7 @@ export type TChauffeur = {
   affiliateId: string;
   status: string;
   password: string;
-  panNumber: string;
+  taxIdNumber: string;
   licenseNumber: string;
   vehicleId: string;
   documents:

@@ -250,6 +250,7 @@ interface SelectDropDownProps {
   items: SelectDropDownItems[];
   setSelectedItem?: (value: string) => void;
   value?: string;
+  onChange?: (value: string) => void;
 }
 
 function SelectDropDown({
@@ -259,9 +260,17 @@ function SelectDropDown({
   items,
   setSelectedItem,
   value,
+  onChange,
 }: SelectDropDownProps) {
   return (
-    <Select value={value} onValueChange={setSelectedItem} variant={variant}>
+    <Select
+      value={value}
+      onValueChange={(val) => {
+        setSelectedItem?.(val);
+        onChange?.(val);
+      }}
+      variant={variant}
+    >
       <SelectTrigger
         className={classname}
         data-has-value={value ? "true" : undefined}

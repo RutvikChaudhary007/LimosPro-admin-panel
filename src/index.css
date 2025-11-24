@@ -49,6 +49,8 @@
   --color-base-secondary: var(--base-secondary);
   --color-base-secondary-dark: var(--base-secondary-dark);
 
+  --color-base-info: var(--base-info);
+
   --color-base-gray: var(--base-gray);
 
   --color-base-white: var(--base-white);
@@ -123,6 +125,7 @@
   --base-secondary: #d68e29;
   --base-secondary-dark: #996925;
 
+  --base-info: #3ca8d7;
   --base-gray: #b6b6b6;
   --base-white: #ffffff;
   --base-black: #404040;

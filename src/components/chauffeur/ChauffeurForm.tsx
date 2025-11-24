@@ -10,16 +10,14 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { DollarSign } from "lucide-react";
-import { type FC, useCallback, useEffect, useState } from "react";
+import { type FC, useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import useFetchAllFleets from "@/api/getAllFleets.api";
 import { Form } from "@/components/ui/form";
-import { toast } from "@/hooks/use-toast";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
-import { geoDecoding } from "@/utils/googleMaps";
 import AddressInput from "../AddressInput";
 import { Spinner } from "../Spinner";
 import type { TChauffeur } from "../table/column";
@@ -83,7 +81,7 @@ const formSchema = z.object({
   affiliateId: z.string().refine((value) => value.trim() !== "", {
     message: "Affiliate Id cannot be empty or just whitespace.",
   }),
-  panNumber: z.string().refine((value) => value.trim() !== "", {
+  taxIdNumber: z.string().refine((value) => value.trim() !== "", {
     message: "Pan Number cannot be empty or just whitespace.",
   }),
   licenseNumber: z.string().refine((value) => value.trim() !== "", {
@@ -187,7 +185,7 @@ const transformInitialData = (
       }) || [],
     status: data.status || "",
     affiliateId: data.affiliateId || "",
-    panNumber: data.panNumber || "",
+    taxIdNumber: data.taxIdNumber || "",
     licenseNumber: data.licenseNumber || "",
     vehicleId: data.vehicleId || "",
     gratuity: !Number.isNaN(Number(data.gratuity))
@@ -252,7 +250,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       formData.append("lastName", values.lastName);
       formData.append("email", values.email);
       formData.append("affiliateId", values.affiliateId);
-      formData.append("panNumber", values.panNumber);
+      formData.append("taxIdNumber", values.taxIdNumber);
       formData.append("licenseNumber", values.licenseNumber);
       formData.append("vehicleId", values.vehicleId);
       formData.append("gratuity", values.gratuity);
@@ -569,7 +567,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
 
               <Field>
                 <FieldLabel
-                  htmlFor="panNumber"
+                  htmlFor="taxIdNumber"
                   className="text-base-black gap-0"
                 >
                   PAN Number
@@ -577,14 +575,17 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
 
                 <Controller
                   control={form.control}
-                  name="panNumber"
+                  name="taxIdNumber"
                   render={({ field }) => (
                     <InputGroup>
                       <InputGroupInput
-                        id="panNumber"
+                        id="taxIdNumber"
                         type="text"
                         placeholder="ABCDE1234F"
-                        disabled={isFieldDisabled(disabledFields, "panNumber")}
+                        disabled={isFieldDisabled(
+                          disabledFields,
+                          "taxIdNumber",
+                        )}
                         {...field}
                       />
                       <InputGroupAddon>
@@ -598,9 +599,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   Enter your 10-character PAN number.
                 </FieldDescription>
 
-                {form.formState.errors.panNumber && (
+                {form.formState.errors.taxIdNumber && (
                   <p className="text-base-danger mt-1">
-                    {form.formState.errors.panNumber.message}
+                    {form.formState.errors.taxIdNumber.message}
                   </p>
                 )}
               </Field>
@@ -763,7 +764,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     businessAddress: "",
                     location: { latitude: 0, longitude: 0 },
                     affiliateId: "",
-                    panNumber: "",
+                    taxIdNumber: "",
                     licenseNumber: "",
                     vehicleId: "",
                     documents: [],

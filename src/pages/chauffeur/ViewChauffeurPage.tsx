@@ -198,9 +198,9 @@ const ViewChauffeurPage = () => {
                   </div>
 
                   <Label className="font-montserrat font-semibold capitalize">
-                    Pan:
+                    Tax Id:
                   </Label>
-                  <Label>{data?.panNumber}</Label>
+                  <Label>{data?.taxIdNumber}</Label>
                   <Label className="font-montserrat font-semibold capitalize">
                     License:
                   </Label>

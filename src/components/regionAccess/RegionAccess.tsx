@@ -32,7 +32,7 @@ const AccessCell = <T extends { id: string; permissionAccess?: string[] }>({
     <Dialog modal={false}>
       <DialogTrigger asChild>
         <Button
-          variant="outlineNavBtnBlack"
+          variant="outlineNavBtnSecondary"
           size="xl"
           spacing="lg"
           tooltip="Manage Access"
@@ -51,7 +51,7 @@ const AccessCell = <T extends { id: string; permissionAccess?: string[] }>({
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outlinePrimary">Cancel</Button>
           </DialogClose>
           <Button
             type="button"
