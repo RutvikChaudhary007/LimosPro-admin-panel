@@ -59,7 +59,7 @@ const formSchema = z.object({
 const statusAction = [
   { label: "Active", value: "active" },
   { label: "Suspended", value: "suspended" },
-  { label: "InActive", value: "inactive" },
+  { label: "In Active", value: "inactive" },
 ];
 
 type TUserForm = z.infer<typeof formSchema>;

@@ -411,7 +411,7 @@ export function getAffiliate(
       enableSorting: false,
       cell: ({ row }) => {
         const number = row.original.businessContactNumber;
-
+        const normalizedNumber = number.replace(/\D/g, "");
         return (
           <HoverCard openDelay={100}>
             <HoverCardTrigger asChild>
@@ -429,7 +429,7 @@ export function getAffiliate(
                   spacing="lg"
                   tooltip="Call"
                 >
-                  <a href={`tel:${number}`}>
+                  <a href={`tel:${normalizedNumber}`}>
                     <PhoneIcon />
                   </a>
                 </Button>
@@ -442,7 +442,7 @@ export function getAffiliate(
                   tooltip="Whatsapp"
                 >
                   <a
-                    href={`https://wa.me/${number}`}
+                    href={`https://wa.me/${normalizedNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

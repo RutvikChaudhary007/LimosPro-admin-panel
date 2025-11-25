@@ -9,6 +9,7 @@ import UsefetchAllBookings from "@/api/getAllBookings.api";
 import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import PaginationControls from "@/components/pagination/PaginationControls";
 import { Spinner } from "@/components/Spinner";
 import {
   formatDate,
@@ -17,15 +18,6 @@ import {
 } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
@@ -169,76 +161,6 @@ function BookingPage() {
     window.scrollTo(0, 0);
   };
 
-  // Generate pagination items
-  const generatePaginationItems = () => {
-    const items = [];
-
-    // Always show first page
-    items.push(
-      <PaginationItem key="first">
-        <PaginationLink
-          isActive={currentPage === 1}
-          onClick={() => handlePageChange(1)}
-        >
-          1
-        </PaginationLink>
-      </PaginationItem>,
-    );
-
-    // Show ellipsis if needed
-    if (currentPage > 3) {
-      items.push(
-        <PaginationItem key="ellipsis-1">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Show nearby pages
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
-      i++
-    ) {
-      if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
-
-      items.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={currentPage === i}
-            onClick={() => handlePageChange(i)}
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    // Show ellipsis if needed
-    if (currentPage < calculatedTotalPages - 2) {
-      items.push(
-        <PaginationItem key="ellipsis-2">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Always show last page if there's more than one page
-    if (calculatedTotalPages > 1) {
-      items.push(
-        <PaginationItem key="last">
-          <PaginationLink
-            isActive={currentPage === calculatedTotalPages}
-            onClick={() => handlePageChange(calculatedTotalPages)}
-          >
-            {calculatedTotalPages}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    return items;
-  };
   useEffect(() => {
     if (isError) {
       toast.error(error?.response?.data?.message);
@@ -267,13 +189,6 @@ function BookingPage() {
             <Calendar28 dateRange={dateRange} setDateRange={setDateRange} />
           </div>
           <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <SelectDropDown
-              placeholder={"Select Status"}
-              items={showStatus}
-              value={selectedStatus}
-              setSelectedItem={setSelectedStatus}
-            />
-
             <Button
               onClick={() => {
                 setSelectedStatus("");
@@ -284,6 +199,13 @@ function BookingPage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
+
+            <SelectDropDown
+              placeholder={"Select Status"}
+              items={showStatus}
+              value={selectedStatus}
+              setSelectedItem={setSelectedStatus}
+            />
 
             <Button onClick={handleExportCsv} type="button" variant={"black"}>
               <span>Export</span>
@@ -306,33 +228,11 @@ function BookingPage() {
 
         {/* Pagination */}
         {totalPages > 0 && calculatedTotalPages > 1 && (
-          <Pagination className="justify-end mt-5 cursor-pointer">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-
-              {generatePaginationItems()}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={
-                    currentPage === calculatedTotalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={calculatedTotalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </>

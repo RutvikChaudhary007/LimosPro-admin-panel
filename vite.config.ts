@@ -6,6 +6,7 @@ import svgr from "vite-plugin-svgr";
 
 // https://vite.dev/config/
 export default defineConfig({
+  appType: "spa",
   server: {
     port: 8080,
   },

@@ -90,7 +90,7 @@ function TableAndPieChart({
     <div className="flex gap-6">
       {/* table */}
       <div className="basis-9/12">
-        <Card>
+        <Card className="shadow-none border border-base-gray">
           <CardBody>
             <CardHeader>
               <CardTitle>Chauffeurs Availability</CardTitle>
@@ -132,7 +132,7 @@ function TableAndPieChart({
       </div>
       {/* pie */}
       <div className="basis-3/12">
-        <Card>
+        <Card className="shadow-none border border-base-gray">
           <CardBody>
             <CardTitle>Fleet Availability & Demand Ratio</CardTitle>
             <div className="max-h-60 overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden space-y-4">

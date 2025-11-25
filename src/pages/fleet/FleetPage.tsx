@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { IconFilterX } from "@tabler/icons-react";
 import { Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,23 +9,16 @@ import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import PaginationControls from "@/components/pagination/PaginationControls";
 import { Spinner } from "@/components/Spinner";
 import { getFleets, type TFleet } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
+import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
@@ -41,7 +35,7 @@ const showTime = [
 function FleetPage() {
   const navigate = useNavigate();
   const perPage = 10;
-
+  const [newPage, setNewPage] = useState<number>(1);
   const [tableRef, setTableRef] = useState<any>(null);
   const [selectedTime, setSelectedTime] = useState("");
   // --- Time range helper ---
@@ -95,25 +89,17 @@ function FleetPage() {
     return { startDate: start, endDate: selectedTime ? end : undefined };
   }, [selectedTime]);
 
-  // const [data, setData] = useState<TFleet[]>(tableData);
   const { data, refetch, isPending, isError } = UsefetchAllFleets({
     DateRange: { startDate, endDate },
+    page: newPage,
   });
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TFleet>(data?.vehicles, 1, perPage);
-  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TFleet>(data, 1, perPage);
-
-  // const queryClient = useQueryClient();
-  // useEffect(() => {
-  //   queryClient.prefetchQuery(UsefetchAllFleets({DateRange: {startDate,endDate}, page: currentPage + 1}));
-  // }, [queryClient, currentPage, startDate, endDate]);
+    usePagination<TFleet>(data?.vehicles, 1, perPage, data?.pagination);
 
   const handleView = (id: string) => {
-    // console.log("view:", id);
     navigate(constant.ROUTING_URLS.VIEW_FLEET.replace(":id", id));
   };
   const handleEdit = (id: string) => {
-    // console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_FLEET.replace(":id", id));
   };
   const deleteMutation = queries.useDeletefleetMutation(refetch);
@@ -128,7 +114,6 @@ function FleetPage() {
     } catch (error) {
       console.log(error);
     }
-    // setData((prev) => prev.filter((row) => row.id !== id));
   };
   const columns = getFleets(handleView, handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
@@ -139,80 +124,11 @@ function FleetPage() {
   // if(isFetching) return <Spinner/>
   // Handle page change
   const handlePageChange = (newPage: number) => {
+    setNewPage(newPage);
     setPage(newPage);
     window.scrollTo(0, 0);
   };
 
-  // Generate pagination items
-  const generatePaginationItems = () => {
-    const items = [];
-
-    // Always show first page
-    items.push(
-      <PaginationItem key="first">
-        <PaginationLink
-          isActive={currentPage === 1}
-          onClick={() => handlePageChange(1)}
-        >
-          1
-        </PaginationLink>
-      </PaginationItem>,
-    );
-
-    // Show ellipsis if needed
-    if (currentPage > 3) {
-      items.push(
-        <PaginationItem key="ellipsis-1">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Show nearby pages
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
-      i++
-    ) {
-      if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
-
-      items.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={currentPage === i}
-            onClick={() => handlePageChange(i)}
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    // Show ellipsis if needed
-    if (currentPage < calculatedTotalPages - 2) {
-      items.push(
-        <PaginationItem key="ellipsis-2">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Always show last page if there's more than one page
-    if (calculatedTotalPages > 1) {
-      items.push(
-        <PaginationItem key="last">
-          <PaginationLink
-            isActive={currentPage === calculatedTotalPages}
-            onClick={() => handlePageChange(calculatedTotalPages)}
-          >
-            {calculatedTotalPages}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    return items;
-  };
   if (isError) return <ErrorCard refetch={refetch} />;
   return (
     <>
@@ -237,7 +153,17 @@ function FleetPage() {
               setSelectedItem={setSelectedTime}
             />
           </div>
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
+          <div className="w-full max-w-fit flex flex-wrap items-center justify-between gap-4">
+            <Button
+              onClick={() => {
+                setSelectedTime("");
+                setSearchValue("");
+              }}
+              type="button"
+              variant={"outlineSecondary"}
+            >
+              <IconFilterX /> <span>Clear Filter</span>
+            </Button>
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
@@ -282,33 +208,11 @@ function FleetPage() {
 
         {/* Pagination */}
         {totalPages > 0 && calculatedTotalPages > 1 && (
-          <Pagination className="justify-end mt-5 cursor-pointer">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-
-              {generatePaginationItems()}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={
-                    currentPage === calculatedTotalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={calculatedTotalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </>

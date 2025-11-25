@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { IconFilterX } from "@tabler/icons-react";
 import { Download } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,19 +8,11 @@ import useFetchAllPayments from "@/api/payment.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { PaginationControls } from "@/components/pagination";
 import { Spinner } from "@/components/Spinner";
 import { getPayments, type TPayments } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { constant } from "@/lib/constant";
@@ -39,33 +32,12 @@ const showOptions = [
   { label: "Show 25", value: 25 },
 ];
 
-const tableData: TPayments[] = [
-  {
-    id: "801c9f7e-7dfa-4f97-9664-912fe821db19",
-    Status: "Pending",
-    Amount: "1879",
-    BookingId: "AA57329144",
-    PassengerName: "Chris Johnson",
-    PaymentId: "TRXPAY000111",
-  },
-  {
-    id: "801c9f7e-7dfa-4f97-a664-912fe821db1b",
-    Status: "InProgress",
-
-    Amount: "1879",
-    BookingId: "AA57329144",
-    PassengerName: "Jane Smith",
-    PaymentId: "SAMPLEPAY123",
-  },
-];
 const PaymentsPage = () => {
   const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedOption, setSelectedOption] = useState(optionDefaultValue);
-  // const [data, setData] = useState<TPayments[]>(tableData);
-  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TPayments>(data, 1, perPage);
   const { data, isFetching, isError, refetch } = useFetchAllPayments({
     page: newPage,
     limit: selectedOption,
@@ -110,76 +82,6 @@ const PaymentsPage = () => {
     window.scrollTo(0, 0);
   };
 
-  // Generate pagination items
-  const generatePaginationItems = () => {
-    const items = [];
-
-    // Always show first page
-    items.push(
-      <PaginationItem key="first">
-        <PaginationLink
-          isActive={currentPage === 1}
-          onClick={() => handlePageChange(1)}
-        >
-          1
-        </PaginationLink>
-      </PaginationItem>,
-    );
-
-    // Show ellipsis if needed
-    if (currentPage > 3) {
-      items.push(
-        <PaginationItem key="ellipsis-1">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Show nearby pages
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
-      i++
-    ) {
-      if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
-
-      items.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={currentPage === i}
-            onClick={() => handlePageChange(i)}
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    // Show ellipsis if needed
-    if (currentPage < calculatedTotalPages - 2) {
-      items.push(
-        <PaginationItem key="ellipsis-2">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Always show last page if there's more than one page
-    if (calculatedTotalPages > 1) {
-      items.push(
-        <PaginationItem key="last">
-          <PaginationLink
-            isActive={currentPage === calculatedTotalPages}
-            onClick={() => handlePageChange(calculatedTotalPages)}
-          >
-            {calculatedTotalPages}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    return items;
-  };
   if (isError) return <ErrorCard refetch={refetch} />;
   return (
     <>
@@ -198,7 +100,17 @@ const PaymentsPage = () => {
             setSelectedItem={setSelectedOption}
           />
 
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
+          <div className="w-full max-w-fit flex flex-wrap items-center justify-between gap-4">
+            <Button
+              onClick={() => {
+                setSelectedStatus("");
+                setSelectedOption(optionDefaultValue);
+              }}
+              type="button"
+              variant={"outlineSecondary"}
+            >
+              <IconFilterX /> <span>Clear Filter</span>
+            </Button>
             <SelectDropDown
               placeholder="Select Status"
               items={showStatus}
@@ -241,34 +153,12 @@ const PaymentsPage = () => {
         )}
 
         {/* Pagination */}
-        {tableData.length > 0 && calculatedTotalPages > 1 && (
-          <Pagination className="justify-end mt-5 cursor-pointer">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-
-              {generatePaginationItems()}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={
-                    currentPage === calculatedTotalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        {totalPages > 0 && calculatedTotalPages > 1 && (
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={calculatedTotalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </>

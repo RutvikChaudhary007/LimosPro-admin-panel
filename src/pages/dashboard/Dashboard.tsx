@@ -155,7 +155,7 @@ export default function Dashboard() {
 
           <div className="w-full">
             {/* Charts */}
-            <Card>
+            <Card className="shadow-none border border-base-gray">
               <CardBody>
                 <CardHeader>
                   <CardTitle>Total Bookings</CardTitle>

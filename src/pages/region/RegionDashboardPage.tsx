@@ -16,21 +16,13 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
+import { PaginationControls } from "../../components/pagination";
 
 const showOptions = [
   { value: "10", label: "Show 10" },
@@ -38,66 +30,12 @@ const showOptions = [
   { value: "30", label: "Show 30" },
 ];
 
-// const tableData: TRegion[] = [
-//   { id: "1", regionName: "Region 1", admin: "Chris Johnson" },
-//   { id: "2", regionName: "Region 1", admin: "Ovi Smith" },
-//   { id: "3", regionName: "Region 1", admin: "June Parker" },
-//   { id: "4", regionName: "Region 1", admin: "Casey Walker" },
-//   { id: "5", regionName: "Region 1", admin: "Jordon Lee" },
-//   { id: "6", regionName: "Region 1", admin: "Taylor Morgan" },
-//   { id: "7", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "8", regionName: "Region 1", admin: "Chris Johnson" },
-//   { id: "9", regionName: "Region 1", admin: "Ovi Smith" },
-//   { id: "10", regionName: "Region 1", admin: "June Parker" },
-//   { id: "11", regionName: "Region 1", admin: "Casey Walker" },
-//   { id: "12", regionName: "Region 1", admin: "Jordon Lee" },
-//   { id: "13", regionName: "Region 1", admin: "Taylor Morgan" },
-//   { id: "14", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "15", regionName: "Region 1", admin: "Chris Johnson" },
-//   { id: "16", regionName: "Region 1", admin: "Ovi Smith" },
-//   { id: "17", regionName: "Region 1", admin: "June Parker" },
-//   { id: "18", regionName: "Region 1", admin: "Casey Walker" },
-//   { id: "19", regionName: "Region 1", admin: "Jordon Lee" },
-//   { id: "20", regionName: "Region 1", admin: "Taylor Morgan" },
-//   { id: "21", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "22", regionName: "Region 1", admin: "Chris Johnson" },
-//   { id: "23", regionName: "Region 1", admin: "Ovi Smith" },
-//   { id: "24", regionName: "Region 1", admin: "June Parker" },
-//   { id: "25", regionName: "Region 1", admin: "Casey Walker" },
-//   { id: "26", regionName: "Region 1", admin: "Jordon Lee" },
-//   { id: "27", regionName: "Region 1", admin: "Taylor Morgan" },
-//   { id: "28", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "29", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "30", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "31", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "32", regionName: "Region 1", admin: "Chris Johnson" },
-//   { id: "33", regionName: "Region 1", admin: "Ovi Smith" },
-//   { id: "34", regionName: "Region 1", admin: "June Parker" },
-//   { id: "35", regionName: "Region 1", admin: "Casey Walker" },
-//   { id: "36", regionName: "Region 1", admin: "Jordon Lee" },
-//   { id: "37", regionName: "Region 1", admin: "Taylor Morgan" },
-//   { id: "38", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "39", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "40", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "41", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "42", regionName: "Region 1", admin: "Chris Johnson" },
-//   { id: "43", regionName: "Region 1", admin: "Ovi Smith" },
-//   { id: "44", regionName: "Region 1", admin: "June Parker" },
-//   { id: "45", regionName: "Region 1", admin: "Casey Walker" },
-//   { id: "46", regionName: "Region 1", admin: "Jordon Lee" },
-//   { id: "47", regionName: "Region 1", admin: "Taylor Morgan" },
-//   { id: "48", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "49", regionName: "Region 1", admin: "Sam Patel" },
-//   { id: "50", regionName: "Region 1", admin: "Sam Patel" },
-// ];
-
 function RegionDashboardPage() {
   const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [perPage, setPerPage] = useState(optionDefaultValue);
   const [page, setCPage] = useState(1);
   const [selected, setSelected] = useState(optionDefaultValue);
-  // const [data, setData] = useState<TRegion[]>(tableData);
   const { data, refetch, isFetching } = useFetchAllRegions({ limit: perPage });
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TRegion>(data?.regions, page, perPage, data?.pagination);
@@ -169,76 +107,6 @@ function RegionDashboardPage() {
     window.scrollTo(0, 0);
   };
 
-  // Generate pagination items
-  const generatePaginationItems = () => {
-    const items = [];
-
-    // Always show first page
-    items.push(
-      <PaginationItem key="first">
-        <PaginationLink
-          isActive={currentPage === 1}
-          onClick={() => handlePageChange(1)}
-        >
-          1
-        </PaginationLink>
-      </PaginationItem>,
-    );
-
-    // Show ellipsis if needed
-    if (currentPage > 3) {
-      items.push(
-        <PaginationItem key="ellipsis-1">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Show nearby pages
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
-      i++
-    ) {
-      if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
-
-      items.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={currentPage === i}
-            onClick={() => handlePageChange(i)}
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    // Show ellipsis if needed
-    if (currentPage < calculatedTotalPages - 2) {
-      items.push(
-        <PaginationItem key="ellipsis-2">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Always show last page if there's more than one page
-    if (calculatedTotalPages > 1) {
-      items.push(
-        <PaginationItem key="last">
-          <PaginationLink
-            isActive={currentPage === calculatedTotalPages}
-            onClick={() => handlePageChange(calculatedTotalPages)}
-          >
-            {calculatedTotalPages}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    return items;
-  };
   return (
     <>
       <PageTitle title={generatePageTitle("Region")} />
@@ -321,35 +189,12 @@ function RegionDashboardPage() {
           />
         )}
 
-        {/* Pagination */}
         {totalPages > 0 && calculatedTotalPages > 1 && (
-          <Pagination className="justify-end mt-5 cursor-pointer">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-
-              {generatePaginationItems()}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={
-                    currentPage === calculatedTotalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={calculatedTotalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </>

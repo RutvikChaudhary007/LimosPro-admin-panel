@@ -61,9 +61,11 @@ function PaginationLink({
       data-slot="pagination-link"
       data-active={isActive}
       className={cn(
+        "size-11",
         buttonVariants({
           variant: isActive ? "outlinePrimary" : "outlineBlack",
-          size,
+          size: "xl",
+          spacing: "lg",
         }),
         className,
       )}
@@ -81,11 +83,11 @@ function PaginationPrevious({
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
+      className={cn(className)}
       {...props}
     >
       <ChevronLeftIcon />
-      {/* <span className="hidden sm:block">Previous</span> */}
+      <span className="sr-only">Previous</span>
     </PaginationLink>
   );
 }
@@ -98,11 +100,11 @@ function PaginationNext({
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
+      className={cn(className)}
       {...props}
     >
-      {/* <span className="hidden sm:block">Next</span> */}
       <ChevronRightIcon />
+      <span className="sr-only">Next</span>
     </PaginationLink>
   );
 }
@@ -115,10 +117,10 @@ function PaginationEllipsis({
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
-      className={cn("flex size-9 items-center justify-center", className)}
+      className={cn("flex size-11 items-center justify-center", className)}
       {...props}
     >
-      <MoreHorizontalIcon className="size-4" />
+      <MoreHorizontalIcon className="size-5" />
       <span className="sr-only">More pages</span>
     </span>
   );
@@ -127,9 +129,9 @@ function PaginationEllipsis({
 export {
   Pagination,
   PaginationContent,
-  PaginationLink,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
   PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
 };

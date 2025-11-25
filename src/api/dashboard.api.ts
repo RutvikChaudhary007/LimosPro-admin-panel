@@ -49,8 +49,6 @@ const useFetchDashboard = ({
     queryFn: () => getDashboard(DateRange, page),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 1000 * 60 * 5,
-    placeholderData: (previousData) => previousData,
   });
 
 export default useFetchDashboard;

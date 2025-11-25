@@ -35,6 +35,9 @@ export const getAllUsers = async (
 
     return response?.data?.data;
   } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 400) {
+      return { users: [], pagination: {} };
+    }
     if (isAxiosError(error)) throw error;
     throw new Error("An unexpected error occurred");
   }

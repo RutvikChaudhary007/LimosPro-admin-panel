@@ -36,13 +36,13 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "published":
-        return "bg-green-100 text-green-800";
+        return "bg-base-success/15 text-base-success brightness-75";
       case "draft":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-base-warning/15 text-base-warning brightness-75";
       case "archived":
-        return "bg-gray-100 text-gray-800";
+        return "bg-base-gray/15 text-base-gray brightness-75";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-base-gray/15 text-base-gray brightness-75";
     }
   };
 
@@ -65,10 +65,10 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
         className="w-full h-40"
       />
 
-      <CardBody>
-        <CardHeader>
+      <CardBody className="flex-1">
+        <CardHeader className="!grid-rows-1 !auto-rows-auto !gap-1">
           <TitleWithTooltip title={blogPost.title} />
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap col-span-2">
             <Badge
               className={cn("capitalize", getStatusColor(blogPost.status))}
             >
@@ -119,7 +119,9 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
         </CardHeader>
         <CardContent>
           {blogPost.excerpt && (
-            <p className="text-sm line-clamp-3 mb-4">{blogPost.excerpt}</p>
+            <p className="text-sm line-clamp-3 mb-4">
+              {blogPost.excerpt.replace(/<[^>]+>/g, "")}
+            </p>
           )}
           <div className="flex items-center justify-between text-xs">
             <div className="flex flex-col gap-1">

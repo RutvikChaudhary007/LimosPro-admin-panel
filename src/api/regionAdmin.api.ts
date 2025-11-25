@@ -5,11 +5,14 @@ import type { TRegionAdmin } from "@/components/table/column";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
-type TPara = { limit: number };
+type TPara = { limit: number; page?: number };
 export const getAllRegionAdmins = async (data?: TPara) => {
   const params: Record<string, unknown> = {};
   if (data?.limit) {
     params.limit = data.limit;
+  }
+  if (data?.page) {
+    params.page = data.page;
   }
   const response = await axiosInstance.get(
     `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ALL}`,
@@ -21,12 +24,10 @@ export const getAllRegionAdmins = async (data?: TPara) => {
 
 const useFetchAllRegionAdmins = (Data: TPara) =>
   useQuery({
-    queryKey: ["RegionAdmins", { Data }],
+    queryKey: ["RegionAdmins", Data],
     queryFn: () => getAllRegionAdmins(Data),
     refetchOnWindowFocus: false,
-    // refetchInterval: 60000,
     retry: false,
-    // keepPreviousData: true, // for pagination
   });
 
 export default useFetchAllRegionAdmins;
