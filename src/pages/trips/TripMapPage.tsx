@@ -124,9 +124,9 @@ const Content = ({ data }: { data: object }) => {
               <div className="text-xs text-gray-500">Chauffeur</div>
             </div>
           </div>
-          {/* Pan */}
+          {/* Tax Id Number */}
           <div>
-            <div className="font-semibold text-gray-700">PAN:</div>
+            <div className="font-semibold text-gray-700">Tax Id Number:</div>
             <div className="text-xs text-gray-500 mt-2">
               <span className="font-semibold">
                 {data?.chauffeur?.taxIdNumber}

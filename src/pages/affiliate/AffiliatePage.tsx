@@ -46,9 +46,10 @@ const showStatus = [
 ];
 
 const showTime = [
-  // { label: "All Time", value: "All Time" },
   { label: "Weekly", value: "weekly" },
   { label: "Monthly", value: "monthly" },
+  { label: "Quarterly", value: "quarterly" },
+  { label: "6 Months", value: "6_months" },
   { label: "Yearly", value: "yearly" },
 ];
 
@@ -57,7 +58,6 @@ function AffiliatePage() {
   const perPage = 10;
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
-  console.log("🚀 ~ AffiliatePage ~ selectedTime:", selectedTime);
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
@@ -75,8 +75,7 @@ function AffiliatePage() {
     let start: Date | undefined;
 
     switch (selectedTime) {
-      case "weekly": {
-        // last 7 days inclusive (UTC)
+      case "weekly":
         start = new Date(
           Date.UTC(
             now.getUTCFullYear(),
@@ -89,21 +88,47 @@ function AffiliatePage() {
           ),
         );
         break;
-      }
-      case "monthly": {
+
+      case "monthly":
         start = new Date(
           Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0),
         );
         break;
-      }
-      case "yearly": {
+
+      case "quarterly":
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth() - 2,
+            now.getUTCDate(),
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
+        break;
+
+      case "6_months":
+        start = new Date(
+          Date.UTC(
+            now.getUTCFullYear(),
+            now.getUTCMonth() - 5,
+            now.getUTCDate(),
+            0,
+            0,
+            0,
+            0,
+          ),
+        );
+        break;
+
+      case "yearly":
         start = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
         break;
-      }
-      default: {
-        // All time: leave undefined so callers can omit filters
+
+      default:
         start = undefined;
-      }
     }
 
     return { startDate: start, endDate: selectedTime ? end : undefined };

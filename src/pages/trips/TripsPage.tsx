@@ -33,7 +33,7 @@ import { generatePageTitle } from "@/utils/seo";
 const showStatus = [
   { label: "Completed", value: "completed" },
   { label: "Pending", value: "pending" },
-  { label: "In-Progress", value: "inProgress" },
+  { label: "In Progress", value: "inProgress" },
   { label: "Cancelled", value: "cancelled" },
 ];
 
@@ -44,11 +44,10 @@ function TripsPage(): JSX.Element {
   const [selectedStatus, setSelectedStatus] = useState("");
   // const [data, setData] = useState<TTrips[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllTrips({
-    status: selectedStatus,
+    tripStatus: selectedStatus,
   });
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TTrips>(data?.trips ?? data, 1, perPage);
-  // const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } = usePagination<TTrips>(data ?? data, 1, perPage);
+    usePagination<TTrips>(data?.trips ?? data, 1, perPage, data?.pagination);
 
   const handleView = (id: string) => {
     // console.log("view:", id);

@@ -192,5 +192,11 @@ export function AreaLineChart({
     },
   };
 
-  return <Line options={chartOptions} data={chartData} />;
+  return (
+    <Line
+      options={chartOptions}
+      data={chartData}
+      className="min-h-60 max-h-60 h-60"
+    />
+  );
 }

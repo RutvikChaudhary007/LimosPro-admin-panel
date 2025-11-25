@@ -1,4 +1,9 @@
-import { IconMap } from "@tabler/icons-react";
+import {
+  IconArrowNarrowUp,
+  IconArrowsUpDown,
+  IconBrandWhatsapp,
+  IconMap,
+} from "@tabler/icons-react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import {
@@ -8,6 +13,7 @@ import {
   FolderKey,
   Mail,
   Phone,
+  PhoneIcon,
   Reply,
   Star,
   Trash2,
@@ -24,13 +30,54 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
 import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";
-import { Label } from "../ui/label";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { DataTableColumnHeader } from "./DataTableColumnHeader";
+
+export const getStatusColor = (status: string): string => {
+  if (status?.toLowerCase() === "active") {
+    return "bg-[#444444]";
+  } else if (status?.toLowerCase() === "inactive") {
+    return "bg-[#B8B8B8] text-black";
+  } else if (status?.toLowerCase() === "suspended") {
+    return "bg-[#ECECEC] text-black";
+  } else if (status?.toLowerCase() === "completed") {
+    return "bg-[#444444] text-white";
+  } else if (status?.toLowerCase() === "ongoing") {
+    return "bg-[#ECECEC] text-black";
+  } else if (status?.toLowerCase() === "canceled") {
+    return "bg-[#B8B8B8] text-black";
+  }
+  return "bg-[#ececeb] text-black";
+};
+export const getStatusVariant = (status: string) => {
+  const map = {
+    pending: "gray",
+    ongoing: "info",
+    suspended: "gray",
+
+    canceled: "destructive",
+    cancelled: "destructive",
+    rejected: "destructive",
+
+    inactive: "black",
+  } as const;
+
+  return map[status?.toLowerCase() as keyof typeof map] || "default";
+};
 
 export type TDashboardBooking = {
   id: string;
@@ -256,13 +303,13 @@ export function getRegionAdminColumns(
                   action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -279,34 +326,6 @@ export function getRegionAdminColumns(
   ];
 }
 
-export const getStatusColor = (status: string): string => {
-  if (status?.toLowerCase() === "active") {
-    return "bg-[#444444]";
-  } else if (status?.toLowerCase() === "inactive") {
-    return "bg-[#B8B8B8] text-black";
-  } else if (status?.toLowerCase() === "suspended") {
-    return "bg-[#ECECEC] text-black";
-  } else if (status?.toLowerCase() === "completed") {
-    return "bg-[#444444] text-white";
-  } else if (status?.toLowerCase() === "ongoing") {
-    return "bg-[#ECECEC] text-black";
-  } else if (status?.toLowerCase() === "canceled") {
-    return "bg-[#B8B8B8] text-black";
-  }
-  return "bg-[#ececeb] text-black";
-};
-export const getStatusVariant = (status: string) => {
-  const map = {
-    active: "default",
-    inactive: "black",
-    suspended: "outline",
-    completed: "default",
-    ongoing: "outline",
-    canceled: "destructive",
-  } as const;
-
-  return map[status?.toLowerCase() as keyof typeof map] || "default";
-};
 export function getAffiliate(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
@@ -390,6 +409,51 @@ export function getAffiliate(
         <DataTableColumnHeader column={column} title="Contact Number" />
       ),
       enableSorting: false,
+      cell: ({ row }) => {
+        const number = row.original.businessContactNumber;
+
+        return (
+          <HoverCard openDelay={100}>
+            <HoverCardTrigger asChild>
+              <Button variant="linkDark" spacing="none">
+                {number}
+              </Button>
+            </HoverCardTrigger>
+
+            <HoverCardContent className="w-36 p-4 rounded">
+              <div className="flex items-center justify-between">
+                <Button
+                  asChild
+                  variant="outlineNavBtnPrimary"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Call"
+                >
+                  <a href={`tel:${number}`}>
+                    <PhoneIcon />
+                  </a>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="outlineNavBtnPrimary"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Whatsapp"
+                >
+                  <a
+                    href={`https://wa.me/${number}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IconBrandWhatsapp />
+                  </a>
+                </Button>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        );
+      },
     },
     {
       accessorKey: "commissionRate",
@@ -426,11 +490,6 @@ export function getAffiliate(
         >
           {row.original.status}
         </Badge>
-        // <div className="inset-shadow-2xs inset-shadow-[#EEEEEE]">
-        //   <Badge  className={`capitalize rounded ${getStatusColor(row.original.status)}`}>
-        //     {row.original.status}
-        //   </Badge>
-        // </div>
       ),
       enableSorting: false,
     },
@@ -481,13 +540,13 @@ export function getAffiliate(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id ?? "")}
                   variant="destructive"
@@ -576,7 +635,10 @@ export function getChauffeur(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Badge variant={getStatusVariant(row?.original?.status ?? "")}>
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
+        >
           <span>{row.original.status}</span>
         </Badge>
       ),
@@ -629,13 +691,13 @@ export function getChauffeur(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -730,15 +792,12 @@ export function getUsers(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Badge variant={getStatusVariant(row?.original?.status ?? "")}>
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
+        >
           <span>{row.original.status}</span>
         </Badge>
-        // <Badge
-        //   variant={"default"}
-        //   className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)} w-[70px] h-5`}
-        // >
-        //   {row.original.status}
-        // </Badge>
       ),
       enableSorting: false,
     },
@@ -789,13 +848,13 @@ export function getUsers(
                   be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -832,7 +891,6 @@ export type TBooking = {
     phone: string;
   };
   scheduledTime: string;
-  fare: number;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -881,7 +939,42 @@ export function getBooking(
     {
       accessorKey: "bookingType",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Booking Type" />
+        <DataTableColumnHeader
+          column={column}
+          title="Booking Type"
+          className="text-center"
+        />
+      ),
+
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center gap-1">
+          <TooltipProvider delayDuration={0}>
+            {row.original.bookingType === "oneWay" && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <IconArrowNarrowUp />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>One Way</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+            {row.original.bookingType === "twoWay" && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <IconArrowsUpDown />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Two Way</p>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </TooltipProvider>
+        </div>
       ),
       enableSorting: false,
     },
@@ -894,27 +987,17 @@ export function getBooking(
       enableSorting: false,
     },
     {
-      accessorKey: "fare",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Price" />
-      ),
-      enableSorting: false,
-    },
-    {
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Badge variant={getStatusVariant(row?.original?.status ?? "")}>
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
+        >
           <span>{row.original.status}</span>
         </Badge>
-        // <Badge
-        //   variant={"default"}
-        //   className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.status)}] ${getStatusColor(row.original.status)} w-[70px] h-5`}
-        // >
-        //   {row.original.status}
-        // </Badge>
       ),
       enableSorting: false,
     },
@@ -1094,13 +1177,13 @@ export function getFleets(
                   be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -1181,15 +1264,12 @@ export function getTrips(
         <DataTableColumnHeader column={column} title="Trip Status" />
       ),
       cell: ({ row }) => (
-        <Badge variant={getStatusVariant(row?.original?.tripStatus ?? "")}>
+        <Badge
+          variant={getStatusVariant(row?.original?.tripStatus ?? "")}
+          className="capitalize"
+        >
           <span>{row.original.tripStatus}</span>
         </Badge>
-        // <Badge
-        //   variant={"default"}
-        //   className={`capitalize cursor-pointer rounded inset-shadow-xs inset-shadow-[${getStatusColor(row.original.tripStatus)}] ${getStatusColor(row.original.tripStatus)} w-[70px] h-5`}
-        // >
-        //   {row.original.tripStatus}
-        // </Badge>
       ),
       enableSorting: false,
     },
@@ -1603,16 +1683,12 @@ export function getRefundRequest(
         <DataTableColumnHeader column={column} title="Refund Status" />
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center ">
-          <Button
-            className={cn(
-              "bg-[#F1F1F1] rounded w-[103px] h-[33px]",
-              getStatusColor(row.original.Status),
-            )}
-          >
-            {row.original.Status}
-          </Button>
-        </div>
+        <Badge
+          variant={getStatusVariant(row?.original?.Status ?? "")}
+          className="capitalize"
+        >
+          {row.original.Status}
+        </Badge>
       ),
       enableSorting: false,
     },
@@ -1721,13 +1797,13 @@ export function getCrewMember(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -1863,13 +1939,13 @@ export function getStaffMember(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2092,13 +2168,13 @@ export function getTestimonial(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2229,13 +2305,13 @@ export function getOurPartner(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2341,13 +2417,13 @@ export function getNews(
                   be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2544,13 +2620,13 @@ export function getIpWhiteList(
                   action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2663,13 +2739,13 @@ export function getFaqs(
                   be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2731,10 +2807,10 @@ export function getChauffeurAvailablility(
         <DataTableColumnHeader column={column} title="Ratings" />
       ),
       cell: ({ row }) => (
-        <Label className="flex items-center rounded bg-[#D9D9D9] px-1 w-16">
-          <Star className="fill-black text-sm max-h-4 max-w-4" />{" "}
-          <span className="text-xl">{row.original.rating}</span>
-        </Label>
+        <Badge>
+          <Star />
+          <span>{row.original.rating}</span>
+        </Badge>
       ),
       enableSorting: false,
     },
@@ -2744,18 +2820,12 @@ export function getChauffeurAvailablility(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Label
-          className={cn(
-            "flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
-            [
-              getStatusColor(row.original.status),
-              row.original.status.toLocaleLowerCase() === "active" &&
-                "text-white",
-            ],
-          )}
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
         >
           {row.original.status}
-        </Label>
+        </Badge>
       ),
       enableSorting: false,
     },
@@ -2799,13 +2869,13 @@ export function getChauffeurAvailablility(
                   This action cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2886,13 +2956,13 @@ export function getHomeContent(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -2949,10 +3019,10 @@ export function getContent(
         <DataTableColumnHeader column={column} title="Ratings" />
       ),
       cell: ({ row }) => (
-        <Label className="flex items-center rounded bg-[#D9D9D9] px-2 w-14">
-          <Star className="fill-black text-sm max-h-4 max-w-4" />{" "}
-          <span className="text-xl">{row.original.ratings}</span>
-        </Label>
+        <Badge>
+          <Star />
+          <span>{row.original.ratings}</span>
+        </Badge>
       ),
       enableSorting: false,
     },
@@ -2962,18 +3032,12 @@ export function getContent(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Label
-          className={cn(
-            "flex items-center rounded bg-[#D9D9D9] px-2 w-14 text-sm",
-            [
-              getStatusColor(row.original.status),
-              row.original.status.toLocaleLowerCase() === "active" &&
-                "text-white",
-            ],
-          )}
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
         >
           {row.original.status}
-        </Label>
+        </Badge>
       ),
       enableSorting: false,
     },
@@ -3017,13 +3081,13 @@ export function getContent(
                   cannot be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"
@@ -3138,13 +3202,13 @@ export function getBlogColumns(
                   be undone.
                 </DialogDescription>
               </DialogHeader>
-              <div className="py-4">
+              <div>
                 <p className="text-sm text-muted-foreground">
                   <strong>Are you absolutely sure?</strong> This action cannot
                   be undone.
                 </p>
               </div>
-              <DialogFooter className="mt-6">
+              <DialogFooter>
                 <Button
                   onClick={() => onDelete(row.original.id)}
                   variant="destructive"

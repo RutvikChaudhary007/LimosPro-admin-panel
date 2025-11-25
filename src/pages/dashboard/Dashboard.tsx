@@ -1,4 +1,6 @@
+import { Eye } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import useFetchDashboard from "@/api/dashboard.api";
 import TableAndPieChart, {
   type FleetStat,
@@ -7,6 +9,7 @@ import { ChartAreaInteractive } from "@/components/layouts/partials/chart-area-i
 import { Spinner } from "@/components/Spinner";
 import { getDashboardColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -15,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { constant } from "@/lib/constant";
 import { SectionCards } from "@/pages/dashboard/partials/section-cards";
 import UserProfile from "./partials/user-profile";
 // import { DataTable } from "@/components/data-table"
@@ -120,6 +124,14 @@ export default function Dashboard() {
     DateRange: { startDate, endDate },
   });
 
+  const fleetDistributionData = useMemo(
+    () => ({
+      fleetDis: data?.fleetDistribution ?? [],
+      fleets: data?.fleets ?? [],
+    }),
+    [data?.fleetDistribution, data?.fleets],
+  );
+
   if (isFetching) return <Spinner />;
   return (
     <div className="bg-base-background-light @container/main h-full">
@@ -135,7 +147,7 @@ export default function Dashboard() {
         {/* Cards */}
         <SectionCards data={data?.totals} />
 
-        <div className="px-4 lg:px-8 flex gap-6">
+        <div className="px-4 lg:px-8 flex flex-col gap-6 md:flex-row overflow-hidden">
           {/* Charts */}
           <div className="w-full">
             <ChartAreaInteractive data={data?.revenueByMonth} />
@@ -148,10 +160,20 @@ export default function Dashboard() {
                 <CardHeader>
                   <CardTitle>Total Bookings</CardTitle>
                   <CardAction>
-                    <span className="text-sm text-base-text">View All</span>
+                    <Link to={constant.ROUTING_URLS.BOOKING}>
+                      <Button
+                        variant="outlineBlack"
+                        size="xl"
+                        spacing="lg"
+                        tooltip="View All"
+                        className="hover:bg-base-black hover:text-base-white transition-all"
+                      >
+                        <Eye />
+                      </Button>
+                    </Link>
                   </CardAction>
                 </CardHeader>
-                <CardContent className="max-h-[195px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+                <CardContent className="max-h-[150px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
                   <DataTable
                     columns={columns}
                     rowSelection={rowSelection}
@@ -167,13 +189,11 @@ export default function Dashboard() {
         <div className="px-4 lg:px-8">
           {/* Table and Pie Chart */}
           <TableAndPieChart
+            key={`${selectedTime}-${selectedYear}`}
             chauffeurAvailability={data?.availability}
-            fleetDistribution={
-              {
-                fleetDis: data?.fleetDistribution ?? [],
-                fleets: data?.fleets ?? [],
-              } as unknown as FleetStat
-            }
+            fleetDistribution={fleetDistributionData as unknown as FleetStat}
+            selectedTime={selectedTime}
+            selectedYear={selectedYear}
           />
         </div>
 

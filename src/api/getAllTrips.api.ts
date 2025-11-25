@@ -3,10 +3,10 @@ import { AxiosError } from "axios";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
-export const getAllTrips = async (status?: string) => {
+export const getAllTrips = async (tripStatus?: string) => {
   const params: Record<string, unknown> = {};
-  if (status) {
-    params.status = status;
+  if (tripStatus) {
+    params.tripStatus = tripStatus;
   }
   try {
     const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_TRIPS}`, {
@@ -23,10 +23,10 @@ export const getAllTrips = async (status?: string) => {
   }
 };
 
-const useFetchAllTrips = ({ status }: { status?: string }) =>
+const useFetchAllTrips = ({ tripStatus }: { tripStatus?: string }) =>
   useQuery({
-    queryKey: ["Trips", status],
-    queryFn: () => getAllTrips(status),
+    queryKey: ["Trips", tripStatus],
+    queryFn: () => getAllTrips(tripStatus),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

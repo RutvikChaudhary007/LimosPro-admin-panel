@@ -82,7 +82,7 @@ const formSchema = z.object({
     message: "Affiliate Id cannot be empty or just whitespace.",
   }),
   taxIdNumber: z.string().refine((value) => value.trim() !== "", {
-    message: "Pan Number cannot be empty or just whitespace.",
+    message: "Tax Id Number cannot be empty or just whitespace.",
   }),
   licenseNumber: z.string().refine((value) => value.trim() !== "", {
     message: "License Number cannot be empty or just whitespace.",
@@ -570,7 +570,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   htmlFor="taxIdNumber"
                   className="text-base-black gap-0"
                 >
-                  PAN Number
+                  Tax Id Number
                 </FieldLabel>
 
                 <Controller
@@ -595,9 +595,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   )}
                 />
 
-                <FieldDescription>
-                  Enter your 10-character PAN number.
-                </FieldDescription>
+                <FieldDescription>Enter your Tax Id number.</FieldDescription>
 
                 {form.formState.errors.taxIdNumber && (
                   <p className="text-base-danger mt-1">

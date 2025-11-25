@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getChauffeur } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
+import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -260,27 +261,15 @@ function ChauffeurPage() {
         <PageHeader
           title="Chauffeur"
           breadcrumbs={[{ label: "Home", path: "/" }, { label: "Chauffeur" }]}
-          action={[
-            {
-              label: "Clear Filter",
-              variant: "outlineSecondary",
-              icon: <IconFilterX />,
-              onClick: () => {
-                setSelectedStatus("");
-                setSelectedTime("");
-                setSearchValue("");
-              },
-            },
-            {
-              label: "Add Chauffeur",
-              icon: <Plus />,
-              link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
-            },
-          ]}
+          action={{
+            label: "Add Chauffeur",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
+          }}
         />
 
         <div className="flex justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <SelectDropDown
               placeholder={"Select Status"}
               items={showStatus}
@@ -294,7 +283,18 @@ function ChauffeurPage() {
               setSelectedItem={setSelectedTime}
             />
           </div>
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
+          <div className="w-full max-w-fit flex flex-wrap items-center justify-between gap-4">
+            <Button
+              onClick={() => {
+                setSelectedStatus("");
+                setSelectedTime("");
+                setSearchValue("");
+              }}
+              type="button"
+              variant={"outlineSecondary"}
+            >
+              <IconFilterX /> <span>Clear Filter</span>
+            </Button>
             <span
               className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
