@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SelectDropDown } from "@/components/ui/select";
 
-export function SelectOptionPage() {
+export default function SelectOptionPage() {
   const [value, setValue] = useState("de");
   const [secondValue, setSecondValue] = useState("");
   const [thirdValue, setThirdValue] = useState("");

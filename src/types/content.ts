@@ -18,6 +18,33 @@ export interface BlogPost {
     metaKeywords?: string[];
     ogImage?: string;
   };
+  blogAuthor?: {
+    authorBadges?: any[];
+    authorSlug?: string | null;
+    bio?: string | null;
+    coverImage?: string | null;
+    createdAt?: string;
+    customProfileImage?: string | null;
+    deletedAt?: string | null;
+    id?: string;
+    isActive?: boolean;
+    isFeaturedAuthor?: boolean;
+    jobTitle?: string | null;
+    location?: string | null;
+    name?: string;
+    role?: string | null;
+    socialFacebook?: string | null;
+    socialGithub?: string | null;
+    socialInstagram?: string | null;
+    socialLinkedin?: string | null;
+    socialPinterest?: string | null;
+    socialTwitter?: string | null;
+    socialYoutube?: string | null;
+    totalPosts?: number | null;
+    updatedAt?: string;
+    userId?: string | null;
+    websiteUrl?: string | null;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

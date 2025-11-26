@@ -71,11 +71,11 @@ function TableAndPieChart({
         {
           label: "Requested Fleet",
           data: topAndBottom.map((s) => s.count),
-          backgroundColor: ["#135389", "#0a4272"].slice(
+          backgroundColor: ["#135389", "#d68e29"].slice(
             0,
             Math.max(1, topAndBottom.length),
           ),
-          borderColor: ["#135389", "#0a4272"].slice(
+          borderColor: ["#135389", "#d68e29"].slice(
             0,
             Math.max(1, topAndBottom.length),
           ),

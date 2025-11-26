@@ -1,6 +1,6 @@
 import { Switch } from "@/components/ui/switch";
 
-export function SwitchPage() {
+export default function SwitchPage() {
   return (
     <div className="flex flex-wrap gap-4 p-2">
       <Switch size="md" labelChecked="On" labelUnchecked="On" />

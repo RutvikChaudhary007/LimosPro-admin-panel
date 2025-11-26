@@ -125,16 +125,18 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
               {blogPost.excerpt.replace(/<[^>]+>/g, "")}
             </p>
           )}
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex flex-col gap-1">
-              {blogPost.author && <span>By {blogPost.author}</span>}
-              <span>Created: {formatDate(blogPost.createdAt)}</span>
+          <div className="flex items-end justify-between text-xs">
+            <div className="space-y-1">
+              {blogPost?.blogAuthor?.name && (
+                <p>By {blogPost.blogAuthor.name}</p>
+              )}
+              <p>Created: {formatDate(blogPost.createdAt)}</p>
               {blogPost.publishedAt && (
-                <span>Published: {formatDate(blogPost.publishedAt)}</span>
+                <p>Published: {formatDate(blogPost.publishedAt)}</p>
               )}
             </div>
-            <div className="text-right">
-              <span>{blogPost.viewCount} views</span>
+            <div className="text-right shrink-0">
+              {blogPost.viewCount} views
             </div>
           </div>
         </CardContent>
