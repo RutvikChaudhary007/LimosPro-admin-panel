@@ -32,6 +32,7 @@ import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost, BlogPostFormData } from "@/types/content";
 import "react-quill/dist/quill.snow.css";
 import * as z from "zod";
+import { FormMessage } from "../ui/form";
 
 const blogPostSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
@@ -320,9 +321,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   <FieldDescription>Enter the Title here.</FieldDescription>
 
                   {errors.title && (
-                    <p className="text-base-danger mt-1">
-                      {errors.title.message}
-                    </p>
+                    <FormMessage>{errors.title.message}</FormMessage>
                   )}
                 </Field>
 
@@ -347,9 +346,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   <FieldDescription>Enter the Slug here.</FieldDescription>
 
                   {errors.slug && (
-                    <p className="text-base-danger mt-1">
-                      {errors.slug.message}
-                    </p>
+                    <FormMessage>{errors.slug.message}</FormMessage>
                   )}
                 </Field>
 
@@ -378,9 +375,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   </FieldDescription>
 
                   {errors.excerpt && (
-                    <p className="text-base-danger mt-1">
-                      {errors.excerpt.message}
-                    </p>
+                    <FormMessage>{errors.excerpt.message}</FormMessage>
                   )}
                 </Field>
 
@@ -409,9 +404,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   </FieldDescription>
 
                   {errors.content && (
-                    <p className="text-base-danger mt-1">
-                      {errors.content.message}
-                    </p>
+                    <FormMessage>{errors.content.message}</FormMessage>
                   )}
                 </Field>
               </CardContent>
@@ -451,9 +444,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   </FieldDescription>
 
                   {errors.metaTitle && (
-                    <p className="text-base-danger mt-1">
-                      {errors.metaTitle.message}
-                    </p>
+                    <FormMessage>{errors.metaTitle.message}</FormMessage>
                   )}
                 </Field>
 
@@ -545,9 +536,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   />
 
                   {errors.status && (
-                    <p className="text-base-danger mt-1">
-                      {errors.status.message}
-                    </p>
+                    <FormMessage>{errors.status.message}</FormMessage>
                   )}
                 </Field>
 
@@ -599,9 +588,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                   <FieldDescription>Enter the author's name.</FieldDescription>
 
                   {errors.author && (
-                    <p className="text-base-danger mt-1">
-                      {errors.author.message}
-                    </p>
+                    <FormMessage>{errors.author.message}</FormMessage>
                   )}
                 </Field>
 

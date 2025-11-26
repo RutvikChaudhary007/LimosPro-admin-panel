@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
 import useFetchAllFleets from "@/api/getAllFleets.api";
-import { Form } from "@/components/ui/form";
+import { Form, FormMessage } from "@/components/ui/form";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import AddressInput from "../AddressInput";
@@ -330,9 +330,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </FieldDescription>
 
                 {form.formState.errors.firstName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.firstName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -368,9 +368,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </FieldDescription>
 
                 {form.formState.errors.lastName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.lastName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -406,9 +406,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   <FieldDescription>Select Affiliate</FieldDescription>
 
                   {form.formState.errors.affiliateId && (
-                    <p className="text-base-danger mt-1">
+                    <FormMessage>
                       {form.formState.errors.affiliateId.message}
-                    </p>
+                    </FormMessage>
                   )}
                 </Field>
               ) : (
@@ -441,9 +441,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 <FieldDescription>Select Status</FieldDescription>
 
                 {form.formState.errors.status && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.status.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -476,9 +476,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </FieldDescription>
 
                 {form.formState.errors.email && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.email.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -520,9 +520,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </FieldDescription>
 
                 {form.formState.errors.password && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.password.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -559,9 +559,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </FieldDescription>
 
                 {form.formState.errors.businessAddress && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.businessAddress.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -598,9 +598,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 <FieldDescription>Enter your Tax Id number.</FieldDescription>
 
                 {form.formState.errors.taxIdNumber && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.taxIdNumber.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -639,9 +639,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </FieldDescription>
 
                 {form.formState.errors.licenseNumber && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.licenseNumber.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -682,9 +682,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   </FieldDescription>
 
                   {form.formState.errors.vehicleId && (
-                    <p className="text-base-danger mt-1">
+                    <FormMessage>
                       {form.formState.errors.vehicleId.message}
-                    </p>
+                    </FormMessage>
                   )}
                 </Field>
 
@@ -718,9 +718,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   <FieldDescription>Enter gratuity amount.</FieldDescription>
 
                   {form.formState.errors.gratuity && (
-                    <p className="text-base-danger mt-1">
+                    <FormMessage>
                       {form.formState.errors.gratuity.message}
-                    </p>
+                    </FormMessage>
                   )}
                 </Field>
               </div>
@@ -743,9 +743,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 />
 
                 {form.formState.errors.documents && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.documents.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

@@ -2,7 +2,6 @@ import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import type React from "react";
 import { cn } from "@/lib/utils";
 import type { BlogPost } from "@/types/content";
-import { TitleWithTooltip } from "../TitleWithTooltip";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import {
@@ -12,6 +11,7 @@ import {
   CardContent,
   CardHeader,
   CardImage,
+  CardTitle,
 } from "../ui/card";
 import {
   DropdownMenu,
@@ -67,7 +67,9 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({
 
       <CardBody className="flex-1">
         <CardHeader className="!grid-rows-1 !auto-rows-auto !gap-1">
-          <TitleWithTooltip title={blogPost.title} />
+          <CardTitle className="line-clamp-2 text-lg">
+            {blogPost.title}
+          </CardTitle>
           <div className="flex items-center gap-1.5 flex-wrap col-span-2">
             <Badge
               className={cn("capitalize", getStatusColor(blogPost.status))}

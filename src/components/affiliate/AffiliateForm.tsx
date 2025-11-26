@@ -13,7 +13,7 @@ import {
 import { type FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormItem } from "@/components/ui/form";
+import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
 import type {
   IAffiliate,
   IEditAffiliateRes,
@@ -443,9 +443,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.companyName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.companyName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -481,9 +481,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.firstName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.firstName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -519,9 +519,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.lastName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.lastName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -564,9 +564,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.password && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.password.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -599,9 +599,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.email && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.email.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -644,9 +644,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.businessContactNumber && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.businessContactNumber.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -683,9 +683,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.businessAddress && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.businessAddress.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -722,9 +722,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.entityType && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.entityType.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -757,9 +757,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.taxId && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.taxId.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -800,9 +800,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.commissionRate && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.commissionRate.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -856,9 +856,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.status && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.status.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -897,9 +897,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 </FieldDescription>
 
                 {form.formState.errors.businessEmail && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.businessEmail.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -963,9 +963,9 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 />
 
                 {form.formState.errors.documents && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.documents.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

@@ -128,7 +128,7 @@ const TestimonialForm = ({
       name: "",
       message: "",
       photo: null,
-      rating: 0,
+      rating: 1,
       isFeatured: false,
     },
   });
@@ -190,9 +190,9 @@ const TestimonialForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.name && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.name.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -223,9 +223,9 @@ const TestimonialForm = ({
                 <FieldDescription>Enter your message here.</FieldDescription>
 
                 {form.formState.errors.message && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.message.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -245,6 +245,8 @@ const TestimonialForm = ({
                         placeholder="Rating"
                         disabled={isFieldDisabled(disabledFields, "rating")}
                         {...field}
+                        min={1}
+                        max={5}
                       />
                       <InputGroupAddon>
                         <IconStar />
@@ -256,13 +258,13 @@ const TestimonialForm = ({
                 <FieldDescription>Enter the rating value.</FieldDescription>
 
                 {form.formState.errors.rating && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.rating.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
-              <Field className="self-end">
+              <Field className="justify-between">
                 <FieldLabel
                   htmlFor="isFeatured"
                   className="text-base-black gap-0"
@@ -275,7 +277,7 @@ const TestimonialForm = ({
                   name="isFeatured"
                   render={({ field }) => (
                     <Checkbox
-                      className="w-4 max-w-4"
+                      className="w-4 max-w-4 !mt-auto"
                       id="isFeatured"
                       checked={field.value}
                       onCheckedChange={(checked) => field.onChange(checked)}
@@ -283,14 +285,14 @@ const TestimonialForm = ({
                   )}
                 />
 
-                <FieldDescription>
+                <FieldDescription className="!mt-auto">
                   Toggle to mark this item as featured.
                 </FieldDescription>
 
                 {form.formState.errors.isFeatured && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.isFeatured.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -315,7 +317,7 @@ const TestimonialForm = ({
                         }}
                       />
                     </FormControl>
-                    <FormMessage className="mt-1 text-red-600">
+                    <FormMessage>
                       {form.formState.errors.photo?.message}
                     </FormMessage>
                   </FormItem>

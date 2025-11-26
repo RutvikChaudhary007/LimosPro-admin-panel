@@ -7,7 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import useFetchAllRegions from "@/api/region.api";
 import useFetchAllStaffRoles from "@/api/role.api";
-import { Form } from "@/components/ui/form";
+import { Form, FormMessage } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { Button } from "../ui/button";
@@ -134,9 +134,9 @@ const StaffMemberForm = ({
                 <FieldDescription>Enter the First Name.</FieldDescription>
 
                 {form.formState.errors.firstName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.firstName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -169,9 +169,9 @@ const StaffMemberForm = ({
                 <FieldDescription>Enter the Last Name.</FieldDescription>
 
                 {form.formState.errors.lastName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.lastName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -201,9 +201,9 @@ const StaffMemberForm = ({
                 <FieldDescription>Enter the Email Address.</FieldDescription>
 
                 {form.formState.errors.lastName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.lastName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -237,9 +237,9 @@ const StaffMemberForm = ({
                 <FieldDescription>Enter your password.</FieldDescription>
 
                 {form.formState.errors.password && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.password.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
               <Field>
@@ -268,9 +268,9 @@ const StaffMemberForm = ({
                 <FieldDescription>Select the Role.</FieldDescription>
 
                 {form.formState.errors.role && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.role.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -302,9 +302,9 @@ const StaffMemberForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.region && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.region.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

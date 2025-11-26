@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
-import { Form } from "../ui/form";
+import { Form, FormMessage } from "../ui/form";
 import {
   InputGroup,
   InputGroupAddon,
@@ -109,9 +109,9 @@ const IpWhiteListForm = ({
                 <FieldDescription>Enter the full name here.</FieldDescription>
 
                 {form.formState.errors.name && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.name.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -142,9 +142,7 @@ const IpWhiteListForm = ({
                 <FieldDescription>Enter the IP address here.</FieldDescription>
 
                 {form.formState.errors.ip && (
-                  <p className="text-base-danger mt-1">
-                    {form.formState.errors.ip.message}
-                  </p>
+                  <FormMessage>{form.formState.errors.ip.message}</FormMessage>
                 )}
               </Field>
             </CardContent>

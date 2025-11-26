@@ -18,7 +18,7 @@ import type { TSetting } from "../table/column";
 import { Button } from "../ui/button";
 import { Card, CardBody, CardContent, CardFooter } from "../ui/card";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
-import { Form } from "../ui/form";
+import { Form, FormMessage } from "../ui/form";
 import {
   InputGroup,
   InputGroupAddon,
@@ -148,9 +148,9 @@ const SettingForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.email && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.email.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
               <Field>
@@ -183,9 +183,9 @@ const SettingForm = ({
                 <FieldDescription>Enter your location here.</FieldDescription>
 
                 {form.formState.errors.location && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.location.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
               <Field>
@@ -217,9 +217,9 @@ const SettingForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.phone && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.phone.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
               <Field>
@@ -254,9 +254,9 @@ const SettingForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.whatsapp && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.whatsapp.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -287,9 +287,9 @@ const SettingForm = ({
                 <FieldDescription>Enter your Skype ID here.</FieldDescription>
 
                 {form.formState.errors.skype && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.skype.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -323,9 +323,9 @@ const SettingForm = ({
                 <FieldDescription>Enter your payment ID here.</FieldDescription>
 
                 {form.formState.errors.paymentId && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.paymentId.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -364,9 +364,9 @@ const SettingForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.paymentSecretKey && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.paymentSecretKey.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

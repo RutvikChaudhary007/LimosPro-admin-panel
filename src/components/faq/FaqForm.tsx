@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
-import { Form } from "../ui/form";
+import { Form, FormMessage } from "../ui/form";
 import {
   InputGroup,
   InputGroupAddon,
@@ -109,9 +109,9 @@ const FaqForm = ({
                 <FieldDescription>Enter your question here.</FieldDescription>
 
                 {form.formState.errors.question && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.question.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -142,9 +142,9 @@ const FaqForm = ({
                 <FieldDescription>Enter the answer here.</FieldDescription>
 
                 {form.formState.errors.answer && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.answer.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

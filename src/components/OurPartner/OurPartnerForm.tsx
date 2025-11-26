@@ -137,9 +137,9 @@ const OurPartnerForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.CompanyName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.CompanyName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
               <Field>
@@ -169,9 +169,7 @@ const OurPartnerForm = ({
                 <FieldDescription>Enter your Url here.</FieldDescription>
 
                 {form.formState.errors.url && (
-                  <p className="text-base-danger mt-1">
-                    {form.formState.errors.url.message}
-                  </p>
+                  <FormMessage>{form.formState.errors.url.message}</FormMessage>
                 )}
               </Field>
 
@@ -196,7 +194,7 @@ const OurPartnerForm = ({
                         }}
                       />
                     </FormControl>
-                    <FormMessage className="mt-1 text-base-danger">
+                    <FormMessage>
                       {form.formState.errors.photo?.message}
                     </FormMessage>
                   </FormItem>

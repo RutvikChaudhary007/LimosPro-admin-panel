@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText, IconGridPattern, IconSort09 } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
-import { Form } from "@/components/ui/form";
+import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
@@ -196,9 +196,9 @@ const ContentManagementForm = ({
                 <FieldDescription>Enter the page title.</FieldDescription>
 
                 {form.formState.errors.pageTitle && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.pageTitle.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -233,9 +233,9 @@ const ContentManagementForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.metaTitle && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.metaTitle.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -270,9 +270,9 @@ const ContentManagementForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.metaDescription && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.metaDescription.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -307,9 +307,9 @@ const ContentManagementForm = ({
                 <FieldDescription>Enter the block type.</FieldDescription>
 
                 {form.formState.errors.blockType && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.blockType.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -342,9 +342,9 @@ const ContentManagementForm = ({
                 <FieldDescription>Enter the page name.</FieldDescription>
 
                 {form.formState.errors.pageName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.pageName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -377,9 +377,9 @@ const ContentManagementForm = ({
                 <FieldDescription>Enter the section name.</FieldDescription>
 
                 {form.formState.errors.sectionName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.sectionName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -414,9 +414,9 @@ const ContentManagementForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.sortOrder && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.sortOrder.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -446,9 +446,9 @@ const ContentManagementForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.content && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.content.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

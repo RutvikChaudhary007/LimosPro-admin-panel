@@ -13,12 +13,11 @@ import {
   IconTimeDuration0,
   IconUsers,
 } from "@tabler/icons-react";
-
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import { Form } from "@/components/ui/form";
+import { Form, FormMessage } from "@/components/ui/form";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { styledLog } from "@/utils/styledLog";
@@ -585,9 +584,9 @@ const FleetForm = ({
                 <FieldDescription>Select your region.</FieldDescription>
 
                 {form.formState.errors.regionId && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.regionId.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -624,9 +623,9 @@ const FleetForm = ({
                 <FieldDescription>Select Affiliate</FieldDescription>
 
                 {form.formState.errors.affiliateId && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.affiliateId.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -656,9 +655,9 @@ const FleetForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.description && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.description.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -695,9 +694,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the bag capacity.</FieldDescription>
 
                 {form.formState.errors.bagsCapacity && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.bagsCapacity.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -732,9 +731,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the vehicle capacity.</FieldDescription>
 
                 {form.formState.errors.capacity && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.capacity.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -768,9 +767,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the base fare amount.</FieldDescription>
 
                 {form.formState.errors.baseFair && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.baseFair.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -803,9 +802,9 @@ const FleetForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.minFair && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.minFair.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -838,9 +837,9 @@ const FleetForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.minHour && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.minHour.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -877,9 +876,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the price per hour.</FieldDescription>
 
                 {form.formState.errors.pricePerHour && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.pricePerHour.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -917,9 +916,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the price per mile.</FieldDescription>
 
                 {form.formState.errors.pricePerMile && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.pricePerMile.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -957,9 +956,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the price per minute.</FieldDescription>
 
                 {form.formState.errors.pricePerMinute && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.pricePerMinute.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -999,9 +998,9 @@ const FleetForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.cityToCityHourlyRate && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.cityToCityHourlyRate.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1040,9 +1039,9 @@ const FleetForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.plateNumber && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.plateNumber.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1073,9 +1072,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the vehicle brand.</FieldDescription>
 
                 {form.formState.errors.brand && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.brand.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1106,9 +1105,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the vehicle model.</FieldDescription>
 
                 {form.formState.errors.model && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.model.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1139,9 +1138,9 @@ const FleetForm = ({
                 <FieldDescription>Enter the vehicle color.</FieldDescription>
 
                 {form.formState.errors.color && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.color.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1169,9 +1168,9 @@ const FleetForm = ({
                 <FieldDescription>Select the vehicle year.</FieldDescription>
 
                 {form.formState.errors.year && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.year.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1204,9 +1203,9 @@ const FleetForm = ({
                 <FieldDescription>Select the type of vehicle.</FieldDescription>
 
                 {form.formState.errors.vehicleType && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.vehicleType.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1248,9 +1247,9 @@ const FleetForm = ({
                 </FieldDescription>
 
                 {form.formState.errors.zonePricings && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.zonePricingEnabled.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -1505,9 +1504,9 @@ const FleetForm = ({
                 />
 
                 {form.formState.errors.documents && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.documents.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>

@@ -9,7 +9,7 @@ import {
 } from "@tabler/icons-react";
 import IntlTelInput from "intl-tel-input/react";
 import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
-import { Form } from "@/components/ui/form";
+import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "intl-tel-input/styles";
 import { Controller, useForm } from "react-hook-form";
@@ -157,9 +157,9 @@ const CrewMemberForm = ({
                 <FieldDescription> Enter the First Name. </FieldDescription>
 
                 {form.formState.errors.firstName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.firstName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
               <Field>
@@ -191,9 +191,9 @@ const CrewMemberForm = ({
                 <FieldDescription> Enter the Last Name. </FieldDescription>
 
                 {form.formState.errors.lastName && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.lastName.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -226,9 +226,9 @@ const CrewMemberForm = ({
                 <FieldDescription>Enter the description.</FieldDescription>
 
                 {form.formState.errors.description && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.description.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -258,9 +258,9 @@ const CrewMemberForm = ({
                 <FieldDescription>Enter the email address.</FieldDescription>
 
                 {form.formState.errors.email && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.email.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -292,9 +292,9 @@ const CrewMemberForm = ({
                 <FieldDescription>Enter your phone number.</FieldDescription>
 
                 {form.formState.errors.phone && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.phone.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -328,9 +328,9 @@ const CrewMemberForm = ({
                 <FieldDescription>Enter your password.</FieldDescription>
 
                 {form.formState.errors.password && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.password.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
 
@@ -366,9 +366,9 @@ const CrewMemberForm = ({
                   <FieldDescription>Select an affiliate.</FieldDescription>
 
                   {form.formState.errors.affiliateId && (
-                    <p className="text-base-danger mt-1">
+                    <FormMessage>
                       {form.formState.errors.affiliateId.message}
-                    </p>
+                    </FormMessage>
                   )}
                 </Field>
               ) : (

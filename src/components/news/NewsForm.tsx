@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
-import { Form } from "../ui/form";
+import { Form, FormMessage } from "../ui/form";
 import {
   InputGroup,
   InputGroupAddon,
@@ -99,9 +99,9 @@ const NewsForm = ({
                 <FieldDescription>Enter the latest news here.</FieldDescription>
 
                 {form.formState.errors.news && (
-                  <p className="text-base-danger mt-1">
+                  <FormMessage>
                     {form.formState.errors.news.message}
-                  </p>
+                  </FormMessage>
                 )}
               </Field>
             </CardContent>
