@@ -156,11 +156,11 @@ const SeoPage = () => {
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
-        title="Seo"
+        title="SEO"
         breadcrumbs={[
           { label: "Home", path: "/" },
           { label: "Content Management" },
-          { label: "Seo" },
+          { label: "SEO" },
         ]}
         action={{
           label: "Add New SEO",

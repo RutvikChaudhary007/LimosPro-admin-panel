@@ -183,7 +183,7 @@ export default function Dashboard() {
                     </Link>
                   </CardAction>
                 </CardHeader>
-                <CardContent className="max-h-[150px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+                <CardContent className="max-h-[180px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
                   <DataTable
                     columns={columns}
                     rowSelection={rowSelection}

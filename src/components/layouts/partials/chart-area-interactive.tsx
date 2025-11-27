@@ -33,7 +33,7 @@ export function ChartAreaInteractive({ data }: TProps) {
 
   return (
     <Card className="border-base-gray @container/card rounded border shadow-none">
-      <CardBody className="p-2">
+      <CardBody>
         <CardContent>
           <AreaLineChart data={chartData} />
         </CardContent>

@@ -32,7 +32,7 @@ const AccessCell = <T extends { id: string; permissionAccess?: string[] }>({
     <Dialog modal={false}>
       <DialogTrigger asChild>
         <Button
-          variant="outlineNavBtnSecondary"
+          variant="outlineNavBtnBlack"
           size="xl"
           spacing="lg"
           tooltip="Manage Access"

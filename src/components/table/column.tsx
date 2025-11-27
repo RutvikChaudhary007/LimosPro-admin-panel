@@ -1768,7 +1768,7 @@ export function getCrewMember(
         <div className="text-right flex gap-2 items-center">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -1778,7 +1778,7 @@ export function getCrewMember(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -1882,16 +1882,6 @@ export function getStaffMember(
       ),
       enableSorting: false,
     },
-    // {
-    //   id: "access",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Access" />
-    //   ),
-    //   cell: ({ row }) => (
-    //     <Button onClick={() => onAccess(row.original.id)}>Manage Access</Button>
-    //   ),
-    //   enableSorting: false
-    // },
     {
       id: "action",
       header: ({ column }) => (
@@ -1910,7 +1900,7 @@ export function getStaffMember(
           </Button>
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -1920,7 +1910,7 @@ export function getStaffMember(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -1955,13 +1945,6 @@ export function getStaffMember(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2047,7 +2030,7 @@ export function getContactRequest(
           </Button>
           <Button
             onClick={() => onEmail(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnInfo"
             size="xl"
             spacing="lg"
             tooltip="Reply"
@@ -2139,7 +2122,7 @@ export function getTestimonial(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2149,7 +2132,7 @@ export function getTestimonial(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -2184,13 +2167,6 @@ export function getTestimonial(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2276,7 +2252,7 @@ export function getOurPartner(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2286,7 +2262,7 @@ export function getOurPartner(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -2321,13 +2297,6 @@ export function getOurPartner(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2387,7 +2356,7 @@ export function getNews(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2398,7 +2367,7 @@ export function getNews(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -2433,13 +2402,6 @@ export function getNews(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2508,7 +2470,7 @@ export function getSettings(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2517,7 +2479,7 @@ export function getSettings(
           </Button>
           <Button
             onClick={() => onDelete(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnDestructive"
             size="xl"
             spacing="lg"
             tooltip="Delete"
@@ -2591,7 +2553,7 @@ export function getIpWhiteList(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2601,7 +2563,7 @@ export function getIpWhiteList(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -2636,13 +2598,6 @@ export function getIpWhiteList(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2710,7 +2665,7 @@ export function getFaqs(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2720,7 +2675,7 @@ export function getFaqs(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -2755,13 +2710,6 @@ export function getFaqs(
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          {/* <Button
-            onClick={() => onDelete(row.original.id)}
-            
-            
-          >
-            <Trash2  />
-          </Button> */}
         </div>
       ),
       enableSorting: false,
@@ -2840,7 +2788,7 @@ export function getChauffeurAvailablility(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -2850,7 +2798,7 @@ export function getChauffeurAvailablility(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -2926,7 +2874,7 @@ export function getHomeContent(
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             onClick={() => onEdit(row.original.id)}
@@ -2937,7 +2885,7 @@ export function getHomeContent(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -3052,7 +3000,7 @@ export function getContent(
         <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -3062,7 +3010,7 @@ export function getContent(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"
@@ -3173,7 +3121,7 @@ export function getBlogColumns(
           </Button>
           <Button
             onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnBlack"
+            variant="outlineNavBtnPrimary"
             size="xl"
             spacing="lg"
             tooltip="Edit Blog"
@@ -3183,7 +3131,7 @@ export function getBlogColumns(
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outlineNavBtnBlack"
+                variant="outlineNavBtnDestructive"
                 size="xl"
                 spacing="lg"
                 tooltip="Delete"

@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBuilding,
-  IconBuildingBridge2,
   IconEye,
   IconEyeClosed,
   IconId,
@@ -35,13 +34,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "../ui/input-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { SelectDropDown } from "../ui/select";
 import { Switch } from "../ui/switch";
 import FilesUpload from "../ui/upload-files";
 
@@ -172,6 +165,32 @@ const showStatus = [
   { label: "Pending", value: "pending" },
   { label: "Approved", value: "approved" },
   { label: "Rejected", value: "rejected" },
+];
+
+const entityType = [
+  { label: "Sole Proprietorship", value: "sole_proprietorship" },
+  { label: "Partnership", value: "partnership" },
+  { label: "Limited Partnership (LP)", value: "lp" },
+  { label: "Limited Liability Partnership (LLP)", value: "llp" },
+
+  { label: "Limited Liability Company (LLC)", value: "llc" },
+  { label: "Private Limited Company (Ltd)", value: "ltd" },
+  { label: "Public Limited Company (PLC)", value: "plc" },
+
+  { label: "Corporation (Inc)", value: "inc" },
+  { label: "C Corporation (C-Corp)", value: "c_corp" },
+  { label: "S Corporation (S-Corp)", value: "s_corp" },
+
+  { label: "Joint Stock Company (JSC)", value: "jsc" },
+  { label: "Holding Company", value: "holding_company" },
+  { label: "Subsidiary", value: "subsidiary" },
+
+  { label: "Branch Office", value: "branch_office" },
+  { label: "Representative Office", value: "representative_office" },
+
+  { label: "Non-Profit Organization (NPO)", value: "npo" },
+  { label: "Non-Governmental Organization (NGO)", value: "ngo" },
+  { label: "Foundation", value: "foundation" },
 ];
 
 interface IAddressObj {
@@ -701,18 +720,17 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   control={form.control}
                   name="entityType"
                   render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="entityType"
-                        type="text"
-                        placeholder="Corporation"
-                        disabled={isFieldDisabled(disabledFields, "entityType")}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconBuildingBridge2 />
-                      </InputGroupAddon>
-                    </InputGroup>
+                    <SelectDropDown
+                      placeholder="Select Entity Type"
+                      items={
+                        entityType?.map((a) => ({
+                          label: a.label,
+                          value: a.value,
+                        })) || []
+                      }
+                      value={field.value}
+                      setSelectedItem={(v) => field.onChange(v)}
+                    />
                   )}
                 />
 
@@ -815,39 +833,17 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                   control={form.control}
                   name="status"
                   render={({ field }) => (
-                    <Select
+                    <SelectDropDown
+                      placeholder="Select Status"
+                      items={
+                        showStatus?.map((a) => ({
+                          label: a.label,
+                          value: a.value,
+                        })) || []
+                      }
                       value={field.value}
-                      onValueChange={(v) => {
-                        // console.log("onChange triggered with:", v);
-                        field.onChange(v);
-                      }}
-                      disabled={isFieldDisabled(disabledFields, "status")}
-                    >
-                      <FormControl className="w-full min-w-full rounded">
-                        <SelectTrigger className="cursor-pointer">
-                          <SelectValue placeholder="Select status">
-                            {/* Force display the selected value */}
-                            {/* {field.value &&
-                                  showStatus.find(
-                                    (s) => s.value === field.value,
-                                  )?.label} */}
-                          </SelectValue>
-                        </SelectTrigger>
-                      </FormControl>
-
-                      <SelectContent>
-                        {showStatus.map((option) => (
-                          <SelectItem
-                            className="cursor-pointer"
-                            key={option.value}
-                            value={option.value}
-                          >
-                            {option.label}
-                            {/* {field.value === option.value && "✓"} */}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      setSelectedItem={(v) => field.onChange(v)}
+                    />
                   )}
                 />
 
