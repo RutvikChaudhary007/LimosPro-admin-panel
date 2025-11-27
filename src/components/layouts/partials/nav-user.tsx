@@ -15,17 +15,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { constant } from "@/lib/constant";
+import { useUserStore } from "@/stores/useAuthStore";
 import { Button } from "../../ui/button";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar?: string;
-  };
-}) {
+export function NavUser() {
+  const { user } = useUserStore();
   const navigate = useNavigate();
   return (
     <DropdownMenu>
@@ -37,17 +31,12 @@ export function NavUser({
           className="group"
         >
           <Avatar className="size-7">
-            <AvatarImage src={user?.avatar} alt={user?.name} />
+            <AvatarImage src={user?.profilePicture} alt={user?.name} />
             <AvatarFallback className="group-hover:bg-base-black transition-all bg-base-primary/10 text-xs">
-              {(user?.name
-                ? user.name
-                    .split(" ")
-                    .map((w) => w[0])
-                    .join("")
-                : "N/A"
-              )
-                ?.toUpperCase()
-                .slice(0, 2)}
+              {(
+                (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
+                "N/A"
+              ).toUpperCase()}
             </AvatarFallback>
           </Avatar>
           <span>{user?.name}</span>
@@ -64,17 +53,12 @@ export function NavUser({
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="size-8 rounded">
-              <AvatarImage src={user?.avatar} alt={user?.name} />
+              <AvatarImage src={user?.profilePicture} alt={user?.name} />
               <AvatarFallback className="rounded bg-base-primary/10">
-                {(user?.name
-                  ? user.name
-                      .split(" ")
-                      .map((w) => w[0])
-                      .join("")
-                  : "N/A"
-                )
-                  ?.toUpperCase()
-                  .slice(0, 2)}
+                {(
+                  (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
+                  "N/A"
+                ).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">

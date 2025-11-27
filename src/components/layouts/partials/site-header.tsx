@@ -9,10 +9,8 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { type User, useUserStore } from "@/stores/useAuthStore";
 import { NavUser } from "./nav-user";
 export function SiteHeader() {
-  const { user } = useUserStore();
   return (
     <header className="bg-base-background-light sticky top-0 z-40 flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-5 p-4 sm:gap-2 md:gap-2 lg:gap-4">
@@ -41,7 +39,7 @@ export function SiteHeader() {
             </Button>
           </div>
           <div className="">
-            <NavUser user={user as User} />
+            <NavUser />
           </div>
         </div>
       </div>

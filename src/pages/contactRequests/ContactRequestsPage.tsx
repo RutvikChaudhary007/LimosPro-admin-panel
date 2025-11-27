@@ -7,6 +7,7 @@ import ReplyFC from "@/components/ContactRequests/ReplyFC";
 import ViewModal from "@/components/ContactRequests/ViewModal";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { PaginationControls } from "@/components/pagination";
 import { Spinner } from "@/components/Spinner";
 import {
   getContactRequest,
@@ -19,15 +20,6 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { generatePageTitle } from "@/utils/seo";
@@ -42,6 +34,7 @@ const ContactRequestsPage = () => {
   const [{ value: optionDefaultValue }] = showOptions;
   const [isOpen, setIsOpen] = useState(false);
   const [isModal, setIsModal] = useState(false);
+  const [newPage, setNewPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(
     parseInt(optionDefaultValue, 10),
   );
@@ -49,12 +42,11 @@ const ContactRequestsPage = () => {
   const [selectedOption, setSelectedOption] =
     useState<string>(optionDefaultValue);
   const { data, isFetching } = useFetchAllContactRequest();
-  // const [data, setData] = useState<TContactRequest[]>(tableData);
 
   const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } =
     usePagination<TContactRequest>(
       data?.contactRequests,
-      1,
+      newPage,
       perPage,
       data?.pagination,
     );
@@ -84,79 +76,11 @@ const ContactRequestsPage = () => {
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+    setNewPage(1);
+    setPage(1);
     window.scrollTo(0, 0);
   };
 
-  // Generate pagination items
-  const generatePaginationItems = () => {
-    const items = [];
-
-    // Always show first page
-    items.push(
-      <PaginationItem key="first">
-        <PaginationLink
-          isActive={currentPage === 1}
-          onClick={() => handlePageChange(1)}
-        >
-          1
-        </PaginationLink>
-      </PaginationItem>,
-    );
-
-    // Show ellipsis if needed
-    if (currentPage > 3) {
-      items.push(
-        <PaginationItem key="ellipsis-1">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Show nearby pages
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(calculatedTotalPages - 1, currentPage + 1);
-      i++
-    ) {
-      if (i === 1 || i === calculatedTotalPages) continue; // Skip first and last pages as they're added separately
-
-      items.push(
-        <PaginationItem key={i}>
-          <PaginationLink
-            isActive={currentPage === i}
-            onClick={() => handlePageChange(i)}
-          >
-            {i}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    // Show ellipsis if needed
-    if (currentPage < calculatedTotalPages - 2) {
-      items.push(
-        <PaginationItem key="ellipsis-2">
-          <PaginationEllipsis />
-        </PaginationItem>,
-      );
-    }
-
-    // Always show last page if there's more than one page
-    if (calculatedTotalPages > 1) {
-      items.push(
-        <PaginationItem key="last">
-          <PaginationLink
-            isActive={currentPage === calculatedTotalPages}
-            onClick={() => handlePageChange(calculatedTotalPages)}
-          >
-            {calculatedTotalPages}
-          </PaginationLink>
-        </PaginationItem>,
-      );
-    }
-
-    return items;
-  };
   return (
     <>
       <PageTitle title={generatePageTitle("Contact Request")} />
@@ -235,33 +159,11 @@ const ContactRequestsPage = () => {
         <ReplyFC isModal={isModal} setIsModal={setIsModal} />
         {/* Pagination */}
         {totalPages > 0 && calculatedTotalPages > 1 && (
-          <Pagination className="justify-end mt-5 cursor-pointer">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
-                />
-              </PaginationItem>
-
-              {generatePaginationItems()}
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={
-                    currentPage === calculatedTotalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={calculatedTotalPages}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </>

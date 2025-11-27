@@ -37,17 +37,11 @@ function UserProfile({
   return (
     <div className="font-quicksand text-base-black flex items-center gap-4 px-4 text-left text-base leading-[100%] font-bold tracking-[0%] lg:px-8">
       <Avatar className="size-[60px]">
-        <AvatarImage src={user?.avatar || ""} alt={user?.name || "User"} />
+        <AvatarImage src={user?.profilePicture || ""} alt={user?.name} />
         <AvatarFallback className="bg-base-blue-cream text-2xl font-medium">
-          {(user?.name
-            ? user.name
-                .split(" ")
-                .map((w) => w[0])
-                .join("")
-            : "N/A"
-          )
-            ?.toUpperCase()
-            .slice(0, 2)}
+          {(
+            (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") || "N/A"
+          ).toUpperCase()}
         </AvatarFallback>
       </Avatar>
 

@@ -9,7 +9,7 @@ export type User = {
   lastName: string;
   email: string;
   role?: string;
-  avatar?: string;
+  profilePicture?: string;
   permissions: string[];
   refreshToken: string;
 };
@@ -27,7 +27,6 @@ export const useUserStore = create<UserStore>()(
       isLoggedIn: false,
 
       setUser: (user) => {
-        console.log("zustand:", user);
         set({
           user: user,
           isLoggedIn: !!user,
