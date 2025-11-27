@@ -6,7 +6,14 @@ import "./App.css";
 import { renderRoutes } from "./routes/renderRoutes";
 import { envValidationError } from "./utils/env";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   if (envValidationError) {

@@ -162,7 +162,7 @@ const ViewBlogPostPage: React.FC = () => {
                     {blogPost.images.map((image, index) => (
                       <img
                         key={index}
-                        src={image}
+                        src={image?.url}
                         alt={`Blog-image-${index + 1}`}
                         className="w-full h-32 object-cover rounded-lg"
                       />

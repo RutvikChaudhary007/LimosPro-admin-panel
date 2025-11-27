@@ -256,7 +256,7 @@ const StaffMemberForm = ({
                       items={
                         rolesData?.map((option) => ({
                           label: option?.roleName,
-                          value: option?.id,
+                          value: option?.roleName,
                         })) || []
                       }
                       value={field.value || ""}

@@ -11,12 +11,14 @@ export interface BlogPost {
   status: "draft" | "published" | "archived";
   viewCount: number;
   publishedAt?: Date;
+  author?: string;
   authorId?: string;
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
     metaKeywords?: string[];
     ogImage?: string;
+    canonicalUrl?: string;
   };
   blogAuthor?: {
     authorBadges?: any[];

@@ -25,7 +25,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import MultipleImageUpload from "@/components/ui/multiple-image-upload";
+
 import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost } from "@/types/content";
 import "react-quill/dist/quill.snow.css";
@@ -33,25 +33,17 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { styledLog } from "@/utils/styledLog";
 import { Form, FormMessage } from "../ui/form";
+import UploadWithUrl from "../ui/upload-with-url";
 
-const FileSchema = z.instanceof(File);
-const UrlSchema = z.string(); // Relaxed from .url() to allow relative paths
+const imageSchema = z.union([z.string(), z.instanceof(File)]);
 
 const blogPostSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   slug: z.string().min(1, "Slug is required").max(100, "Slug too long"),
   content: z.string().min(1, "Content is required"),
   excerpt: z.string().optional(),
-  featuredImage: z.union([FileSchema, UrlSchema, z.literal("")]),
-  images: z
-    .union([
-      z.array(z.union([FileSchema, UrlSchema])),
-      FileSchema,
-      UrlSchema,
-      z.literal(""),
-      z.null(),
-    ])
-    .optional(),
+  featuredImage: imageSchema.optional().or(z.literal("")),
+  images: z.array(imageSchema).optional(),
   status: z.enum(["draft", "published", "archived"]),
   authorId: z.string().optional(),
   tags: z.array(z.string()).optional(),
@@ -59,7 +51,7 @@ const blogPostSchema = z.object({
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
   canonicalUrl: z.string().optional(),
-  ogImage: z.union([FileSchema, UrlSchema, z.literal("")]),
+  ogImage: imageSchema.optional().or(z.literal("")),
 });
 
 const modules = {
@@ -105,20 +97,31 @@ interface IBlogFormProps {
 
 const transformInitialData = (data?: BlogPost): BlogPostForm | undefined => {
   if (!data) return undefined;
+
+  // Helper to extract URL from image field which might be string or object
+  const getImageUrl = (img: any): string => {
+    if (!img) return "";
+    if (typeof img === "string") return img;
+    return img.url || "";
+  };
+
   return {
     title: data?.title || "",
     content: data?.content || "",
     excerpt: data?.excerpt || "",
-    featuredImage: data?.featuredImage || "",
-    images: data?.images || [],
+    featuredImage: getImageUrl(data?.featuredImage),
+    images: Array.isArray(data?.images)
+      ? data.images.map(getImageUrl).filter(Boolean)
+      : [],
     slug: data?.slug || "",
     status: (data?.status as "draft" | "published" | "archived") || "draft",
-    authorId: data?.authorId || "",
+    authorId: data?.authorId || data?.author || "",
     tags: data?.tags || [],
     metaKeywords: data?.seo?.metaKeywords || [],
     metaTitle: data?.seo?.metaTitle || "",
     metaDescription: data?.seo?.metaDescription || "",
-    ogImage: data?.seo?.ogImage || "",
+    canonicalUrl: data?.seo?.canonicalUrl || "",
+    ogImage: getImageUrl(data?.seo?.ogImage),
   };
 };
 
@@ -254,13 +257,27 @@ const BlogForm: FC<IBlogFormProps> = ({
 
       // Blog Images - handle File array or URL string array
       if (data?.images && Array.isArray(data.images)) {
-        data.images.forEach((file) => {
-          if (file instanceof File) {
-            formdata.append("images", file);
-          } else if (typeof file === "string") {
-            formdata.append("images", file);
+        const imageFiles: File[] = [];
+        const imageUrls: string[] = [];
+
+        data.images.forEach((item) => {
+          if (item instanceof File) {
+            imageFiles.push(item);
+          } else if (typeof item === "string") {
+            imageUrls.push(item);
           }
         });
+
+        // Append files individually
+        imageFiles.forEach((file) => {
+          formdata.append("images", file);
+        });
+
+        // Append URLs as a single JSON string to satisfy backend validation
+        if (imageUrls.length > 0) {
+          const urlObjects = imageUrls.map((url) => ({ url }));
+          formdata.append("images", JSON.stringify(urlObjects));
+        }
       }
 
       // Tags - append as JSON string or individually
@@ -741,15 +758,10 @@ const BlogForm: FC<IBlogFormProps> = ({
                     control={form.control}
                     name="images"
                     render={({ field }) => (
-                      <MultipleImageUpload
-                        label="Additional Images"
-                        value={
-                          Array.isArray(field.value)
-                            ? (field.value as string[])
-                            : []
-                        }
+                      <UploadWithUrl
+                        multiple={true}
                         onChange={field.onChange}
-                        maxImages={10}
+                        value={field.value}
                       />
                     )}
                   />

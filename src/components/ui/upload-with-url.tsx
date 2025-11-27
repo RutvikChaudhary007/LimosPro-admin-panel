@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Link, Loader2, Plus, Trash2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Upload from "@/assets/Icons/ic-document-arrow-up.svg?react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "./badge";
@@ -12,8 +12,6 @@ import { Input } from "./input";
 /* ------------------------------------------------------ */
 type UploadMode = "url" | "file";
 
-type FileWithPreview = File & { preview?: string };
-
 interface UploadItem {
   id: string;
   source: "url" | "file";
@@ -24,13 +22,14 @@ interface UploadItem {
 }
 
 interface UploadWithUrlProps extends VariantProps<typeof uploadBoxVariants> {
+  value?: (File | string)[];
   multiple?: boolean;
   maxSize?: number;
   accept?: string;
   title?: string;
   info?: boolean;
   disabled?: boolean;
-  onUpload?: (items: UploadItem[]) => void;
+  onChange?: (items: (File | string)[]) => void;
 }
 
 /* ------------------------------------------------------ */
@@ -52,19 +51,6 @@ const uploadBoxVariants = cva(
   },
 );
 
-const tabButtonVariants = cva(
-  "px-4 py-2 font-bold text-sm rounded-t transition-all duration-200 flex items-center gap-2 border-b-2",
-  {
-    variants: {
-      active: {
-        true: "border-base-primary text-base-primary bg-base-primary/5",
-        false:
-          "border-transparent text-base-gray bg-transparent hover:text-base-black",
-      },
-    },
-  },
-);
-
 const dragOverVariants = cva(
   "border border-dashed rounded p-6 flex flex-col items-center justify-center text-center transition-all duration-200 cursor-pointer",
   {
@@ -80,15 +66,16 @@ const dragOverVariants = cva(
 /* ------------------------------------------------------ */
 /* COMPONENT */
 /* ------------------------------------------------------ */
-export default function UploadWithUrlV2({
-  variant,
+export default function UploadWithUrl({
+  value = [],
+  // variant,
   multiple = false,
   maxSize = 10,
   accept = "image/*",
   title = "Upload Image",
   info = true,
   disabled = false,
-  onUpload,
+  onChange,
 }: UploadWithUrlProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [mode, setMode] = useState<UploadMode>("url");
@@ -98,6 +85,71 @@ export default function UploadWithUrlV2({
   const [dragOver, setDragOver] = useState(false);
   const [uploads, setUploads] = useState<UploadItem[]>([]);
   const maxFileBytes = maxSize * 1024 * 1024;
+
+  // Sync internal state with external value prop
+  useEffect(() => {
+    const newUploads: UploadItem[] = [];
+
+    // Helper to check if an item is already in current uploads to avoid recreating object URLs if possible
+    // For simplicity and correctness with "value" prop changes, we might regenerate.
+    // But to avoid flickering, we can try to match.
+    // However, since "value" is the source of truth, we map it to UploadItems.
+
+    value.forEach((item) => {
+      if (item instanceof File) {
+        // Check if we already have this file in state to preserve previewSrc
+        const existing = uploads.find((u) => u.selectedFile === item);
+        if (existing) {
+          newUploads.push(existing);
+        } else {
+          const previewSrc = item.type.startsWith("image/")
+            ? URL.createObjectURL(item)
+            : "";
+          newUploads.push({
+            id: `file-${Date.now()}-${Math.random()}`,
+            source: "file",
+            previewSrc,
+            selectedFile: item,
+            fileName: item.name,
+          });
+        }
+      } else if (typeof item === "string") {
+        const existing = uploads.find((u) => u.imageUrl === item);
+        if (existing) {
+          newUploads.push(existing);
+        } else {
+          newUploads.push({
+            id: `url-${Date.now()}-${Math.random()}`,
+            source: "url",
+            previewSrc: item, // For URL, preview is the URL itself
+            imageUrl: item,
+            fileName: item.split("/").pop() || "image",
+          });
+        }
+      }
+    });
+
+    // Cleanup old object URLs that are no longer in use
+    uploads.forEach((u) => {
+      if (
+        u.source === "file" &&
+        u.previewSrc &&
+        !newUploads.find((nu) => nu.previewSrc === u.previewSrc)
+      ) {
+        URL.revokeObjectURL(u.previewSrc);
+      }
+    });
+
+    // Only update if length or content mismatch to avoid loops if value is referentially unstable but content same
+    // For now, simple set.
+    if (
+      JSON.stringify(newUploads.map((u) => u.id)) !==
+      JSON.stringify(uploads.map((u) => u.id))
+    ) {
+      setUploads(newUploads);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   /* ------------------------------------------------------ */
   /* URL VALIDATION & FETCH */
@@ -121,52 +173,41 @@ export default function UploadWithUrlV2({
     setUrlError(null);
 
     try {
-      const response = await fetch(url, {
-        mode: "cors",
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        },
-      });
+      // In a real app, you might want to verify the URL is an image via a HEAD request or similar,
+      // but here we might just trust it or let the img tag fail.
+      // The previous implementation fetched the blob. We can keep that if we want to validate size/type.
+      // However, for "Upload with URL", often we just want to store the URL string.
+      // If we fetch blob, we are converting URL -> File essentially.
+      // But the requirement says "File | string". So if it's a URL, we keep it as string.
+      // We can do a quick check if it's reachable/image if needed, but simple is better.
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      // Let's just validate it loads as an image or simple fetch check?
+      // The previous code did a fetch. Let's keep it lightweight but robust.
+      // If we just want the URL string, we don't need to fetch the blob unless we want to validate constraints.
 
-      const contentType = response.headers.get("content-type");
-      if (!contentType?.startsWith("image/")) {
-        throw new Error("URL does not point to a valid image");
-      }
+      // Let's try to fetch headers to validate type/size if possible, otherwise just add it.
+      // CORS might block fetch.
 
-      const blob = await response.blob();
+      // For this implementation, let's assume if it's a valid URL string, we accept it.
+      // We can try to load it in an Image object to verify it's an image.
 
-      // Check file size
-      if (blob.size > maxFileBytes) {
-        throw new Error(`Image is too large. Max size is ${maxSize} MB`);
-      }
-
-      // Create preview
-      const previewSrc = URL.createObjectURL(blob);
-
-      // Create upload item
-      const uploadItem: UploadItem = {
-        id: `url-${Date.now()}`,
-        source: "url",
-        previewSrc,
-        imageUrl: url,
-        fileName: url.split("/").pop() || "image",
+      const img = new Image();
+      img.onload = () => {
+        const newItem = url;
+        const newValues = multiple ? [...value, newItem] : [newItem];
+        onChange?.(newValues);
+        setUrlInput("");
+        setUrlLoading(false);
       };
-
-      // Add or replace based on multiple setting
-      const newUploads = multiple ? [...uploads, uploadItem] : [uploadItem];
-      setUploads(newUploads);
-      setUrlInput("");
-      onUpload?.(newUploads);
+      img.onerror = () => {
+        setUrlError("Failed to load image from URL");
+        setUrlLoading(false);
+      };
+      img.src = url;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch image";
       setUrlError(errorMessage);
-    } finally {
       setUrlLoading(false);
     }
   };
@@ -193,7 +234,7 @@ export default function UploadWithUrlV2({
     if (!list || disabled) return;
 
     const arr = Array.from(list);
-    const validated: UploadItem[] = [];
+    const validFiles: File[] = [];
 
     for (const f of arr) {
       // Size check
@@ -208,7 +249,7 @@ export default function UploadWithUrlV2({
         continue;
       }
 
-      // Add timestamp to filename
+      // Rename logic (optional, kept from previous)
       const now = new Date();
       const pad = (n: number) => n.toString().padStart(2, "0");
       const timestamp = `${pad(now.getDate())}${pad(now.getMonth() + 1)}${now.getFullYear()}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
@@ -219,42 +260,33 @@ export default function UploadWithUrlV2({
       const newFileName = `${namePart}_${timestamp}${extPart}`;
 
       const newFile = new File([f], newFileName, { type: f.type });
-
-      // Create preview for images
-      let previewSrc = "";
-      if (f.type.startsWith("image/")) {
-        previewSrc = URL.createObjectURL(newFile);
-      }
-
-      const uploadItem: UploadItem = {
-        id: `file-${Date.now()}-${Math.random()}`,
-        source: "file",
-        previewSrc,
-        selectedFile: newFile,
-        fileName: newFileName,
-      };
-
-      validated.push(uploadItem);
+      validFiles.push(newFile);
     }
 
-    const newUploads = multiple
-      ? [...uploads, ...validated]
-      : validated.slice(0, 1);
-    setUploads(newUploads);
-    onUpload?.(newUploads);
+    if (validFiles.length > 0) {
+      const newValues = multiple
+        ? [...value, ...validFiles]
+        : validFiles.slice(0, 1);
+      onChange?.(newValues);
+    }
   };
 
   /* ------------------------------------------------------ */
   /* REMOVE UPLOAD */
   /* ------------------------------------------------------ */
   const removeUpload = (id: string) => {
-    setUploads((prev) => {
-      const item = prev.find((u) => u.id === id);
-      if (item?.previewSrc) {
-        URL.revokeObjectURL(item.previewSrc);
-      }
-      return prev.filter((u) => u.id !== id);
+    // Find the item to remove
+    const itemToRemove = uploads.find((u) => u.id === id);
+    if (!itemToRemove) return;
+
+    // Filter out from value
+    // We need to match by reference for Files or value for strings
+    const newValues = value.filter((v) => {
+      if (v instanceof File) return v !== itemToRemove.selectedFile;
+      return v !== itemToRemove.imageUrl;
     });
+
+    onChange?.(newValues);
   };
 
   /* ------------------------------------------------------ */
@@ -314,12 +346,14 @@ export default function UploadWithUrlV2({
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && urlInput.trim()) {
+                    e.preventDefault(); // Prevent form submission
                     fetchImageFromUrl(urlInput);
                   }
                 }}
                 disabled={disabled || urlLoading}
               />
               <Button
+                type="button"
                 onClick={() => fetchImageFromUrl(urlInput)}
                 disabled={disabled || urlLoading || !urlInput.trim()}
                 size="xl"
