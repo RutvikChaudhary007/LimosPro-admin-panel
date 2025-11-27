@@ -7,32 +7,33 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { TTestimonialFormData } from "@/types/testimonial.type";
+import { styledLog } from "@/utils/styledLog";
 
 const CreateTestimonailPage = () => {
   const navigate = useNavigate();
   const createTestimonialMutation = queries.useCreateTestimonialMutation();
   const handleSubmit = async (data: TTestimonialFormData): Promise<void> => {
+    styledLog(data, "data:", "info");
     try {
-      toastPromise(
-        createTestimonialMutation.mutateAsync({
-          customerName: data.name,
-          content: data.message,
-          customerImage: data.photo,
-          rating: data.rating,
-          isFeatured: data.isFeatured,
-        }),
-        {
-          loading: "Creating testimonial...",
-          success: (res) => {
-            if (res) navigate(constant.ROUTING_URLS.TESTIMONIALS);
-            return "Yeah! Testimonial created successfully";
-          },
-          error: (e) =>
-            e instanceof Error
-              ? e.message
-              : "Opps! Failed to create testimonial",
+      const formData = new FormData();
+      formData.append("customerName", data.name);
+      formData.append("content", data.message);
+      formData.append("rating", data.rating.toString());
+      formData.append("isFeatured", data.isFeatured.toString());
+
+      if (data?.photo) {
+        formData.append("customerImage", data.photo);
+      }
+
+      toastPromise(createTestimonialMutation.mutateAsync(formData), {
+        loading: "Creating testimonial...",
+        success: (res) => {
+          if (res) navigate(constant.ROUTING_URLS.TESTIMONIALS);
+          return "Yeah! Testimonial created successfully";
         },
-      );
+        error: (e) =>
+          e instanceof Error ? e.message : "Opps! Failed to create testimonial",
+      });
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

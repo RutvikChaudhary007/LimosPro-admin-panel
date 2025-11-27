@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Plus, Trash2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 // IMAGE ONLY UPLOAD
@@ -42,6 +42,16 @@ const uploadBoxVariants = cva(
   },
 );
 
+type FileWithPreview = File & { preview?: string };
+
+type ImageItem = {
+  id: string;
+  type: "file" | "url";
+  file?: FileWithPreview;
+  url?: string;
+  preview: string;
+};
+
 interface ImagesUploadProps extends VariantProps<typeof uploadBoxVariants> {
   multiple?: boolean;
   maxSize?: number;
@@ -49,10 +59,9 @@ interface ImagesUploadProps extends VariantProps<typeof uploadBoxVariants> {
   title?: string;
   info?: boolean;
   disabled?: boolean;
+  value?: File | File[] | string | string[] | null;
   onFilesSelected?: (files: FileWithPreview[]) => void;
 }
-
-type FileWithPreview = File & { preview?: string };
 
 export default function ImagesUpload({
   variant,
@@ -62,17 +71,70 @@ export default function ImagesUpload({
   title = "Upload Images",
   info = true,
   disabled = false,
+  value,
   onFilesSelected,
 }: ImagesUploadProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const [items, setItems] = useState<ImageItem[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const maxFileBytes = maxSize * 1024 * 1024;
+
+  // Initialize items from value prop
+  useEffect(() => {
+    if (!value) {
+      setItems([]);
+      return;
+    }
+
+    const newItems: ImageItem[] = [];
+
+    if (typeof value === "string") {
+      // Single URL
+      newItems.push({
+        id: `url-${Date.now()}`,
+        type: "url",
+        url: value,
+        preview: value,
+      });
+    } else if (Array.isArray(value)) {
+      // Array of Files or URLs
+      value.forEach((item, index) => {
+        if (typeof item === "string") {
+          newItems.push({
+            id: `url-${Date.now()}-${index}`,
+            type: "url",
+            url: item,
+            preview: item,
+          });
+        } else if (item instanceof File) {
+          const preview = URL.createObjectURL(item);
+          newItems.push({
+            id: `file-${Date.now()}-${index}`,
+            type: "file",
+            file: Object.assign(item, { preview }),
+            preview,
+          });
+        }
+      });
+    } else if (value instanceof File) {
+      // Single File
+      const preview = URL.createObjectURL(value);
+      newItems.push({
+        id: `file-${Date.now()}`,
+        type: "file",
+        file: Object.assign(value, { preview }),
+        preview,
+      });
+    }
+
+    setItems(newItems);
+  }, [value]);
 
   function addFiles(list: FileList | null) {
     if (!list || disabled) return;
     const arr = Array.from(list);
     const validated: FileWithPreview[] = [];
+    const newItems: ImageItem[] = [];
 
     for (const f of arr) {
       if (f.size > maxFileBytes) continue;
@@ -94,23 +156,48 @@ export default function ImagesUpload({
       });
       newFile.preview = URL.createObjectURL(newFile);
       validated.push(newFile);
+
+      newItems.push({
+        id: `file-${Date.now()}-${newFile.name}`,
+        type: "file",
+        file: newFile,
+        preview: newFile.preview,
+      });
     }
 
-    setFiles((prev) =>
-      multiple ? [...prev, ...validated] : validated.slice(0, 1),
+    setItems((prev) =>
+      multiple ? [...prev, ...newItems] : newItems.slice(0, 1),
     );
 
     // Call callback if provided
     if (onFilesSelected) {
-      onFilesSelected(multiple ? [...validated] : validated.slice(0, 1));
+      const allFiles = multiple
+        ? [
+            ...items.filter((i) => i.type === "file").map((i) => i.file!),
+            ...validated,
+          ]
+        : validated.slice(0, 1);
+      onFilesSelected(allFiles);
     }
   }
 
-  const removeFile = (name: string) => {
-    setFiles((prev) => {
-      const removed = prev.find((f) => f.name === name);
-      if (removed?.preview) URL.revokeObjectURL(removed.preview);
-      return prev.filter((f) => f.name !== name);
+  const removeItem = (id: string) => {
+    setItems((prev) => {
+      const removed = prev.find((item) => item.id === id);
+      if (removed?.type === "file" && removed.file?.preview) {
+        URL.revokeObjectURL(removed.file.preview);
+      }
+      const newItems = prev.filter((item) => item.id !== id);
+
+      // Notify parent of change
+      if (onFilesSelected) {
+        const files = newItems
+          .filter((i) => i.type === "file")
+          .map((i) => i.file!);
+        onFilesSelected(files);
+      }
+
+      return newItems;
     });
   };
 
@@ -158,15 +245,15 @@ export default function ImagesUpload({
           />
         </div>
         {/* Thumbnails */}
-        {files.map((f, i) => (
+        {items.map((item) => (
           <div
-            key={i}
+            key={item.id}
             className="relative w-[200px] h-[200px] rounded overflow-hidden"
           >
             <img
-              src={f.preview}
-              alt={f.name}
-              className="w-full h-full object-cover rounded"
+              src={item.preview}
+              alt={item.type === "file" ? item.file?.name : "Image"}
+              className="w-full h-full object-fill rounded"
             />
             <Button
               type="button"
@@ -174,8 +261,8 @@ export default function ImagesUpload({
               variant="outlineNavBtnBlack"
               size="xl"
               spacing="lg"
-              onClick={() => removeFile(f.name)}
-              aria-label={`Remove ${f.name}`}
+              onClick={() => removeItem(item.id)}
+              aria-label={`Remove ${item.type === "file" ? item.file?.name : "image"}`}
             >
               <Trash2 />
             </Button>

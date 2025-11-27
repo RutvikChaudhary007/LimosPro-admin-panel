@@ -17,15 +17,18 @@ const EditTestimonailPage = () => {
   const editTestimonialMutation = queries.useEditTestimonialMutation();
   const handleSubmit = async (data: TTestimonialFormData): Promise<void> => {
     try {
+      const formData = new FormData();
+      formData.append("customerName", data.name);
+      formData.append("content", data.message);
+      formData.append("rating", data.rating.toString());
+      formData.append("isFeatured", data.isFeatured.toString());
+
+      if (data?.photo) {
+        formData.append("customerImage", data?.photo);
+      }
       toastPromise(
         editTestimonialMutation.mutateAsync({
-          data: {
-            customerName: data.name,
-            content: data.message,
-            customerImage: data.photo,
-            rating: data.rating,
-            isFeatured: data.isFeatured,
-          },
+          data: formData,
           id: id!,
         }),
         {

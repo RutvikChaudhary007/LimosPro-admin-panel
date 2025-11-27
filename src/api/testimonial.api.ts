@@ -76,15 +76,10 @@ export const useFetchTestimonialById = ({ id }: { id: string }) =>
  * @param data
  * @returns response data
  */
-export const createTestimonial = async (data: object) => {
+export const createTestimonial = async (data: FormData) => {
   const response = await adminAxiosInstance.post(
     API_ENDPOINTS.CREATE_TESTIMONIAL,
     data,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    },
   );
 
   return response.data;
@@ -97,29 +92,18 @@ export const createTestimonial = async (data: object) => {
  * @param data
  * @returns response data
  */
-type TFormData = {
-  customerName: string;
-  content: string;
-  customerImage: File | null | string;
-  rating: number;
-  isFeatured: boolean;
-};
+
 export const editTestimonial = async ({
   data,
   id,
 }: {
-  data: TFormData;
+  data: FormData;
   id: string;
 }) => {
   // console.log("edit testimonial..:",data)
   const response = await adminAxiosInstance.put(
     API_ENDPOINTS.EDIT_TESTIMONIAL.replace(":id", id),
     data,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    },
   );
 
   return response.data;

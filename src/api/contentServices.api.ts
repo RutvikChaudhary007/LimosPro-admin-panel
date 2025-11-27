@@ -114,7 +114,7 @@ export const blogService = {
   },
 
   // Create new blog post
-  create: async (data: BlogPostFormData): Promise<ApiResponse<BlogPost>> => {
+  create: async (data: FormData): Promise<ApiResponse<BlogPost>> => {
     const response = await adminAxiosInstance.post(
       API_ENDPOINTS.BLOG.CREATE,
       data,
@@ -125,7 +125,7 @@ export const blogService = {
   // Update blog post
   update: async (
     id: string,
-    data: Partial<BlogPostFormData>,
+    data: FormData,
   ): Promise<ApiResponse<BlogPost>> => {
     const response = await adminAxiosInstance.put(
       API_ENDPOINTS.BLOG.UPDATE(id),

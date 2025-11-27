@@ -7,13 +7,12 @@ import { blogService } from "@/api/contentServices.api";
 import BlogForm from "@/components/contentManagement/BlogForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { constant } from "@/lib/constant";
-import type { BlogPostFormData } from "@/types/content";
 
 const CreateBlogPostPage: FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const handleCreateBlogPost = async (data: BlogPostFormData) => {
+  const handleCreateBlogPost = async (data: FormData) => {
     try {
       setLoading(true);
       await blogService.create(data);

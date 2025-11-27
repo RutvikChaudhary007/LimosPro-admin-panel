@@ -11,6 +11,7 @@ type TProps = {
   data: TData;
 };
 export function SectionCards({ data }: TProps) {
+  console.log("SectionCards Render:", data);
   return (
     <div className="grid grid-cols-1 gap-6 px-4 lg:px-8 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <MetricCard

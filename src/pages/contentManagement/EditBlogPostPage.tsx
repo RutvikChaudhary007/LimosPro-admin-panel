@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
-import type { BlogPost, BlogPostFormData } from "@/types/content";
+import type { BlogPost } from "@/types/content";
 
 const EditBlogPostPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const EditBlogPostPage: React.FC = () => {
     }
   }, [id]);
 
-  const handleUpdateBlogPost = async (data: BlogPostFormData) => {
+  const handleUpdateBlogPost = async (data: FormData) => {
     try {
       setLoading(true);
       await blogService.update(id!, data);

@@ -1,11 +1,9 @@
-//@ts-nocheck
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
 import { Save, X } from "lucide-react";
 import type { FC } from "react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import UsefetchAllUsers from "@/api/getAllUser.api";
 import useFetchAllMetaKeywords from "@/api/metaKeyWord.api";
@@ -29,22 +27,39 @@ import {
 } from "@/components/ui/input-group";
 import MultipleImageUpload from "@/components/ui/multiple-image-upload";
 import { SelectDropDown } from "@/components/ui/select";
-import type { BlogPost, BlogPostFormData } from "@/types/content";
+import type { BlogPost } from "@/types/content";
 import "react-quill/dist/quill.snow.css";
+import { toast } from "sonner";
 import * as z from "zod";
-import { FormMessage } from "../ui/form";
+import { styledLog } from "@/utils/styledLog";
+import { Form, FormMessage } from "../ui/form";
+
+const FileSchema = z.instanceof(File);
+const UrlSchema = z.string(); // Relaxed from .url() to allow relative paths
 
 const blogPostSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
+  slug: z.string().min(1, "Slug is required").max(100, "Slug too long"),
   content: z.string().min(1, "Content is required"),
   excerpt: z.string().optional(),
-  featuredImage: z.string().url().optional().or(z.literal("")),
-  slug: z.string().min(1, "Slug is required").max(100, "Slug too long"),
+  featuredImage: z.union([FileSchema, UrlSchema, z.literal("")]),
+  images: z
+    .union([
+      z.array(z.union([FileSchema, UrlSchema])),
+      FileSchema,
+      UrlSchema,
+      z.literal(""),
+      z.null(),
+    ])
+    .optional(),
   status: z.enum(["draft", "published", "archived"]),
-  author: z.string().optional(),
+  authorId: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  metaKeywords: z.array(z.string()).optional(),
   metaTitle: z.string().optional(),
   metaDescription: z.string().optional(),
-  ogImage: z.string().url().optional().or(z.literal("")),
+  canonicalUrl: z.string().optional(),
+  ogImage: z.union([FileSchema, UrlSchema, z.literal("")]),
 });
 
 const modules = {
@@ -79,11 +94,11 @@ const formats = [
   "video",
 ];
 
-type BlogPostForm = z.infer<typeof blogPostSchema>;
+export type BlogPostForm = z.infer<typeof blogPostSchema>;
 
 interface IBlogFormProps {
   initialData?: BlogPost;
-  onSubmit: (data: BlogPostFormData) => Promise<void>;
+  onSubmit: (data: FormData) => Promise<void>;
   mode?: "create" | "edit";
   loading?: boolean;
 }
@@ -95,9 +110,12 @@ const transformInitialData = (data?: BlogPost): BlogPostForm | undefined => {
     content: data?.content || "",
     excerpt: data?.excerpt || "",
     featuredImage: data?.featuredImage || "",
+    images: data?.images || [],
     slug: data?.slug || "",
     status: (data?.status as "draft" | "published" | "archived") || "draft",
-    author: data?.author || "",
+    authorId: data?.authorId || "",
+    tags: data?.tags || [],
+    metaKeywords: data?.seo?.metaKeywords || [],
     metaTitle: data?.seo?.metaTitle || "",
     metaDescription: data?.seo?.metaDescription || "",
     ogImage: data?.seo?.ogImage || "",
@@ -110,24 +128,9 @@ const BlogForm: FC<IBlogFormProps> = ({
   mode = "create",
   loading = false,
 }) => {
-  const [blogImages, setBlogImages] = useState<string[]>(
-    initialData?.images || [],
-  );
-  const [metaKeywords, setMetaKeywords] = useState<string[]>(
-    initialData?.seo?.metaKeywords || [],
-  );
+  // Local state for AutoCompleteInput components
   const [keywordInput, setKeywordInput] = useState("");
-  const [keywordOpen, setKeywordOpen] = useState(false);
-  const [keywordTypingTimer, setKeywordTypingTimer] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-
-  const [tagInput, setTagInput] = useState<string>("");
-  const [tags, setTags] = useState<string[]>(initialData?.tags || []);
-  const [tagOpen, setTagOpen] = useState<boolean>(false);
-  const [tagTypingTimer, setTagTypingTimer] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
+  const [tagInput, setTagInput] = useState("");
 
   const keywordSuggestions = [
     "SEO",
@@ -196,18 +199,20 @@ const BlogForm: FC<IBlogFormProps> = ({
     roleName: string;
   }
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<BlogPostForm>({
+  const form = useForm<BlogPostForm>({
     resolver: zodResolver(blogPostSchema),
     defaultValues: transformInitialData(initialData) || {
       status: "draft",
+      tags: [],
+      metaKeywords: [],
+      images: [],
     },
   });
+  const {
+    setValue,
+    watch,
+    formState: { errors },
+  } = form;
 
   // Generate slug from title
   const generateSlug = (title: string) => {
@@ -226,48 +231,58 @@ const BlogForm: FC<IBlogFormProps> = ({
     }
   };
 
-  const addTag = (t: string) => {
-    if (!t || tags.includes(t)) return;
-    setTags([...tags, t]);
-  };
-
-  const removeTag = (index: number) => {
-    setTags(tags.filter((_, i) => i !== index));
-  };
-
-  const addKeyword = (kw: string = keywordInput) => {
-    if (!kw.trim()) return;
-    if (metaKeywords.includes(kw)) return;
-
-    setMetaKeywords([...metaKeywords, kw]);
-    setKeywordInput("");
-    setKeywordOpen(false);
-  };
-
-  const removeKeyword = (index: number) => {
-    setMetaKeywords(metaKeywords.filter((_, i) => i !== index));
-  };
-
   const handleFormSubmit = async (data: BlogPostForm) => {
-    const blogPostData: BlogPostFormData = {
-      title: data.title,
-      content: data.content,
-      excerpt: data.excerpt || "",
-      featuredImage: data.featuredImage || "",
-      slug: data.slug,
-      status: data.status,
-      author: data.author || "",
-      tags,
-      images: blogImages,
-      seo: {
+    try {
+      const formdata = new FormData();
+
+      // Basic fields
+      formdata.append("title", data.title);
+      formdata.append("content", data.content);
+      formdata.append("excerpt", data.excerpt || "");
+      formdata.append("slug", data.slug);
+      formdata.append("status", data.status);
+      formdata.append("author", data.authorId || "");
+
+      // Featured Image - handle File or URL string
+      if (data.featuredImage) {
+        if (data.featuredImage instanceof File) {
+          formdata.append("featuredImage", data.featuredImage);
+        } else if (typeof data.featuredImage === "string") {
+          formdata.append("featuredImage", data.featuredImage);
+        }
+      }
+
+      // Blog Images - handle File array or URL string array
+      if (data?.images && Array.isArray(data.images)) {
+        data.images.forEach((file) => {
+          if (file instanceof File) {
+            formdata.append("images", file);
+          } else if (typeof file === "string") {
+            formdata.append("images", file);
+          }
+        });
+      }
+
+      // Tags - append as JSON string or individually
+      if (data.tags && data.tags.length > 0) {
+        formdata.append("tags", JSON.stringify(data.tags));
+      }
+
+      // SEO fields
+      const seoData = {
         metaTitle: data.metaTitle || "",
         metaDescription: data.metaDescription || "",
-        metaKeywords,
-        ogImage: data.ogImage || "",
-      },
-    };
+        metaKeywords: data.metaKeywords || [],
+        canonicalUrl: data.canonicalUrl || "",
+      };
 
-    await onSubmit(blogPostData);
+      formdata.append("seo", JSON.stringify(seoData));
+
+      await onSubmit(formdata);
+    } catch (error) {
+      styledLog(error, "Error submitting blog post:", "danger");
+      toast.error("Error submitting blog post");
+    }
   };
 
   const isEditMode = mode === "edit";
@@ -289,412 +304,540 @@ const BlogForm: FC<IBlogFormProps> = ({
           : "Draft Post";
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardBody>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Field>
-                  <FieldLabel htmlFor="title" className="text-base-black gap-0">
-                    Title <span className="text-base-danger">*</span>
-                  </FieldLabel>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(handleFormSubmit, (errors) => {
+          console.error("Form validation errors:", errors);
+          toast.error("Please check the form for errors");
+        })}
+        className="space-y-6"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="title"
+                      className="text-base-black gap-0"
+                    >
+                      Title <span className="text-base-danger">*</span>
+                    </FieldLabel>
 
-                  <InputGroup>
-                    <InputGroupInput
-                      id="title"
-                      type="text"
-                      placeholder="Enter blog post title"
-                      {...register("title")}
-                      onChange={handleTitleChange}
-                      className={errors.title ? "border-base-danger" : ""}
+                    <Controller
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <InputGroup>
+                          <InputGroupInput
+                            id="title"
+                            type="text"
+                            placeholder="Enter blog post title"
+                            {...field}
+                            onChange={handleTitleChange}
+                            className={errors.title ? "border-base-danger" : ""}
+                          />
+                          <InputGroupAddon>
+                            <IconFileText />
+                          </InputGroupAddon>
+                        </InputGroup>
+                      )}
                     />
-                    <InputGroupAddon>
-                      <IconFileText />
-                    </InputGroupAddon>
-                  </InputGroup>
+                    <FieldDescription>Enter the Title here.</FieldDescription>
 
-                  <FieldDescription>Enter the Title here.</FieldDescription>
+                    {errors.title && (
+                      <FormMessage>{errors.title.message}</FormMessage>
+                    )}
+                  </Field>
 
-                  {errors.title && (
-                    <FormMessage>{errors.title.message}</FormMessage>
-                  )}
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="slug" className="text-base-black gap-0">
-                    Slug <span className="text-base-danger">*</span>
-                  </FieldLabel>
-
-                  <InputGroup>
-                    <InputGroupInput
-                      id="slug"
-                      type="text"
-                      placeholder="Enter blog post slug"
-                      {...register("slug")}
-                      className={errors.slug ? "border-base-danger" : ""}
+                  <Field>
+                    <FieldLabel
+                      htmlFor="slug"
+                      className="text-base-black gap-0"
+                    >
+                      Slug <span className="text-base-danger">*</span>
+                    </FieldLabel>
+                    <Controller
+                      control={form.control}
+                      name="slug"
+                      render={({ field }) => (
+                        <InputGroup>
+                          <InputGroupInput
+                            id="slug"
+                            type="text"
+                            placeholder="Enter blog post slug"
+                            {...field}
+                            className={errors.slug ? "border-base-danger" : ""}
+                          />
+                          <InputGroupAddon>
+                            <IconFileText />
+                          </InputGroupAddon>
+                        </InputGroup>
+                      )}
                     />
-                    <InputGroupAddon>
-                      <IconFileText />
-                    </InputGroupAddon>
-                  </InputGroup>
+                    <FieldDescription>Enter the Slug here.</FieldDescription>
 
-                  <FieldDescription>Enter the Slug here.</FieldDescription>
+                    {errors.slug && (
+                      <FormMessage>{errors.slug.message}</FormMessage>
+                    )}
+                  </Field>
 
-                  {errors.slug && (
-                    <FormMessage>{errors.slug.message}</FormMessage>
-                  )}
-                </Field>
-
-                <Field>
-                  <FieldLabel
-                    htmlFor="excerpt"
-                    className="text-base-black gap-0"
-                  >
-                    Excerpt <span className="text-base-danger">*</span>
-                  </FieldLabel>
-
-                  <ReactQuill
-                    id="excerpt"
-                    theme="snow"
-                    value={(watch("excerpt") as string) || ""}
-                    onChange={(val) => {
-                      setValue("excerpt", val, { shouldValidate: true });
-                    }}
-                    modules={modules}
-                    formats={formats}
-                    className={`react-quill-full ${errors.excerpt ? "border-base-danger" : ""}`}
-                  />
-
-                  <FieldDescription>
-                    Enter a short description of the blog post.
-                  </FieldDescription>
-
-                  {errors.excerpt && (
-                    <FormMessage>{errors.excerpt.message}</FormMessage>
-                  )}
-                </Field>
-
-                <Field>
-                  <FieldLabel
-                    htmlFor="content"
-                    className="text-base-black gap-0"
-                  >
-                    Content <span className="text-base-danger">*</span>
-                  </FieldLabel>
-
-                  <ReactQuill
-                    id="content"
-                    theme="snow"
-                    value={(watch("content") as string) || ""}
-                    onChange={(val) => {
-                      setValue("content", val, { shouldValidate: true });
-                    }}
-                    modules={modules}
-                    formats={formats}
-                    className={`react-quill-full ${errors.content ? "border-base-danger" : ""}`}
-                  />
-
-                  <FieldDescription>
-                    Enter the full blog content here.
-                  </FieldDescription>
-
-                  {errors.content && (
-                    <FormMessage>{errors.content.message}</FormMessage>
-                  )}
-                </Field>
-              </CardContent>
-            </CardBody>
-          </Card>
-
-          {/* SEO Settings */}
-          <Card>
-            <CardBody>
-              <CardHeader>
-                <CardTitle>SEO Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Field>
-                  <FieldLabel
-                    htmlFor="metaTitle"
-                    className="text-base-black gap-0"
-                  >
-                    Meta Title
-                  </FieldLabel>
-
-                  <InputGroup>
-                    <InputGroupInput
-                      id="metaTitle"
-                      type="text"
-                      placeholder="SEO title for search engines"
-                      {...register("metaTitle")}
-                      className={errors.metaTitle ? "border-base-danger" : ""}
+                  <Field>
+                    <FieldLabel
+                      htmlFor="excerpt"
+                      className="text-base-black gap-0"
+                    >
+                      Excerpt <span className="text-base-danger">*</span>
+                    </FieldLabel>
+                    <Controller
+                      control={form.control}
+                      name="excerpt"
+                      render={({ field }) => (
+                        <ReactQuill
+                          id="excerpt"
+                          theme="snow"
+                          value={(field.value as string) || ""}
+                          onChange={(val) => {
+                            field.onChange(val);
+                          }}
+                          modules={modules}
+                          formats={formats}
+                          className={`react-quill-full ${errors.excerpt ? "border-base-danger" : ""}`}
+                        />
+                      )}
                     />
-                    <InputGroupAddon>
-                      <IconFileText />
-                    </InputGroupAddon>
-                  </InputGroup>
 
-                  <FieldDescription>
-                    Enter the SEO title for this blog post.
-                  </FieldDescription>
+                    <FieldDescription>
+                      Enter a short description of the blog post.
+                    </FieldDescription>
 
-                  {errors.metaTitle && (
-                    <FormMessage>{errors.metaTitle.message}</FormMessage>
-                  )}
-                </Field>
+                    {errors.excerpt && (
+                      <FormMessage>{errors.excerpt.message}</FormMessage>
+                    )}
+                  </Field>
 
-                <Field>
-                  <FieldLabel className="text-base-black gap-0">
-                    Meta Keywords
-                  </FieldLabel>
+                  <Field>
+                    <FieldLabel
+                      htmlFor="content"
+                      className="text-base-black gap-0"
+                    >
+                      Content <span className="text-base-danger">*</span>
+                    </FieldLabel>
 
-                  <AutoCompleteInput
-                    value={keywordInput}
-                    setValue={setKeywordInput}
-                    list={
-                      metaKeywordsData?.metaKeywords?.map(
-                        (k: { keyword: string }) => k.keyword,
-                      ) || keywordSuggestions
-                    }
-                    onAdd={(kw) => addKeyword(kw)}
-                    open={keywordOpen}
-                    setOpen={setKeywordOpen}
-                    typingTimer={keywordTypingTimer}
-                    setTypingTimer={setKeywordTypingTimer}
-                    placeholder="Add keyword"
-                    inputId="keyword-input"
-                  />
-
-                  <FieldDescription>
-                    Add SEO keywords here (type to search, press Enter, or click
-                    +).
-                  </FieldDescription>
-
-                  {/* Keywords List */}
-                  {metaKeywords.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {metaKeywords.map((keyword, index) => (
-                        <Badge key={index} className="capitalize">
-                          <span>{keyword}</span>
-                          <span
-                            className="cursor-pointer"
-                            onClick={() => removeKeyword(index)}
-                          >
-                            <X className="size-4" />
-                          </span>
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </Field>
-
-                <ImageUpload
-                  label="Open Graph Image"
-                  placeholder="Enter OG image URL or upload file"
-                  value={watch("ogImage") || ""}
-                  onChange={(url) => setValue("ogImage", url)}
-                />
-              </CardContent>
-            </CardBody>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Settings */}
-          <Card>
-            <CardBody>
-              <CardHeader>
-                <CardTitle>
-                  {isEditMode ? "Publish Settings" : "Settings"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Field>
-                  <SelectDropDown
-                    placeholder="Select Status"
-                    items={[
-                      { label: "Draft", value: "draft" },
-                      { label: "Publish", value: "published" },
-                      ...(isEditMode
-                        ? [{ label: "Archived", value: "archived" }]
-                        : []),
-                    ]}
-                    value={watch("status")}
-                    setSelectedItem={(v) =>
-                      setValue(
-                        "status",
-                        v as "draft" | "published" | "archived",
-                        { shouldValidate: true },
-                      )
-                    }
-                  />
-
-                  {errors.status && (
-                    <FormMessage>{errors.status.message}</FormMessage>
-                  )}
-                </Field>
-
-                <Field>
-                  <FieldLabel
-                    htmlFor="author"
-                    className="text-base-black gap-0"
-                  >
-                    Author
-                  </FieldLabel>
-
-                  {userIsFetching ? (
-                    <div className="w-full h-14 skeleton rounded"></div>
-                  ) : usersData?.users?.some(
-                      (user: User) => user.roleName === "SEO Agent",
-                    ) ? (
-                    <SelectDropDown
-                      placeholder="Author Name"
-                      items={
-                        usersData.users
-                          .filter((user: User) => user.roleName === "SEO Agent")
-                          .map((user: User) => ({
-                            label: `${user.firstName} ${user.lastName}`,
-                            value: user.id,
-                          })) || []
-                      }
-                      value={watch("author")}
-                      setSelectedItem={(v) =>
-                        setValue("author", v as string, {
-                          shouldValidate: true,
-                        })
-                      }
+                    <Controller
+                      control={form.control}
+                      name="content"
+                      render={({ field }) => (
+                        <ReactQuill
+                          id="content"
+                          theme="snow"
+                          value={(field.value as string) || ""}
+                          onChange={(val) => {
+                            field.onChange(val);
+                          }}
+                          modules={modules}
+                          formats={formats}
+                          className={`react-quill-full ${errors.content ? "border-base-danger" : ""}`}
+                        />
+                      )}
                     />
-                  ) : (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="author"
-                        type="text"
-                        placeholder="Author name"
-                        {...register("author")}
-                        className={errors.author ? "border-base-danger" : ""}
+
+                    <FieldDescription>
+                      Enter the full blog content here.
+                    </FieldDescription>
+
+                    {errors.content && (
+                      <FormMessage>{errors.content.message}</FormMessage>
+                    )}
+                  </Field>
+                </CardContent>
+              </CardBody>
+            </Card>
+
+            {/* SEO Settings */}
+            <Card>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>SEO Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Field>
+                    <FieldLabel
+                      htmlFor="metaTitle"
+                      className="text-base-black gap-0"
+                    >
+                      Meta Title
+                    </FieldLabel>
+
+                    <Controller
+                      control={form.control}
+                      name="metaTitle"
+                      render={({ field }) => (
+                        <InputGroup>
+                          <InputGroupInput
+                            id="metaTitle"
+                            type="text"
+                            placeholder="SEO title for search engines"
+                            {...field}
+                            className={
+                              errors.metaTitle ? "border-base-danger" : ""
+                            }
+                          />
+                          <InputGroupAddon>
+                            <IconFileText />
+                          </InputGroupAddon>
+                        </InputGroup>
+                      )}
+                    />
+
+                    <FieldDescription>
+                      Enter the SEO title for this blog post.
+                    </FieldDescription>
+
+                    {errors.metaTitle && (
+                      <FormMessage>{errors.metaTitle.message}</FormMessage>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel className="text-base-black gap-0">
+                      Meta Keywords
+                    </FieldLabel>
+
+                    <Controller
+                      control={form.control}
+                      name="metaKeywords"
+                      render={({ field }) => {
+                        const keywords = field.value || [];
+
+                        const addKeyword = (kw: string) => {
+                          if (!kw.trim() || keywords.includes(kw)) return;
+                          field.onChange([...keywords, kw]);
+                        };
+
+                        const removeKeyword = (index: number) => {
+                          field.onChange(
+                            keywords.filter((_, i) => i !== index),
+                          );
+                        };
+
+                        return (
+                          <>
+                            <AutoCompleteInput
+                              value={keywordInput}
+                              setValue={setKeywordInput}
+                              list={
+                                metaKeywordsData?.metaKeywords?.map(
+                                  (k: { keyword: string }) => k.keyword,
+                                ) || keywordSuggestions
+                              }
+                              onAdd={(kw) => {
+                                addKeyword(kw);
+                                setKeywordInput("");
+                              }}
+                              open={false}
+                              setOpen={() => {}}
+                              typingTimer={null}
+                              setTypingTimer={() => {}}
+                              placeholder="Add keyword"
+                              inputId="keyword-input"
+                            />
+                            <FieldDescription>
+                              Add SEO keywords here (type to search, press
+                              Enter, or click +).
+                            </FieldDescription>
+
+                            {/* Keywords List */}
+                            {keywords.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {keywords.map(
+                                  (keyword: string, index: number) => (
+                                    <Badge key={index} className="capitalize">
+                                      <span>{keyword}</span>
+                                      <span
+                                        className="cursor-pointer"
+                                        onClick={() => removeKeyword(index)}
+                                      >
+                                        <X className="size-4" />
+                                      </span>
+                                    </Badge>
+                                  ),
+                                )}
+                              </div>
+                            )}
+                          </>
+                        );
+                      }}
+                    />
+                  </Field>
+
+                  <Controller
+                    control={form.control}
+                    name="ogImage"
+                    render={({ field }) => (
+                      <ImageUpload
+                        label="Open Graph Image"
+                        placeholder="Enter OG image URL or upload file"
+                        value={field.value || ""}
+                        onChange={field.onChange}
                       />
-                      <InputGroupAddon>
-                        <IconFileText />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-
-                  <FieldDescription>Enter the author's name.</FieldDescription>
-
-                  {errors.author && (
-                    <FormMessage>{errors.author.message}</FormMessage>
-                  )}
-                </Field>
-
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  variant={
-                    watch("status") === "published" ? "default" : "black"
-                  }
-                >
-                  <Save />
-                  {buttonLabel}
-                </Button>
-              </CardContent>
-            </CardBody>
-          </Card>
-
-          {/* Featured Image */}
-          <Card>
-            <CardBody>
-              <CardHeader>
-                <CardTitle>Featured Image</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ImageUpload
-                  label="Featured Image"
-                  placeholder="Enter featured image URL or upload file"
-                  value={watch("featuredImage") || ""}
-                  onChange={(url) => setValue("featuredImage", url)}
-                />
-              </CardContent>
-            </CardBody>
-          </Card>
-
-          {/* Blog Images */}
-          <Card>
-            <CardBody>
-              <CardHeader>
-                <CardTitle>Blog Images</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MultipleImageUpload
-                  label="Additional Images"
-                  value={blogImages}
-                  onChange={setBlogImages}
-                  maxImages={10}
-                />
-              </CardContent>
-            </CardBody>
-          </Card>
-
-          {/* Tags */}
-          <Card>
-            <CardBody>
-              <CardHeader>
-                <CardTitle>Tags</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Field>
-                  <FieldLabel className="text-base-black gap-0">
-                    Tags
-                  </FieldLabel>
-
-                  <AutoCompleteInput
-                    value={tagInput}
-                    setValue={setTagInput}
-                    list={
-                      tagsData?.tags?.map((k: { name: string }) => k.name) ||
-                      tagSuggestions
-                    }
-                    onAdd={(t) => addTag(t)}
-                    open={tagOpen}
-                    setOpen={setTagOpen}
-                    typingTimer={tagTypingTimer}
-                    setTypingTimer={setTagTypingTimer}
-                    placeholder="Add tag"
-                    inputId="tag-input"
+                    )}
                   />
+                </CardContent>
+              </CardBody>
+            </Card>
+          </div>
 
-                  <FieldDescription>
-                    Add tags for this blog post (type to search, press Enter, or
-                    click +)
-                  </FieldDescription>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Settings */}
+            <Card>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>
+                    {isEditMode ? "Publish Settings" : "Settings"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Field>
+                    <SelectDropDown
+                      placeholder="Select Status"
+                      items={[
+                        { label: "Draft", value: "draft" },
+                        { label: "Publish", value: "published" },
+                        ...(isEditMode
+                          ? [{ label: "Archived", value: "archived" }]
+                          : []),
+                      ]}
+                      value={watch("status")}
+                      setSelectedItem={(v) =>
+                        setValue(
+                          "status",
+                          v as "draft" | "published" | "archived",
+                          { shouldValidate: true },
+                        )
+                      }
+                    />
 
-                  {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {tags.map((tag, index) => (
-                        <Badge key={index} className="capitalize">
-                          <span>{tag}</span>
-                          <span
-                            className="cursor-pointer"
-                            onClick={() => removeTag(index)}
-                          >
-                            <X className="size-4" />
-                          </span>
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </Field>
-              </CardContent>
-            </CardBody>
-          </Card>
+                    {errors.status && (
+                      <FormMessage>{errors.status.message}</FormMessage>
+                    )}
+                  </Field>
+
+                  <Field>
+                    <FieldLabel
+                      htmlFor="author"
+                      className="text-base-black gap-0"
+                    >
+                      Author
+                    </FieldLabel>
+
+                    {userIsFetching ? (
+                      <div className="w-full h-14 skeleton rounded"></div>
+                    ) : usersData?.users?.some(
+                        (user: User) => user.roleName === "SEO Agent",
+                      ) ? (
+                      <SelectDropDown
+                        placeholder="Author Name"
+                        items={
+                          usersData.users
+                            .filter(
+                              (user: User) => user.roleName === "SEO Agent",
+                            )
+                            .map((user: User) => ({
+                              label: `${user.firstName} ${user.lastName}`,
+                              value: user.id,
+                            })) || []
+                        }
+                        value={watch("authorId")}
+                        setSelectedItem={(v) =>
+                          setValue("authorId", v as string, {
+                            shouldValidate: true,
+                          })
+                        }
+                      />
+                    ) : (
+                      <Controller
+                        name="authorId"
+                        control={form.control}
+                        render={({ field }) => (
+                          <InputGroup>
+                            <InputGroupInput
+                              id="authorId"
+                              type="text"
+                              placeholder="Author name"
+                              {...field}
+                              className={
+                                errors.authorId ? "border-base-danger" : ""
+                              }
+                            />
+                            <InputGroupAddon>
+                              <IconFileText />
+                            </InputGroupAddon>
+                          </InputGroup>
+                        )}
+                      />
+                    )}
+
+                    <FieldDescription>
+                      Enter the author's name.
+                    </FieldDescription>
+
+                    {errors.authorId && (
+                      <FormMessage>{errors.authorId.message}</FormMessage>
+                    )}
+                  </Field>
+
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    variant={
+                      watch("status") === "published" ? "default" : "black"
+                    }
+                  >
+                    <Save />
+                    {buttonLabel}
+                  </Button>
+                </CardContent>
+              </CardBody>
+            </Card>
+
+            {/* Featured Image */}
+            <Card>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Featured Image</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Controller
+                    control={form.control}
+                    name="featuredImage"
+                    render={({ field }) => (
+                      <ImageUpload
+                        label="Featured Image"
+                        placeholder="Enter featured image URL or upload file"
+                        value={field.value || ""}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                </CardContent>
+              </CardBody>
+            </Card>
+
+            {/* Blog Images */}
+            <Card>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Blog Images</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Controller
+                    control={form.control}
+                    name="images"
+                    render={({ field }) => (
+                      <MultipleImageUpload
+                        label="Additional Images"
+                        value={
+                          Array.isArray(field.value)
+                            ? (field.value as string[])
+                            : []
+                        }
+                        onChange={field.onChange}
+                        maxImages={10}
+                      />
+                    )}
+                  />
+                </CardContent>
+              </CardBody>
+            </Card>
+
+            {/* Tags */}
+            <Card>
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Tags</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Field>
+                    <FieldLabel className="text-base-black gap-0">
+                      Tags
+                    </FieldLabel>
+
+                    <Controller
+                      control={form.control}
+                      name="tags"
+                      render={({ field }) => {
+                        const tags = field.value || [];
+
+                        const addTag = (t: string) => {
+                          if (!t || tags.includes(t)) return;
+                          field.onChange([...tags, t]);
+                        };
+
+                        const removeTag = (index: number) => {
+                          field.onChange(tags.filter((_, i) => i !== index));
+                        };
+
+                        return (
+                          <>
+                            <AutoCompleteInput
+                              value={tagInput}
+                              setValue={setTagInput}
+                              list={
+                                tagsData?.tags?.map(
+                                  (k: { name: string }) => k.name,
+                                ) || tagSuggestions
+                              }
+                              onAdd={(t) => {
+                                addTag(t);
+                                setTagInput("");
+                              }}
+                              open={false}
+                              setOpen={() => {}}
+                              typingTimer={null}
+                              setTypingTimer={() => {}}
+                              placeholder="Add tag"
+                              inputId="tag-input"
+                            />
+
+                            <FieldDescription>
+                              Add tags for this blog post (type to search, press
+                              Enter, or click +)
+                            </FieldDescription>
+
+                            {tags.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {tags.map((tag: string, index: number) => (
+                                  <Badge key={index} className="capitalize">
+                                    <span>{tag}</span>
+                                    <span
+                                      className="cursor-pointer"
+                                      onClick={() => removeTag(index)}
+                                    >
+                                      <X className="size-4" />
+                                    </span>
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        );
+                      }}
+                    />
+                  </Field>
+                </CardContent>
+              </CardBody>
+            </Card>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </Form>
   );
 };
 

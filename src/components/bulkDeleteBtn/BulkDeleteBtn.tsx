@@ -78,7 +78,12 @@ const BulkDeleteBtn = <TData, TResponse>({
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="outlineBlack"
+          variant={
+            Object.keys(rowSelection).filter((k) => rowSelection[k]).length ===
+            0
+              ? "outlineBlack"
+              : "outlineDestructive"
+          }
           disabled={
             Object.keys(rowSelection).filter((k) => rowSelection[k]).length ===
             0

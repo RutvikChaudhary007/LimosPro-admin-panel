@@ -120,8 +120,18 @@ export default function Dashboard() {
     return { startDate: start, endDate: end };
   }, [selectedTime, selectedYear]);
 
-  const { data, isFetching } = useFetchDashboard({
+  const { data, isFetching, isPlaceholderData } = useFetchDashboard({
     DateRange: { startDate, endDate },
+  });
+
+  console.log("Dashboard Render:", {
+    selectedTime,
+    selectedYear,
+    startDate,
+    endDate,
+    isFetching,
+    isPlaceholderData,
+    data,
   });
 
   const fleetDistributionData = useMemo(

@@ -16,7 +16,9 @@
     "check": "bun x biome check",
     "check:fix": "bun x biome check --write",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "analyze": "vite build",
+    "checkDep": "bunx depcheck"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -109,6 +111,7 @@
     "globals": "^16.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
+    "rollup-plugin-visualizer": "^6.0.5",
     "tw-animate-css": "^1.3.5",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",

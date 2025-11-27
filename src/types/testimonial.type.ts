@@ -3,8 +3,7 @@ export type TTestimonialFormData = {
   message: string;
   customerName?: string;
   content?: string;
-  customerImage?: File | null;
-  photo: File | null;
+  photo: File | string | null;
   rating: number;
   isFeatured: boolean;
 };

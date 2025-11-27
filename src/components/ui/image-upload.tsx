@@ -17,7 +17,7 @@ import { Field, FieldDescription, FieldLabel } from "./field";
 import { Input } from "./input";
 
 interface ImageUploadProps {
-  value?: string;
+  value?: string | File;
   onChange: (url: string) => void;
   label?: string;
   placeholder?: string;

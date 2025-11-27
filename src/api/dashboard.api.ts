@@ -6,6 +6,7 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 
 export const getDashboard = async (DateRange?: DateRange, page?: number) => {
+  console.log("getDashboard called with:", { DateRange, page });
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
     params.DateRange = {
@@ -45,10 +46,17 @@ const useFetchDashboard = ({
   page?: number;
 }) =>
   useQuery({
-    queryKey: ["Dashboard", DateRange, page],
+    queryKey: [
+      "Dashboard",
+      DateRange?.startDate?.toISOString(),
+      DateRange?.endDate?.toISOString(),
+      page,
+    ],
     queryFn: () => getDashboard(DateRange, page),
     refetchOnWindowFocus: false,
     retry: false,
+    staleTime: 0,
+    gcTime: 0,
   });
 
 export default useFetchDashboard;

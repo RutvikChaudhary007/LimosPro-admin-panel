@@ -11,6 +11,7 @@ import {
 import type React from "react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { styledLog } from "@/utils/styledLog";
 import { mediaService } from "../../api/contentServices.api";
 import { Button } from "./button";
 import { Card, CardContent } from "./card";
@@ -145,7 +146,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
     const newImages = value.filter((_, i) => i !== index);
     onChange(newImages);
   };
-
+  styledLog(value, "value:", "info");
   return (
     <div className={`space-y-4 ${className}`}>
       <div>
@@ -240,14 +241,15 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       )}
 
       {/* Image Grid */}
-      {value.length > 0 && (
+      {Array.isArray(value) && value.length > 0 && (
         <Card>
           <CardContent className="p-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {value.map((url, index) => (
+              {value.map((url, index) => console.log(url?.url, "url"))}
+              {value?.map((url, index) => (
                 <div key={index} className="relative group">
                   <img
-                    src={url}
+                    src={url?.url}
                     alt={`Image-${index + 1}`}
                     className="w-full h-32 object-cover rounded-lg"
                     onError={(e) => {
@@ -273,7 +275,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
                     <X className="h-3 w-3" />
                   </Button>
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b-lg truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                    {url}
+                    {url?.url}
                   </div>
                 </div>
               ))}

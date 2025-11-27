@@ -46,29 +46,21 @@ const formSchema = z.object({
     })
     .min(3, { message: "Message  must be at least 3 characters" }),
   photo: z
-    .union([
-      // For create: accept File
-      z.instanceof(File),
-      // For edit: accept URL string
-      z
-        .string()
-        .url(),
-    ])
+    .union([z.instanceof(File), z.url()])
     .refine(
-      (file) => {
-        // If it's a string URL, it's valid (edit mode)
-        if (typeof file === "string") return true;
-        // If it's a File, check size (create mode)
-        return file.size <= MAX_SIZE;
+      (value) => {
+        if (typeof value === "string") return true;
+        if (value instanceof File) return value.size <= MAX_SIZE;
+        return false;
       },
-      { message: "Max size is 5MB" },
+      { message: "Max size is 10MB" },
     )
     .refine(
-      (file) => {
-        // If it's a string URL, it's valid (edit mode)
-        if (typeof file === "string") return true;
-        // If it's a File, check mime type (create mode)
-        return ALLOWED_MIME_TYPES.includes(file.type);
+      (value) => {
+        if (typeof value === "string") return true;
+        if (value instanceof File)
+          return ALLOWED_MIME_TYPES.includes(value.type);
+        return false;
       },
       { message: "Invalid file type. Only accept jpeg and png file" },
     ),
@@ -77,25 +69,6 @@ const formSchema = z.object({
     z.number().min(1).max(5),
   ),
   isFeatured: z.boolean(),
-  // photo: z
-  // .instanceof(File)
-  // .nullable()
-  // .refine(val => val !== null, "Image required"),
-  // .custom<FileList>().check((ctx) => {
-  //     const list = ctx.value;
-  //     if (list.length < 1) {
-  //         ctx.issues.push({ code: "custom", message: "Select at least 1 file", input: list });
-  //     }
-  //     //   console.log("list:")
-  //     if (list.length > 1) {
-  //         ctx.issues.push({ code: "custom", message: "You can upload up to 1 file", input: list });
-  //     }
-  // }).transform(list => Array.from(list)).refine(files => files.every(f => f.size <= maxSize), {
-  //     message: `Max size ${maxSize / (1024 * 1024)}MB`,
-  // })
-  //     .refine(files => files.every(f => ALLOWED_MIME_TYPES.includes(f.type)), {
-  //         message: "Invalid file types detected",
-  //     }),
 });
 
 export type TTestimonialForm = z.infer<typeof formSchema>;
@@ -108,7 +81,7 @@ const TestimonialForm = ({
 }: ITestimonialFormProps) => {
   const [previews, setPreviews] = useState<string | null>(null);
   const transformInitialData = (
-    data?: TTestimonialFormData,
+    data?: TTestimonialFormData & { customerImage?: string | null | undefined },
   ): TTestimonialFormData | undefined => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
@@ -135,7 +108,7 @@ const TestimonialForm = ({
 
   useEffect(() => {
     if (initialData?.customerImage) {
-      setPreviews(initialData?.customerImage);
+      // setPreviews(initialData?.customerImage);
       form.setValue("photo", initialData?.customerImage);
     }
   }, [initialData, form.setValue]);
@@ -296,33 +269,30 @@ const TestimonialForm = ({
                 )}
               </Field>
 
-              <Controller
-                control={form.control}
-                name="photo"
-                render={({ field }) => (
-                  <FormItem className="col-span-full">
-                    <FormControl>
-                      <ImagesUpload
-                        accept="image/*"
-                        title="Upload Image"
-                        maxSize={10}
-                        multiple={true}
-                        onFilesSelected={(files) => {
-                          if (files && files.length > 0) {
-                            const file = files[0];
-                            field.onChange(file);
-                            form.trigger("photo");
-                            setPreviews(file.preview || null);
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.photo?.message}
-                    </FormMessage>
-                  </FormItem>
-                )}
-              />
+              <Field className="justify-between">
+                <Controller
+                  control={form.control}
+                  name="photo"
+                  render={({ field }) => (
+                    <ImagesUpload
+                      accept="image/*"
+                      title="Upload Image"
+                      value={field.value}
+                      maxSize={10}
+                      multiple={false}
+                      onFilesSelected={(files) => {
+                        if (files && files.length > 0) {
+                          field.onChange(files[0]);
+                          form.trigger("photo");
+                        }
+                      }}
+                    />
+                  )}
+                />
+                <FormMessage>
+                  {form.formState.errors.photo?.message}
+                </FormMessage>
+              </Field>
             </CardContent>
             <CardFooter className="flex items-center justify-start space-x-2.5">
               <Button

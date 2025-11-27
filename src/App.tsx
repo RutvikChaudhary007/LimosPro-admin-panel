@@ -24,6 +24,12 @@ function App() {
     );
   }
 
+  // useEffect(() => {
+  //   if ("scrollRestoration" in window.history) {
+  //     console.log("scrollRestoration:", window.history.scrollRestoration);
+  //     window.history.scrollRestoration = "auto";
+  //   }
+  // }, []);
   return (
     <TooltipProvider>
       <Sonner position="top-right" richColors />
