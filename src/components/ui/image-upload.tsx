@@ -8,7 +8,7 @@ import {
   X,
 } from "lucide-react";
 import type React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { mediaService } from "@/api/contentServices.api";
 import { Button } from "./button";
@@ -18,7 +18,7 @@ import { Input } from "./input";
 
 interface ImageUploadProps {
   value?: string | File;
-  onChange: (url: string) => void;
+  onChange: (value: string | File | undefined) => void;
   label?: string;
   placeholder?: string;
   className?: string;
@@ -34,6 +34,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const [uploading, setUploading] = useState(false);
   const [urlInput, setUrlInput] = useState(value);
   const [uploadMode, setUploadMode] = useState<"url" | "upload">("url");
+  const [previewUrl, setPreviewUrl] = useState<string>(
+    typeof value === "string"
+      ? value
+      : value instanceof File
+        ? URL.createObjectURL(value)
+        : "",
+  );
 
   const handleFileUpload = useCallback(
     async (file: File) => {
@@ -65,8 +72,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         const response = await mediaService.upload(uploadData);
 
         if (response.data?.fileUrl) {
+          // Emit the uploaded URL to the parent form
           onChange(response.data.fileUrl);
           setUrlInput(response.data.fileUrl);
+          setPreviewUrl(response.data.fileUrl);
           toast.success("Image uploaded successfully");
         } else {
           throw new Error("No file URL returned");
@@ -114,14 +123,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newUrl = e.target.value;
     setUrlInput(newUrl);
+    setPreviewUrl(newUrl);
     onChange(newUrl);
   };
 
   const clearImage = () => {
-    onChange("");
+    // Revoke object URL if it was created from a File
+    if (value instanceof File && previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    onChange(undefined);
     setUrlInput("");
+    setPreviewUrl("");
   };
 
   return (
@@ -221,7 +235,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             <CardContent>
               <div className="relative">
                 <img
-                  src={value}
+                  src={previewUrl}
                   alt="Preview"
                   className="w-full h-48 object-cover"
                   onError={(e) => {
@@ -250,7 +264,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 </Button>
               </div>
               <div className="mt-2">
-                <p className="text-xs text-gray-500 break-all">{value}</p>
+                <p className="text-xs text-gray-500 break-all">{previewUrl}</p>
               </div>
             </CardContent>
           </CardBody>

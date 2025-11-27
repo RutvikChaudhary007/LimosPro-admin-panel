@@ -1,4 +1,4 @@
-import type * as React from "react";
+import * as React from "react";
 import IconTrendingUp from "@/assets/Icons/ic-arrow-trending-up.svg?react";
 import { cn } from "@/lib/utils";
 import { Badge } from "./badge";
@@ -115,26 +115,61 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
+function shimmer(w: number, h: number) {
+  return `
+  <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g">
+        <stop stop-color="#eee" offset="20%" />
+        <stop stop-color="#ddd" offset="50%" />
+        <stop stop-color="#eee" offset="70%" />
+      </linearGradient>
+    </defs>
+    <rect width="${w}" height="${h}" fill="#eee" />
+    <rect width="${w}" height="${h}" fill="url(#g)">
+      <animate attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite" />
+    </rect>
+  </svg>`;
+}
+
+const toBase64 = (str: string) => {
+  if (typeof window === "undefined") return Buffer.from(str).toString("base64");
+  return window.btoa(str);
+};
+
 function CardImage({ className, ...props }: React.ComponentProps<"img">) {
+  const [loaded, setLoaded] = React.useState(false);
+
+  const w = Number(props.width) || 300;
+  const h = Number(props.height) || 200;
+
+  const shimmerSrc = `data:image/svg+xml;base64,${toBase64(shimmer(w, h))}`;
+
   return (
-    <img
-      data-slot="card-image"
-      className={cn(
-        "object-cover",
-        "data-[variant=default]:w-full data-[variant=default]:h-full",
-        "data-[variant=horizontal]:w-full data-[variant=horizontal]:h-auto",
-        className,
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Shimmer placeholder */}
+      {!loaded && (
+        <img
+          src={shimmerSrc}
+          className={cn(
+            "absolute inset-0 w-full h-full object-cover animate-pulse",
+            className,
+          )}
+        />
       )}
-      onError={(e) => {
-        const img = e.currentTarget;
-        img.onerror = null;
-        (function update() {
-          img.src = `https://placehold.co/${img.clientWidth || 300}x${img.clientHeight || 200}`;
-          globalThis.addEventListener("resize", update);
-        })();
-      }}
-      {...props}
-    />
+
+      {/* Actual image */}
+      <img
+        {...props}
+        className={cn(
+          "w-full h-full object-cover transition-opacity duration-500",
+          loaded ? "opacity-100" : "opacity-0",
+          className,
+        )}
+        onLoad={() => setLoaded(true)}
+        onError={props.onError}
+      />
+    </div>
   );
 }
 

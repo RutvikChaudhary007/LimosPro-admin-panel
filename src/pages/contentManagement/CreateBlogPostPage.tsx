@@ -1,3 +1,4 @@
+import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import type { FC } from "react";
 import { useState } from "react";
@@ -19,8 +20,11 @@ const CreateBlogPostPage: FC = () => {
       toast.success("Blog post created successfully");
       navigate(constant.ROUTING_URLS.BLOG_POSTS);
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message);
+      }
+
       console.error("Error creating blog post:", error);
-      toast.error("Failed to create blog post");
     } finally {
       setLoading(false);
     }

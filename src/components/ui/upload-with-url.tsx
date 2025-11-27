@@ -22,14 +22,14 @@ interface UploadItem {
 }
 
 interface UploadWithUrlProps extends VariantProps<typeof uploadBoxVariants> {
-  value?: (File | string)[];
+  value?: (File | string)[] | File | string;
   multiple?: boolean;
   maxSize?: number;
   accept?: string;
   title?: string;
   info?: boolean;
   disabled?: boolean;
-  onChange?: (items: (File | string)[]) => void;
+  onChange?: (items: (File | string)[] | File | string | undefined) => void;
 }
 
 /* ------------------------------------------------------ */
@@ -88,14 +88,16 @@ export default function UploadWithUrl({
 
   // Sync internal state with external value prop
   useEffect(() => {
+    // Normalize value to array for internal processing
+    const valueArray = Array.isArray(value)
+      ? value
+      : value !== undefined && value !== null && value !== ""
+        ? [value]
+        : [];
+
     const newUploads: UploadItem[] = [];
 
-    // Helper to check if an item is already in current uploads to avoid recreating object URLs if possible
-    // For simplicity and correctness with "value" prop changes, we might regenerate.
-    // But to avoid flickering, we can try to match.
-    // However, since "value" is the source of truth, we map it to UploadItems.
-
-    value.forEach((item) => {
+    valueArray.forEach((item) => {
       if (item instanceof File) {
         // Check if we already have this file in state to preserve previewSrc
         const existing = uploads.find((u) => u.selectedFile === item);
@@ -140,8 +142,7 @@ export default function UploadWithUrl({
       }
     });
 
-    // Only update if length or content mismatch to avoid loops if value is referentially unstable but content same
-    // For now, simple set.
+    // Only update if length or content mismatch to avoid loops
     if (
       JSON.stringify(newUploads.map((u) => u.id)) !==
       JSON.stringify(uploads.map((u) => u.id))
@@ -193,9 +194,18 @@ export default function UploadWithUrl({
 
       const img = new Image();
       img.onload = () => {
-        const newItem = url;
-        const newValues = multiple ? [...value, newItem] : [newItem];
-        onChange?.(newValues);
+        if (multiple) {
+          // For multiple, work with arrays
+          const currentArray = Array.isArray(value)
+            ? value
+            : value
+              ? [value]
+              : [];
+          onChange?.([...currentArray, url]);
+        } else {
+          // For single, emit just the string
+          onChange?.(url);
+        }
         setUrlInput("");
         setUrlLoading(false);
       };
@@ -264,10 +274,18 @@ export default function UploadWithUrl({
     }
 
     if (validFiles.length > 0) {
-      const newValues = multiple
-        ? [...value, ...validFiles]
-        : validFiles.slice(0, 1);
-      onChange?.(newValues);
+      if (multiple) {
+        // For multiple, work with arrays
+        const currentArray = Array.isArray(value)
+          ? value
+          : value
+            ? [value]
+            : [];
+        onChange?.([...currentArray, ...validFiles]);
+      } else {
+        // For single, emit just the first file
+        onChange?.(validFiles[0]);
+      }
     }
   };
 
@@ -279,14 +297,21 @@ export default function UploadWithUrl({
     const itemToRemove = uploads.find((u) => u.id === id);
     if (!itemToRemove) return;
 
+    // Normalize current value to array for filtering
+    const currentArray = Array.isArray(value) ? value : value ? [value] : [];
+
     // Filter out from value
-    // We need to match by reference for Files or value for strings
-    const newValues = value.filter((v) => {
+    const newValues = currentArray.filter((v) => {
       if (v instanceof File) return v !== itemToRemove.selectedFile;
       return v !== itemToRemove.imageUrl;
     });
 
-    onChange?.(newValues);
+    if (multiple) {
+      onChange?.(newValues);
+    } else {
+      // For single mode, emit undefined if empty, otherwise the first item
+      onChange?.(newValues.length > 0 ? newValues[0] : undefined);
+    }
   };
 
   /* ------------------------------------------------------ */

@@ -19,21 +19,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import ImageUpload from "@/components/ui/image-upload";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
 import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost } from "@/types/content";
+import UploadWithUrl from "../ui/upload-with-url";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 import * as z from "zod";
 import { styledLog } from "@/utils/styledLog";
 import { Form, FormMessage } from "../ui/form";
-import UploadWithUrl from "../ui/upload-with-url";
 
 const imageSchema = z.union([z.string(), z.instanceof(File)]);
 
@@ -115,7 +113,7 @@ const transformInitialData = (data?: BlogPost): BlogPostForm | undefined => {
       : [],
     slug: data?.slug || "",
     status: (data?.status as "draft" | "published" | "archived") || "draft",
-    authorId: data?.authorId || data?.author || "",
+    authorId: data?.authorId ?? data?.author ?? "",
     tags: data?.tags || [],
     metaKeywords: data?.seo?.metaKeywords || [],
     metaTitle: data?.seo?.metaTitle || "",
@@ -244,7 +242,7 @@ const BlogForm: FC<IBlogFormProps> = ({
       formdata.append("excerpt", data.excerpt || "");
       formdata.append("slug", data.slug);
       formdata.append("status", data.status);
-      formdata.append("author", data.authorId || "");
+      formdata.append("authorId", data.authorId || "");
 
       // Featured Image - handle File or URL string
       if (data.featuredImage) {
@@ -597,11 +595,10 @@ const BlogForm: FC<IBlogFormProps> = ({
                     control={form.control}
                     name="ogImage"
                     render={({ field }) => (
-                      <ImageUpload
-                        label="Open Graph Image"
-                        placeholder="Enter OG image URL or upload file"
-                        value={field.value || ""}
+                      <UploadWithUrl
+                        multiple={false}
                         onChange={field.onChange}
+                        value={field.value}
                       />
                     )}
                   />
@@ -659,24 +656,26 @@ const BlogForm: FC<IBlogFormProps> = ({
                     ) : usersData?.users?.some(
                         (user: User) => user.roleName === "SEO Agent",
                       ) ? (
-                      <SelectDropDown
-                        placeholder="Author Name"
-                        items={
-                          usersData.users
-                            .filter(
-                              (user: User) => user.roleName === "SEO Agent",
-                            )
-                            .map((user: User) => ({
-                              label: `${user.firstName} ${user.lastName}`,
-                              value: user.id,
-                            })) || []
-                        }
-                        value={watch("authorId")}
-                        setSelectedItem={(v) =>
-                          setValue("authorId", v as string, {
-                            shouldValidate: true,
-                          })
-                        }
+                      <Controller
+                        name="authorId"
+                        control={form.control}
+                        render={({ field }) => (
+                          <SelectDropDown
+                            placeholder="Author Name"
+                            items={
+                              usersData.users
+                                .filter(
+                                  (user: User) => user.roleName === "SEO Agent",
+                                )
+                                .map((user: User) => ({
+                                  label: `${user.firstName} ${user.lastName}`,
+                                  value: user.id,
+                                })) || []
+                            }
+                            value={field.value}
+                            setSelectedItem={(v) => field.onChange(v as string)}
+                          />
+                        )}
                       />
                     ) : (
                       <Controller
@@ -735,11 +734,10 @@ const BlogForm: FC<IBlogFormProps> = ({
                     control={form.control}
                     name="featuredImage"
                     render={({ field }) => (
-                      <ImageUpload
-                        label="Featured Image"
-                        placeholder="Enter featured image URL or upload file"
-                        value={field.value || ""}
+                      <UploadWithUrl
+                        multiple={false}
                         onChange={field.onChange}
+                        value={field.value}
                       />
                     )}
                   />

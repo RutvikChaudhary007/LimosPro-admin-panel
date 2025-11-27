@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FieldLabel } from "@/components/ui/field";
+import { Skeleton } from "@/components/ui/skeleton";
 import { constant } from "@/lib/constant";
 import type { BlogPost } from "@/types/content";
 
@@ -196,7 +197,7 @@ const ViewBlogPostPage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 text-sm text-gray-600">
                     <User className="h-4 w-4" />
-                    <span>{blogPost.author || "Unknown Author"}</span>
+                    <span>{blogPost.authorId || "Unknown Author"}</span>
                   </div>
 
                   <div className="flex items-center space-x-2 text-sm text-gray-600">

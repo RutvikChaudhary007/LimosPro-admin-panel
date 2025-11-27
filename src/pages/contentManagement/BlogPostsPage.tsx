@@ -119,7 +119,7 @@ const BlogPostsPage: React.FC = () => {
   const [isGrid, setIsGrid] = useState(true);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 12,
+    limit: 6,
     total: 0,
     totalPages: 0,
   });
@@ -380,7 +380,7 @@ const BlogPostsPage: React.FC = () => {
           {!loading && blogPosts.length > 0 && (
             <>
               {/* Toggle Button */}
-              <div className="flex justify-end mb-6">
+              <div className="flex justify-end mb-6 ">
                 <TooltipProvider>
                   <ToggleGroup
                     type="single"
