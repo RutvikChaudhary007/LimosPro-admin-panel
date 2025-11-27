@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import type { ChartOptions } from "chart.js";
 import {
   CategoryScale,
@@ -92,27 +91,27 @@ const defaultDatasetProps = {
 };
 
 // Generate fake data for demo purposes
-const generateFakeData = () => {
-  const labels = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-  ];
-  return {
-    labels,
-    datasets: [
-      {
-        ...defaultDatasetProps,
-        label: "Total Revenue",
-        data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-      },
-    ],
-  };
-};
+// const generateFakeData = () => {
+//   const labels = [
+//     "January",
+//     "February",
+//     "March",
+//     "April",
+//     "May",
+//     "June",
+//     "July",
+//   ];
+//   return {
+//     labels,
+//     datasets: [
+//       {
+//         ...defaultDatasetProps,
+//         label: "Total Revenue",
+//         data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
+//       },
+//     ],
+//   };
+// };
 
 export function AreaLineChart({
   data,
@@ -120,7 +119,10 @@ export function AreaLineChart({
   isFilled = true,
   chartColor = "rgb(214, 142, 41)",
 }: AreaLineChartProps) {
-  let chartData = data || generateFakeData();
+  let chartData = data || {
+    labels: [],
+    datasets: [],
+  };
 
   if (data) {
     chartData = {
