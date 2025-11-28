@@ -222,7 +222,7 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header */}
-      <SidebarHeader className="mx-2 h-[calc(var(--header-height)-8px)] justify-center border-b p-0 py-4">
+      <SidebarHeader className="mx-2 h-[calc(var(--header-height)-8px)] justify-center border-b p-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -233,7 +233,7 @@ export function AppSidebar({
                 <img
                   src="/logo/limospro-icon.png"
                   alt="LimosProIcon"
-                  className="size-10 group-data-[collapsible=icon]:size-8"
+                  className="size-10 group-data-[collapsible=icon]:size-12"
                 />
                 <img
                   src="/logo/limospro-text.png"
@@ -256,10 +256,12 @@ export function AppSidebar({
       </SidebarContent>
 
       {/* Footer */}
-      <SidebarFooter className="overflow-hidden bg-transparent py-2 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:p-0">
-        <div className="font-quicksand space-y-1 text-center text-base leading-[100%] tracking-[0]">
+      <SidebarFooter className="overflow-hidden bg-transparent group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:p-0 border-t mx-2 pt-2">
+        <div className="font-quicksand text-center text-base leading-[100%] tracking-[0]">
           <div className="font-bold text-black">Limospro™</div>
-          <div className="text-base-black font-medium">Version: 1.0.0</div>
+          <div className="text-[11px] text-base-black font-medium">
+            Version: 1.0.0
+          </div>
         </div>
       </SidebarFooter>
     </Sidebar>

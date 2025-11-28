@@ -25,9 +25,9 @@ import { cn } from "@/lib/utils";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = "18.75rem";
+const SIDEBAR_WIDTH = "20rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
-const SIDEBAR_WIDTH_ICON = "3rem";
+const SIDEBAR_WIDTH_ICON = "4rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 type SidebarContextProps = {
@@ -347,7 +347,7 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sidebar-footer"
       data-sidebar="footer"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex flex-col gap-1", className)}
       {...props}
     />
   );
@@ -476,7 +476,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left font-quicksand font-bold text-base leading-[100%] tracking-[0] text-base-black outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-base-primary/10 hover:text-base-black focus-visible:ring-2 active:bg-base-primary active:text-base-white disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-base-primary data-[active=true]:text-base-white data-[state=open]:bg-base-primary/15 data-[state=open]:text-base-black data-[state=open]:border-base-primary data-[state=open]:hover:bg-base-primary/10 data-[state=open]:hover:text-base-black group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-1! [&>span:last-child]:truncate [&_svg:not([class*='size-'])]:[&>svg]:size-6 [&>svg]:size-6 [&_svg]:**:stroke-current [&>svg]:shrink-0 data-[child-active=true]:bg-base-primary/20 data-[child-active=true]:text-base-primary!",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left font-quicksand font-bold text-base leading-[100%] tracking-[0] text-base-black outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-base-primary/10 hover:text-base-black focus-visible:ring-2 active:bg-base-primary active:text-base-white disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-base-primary data-[active=true]:text-base-white data-[state=open]:bg-base-primary/15 data-[state=open]:text-base-black data-[state=open]:border-base-primary data-[state=open]:hover:bg-base-primary/10 data-[state=open]:hover:text-base-black group-data-[collapsible=icon]:size-12! group-data-[collapsible=icon]:p-3! [&>span:last-child]:truncate [&_svg:not([class*='size-'])]:[&>svg]:size-6 [&>svg]:size-6 [&_svg]:**:stroke-current [&>svg]:shrink-0 data-[child-active=true]:bg-base-primary/20 data-[child-active=true]:text-base-primary!",
   {
     variants: {
       variant: {
@@ -485,7 +485,7 @@ const sidebarMenuButtonVariants = cva(
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-base-primary/10 hover:text-base-black hover:shadow-[0_0_0_1px_hsl(var(--base-primary))]",
       },
       size: {
-        default: "h-12 px-4 py-3 gap-4 text-lg rounded",
+        default: "h-12 px-4 py-3 gap-4 text-base rounded",
         sm: "h-7 text-xs",
         lg: "h-12 text-sm group-data-[collapsible=icon]:p-0!",
       },
@@ -648,7 +648,7 @@ function SidebarMenuSub({ className, ...props }: React.ComponentProps<"ul">) {
       data-slot="sidebar-menu-sub"
       data-sidebar="menu-sub"
       className={cn(
-        "mt-2 flex w-full min-w-0 flex-col gap-2",
+        "flex w-full min-w-0 flex-col gap-2",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}
@@ -691,11 +691,11 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        "font-quicksand text-base-black ring-sidebar-ring hover:bg-base-primary/10 hover:text-base-black active:bg-base-primary active:text-base-white flex h-12 items-center overflow-hidden rounded py-3 pr-4 pl-14 text-lg leading-[100%] font-bold tracking-[0] outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 has-[>svg]:gap-4 has-[>svg]:px-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:**:stroke-current [&>span:last-child]:truncate [&>svg]:shrink-0 [&_svg:not([class*='size-'])]:[&>svg]:size-6",
+        "font-quicksand text-base-black ring-sidebar-ring hover:bg-base-primary/10 hover:text-base-black active:bg-base-primary active:text-base-white flex items-center overflow-hidden rounded py-3 pr-4 pl-14 text-base leading-[100%] font-bold tracking-[0] outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 has-[>svg]:gap-4 has-[>svg]:px-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:**:stroke-current [&>span:last-child]:truncate [&>svg]:shrink-0 [&_svg:not([class*='size-'])]:[&>svg]:size-6",
         "data-[active=true]:bg-base-primary data-[active=true]:text-base-white",
         size === "sm" && "text-xs",
         size === "md" && "text-sm",
-        size === "lg" && "text-lg",
+        size === "lg" && "text-base",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}

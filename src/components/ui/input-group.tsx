@@ -163,7 +163,10 @@ function InputGroupInput({
   className,
   variant = "primary",
   ...props
-}: React.ComponentProps<"input"> & { variant?: "primary" | "secondary" }) {
+}: React.ComponentProps<"input"> & {
+  variant?: "primary" | "secondary";
+  size?: "sm" | "md" | "lg";
+}) {
   const focusColor =
     variant === "primary" ? "focus:text-black" : "focus:text-black";
 

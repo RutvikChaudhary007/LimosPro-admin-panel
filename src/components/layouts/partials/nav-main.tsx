@@ -36,13 +36,20 @@ export function NavMain({ items }: { items: NavItem[] }) {
   const isActivePath = (path: string) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
 
-  const renderSubItems = (subItems: NavItem["items"] = []) => (
+  const renderSubItems = (
+    subItems: NavItem["items"] = [],
+    className?: string,
+  ) => (
     <SidebarMenuSub>
       {subItems.map((sub) => {
         const active = isActivePath(sub.url);
         return (
           <SidebarMenuSubItem key={sub.title}>
-            <SidebarMenuSubButton asChild data-active={active}>
+            <SidebarMenuSubButton
+              asChild
+              data-active={active}
+              className={className}
+            >
               <Link to={sub.url}>
                 <span className="truncate">{sub.title}</span>
               </Link>
@@ -79,9 +86,9 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   <HoverCardContent
                     side="right"
                     align="start"
-                    className="font-quicksand border-base-gray bg-base-white w-64 rounded border p-2 font-medium shadow-none"
+                    className="font-quicksand border-base-gray bg-base-white w-full max-w-fit rounded border p-2 shadow-none"
                   >
-                    {renderSubItems(item.items)}
+                    {renderSubItems(item.items, "px-4")}
                   </HoverCardContent>
                 </HoverCard>
               </SidebarMenuItem>
@@ -110,7 +117,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
 
-                  <CollapsibleContent>
+                  <CollapsibleContent className="mt-2">
                     {renderSubItems(item.items)}
                   </CollapsibleContent>
                 </SidebarMenuItem>

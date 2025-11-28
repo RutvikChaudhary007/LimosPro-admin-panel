@@ -89,7 +89,7 @@ function TableAndPieChart({
   return (
     <div className="flex gap-6">
       {/* table */}
-      <div className="basis-9/12">
+      <div className="basis-8/12">
         <Card className="shadow-none border border-base-gray">
           <CardBody>
             <CardHeader>
@@ -131,11 +131,11 @@ function TableAndPieChart({
         </Card>
       </div>
       {/* pie */}
-      <div className="basis-3/12">
+      <div className="basis-4/12">
         <Card className="shadow-none border border-base-gray">
           <CardBody>
             <CardTitle>Fleet Availability & Demand Ratio</CardTitle>
-            <div className="max-h-60 overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden space-y-4">
+            <div className="max-h-[260px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden space-y-4">
               <CardContent className="h-56 grid place-items-center">
                 <Doughnut
                   data={Chartdata}

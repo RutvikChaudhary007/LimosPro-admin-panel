@@ -89,7 +89,7 @@ export const buttonVariants = cva(
 
       // spacing and layout
       spacing: {
-        default: "h-[52px] gap-4 p-4",
+        default: "h-13 gap-4 p-4",
         sm: "h-8 px-3 py-2 gap-2 rounded-xs",
         lg: "h-11 rounded gap-2 p-2",
         xl: "h-16 p-5 gap-5 rounded-md",

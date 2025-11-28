@@ -63,7 +63,7 @@ function PaginationLink({
       className={cn(
         "size-11",
         buttonVariants({
-          variant: isActive ? "outlinePrimary" : "outlineBlack",
+          variant: isActive ? "default" : "outlineNavBtnBlack",
           size: "xl",
           spacing: "lg",
         }),

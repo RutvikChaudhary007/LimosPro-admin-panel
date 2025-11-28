@@ -30,7 +30,7 @@ export function NavUser() {
           spacing="lg"
           className="group"
         >
-          <Avatar className="size-7">
+          <Avatar className="size-7 border border-base-primary/20">
             <AvatarImage src={user?.profilePicture} alt={user?.name} />
             <AvatarFallback className="group-hover:bg-base-black transition-all bg-base-primary/10 text-xs">
               {(
@@ -52,9 +52,9 @@ export function NavUser() {
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar className="size-8 rounded">
+            <Avatar className="size-8 border border-base-primary/20">
               <AvatarImage src={user?.profilePicture} alt={user?.name} />
-              <AvatarFallback className="rounded bg-base-primary/10">
+              <AvatarFallback className="bg-base-primary/10">
                 {(
                   (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "") ||
                   "N/A"
@@ -81,7 +81,7 @@ export function NavUser() {
             <IconLanguage />
             Languages
           </DropdownMenuItem>
-          <DropdownMenuItem className="md:hidden">
+          <DropdownMenuItem className="hidden">
             <IconMail />
             Mails
           </DropdownMenuItem>

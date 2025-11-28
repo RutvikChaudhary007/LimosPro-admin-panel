@@ -120,7 +120,6 @@ function DragHandle({ id }: { id: number }) {
       {...attributes}
       {...listeners}
       variant="ghost"
-      size="icon"
       className="text-muted-foreground size-7 hover:bg-transparent"
     >
       <IconGripVertical className="text-muted-foreground size-3" />
@@ -286,7 +285,6 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           <Button
             variant="ghost"
             className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
           >
             <IconDotsVertical />
             <span className="sr-only">Open menu</span>
@@ -570,7 +568,6 @@ export function DataTable({
               <Button
                 variant="outline"
                 className="size-8"
-                size="icon"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -580,7 +577,6 @@ export function DataTable({
               <Button
                 variant="outline"
                 className="size-8"
-                size="icon"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
@@ -590,7 +586,6 @@ export function DataTable({
               <Button
                 variant="outline"
                 className="hidden size-8 lg:flex"
-                size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >

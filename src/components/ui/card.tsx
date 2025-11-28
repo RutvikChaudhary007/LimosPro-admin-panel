@@ -55,7 +55,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "font-montserrat font-bold text-base-black text-2xl leading-[100%] tracking-normal",
+        "font-montserrat font-bold text-base-black text-xl leading-[120%] tracking-normal",
         className,
       )}
       {...props}
@@ -119,20 +119,28 @@ function CardImage({ className, ...props }: React.ComponentProps<"img">) {
   const [loaded, setLoaded] = React.useState(false);
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
-      {/* Shimmer placeholder */}
+    <div className="relative w-full overflow-hidden">
       {!loaded && <div className="absolute inset-0 shimmer" />}
-
-      {/* Actual image */}
       <img
-        {...props}
+        data-slot="card-image"
         className={cn(
-          "w-full h-full object-cover transition-opacity duration-500",
+          "object-cover",
+          "data-[variant=default]:w-full data-[variant=default]:h-full",
+          "data-[variant=horizontal]:w-full data-[variant=horizontal]:h-auto",
+          "transition-opacity duration-500",
           loaded ? "opacity-100" : "opacity-0",
           className,
         )}
         onLoad={() => setLoaded(true)}
-        onError={props.onError}
+        onError={(e) => {
+          const img = e.currentTarget;
+          img.onerror = null;
+          (function update() {
+            img.src = `https://placehold.co/${img.clientWidth || 300}x${img.clientHeight || 200}`;
+            globalThis.addEventListener("resize", update);
+          })();
+        }}
+        {...props}
       />
     </div>
   );

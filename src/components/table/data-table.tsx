@@ -66,11 +66,7 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => {
                 // console.log("header:",header)
                 return (
-                  <TableHead
-                    className="py-4 font-montserrat font-semibold text-lg text-base-black leading-[100%] tracking-normal"
-                    key={header.id}
-                    colSpan={header.colSpan}
-                  >
+                  <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -93,10 +89,7 @@ export function DataTable<TData, TValue>({
                   data-state={row?.getIsSelected() && "selected"}
                 >
                   {row?.getVisibleCells().map((cell) => (
-                    <TableCell
-                      className="font-quicksand font-medium text-base text-base-black leading-[100%] tracking-normal"
-                      key={cell.id}
-                    >
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

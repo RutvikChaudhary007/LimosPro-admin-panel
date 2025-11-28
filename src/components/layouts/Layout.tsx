@@ -8,9 +8,9 @@ export default function Layout() {
     <SidebarProvider
       style={
         {
-          "--sidebar-width": "calc(var(--spacing) * 75)", // 300px
+          "--sidebar-width": "calc(var(--spacing) * 80)", // 320px
           "--header-height": "calc(var(--spacing) * 22)", // 88px
-          "--footer-height": "calc(var(--spacing) * 13)", // 52px
+          "--footer-height": "calc(var(--spacing) * 12)", // 40px
         } as React.CSSProperties
       }
     >

@@ -37,21 +37,22 @@ function AddRegionPage() {
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
-        title="Region Management"
+        title="Create Region"
         breadcrumbs={[
           { label: "Home", path: "/" },
           { label: "Region Management" },
-          { label: "Add Regions" },
+          { label: "Regions", path: constant.ROUTING_URLS.REGION },
+          { label: "Create Region" },
         ]}
-        action={{
-          variant: "outlineBlack",
-          label: "Back to Regions",
+        backAction={{
+          variant: "outlinePrimary",
+          label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.REGION,
         }}
       />
 
-      <RegionForm title="Create Regions" onSubmit={onSubmit} />
+      <RegionForm title="Create Region" onSubmit={onSubmit} />
     </div>
   );
 }

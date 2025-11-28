@@ -31,7 +31,12 @@ export function SiteHeader() {
             </Button>
           </div>
           <div className="hidden gap-2 md:flex">
-            <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
+            <Button
+              variant="outlineNavBtnBlack"
+              size="xl"
+              spacing="lg"
+              className="hidden"
+            >
               <IconMail />
             </Button>
             <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">

@@ -182,10 +182,12 @@ export function getRegionColumns(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <AccessCell<TRegion> row={row} onAccess={onAccess} />
 
           <Button
@@ -268,10 +270,12 @@ export function getRegionAdminColumns(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
             variant="outlineNavBtnPrimary"
@@ -496,10 +500,12 @@ export function getAffiliate(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row?.original?.id ?? "")}
             variant="outlineNavBtnBlack"
@@ -647,10 +653,12 @@ export function getChauffeur(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -804,10 +812,12 @@ export function getUsers(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -1004,10 +1014,12 @@ export function getBooking(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             type="button"
             variant="outlineNavBtnPrimary"
@@ -1133,10 +1145,12 @@ export function getFleets(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -1276,17 +1290,24 @@ export function getTrips(
     {
       accessorKey: "distanceInKm",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Distance In Km" />
+        <div className="w-20">
+          <DataTableColumnHeader column={column} title="Distance In Km" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="w-20 text-center">{row.original.distanceInKm}</div>
       ),
       enableSorting: false,
     },
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -1458,10 +1479,12 @@ export function getPayments(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -1560,10 +1583,12 @@ export function getRefund(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -1660,10 +1685,12 @@ export function getRefundRequest(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Booking Details" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
@@ -1762,10 +1789,12 @@ export function getCrewMember(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Booking Details" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             onClick={() => onEdit(row.original.id)}
             variant="outlineNavBtnPrimary"
@@ -1885,10 +1914,12 @@ export function getStaffMember(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center">
+        <div className="text-right flex gap-2 items-center justify-end">
           <Button
             variant="outlineNavBtnBlack"
             size="xl"
@@ -2013,7 +2044,7 @@ export function getContactRequest(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2114,7 +2145,7 @@ export function getTestimonial(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2244,7 +2275,7 @@ export function getOurPartner(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2348,7 +2379,7 @@ export function getNews(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2462,7 +2493,7 @@ export function getSettings(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2545,7 +2576,7 @@ export function getIpWhiteList(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2657,7 +2688,7 @@ export function getFaqs(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2780,7 +2811,7 @@ export function getChauffeurAvailablility(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2867,7 +2898,7 @@ export function getHomeContent(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -2992,7 +3023,7 @@ export function getContent(
     {
       id: "action",
       header: ({ column }) => (
-        <div className="flex justify-end items-center px-4">
+        <div className="flex justify-end items-center">
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
@@ -3106,7 +3137,9 @@ export function getBlogColumns(
     {
       id: "action",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Action" />
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">

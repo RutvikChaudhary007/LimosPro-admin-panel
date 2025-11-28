@@ -44,15 +44,16 @@ const EditRegionPage = () => {
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
-        title="Region Management"
+        title="Edit Region"
         breadcrumbs={[
           { label: "Home", path: "/" },
           { label: "Region Management" },
-          { label: "Edit Regions" },
+          { label: "Regions", path: constant.ROUTING_URLS.REGION },
+          { label: "Edit Region" },
         ]}
-        action={{
-          variant: "outlineBlack",
-          label: "Back to Regions",
+        backAction={{
+          variant: "outlinePrimary",
+          label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.REGION,
         }}
@@ -63,7 +64,7 @@ const EditRegionPage = () => {
       ) : (
         <RegionForm
           initialData={data}
-          title="Edit Regions"
+          title="Edit Region"
           onSubmit={onSubmit}
         />
       )}

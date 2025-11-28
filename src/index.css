@@ -211,7 +211,7 @@
 }
 
 @layer utilities {
-  @keyframes shimmer {
+  @keyframes skeletonShimmer {
     0% {
       background-position: -500px 0;
     }
@@ -223,6 +223,21 @@
   .skeleton {
     background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 50%, #e5e7eb 100%);
     background-size: 1000px 100%;
-    animation: shimmer 1.5s infinite linear;
+    animation: skeletonShimmer 1.5s infinite linear;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -400px 0;
+    }
+    100% {
+      background-position: 400px 0;
+    }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, #e0e0e0 25%, #f8f8f8 50%, #e0e0e0 75%);
+    background-size: 800px 100%;
+    animation: shimmer 1.2s infinite;
   }
 }

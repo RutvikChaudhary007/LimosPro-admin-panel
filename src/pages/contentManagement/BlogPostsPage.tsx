@@ -9,6 +9,7 @@ import { blogService } from "@/api/contentServices.api";
 import PageTitle from "@/components/common/PageTitle";
 import BlogPostCard from "@/components/contentManagement/BlogPostCard";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { PaginationControls } from "@/components/pagination";
 import { getBlogColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -130,10 +131,10 @@ const BlogPostsPage: React.FC = () => {
       searchTerm,
       statusFilter,
       setBlogPosts,
-      pagination,
+      pagination: { ...pagination, page: 1 },
       setPagination,
     });
-  }, []);
+  }, [searchTerm, statusFilter]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +147,10 @@ const BlogPostsPage: React.FC = () => {
       pagination: { ...pagination, page: 1 },
       setPagination,
     });
+  };
+
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
   };
 
   const handleEdit = (id: string) => {
@@ -316,7 +321,7 @@ const BlogPostsPage: React.FC = () => {
                       { label: "Archived", value: "archived" },
                     ]}
                     value={statusFilter}
-                    setSelectedItem={setStatusFilter}
+                    setSelectedItem={handleStatusFilterChange}
                   />
                 </Field>
               </form>
@@ -470,47 +475,12 @@ const BlogPostsPage: React.FC = () => {
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div className="flex items-center justify-center space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
-            >
-              Previous
-            </Button>
-            {[...Array(pagination.totalPages)].map((_, index) => {
-              const page = index + 1;
-              if (
-                page === 1 ||
-                page === pagination.totalPages ||
-                Math.abs(page - pagination.page) <= 2
-              ) {
-                return (
-                  <Button
-                    key={page}
-                    variant={page === pagination.page ? "default" : "outline"}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </Button>
-                );
-              }
-              if (
-                page === pagination.page - 3 ||
-                page === pagination.page + 3
-              ) {
-                return <span key={page}>...</span>;
-              }
-              return null;
-            })}
-            <Button
-              variant="outline"
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page === pagination.totalPages}
-            >
-              Next
-            </Button>
-          </div>
+          <PaginationControls
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            disabled={loading}
+          />
         )}
       </div>
     </>
