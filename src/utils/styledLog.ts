@@ -1,6 +1,6 @@
 // src/utils/styledLog.ts
 export function styledLog(
-  data: any,
+  data: object | string | number | boolean | undefined | null | Array<object>,
   title = "Log",
   type: "success" | "danger" | "info" | "alert" = "info",
 ) {
@@ -22,5 +22,5 @@ export function styledLog(
   `;
 
   console.log(`%c${title}`, style);
-  console.log(data);
+  console.log(JSON.stringify(data));
 }

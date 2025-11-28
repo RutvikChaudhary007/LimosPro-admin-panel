@@ -113,7 +113,7 @@ const transformInitialData = (data?: BlogPost): BlogPostForm | undefined => {
       : [],
     slug: data?.slug || "",
     status: (data?.status as "draft" | "published" | "archived") || "draft",
-    authorId: data?.authorId ?? data?.author ?? "",
+    authorId: data?.blogAuthor?.userId ?? data?.authorId ?? data?.author ?? "",
     tags: data?.tags || [],
     metaKeywords: data?.seo?.metaKeywords || [],
     metaTitle: data?.seo?.metaTitle || "",
@@ -189,6 +189,10 @@ const BlogForm: FC<IBlogFormProps> = ({
   const { data: usersData, isFetching: userIsFetching } = UsefetchAllUsers({
     DateRange: { startDate: undefined, endDate: undefined },
     limit: 100,
+    queryOptions: {
+      staleTime: 0,
+      gcTime: 0,
+    },
   });
 
   interface User {
@@ -655,23 +659,41 @@ const BlogForm: FC<IBlogFormProps> = ({
                       <div className="w-full h-14 skeleton rounded"></div>
                     ) : usersData?.users?.some(
                         (user: User) => user.roleName === "SEO Agent",
-                      ) ? (
+                      ) || initialData?.blogAuthor ? (
                       <Controller
                         name="authorId"
                         control={form.control}
                         render={({ field }) => (
                           <SelectDropDown
                             placeholder="Author Name"
-                            items={
-                              usersData.users
-                                .filter(
-                                  (user: User) => user.roleName === "SEO Agent",
+                            items={(() => {
+                              const options =
+                                usersData?.users
+                                  ?.filter(
+                                    (user: User) =>
+                                      user.roleName === "SEO Agent",
+                                  )
+                                  .map((user: User) => ({
+                                    label: `${user.firstName} ${user.lastName}`,
+                                    value: user.id,
+                                  })) || [];
+
+                              if (
+                                initialData?.blogAuthor?.userId &&
+                                !options.find(
+                                  (o) =>
+                                    o.value === initialData.blogAuthor?.userId,
                                 )
-                                .map((user: User) => ({
-                                  label: `${user.firstName} ${user.lastName}`,
-                                  value: user.id,
-                                })) || []
-                            }
+                              ) {
+                                options.push({
+                                  label:
+                                    initialData.blogAuthor.name ||
+                                    "Current Author",
+                                  value: initialData.blogAuthor.userId,
+                                });
+                              }
+                              return options;
+                            })()}
                             value={field.value}
                             setSelectedItem={(v) => field.onChange(v as string)}
                           />

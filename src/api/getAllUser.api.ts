@@ -48,17 +48,20 @@ const UsefetchAllUsers = ({
   page,
   status,
   limit,
+  queryOptions,
 }: {
   DateRange: DateRange;
   page?: number;
   status?: string;
   limit?: number;
+  queryOptions?: Record<string, any>;
 }) =>
   useQuery({
     queryKey: ["users", DateRange, page, status, limit],
     queryFn: () => getAllUsers(DateRange, page, status, limit),
     refetchOnWindowFocus: false,
     retry: false,
+    ...queryOptions,
   });
 
 export default UsefetchAllUsers;
