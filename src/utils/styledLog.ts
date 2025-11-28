@@ -1,6 +1,18 @@
+import type { AxiosError } from "axios";
+
 // src/utils/styledLog.ts
 export function styledLog(
-  data: object | string | number | boolean | undefined | null | Array<object>,
+  data:
+    | object
+    | string
+    | number
+    | boolean
+    | undefined
+    | null
+    | Array<object>
+    | unknown
+    | Error
+    | AxiosError,
   title = "Log",
   type: "success" | "danger" | "info" | "alert" = "info",
 ) {
@@ -22,5 +34,5 @@ export function styledLog(
   `;
 
   console.log(`%c${title}`, style);
-  console.log(JSON.stringify(data));
+  console.log(JSON.stringify(data, null, 2));
 }

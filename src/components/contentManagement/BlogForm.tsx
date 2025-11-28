@@ -667,7 +667,10 @@ const BlogForm: FC<IBlogFormProps> = ({
                           <SelectDropDown
                             placeholder="Author Name"
                             items={(() => {
-                              const options =
+                              const options: {
+                                label: string;
+                                value: string;
+                              }[] =
                                 usersData?.users
                                   ?.filter(
                                     (user: User) =>
