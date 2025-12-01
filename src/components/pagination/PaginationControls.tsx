@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { SelectDropDown } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 export interface PaginationControlsProps {
@@ -18,6 +19,11 @@ export interface PaginationControlsProps {
   showPrevNext?: boolean;
   showFirstLast?: boolean;
   disabled?: boolean;
+  totalItems?: number;
+  showPageInfo?: boolean;
+  pageSize?: number;
+  onPageSizeChange?: (size: number) => void;
+  showPageSizeSelector?: boolean;
 }
 
 export function PaginationControls({
@@ -29,6 +35,11 @@ export function PaginationControls({
   showPrevNext = true,
   showFirstLast = true,
   disabled = false,
+  totalItems,
+  showPageInfo = true,
+  pageSize = 10,
+  onPageSizeChange,
+  showPageSizeSelector = true,
 }: PaginationControlsProps) {
   // Validate inputs
   if (totalPages <= 0) return null;
@@ -88,113 +99,157 @@ export function PaginationControls({
   const isPrevDisabled = currentPage === 1 || disabled;
   const isNextDisabled = currentPage === totalPages || disabled;
 
+  const pageSizeOptions = [
+    { label: "10", value: "10" },
+    { label: "20", value: "20" },
+    { label: "30", value: "30" },
+  ];
+
   return (
-    <Pagination className={cn("justify-end cursor-pointer", className)}>
-      <PaginationContent>
-        {/* Previous Button */}
-        {showPrevNext && (
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageClick(currentPage - 1);
-              }}
-              className={cn(isPrevDisabled && "pointer-events-none opacity-50")}
-              aria-disabled={isPrevDisabled}
-            />
-          </PaginationItem>
-        )}
+    <div className="flex items-center gap-2">
+      {/* Page Info Section */}
+      {showPageInfo && (
+        <div className="font-quicksand text-sm text-base-black shrink-0">
+          Showing{" "}
+          <span className="font-semibold text-black">{currentPage}</span>
+          {" - "}
+          <span className="font-semibold text-black">{totalPages}</span>
+          {totalItems !== undefined && (
+            <>
+              {" "}
+              of{" "}
+              <span className="font-semibold text-black">
+                {totalItems.toLocaleString()}
+              </span>{" "}
+              Results
+            </>
+          )}
+        </div>
+      )}
 
-        {/* First Page Button */}
-        {showFirstLast && currentPage > 2 && (
-          <PaginationItem>
-            <PaginationLink
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageClick(1);
-              }}
-              isActive={false}
-              className={cn(disabled && "pointer-events-none opacity-50")}
-            >
-              1
-            </PaginationLink>
-          </PaginationItem>
-        )}
+      {/* Page Size Selector */}
+      {showPageSizeSelector && onPageSizeChange && (
+        <SelectDropDown
+          size="sm"
+          placeholder={pageSize.toString()}
+          items={pageSizeOptions}
+          value={pageSize.toString()}
+          setSelectedItem={(value) => onPageSizeChange(parseInt(value, 10))}
+        />
+      )}
 
-        {/* Page Numbers */}
-        {pageRange.map((page, index) => {
-          if (page === "...") {
-            return (
-              <PaginationItem key={`ellipsis-${index}`}>
-                <PaginationEllipsis />
-              </PaginationItem>
-            );
-          }
+      {/* Pagination Controls */}
+      <Pagination className={cn("justify-end cursor-pointer", className)}>
+        <PaginationContent>
+          {/* Previous Button */}
+          {showPrevNext && (
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageClick(currentPage - 1);
+                }}
+                className={cn(
+                  isPrevDisabled && "pointer-events-none opacity-50",
+                )}
+                aria-disabled={isPrevDisabled}
+              />
+            </PaginationItem>
+          )}
 
-          const pageNum = page as number;
-          if (showFirstLast && pageNum === 1 && currentPage > 2) {
-            return null;
-          }
-          if (
-            showFirstLast &&
-            pageNum === totalPages &&
-            currentPage < totalPages - 1
-          ) {
-            return null;
-          }
-
-          return (
-            <PaginationItem key={pageNum}>
+          {/* First Page Button */}
+          {showFirstLast && currentPage > 2 && (
+            <PaginationItem>
               <PaginationLink
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageClick(pageNum);
+                  handlePageClick(1);
                 }}
-                isActive={currentPage === pageNum}
+                isActive={false}
                 className={cn(disabled && "pointer-events-none opacity-50")}
               >
-                {pageNum}
+                1
               </PaginationLink>
             </PaginationItem>
-          );
-        })}
+          )}
 
-        {/* Last Page Button */}
-        {showFirstLast && currentPage < totalPages - 1 && (
-          <PaginationItem>
-            <PaginationLink
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageClick(totalPages);
-              }}
-              isActive={false}
-              className={cn(disabled && "pointer-events-none opacity-50")}
-            >
-              {totalPages}
-            </PaginationLink>
-          </PaginationItem>
-        )}
+          {/* Page Numbers */}
+          {pageRange.map((page, index) => {
+            if (page === "...") {
+              return (
+                <PaginationItem key={`ellipsis-${index}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              );
+            }
 
-        {/* Next Button */}
-        {showPrevNext && (
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePageClick(currentPage + 1);
-              }}
-              className={cn(isNextDisabled && "pointer-events-none opacity-50")}
-              aria-disabled={isNextDisabled}
-            />
-          </PaginationItem>
-        )}
-      </PaginationContent>
-    </Pagination>
+            const pageNum = page as number;
+            if (showFirstLast && pageNum === 1 && currentPage > 2) {
+              return null;
+            }
+            if (
+              showFirstLast &&
+              pageNum === totalPages &&
+              currentPage < totalPages - 1
+            ) {
+              return null;
+            }
+
+            return (
+              <PaginationItem key={pageNum}>
+                <PaginationLink
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handlePageClick(pageNum);
+                  }}
+                  isActive={currentPage === pageNum}
+                  className={cn(disabled && "pointer-events-none opacity-50")}
+                >
+                  {pageNum}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          })}
+
+          {/* Last Page Button */}
+          {showFirstLast && currentPage < totalPages - 1 && (
+            <PaginationItem>
+              <PaginationLink
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageClick(totalPages);
+                }}
+                isActive={false}
+                className={cn(disabled && "pointer-events-none opacity-50")}
+              >
+                {totalPages}
+              </PaginationLink>
+            </PaginationItem>
+          )}
+
+          {/* Next Button */}
+          {showPrevNext && (
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageClick(currentPage + 1);
+                }}
+                className={cn(
+                  isNextDisabled && "pointer-events-none opacity-50",
+                )}
+                aria-disabled={isNextDisabled}
+              />
+            </PaginationItem>
+          )}
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 }
 

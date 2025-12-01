@@ -48,8 +48,8 @@ const EditUserPage = () => {
           { label: "Users", path: constant.ROUTING_URLS.USERS },
           { label: "Edit User" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.USERS,

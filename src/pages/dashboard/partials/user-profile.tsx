@@ -36,7 +36,7 @@ function UserProfile({
 
   return (
     <div className="font-quicksand text-base-black flex items-center gap-4 px-4 text-left text-base leading-[100%] font-bold tracking-[0%] lg:px-8">
-      <Avatar className="size-[60px]">
+      <Avatar className="size-[60px] border-1 border-base-primary/20">
         <AvatarImage src={user?.profilePicture || ""} alt={user?.name} />
         <AvatarFallback className="bg-base-blue-cream text-2xl font-medium">
           {(

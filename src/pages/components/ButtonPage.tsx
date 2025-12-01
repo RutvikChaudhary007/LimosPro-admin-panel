@@ -1,4 +1,3 @@
-import IconHome from "@/assets/Icons/dashboard.svg?react";
 import IconChevronDown from "@/assets/Icons/ic-chevron-down.svg?react";
 import { Button } from "@/components/ui/button";
 
@@ -14,16 +13,15 @@ function ButtonPage() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button>
-                <span>Button Text</span>
+              <Button spacing="default">
+                <span>Button Default</span>
+              </Button>
+              <Button spacing="md">
+                <span>Button MD</span>
               </Button>
 
-              <Button size="sm" spacing="sm">
-                <span>Button Text</span>
-              </Button>
-
-              <Button size="lg" spacing="xl">
-                <span>Button Text</span>
+              <Button spacing="sm">
+                <span>Button SM</span>
               </Button>
             </div>
           </div>
@@ -34,21 +32,21 @@ function ButtonPage() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button>
+              <Button spacing="default">
                 <IconChevronDown />
                 <span>Button Text</span>
+                <IconChevronDown />
+              </Button>
+
+              <Button spacing="md">
+                <IconChevronDown />
+                <span>Button MD</span>
                 <IconChevronDown />
               </Button>
 
               <Button size="sm" spacing="sm">
                 <IconChevronDown />
-                <span>Button Text</span>
-                <IconChevronDown />
-              </Button>
-
-              <Button size="lg" spacing="xl">
-                <IconChevronDown />
-                <span>Button Text</span>
+                <span>Button SM</span>
                 <IconChevronDown />
               </Button>
             </div>
@@ -60,19 +58,19 @@ function ButtonPage() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button>
+              <Button spacing="default">
                 <IconChevronDown />
                 <span>Button Text</span>
+              </Button>
+
+              <Button spacing="md">
+                <IconChevronDown />
+                <span>Button MD</span>
               </Button>
 
               <Button size="sm" spacing="sm">
                 <IconChevronDown />
-                <span>Button Text</span>
-              </Button>
-
-              <Button size="lg" spacing="xl">
-                <IconChevronDown />
-                <span>Button Text</span>
+                <span>Button SM</span>
               </Button>
             </div>
           </div>
@@ -83,18 +81,18 @@ function ButtonPage() {
             </p>
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button>
+              <Button spacing="default">
                 <span>Button Text</span>
+                <IconChevronDown />
+              </Button>
+
+              <Button spacing="md">
+                <span>Button MD</span>
                 <IconChevronDown />
               </Button>
 
               <Button size="sm" spacing="sm">
-                <span>Button Text</span>
-                <IconChevronDown />
-              </Button>
-
-              <Button size="lg" spacing="xl">
-                <span>Button Text</span>
+                <span>Button SM</span>
                 <IconChevronDown />
               </Button>
             </div>
@@ -666,57 +664,6 @@ function ButtonPage() {
             </Button>
             <Button variant="linkDark" spacing="none">
               Button Text
-            </Button>
-          </div>
-        </div>
-        <div className="space-y-3">
-          <p className="text-base font-medium">Menu Item</p>
-          <div className="flex justify-between">
-            <Button variant="menuItem" size="menu" spacing="menu">
-              <IconHome />
-              Dashboard
-            </Button>
-            <Button
-              variant="menuItem"
-              size="menu"
-              spacing="menu"
-              data-state="active"
-            >
-              <IconHome />
-              Dashboard
-            </Button>
-            <Button
-              variant="menuItem"
-              size="menu"
-              spacing="menu"
-              data-group-state="active"
-            >
-              <IconHome />
-              Dashboard
-            </Button>
-          </div>
-          <div className="flex justify-between">
-            <Button variant="menuItem" size="menu" spacing="menuChild">
-              {/* <IconHome/> */}
-              Dashboard
-            </Button>
-            <Button
-              variant="menuItem"
-              size="menu"
-              spacing="menuChild"
-              data-state="active"
-            >
-              {/* <IconHome/> */}
-              Dashboard
-            </Button>
-            <Button
-              variant="menuItem"
-              size="menu"
-              spacing="menuChild"
-              data-group-state="active"
-            >
-              {/* <IconHome/> */}
-              Dashboard
             </Button>
           </div>
         </div>

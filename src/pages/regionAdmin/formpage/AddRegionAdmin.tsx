@@ -42,8 +42,8 @@ function AddRegionAdmin() {
           { label: "Region Management" },
           { label: "Add Regional Admin" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.REGION_ADMIN,

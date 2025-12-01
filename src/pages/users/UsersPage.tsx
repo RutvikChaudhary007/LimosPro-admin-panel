@@ -39,7 +39,7 @@ const showTime = [
 
 function UsersPage() {
   const navigate = useNavigate();
-  const perPage = 10;
+  const [pageSize, setPageSize] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -100,10 +100,11 @@ function UsersPage() {
     DateRange: { startDate, endDate },
     page: newPage,
     status: selectedStatus,
+    limit: pageSize,
   });
 
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TUsers>(data?.users, 1, perPage, data?.pagination);
+    usePagination<TUsers>(data?.users, newPage, pageSize, data?.pagination);
 
   const handleView = (id: string) => {
     // console.log("view:", id);
@@ -145,6 +146,14 @@ function UsersPage() {
     setNewPage(newPage);
     setPage(newPage);
     window.scrollTo(0, 0);
+  };
+
+  // Handle page size change
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setNewPage(1);
+    setPage(1);
+    refetch();
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -237,6 +246,9 @@ function UsersPage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            pageSize={pageSize}
+            onPageSizeChange={handlePageSizeChange}
           />
         )}
       </div>

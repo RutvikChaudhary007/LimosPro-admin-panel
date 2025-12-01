@@ -94,7 +94,7 @@ function TableAndPieChart({
           <CardBody>
             <CardHeader>
               <CardTitle>Chauffeurs Availability</CardTitle>
-              <CardAction className="flex gap-1">
+              <CardAction className="flex gap-2">
                 <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
                   <Button
                     variant="outlinePrimary"

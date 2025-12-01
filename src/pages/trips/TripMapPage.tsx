@@ -24,8 +24,8 @@ const TripMapPage = () => {
           { label: "Trips", path: constant.ROUTING_URLS.TRIPS },
           { label: "Live Trip Tracking" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.TRIPS,

@@ -62,8 +62,8 @@ const EditStaffMemberPage = () => {
           { label: "Staff Members", path: constant.ROUTING_URLS.STAFF_MEMBERS },
           { label: "Edit Staff Member" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.STAFF_MEMBERS,

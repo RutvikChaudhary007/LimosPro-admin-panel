@@ -42,8 +42,8 @@ function CreateAffiliatePage() {
           { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
           { label: "Create Affiliate" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.AFFILIATE,

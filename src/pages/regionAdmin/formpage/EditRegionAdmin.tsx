@@ -25,8 +25,8 @@ const EditRegionAdmin = () => {
           { label: "Region Management" },
           { label: "Edit Regional Admin" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.REGION_ADMIN,

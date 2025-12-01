@@ -91,8 +91,8 @@ const ViewPaymentPage = () => {
           { label: "Payments", path: constant.ROUTING_URLS.PAYMENTS },
           { label: "View Payment" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.PAYMENTS,

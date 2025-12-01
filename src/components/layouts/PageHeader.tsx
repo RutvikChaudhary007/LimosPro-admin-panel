@@ -67,7 +67,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
         key={key}
         variant={btn.variant}
         onClick={btn.onClick}
-        className={cn(btn.className, isBack && "border-0")}
+        className={cn(btn.className, isBack && "border-0 gap-1.5")}
       >
         {left && <span>{left}</span>}
         {btn.label && <span>{btn.label}</span>}
@@ -87,12 +87,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <Card className="shadow-base-sm" variant="horizontal">
       {backAction && (
-        <div className="self-center ml-6">
+        <div className="self-center ml-3">
           {renderActionButton(backAction, 0, true)}
         </div>
       )}
 
-      <CardBody className={cn(backAction && "pl-2")}>
+      <CardBody className={cn(backAction && "pl-3")}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           <CardDescription>

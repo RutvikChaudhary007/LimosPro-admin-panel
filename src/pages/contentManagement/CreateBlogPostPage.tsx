@@ -43,8 +43,8 @@ const CreateBlogPostPage: FC = () => {
           },
           { label: "Create Blog Post" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.BLOG_POSTS,

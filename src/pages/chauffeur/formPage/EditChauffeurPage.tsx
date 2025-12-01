@@ -95,8 +95,8 @@ const EditChauffeurPage = () => {
           { label: "Chauffeur", path: constant.ROUTING_URLS.CHAUFFEUR },
           { label: "Edit Chauffeur" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.CHAUFFEUR,

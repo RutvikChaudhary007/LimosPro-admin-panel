@@ -10,15 +10,17 @@ import { cn } from "@/lib/utils";
 // --------------------------------------------------------------
 const SelectContext = React.createContext<{
   variant: "primary" | "secondary" | "dark";
+  size?: "default" | "md" | "sm";
 }>({
   variant: "primary",
+  size: "default",
 });
 
 // --------------------------------------------------------------
 // Trigger Variants
 // --------------------------------------------------------------
 const selectTriggerVariants = cva(
-  "font-quicksand font-medium text-base border-base-gray data-placeholder:text-base-gray [&_svg]:**:stroke-current focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-transparent dark:hover:bg-transparent flex w-fit items-center justify-between gap-2 rounded border bg-transparent p-4 whitespace-nowrap transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-14 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 cursor-pointer transition-all duration-300 ease-in-out",
+  "font-quicksand font-medium text-base border-base-gray data-placeholder:text-base-gray [&_svg]:**:stroke-current focus-visible:border-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-transparent dark:hover:bg-transparent flex w-fit items-center justify-between gap-2 rounded border bg-transparent whitespace-nowrap transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-13 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6 cursor-pointer transition-all duration-300 ease-in-out",
   {
     variants: {
       variant: {
@@ -29,8 +31,9 @@ const selectTriggerVariants = cva(
         dark: "hover:border-base-black data-[has-value=true]:border-base-black data-[has-value=true]:text-base-black",
       },
       size: {
-        default: "h-14",
-        sm: "h-10 px-3 text-sm",
+        default: "h-13 p-4",
+        md: "h-10 p-3",
+        sm: "h-8 p-2",
       },
     },
     defaultVariants: {
@@ -46,7 +49,7 @@ type SelectTriggerVariants = VariantProps<typeof selectTriggerVariants>;
 // Item Variants
 // --------------------------------------------------------------
 const selectItemVariants = cva(
-  "font-quicksand font-medium text-base relative flex w-full cursor-pointer items-center gap-2 p-4 select-none outline-hidden [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 border-b last:border-b-0 data-disabled:bg-base-light-gray data-disabled:text-base-gray data-disabled:cursor-not-allowed bg-base-white",
+  "font-quicksand font-medium text-base relative flex w-full cursor-pointer items-center gap-2 select-none outline-hidden [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 border-b last:border-b-0 data-disabled:bg-base-light-gray data-disabled:text-base-gray data-disabled:cursor-not-allowed bg-base-white",
   {
     variants: {
       variant: {
@@ -56,9 +59,15 @@ const selectItemVariants = cva(
           "text-base-black hover:bg-base-secondary/10 border-b-base-secondary/10 data-[state=checked]:bg-base-secondary data-[state=checked]:text-base-white",
         dark: "text-base-black hover:bg-base-light-gray border-b-base-light-gray data-[state=checked]:bg-base-black data-[state=checked]:text-base-white",
       },
+      size: {
+        default: "p-4",
+        md: "p-3",
+        sm: "p-2",
+      },
     },
     defaultVariants: {
       variant: "primary",
+      size: "default",
     },
   },
 );
@@ -68,12 +77,14 @@ const selectItemVariants = cva(
 // --------------------------------------------------------------
 function Select({
   variant = "primary",
+  size = "default",
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root> & {
   variant?: "primary" | "secondary" | "dark";
+  size?: "default" | "md" | "sm";
 }) {
   return (
-    <SelectContext.Provider value={{ variant }}>
+    <SelectContext.Provider value={{ variant, size }}>
       <SelectPrimitive.Root data-slot="select" {...props} />
     </SelectContext.Provider>
   );
@@ -93,12 +104,11 @@ function SelectValue(
 
 function SelectTrigger({
   className,
-  size,
   children,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Trigger> &
   SelectTriggerVariants) {
-  const { variant } = React.useContext(SelectContext);
+  const { variant, size } = React.useContext(SelectContext);
 
   return (
     <SelectPrimitive.Trigger
@@ -127,7 +137,7 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "bg-base-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-32 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded border-none shadow-sm",
+          "bg-base-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-(--radix-select-content-available-height) min-w-12 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded border-none shadow-sm",
           position === "popper" &&
             "data-[side=bottom]:translate-y-2 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-2",
           className,
@@ -170,12 +180,12 @@ function SelectItem({
   children,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Item>) {
-  const { variant } = React.useContext(SelectContext);
+  const { variant, size } = React.useContext(SelectContext);
 
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
-      className={cn(selectItemVariants({ variant }), className)}
+      className={cn(selectItemVariants({ variant, size }), className)}
       {...props}
     >
       <span className="opacity-0 absolute right-4 flex size-4 items-center justify-center">
@@ -245,6 +255,7 @@ interface SelectDropDownItems {
 
 interface SelectDropDownProps {
   variant?: "primary" | "secondary" | "dark";
+  size?: "default" | "md" | "sm";
   classname?: string;
   placeholder?: string | number;
   items: SelectDropDownItems[];
@@ -255,6 +266,7 @@ interface SelectDropDownProps {
 
 function SelectDropDown({
   variant = "primary",
+  size = "md",
   classname,
   placeholder,
   items,
@@ -270,6 +282,7 @@ function SelectDropDown({
         onChange?.(val);
       }}
       variant={variant}
+      size={size}
     >
       <SelectTrigger
         className={classname}

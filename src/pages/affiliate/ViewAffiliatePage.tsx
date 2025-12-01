@@ -135,8 +135,8 @@ const ViewAffiliatePage = () => {
             { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
             { label: "View Affiliate" },
           ]}
-          action={{
-            variant: "outlineBlack",
+          backAction={{
+            variant: "outlinePrimary",
             label: "Back",
             icon: <ArrowLeft />,
             link: constant.ROUTING_URLS.AFFILIATE,

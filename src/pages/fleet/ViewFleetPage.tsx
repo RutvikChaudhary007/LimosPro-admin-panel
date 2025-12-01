@@ -29,8 +29,8 @@ const ViewFleetPage = () => {
           { label: "Fleets", path: constant.ROUTING_URLS.FLEETS },
           { label: "Fleet Details" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.FLEETS,

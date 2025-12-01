@@ -2080,6 +2080,7 @@ export type TTestimonial = {
   customerName: string;
   customerImage: string;
   content: string;
+  rating: string | number;
 };
 
 export function getTestimonial(
@@ -2124,7 +2125,20 @@ export function getTestimonial(
         <DataTableColumnHeader column={column} title="Message" />
       ),
       cell: ({ row }) => (
-        <div className="w-[501px] text-wrap">{row.original.content}</div>
+        <div className="max-w-2xs text-wrap">{row.original.content}</div>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "rating",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ratings" />
+      ),
+      cell: ({ row }) => (
+        <Badge>
+          <Star />
+          <span>{row.original.rating}</span>
+        </Badge>
       ),
       enableSorting: false,
     },

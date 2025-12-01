@@ -50,8 +50,8 @@ const EditNewsPage = () => {
           { label: "News", path: constant.ROUTING_URLS.NEWS },
           { label: "Edit News" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.NEWS,

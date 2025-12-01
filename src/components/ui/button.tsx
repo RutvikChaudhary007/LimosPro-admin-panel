@@ -62,12 +62,6 @@ export const buttonVariants = cva(
         linkWarning:
           "text-base-warning underline underline-offset-4 hover:no-underline",
 
-        menuItem: cn(
-          "text-lg hover:bg-base-primary/10 transition-colors",
-          "data-[state=active]:bg-base-primary data-[state=active]:text-base-white",
-          "data-[group-state=active]:bg-base-primary/20 data-[group-state=active]:text-base-primary",
-        ),
-
         destructive:
           "bg-base-danger text-base-white hover:bg-base-danger/90 focus-visible:ring-base-danger/20 dark:focus-visible:ring-base-danger/40 dark:bg-base-danger/60",
         outline:
@@ -81,21 +75,18 @@ export const buttonVariants = cva(
       size: {
         default: "[&_svg:not([class*='size-'])]:size-5",
         sm: "[&_svg:not([class*='size-'])]:size-4",
-        lg: "font-montserrat [&_svg:not([class*='size-'])]:size-6",
+        lg: "[&_svg:not([class*='size-'])]:size-6",
         xl: "[&_svg:not([class*='size-'])]:size-7",
-        menu: "[&_svg:not([class*='size-'])]:size-6",
         icon: "[&_svg:not([class*='size-'])]:size-5",
       },
 
       // spacing and layout
       spacing: {
         default: "h-13 gap-4 p-4",
-        sm: "h-8 px-3 py-2 gap-2 rounded-xs",
-        lg: "h-11 rounded gap-2 p-2",
+        md: "h-10 gap-3 p-3",
+        sm: "h-8 gap-2 p-2",
+        lg: "h-11 gap-2 p-2",
         xl: "h-16 p-5 gap-5 rounded-md",
-        menu: "h-12 px-4 py-3 gap-4 rounded",
-        menuChild:
-          "h-12 pr-4 pl-14 py-3 rounded has-[>svg]:px-4 has-[>svg]:gap-4",
         none: "p-0 h-auto gap-0",
       },
     },
@@ -103,7 +94,7 @@ export const buttonVariants = cva(
     defaultVariants: {
       variant: "default",
       size: "default",
-      spacing: "default",
+      spacing: "md",
     },
   },
 );

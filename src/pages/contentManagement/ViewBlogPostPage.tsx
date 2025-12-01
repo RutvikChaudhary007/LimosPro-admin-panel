@@ -18,7 +18,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FieldLabel } from "@/components/ui/field";
-import { Skeleton } from "@/components/ui/skeleton";
 import { constant } from "@/lib/constant";
 import type { BlogPost } from "@/types/content";
 
@@ -105,20 +104,18 @@ const ViewBlogPostPage: React.FC = () => {
           },
           { label: "View Blog Post" },
         ]}
-        action={[
-          {
-            variant: "outlinePrimary",
-            label: "Edit Post",
-            icon: <Edit />,
-            onClick: handleEdit,
-          },
-          {
-            variant: "outlineBlack",
-            label: "Back",
-            icon: <ArrowLeft />,
-            link: constant.ROUTING_URLS.BLOG_POSTS,
-          },
-        ]}
+        action={{
+          variant: "outlinePrimary",
+          label: "Edit Post",
+          icon: <Edit />,
+          onClick: handleEdit,
+        }}
+        backAction={{
+          variant: "outlinePrimary",
+          label: "Back",
+          icon: <ArrowLeft />,
+          link: constant.ROUTING_URLS.BLOG_POSTS,
+        }}
       />
 
       {/* Blog Post Details */}

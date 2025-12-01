@@ -19,8 +19,8 @@ const CreateUserPage = () => {
           { label: "Users", path: constant.ROUTING_URLS.USERS },
           { label: "Create User" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.USERS,

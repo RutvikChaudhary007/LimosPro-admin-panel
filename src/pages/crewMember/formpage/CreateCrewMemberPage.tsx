@@ -32,8 +32,8 @@ const CreateCrewMemberPage = () => {
           { label: "Crew Member", path: constant.ROUTING_URLS.CREW_MEMBERS },
           { label: "Create Crew Member" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.CREW_MEMBERS,

@@ -38,8 +38,8 @@ const CreateChauffeurPage = () => {
           { label: "Chauffeur", path: constant.ROUTING_URLS.CHAUFFEUR },
           { label: "Create Chauffeur" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.CHAUFFEUR,

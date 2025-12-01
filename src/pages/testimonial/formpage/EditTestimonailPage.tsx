@@ -60,8 +60,8 @@ const EditTestimonailPage = () => {
           { label: "Testimonails", path: constant.ROUTING_URLS.TESTIMONIALS },
           { label: "Edit Testimonail" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.TESTIMONIALS,

@@ -91,8 +91,8 @@ const ViewBookingPage = () => {
           { label: "Bookings", path: constant.ROUTING_URLS.BOOKING },
           { label: "View Booking" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.BOOKING,

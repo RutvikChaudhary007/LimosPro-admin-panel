@@ -44,8 +44,8 @@ const CreateContent: React.FC = () => {
           },
           { label: "Create Page" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,

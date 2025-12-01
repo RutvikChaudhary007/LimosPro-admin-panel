@@ -88,7 +88,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                     align="start"
                     className="font-quicksand border-base-gray bg-base-white w-full max-w-fit rounded border p-2 shadow-none"
                   >
-                    {renderSubItems(item.items, "px-4")}
+                    {renderSubItems(item.items, "px-4 py-1")}
                   </HoverCardContent>
                 </HoverCard>
               </SidebarMenuItem>

@@ -42,8 +42,8 @@ const CreateFleetPage = () => {
           { label: "Fleets", path: constant.ROUTING_URLS.FLEETS },
           { label: "Create Fleet" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.FLEETS,

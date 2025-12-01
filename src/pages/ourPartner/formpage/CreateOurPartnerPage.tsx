@@ -45,8 +45,8 @@ const CreateOurPartnerPage = () => {
           { label: "Our Partners", path: constant.ROUTING_URLS.OUR_PARTNERS },
           { label: "Create Partners" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.OUR_PARTNERS,

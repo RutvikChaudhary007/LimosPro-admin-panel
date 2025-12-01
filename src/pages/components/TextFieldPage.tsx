@@ -10,13 +10,35 @@ import { Textarea } from "@/components/ui/textarea";
 function TextFieldPage() {
   return (
     <div className="flex gap-2 p-2">
-      <div className="w-1/2 space-y-3">
-        <div className="">
-          <Input placeholder="Placeholder Text" />
+      <div className="w-1/2 space-y-4">
+        <div className="space-y-2">
+          <Input placeholder="Placeholder lg" />
+          <Input placeholder="Placeholder md" size="md" />
+          <Input placeholder="Placeholder sm" size="sm" />
         </div>
-        <div className="">
+        <div className="space-y-2">
           <InputGroup>
-            <InputGroupInput placeholder="Card number" />
+            <InputGroupInput placeholder="Card number lg" />
+            <InputGroupAddon>
+              <CreditCardIcon />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
+
+          <InputGroup size="md">
+            <InputGroupInput placeholder="Card number md" />
+            <InputGroupAddon>
+              <CreditCardIcon />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
+
+          <InputGroup size="sm">
+            <InputGroupInput placeholder="Card number sm" />
             <InputGroupAddon>
               <CreditCardIcon />
             </InputGroupAddon>
@@ -25,9 +47,27 @@ function TextFieldPage() {
             </InputGroupAddon>
           </InputGroup>
         </div>
-        <div className="">
+        <div className="space-y-2">
           <InputGroup>
-            <InputGroupInput placeholder="Card number" />
+            <InputGroupInput placeholder="Card number lg" />
+            <InputGroupAddon align="inline-end">
+              <CreditCardIcon />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
+              <CheckIcon />
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroup size="md">
+            <InputGroupInput placeholder="Card number md" />
+            <InputGroupAddon align="inline-end">
+              <CreditCardIcon />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
+              <CheckIcon />
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroup size="sm">
+            <InputGroupInput placeholder="Card number sm" />
             <InputGroupAddon align="inline-end">
               <CreditCardIcon />
             </InputGroupAddon>
@@ -36,17 +76,35 @@ function TextFieldPage() {
             </InputGroupAddon>
           </InputGroup>
         </div>
-        <div className="">
+        <div className="space-y-2">
           <InputGroup>
-            <InputGroupInput placeholder="Card number" />
+            <InputGroupInput placeholder="Card number lg" />
+            <InputGroupAddon align="inline-end">
+              <CreditCardIcon />
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroup size="md">
+            <InputGroupInput placeholder="Card number md" />
+            <InputGroupAddon align="inline-end">
+              <CreditCardIcon />
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroup size="sm">
+            <InputGroupInput placeholder="Card number sm" />
             <InputGroupAddon align="inline-end">
               <CreditCardIcon />
             </InputGroupAddon>
           </InputGroup>
         </div>
-        <div className="">
+        <div className="space-y-2">
           <InputGroup>
-            <InputGroupInput placeholder="Card number" />
+            <InputGroupInput placeholder="Card number lg" />
+          </InputGroup>
+          <InputGroup size="md">
+            <InputGroupInput placeholder="Card number md" />
+          </InputGroup>
+          <InputGroup size="sm">
+            <InputGroupInput placeholder="Card number sm" />
           </InputGroup>
         </div>
         <div className="">

@@ -89,8 +89,8 @@ const ViewTripsPage = () => {
           { label: "Trips", path: constant.ROUTING_URLS.TRIPS },
           { label: "View Trip" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.TRIPS,

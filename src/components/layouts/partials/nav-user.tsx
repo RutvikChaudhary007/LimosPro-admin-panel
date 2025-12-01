@@ -1,4 +1,5 @@
 import { IconChevronDown, IconLogout } from "@tabler/icons-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IconBell from "@/assets/Icons/ic-bell.svg?react";
 import IconMail from "@/assets/Icons/ic-mail.svg?react";
@@ -17,12 +18,21 @@ import {
 import { constant } from "@/lib/constant";
 import { useUserStore } from "@/stores/useAuthStore";
 import { Button } from "../../ui/button";
+import { useNotifications } from "./notifications-context";
 
 export function NavUser() {
   const { user } = useUserStore();
   const navigate = useNavigate();
+  const { setIsDrawerOpen } = useNotifications();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleNotificationsClick = () => {
+    setIsDrawerOpen(true);
+    setIsDropdownOpen(false); // Close the dropdown menu
+  };
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outlineNavBtnBlack"
@@ -50,7 +60,7 @@ export function NavUser() {
         align="end"
         sideOffset={4}
       >
-        <DropdownMenuLabel className="p-0 font-normal">
+        <DropdownMenuLabel>
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="size-8 border border-base-primary/20">
               <AvatarImage src={user?.profilePicture} alt={user?.name} />
@@ -62,8 +72,10 @@ export function NavUser() {
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user?.name}</span>
-              <span className="text-muted-foreground truncate text-xs">
+              <span className="truncate font-medium text-black">
+                {user?.name}
+              </span>
+              <span className="text-base-black truncate text-xs">
                 {user?.email}
               </span>
             </div>
@@ -85,15 +97,17 @@ export function NavUser() {
             <IconMail />
             Mails
           </DropdownMenuItem>
-          <DropdownMenuItem className="md:hidden">
+          <DropdownMenuItem
+            className="md:hidden"
+            onClick={handleNotificationsClick}
+          >
             <IconBell />
             Notifications
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator />
-
         <DropdownMenuItem
+          className="text-base-danger"
           onClick={() => {
             localStorage.clear();
             navigate(constant.ROUTING_URLS.ADMIN_LOGIN);

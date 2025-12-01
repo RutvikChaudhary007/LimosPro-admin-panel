@@ -39,8 +39,8 @@ const CreateFaqPage = () => {
           { label: "Faq", path: constant.ROUTING_URLS.FAQ },
           { label: "Create Faq" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.FAQ,

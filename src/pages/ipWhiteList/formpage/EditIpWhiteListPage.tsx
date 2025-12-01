@@ -50,8 +50,8 @@ const EditIpWhiteListPage = () => {
           },
           { label: "Edit IP" },
         ]}
-        action={{
-          variant: "outlineBlack",
+        backAction={{
+          variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.IP_WHITE_LIST,
