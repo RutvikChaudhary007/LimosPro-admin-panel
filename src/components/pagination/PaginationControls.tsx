@@ -160,7 +160,7 @@ export function PaginationControls({
       )}
 
       {/* RIGHT: Pagination Controls */}
-      <Pagination className={cn("cursor-pointer justify-end", className)}>
+      <Pagination className={cn("justify-end", className)}>
         <PaginationContent>
           {/* Previous Button */}
           {showPrevNext && (

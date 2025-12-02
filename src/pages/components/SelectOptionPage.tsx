@@ -10,6 +10,7 @@ export default function SelectOptionPage() {
     <div className="p-6 h-screen space-y-2">
       {/* First Select */}
       <SelectDropDown
+        size="default"
         placeholder="Select a country"
         classname="w-full max-w-[277px]"
         items={[
@@ -25,6 +26,7 @@ export default function SelectOptionPage() {
 
       {/* Second Select */}
       <SelectDropDown
+        size="md"
         placeholder="Select a country"
         variant="secondary"
         classname="w-full max-w-[277px]"
@@ -40,6 +42,7 @@ export default function SelectOptionPage() {
       />
       {/* Third Select */}
       <SelectDropDown
+        size="sm"
         placeholder="Select a country"
         variant="dark"
         classname="w-full max-w-[277px]"
