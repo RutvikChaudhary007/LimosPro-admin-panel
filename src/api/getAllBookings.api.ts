@@ -11,6 +11,7 @@ type DateRange = {
 export const getAllBookings = async (
   DateRange?: DateRange,
   page?: number,
+  limit?: number,
   status?: string,
 ) => {
   const params: Record<string, unknown> = {};
@@ -40,6 +41,10 @@ export const getAllBookings = async (
     params.page = page;
   }
 
+  if (limit) {
+    params.limit = limit;
+  }
+
   if (status) {
     params.status = status;
   }
@@ -62,10 +67,12 @@ export const getAllBookings = async (
 const UsefetchAllBookings = ({
   DateRange,
   page,
+  limit,
   status,
 }: {
   DateRange?: { from: Date | undefined; to: Date | undefined };
   page?: number;
+  limit?: number;
   status?: string;
 }) => {
   const hasFullRange = !!DateRange?.from && !!DateRange?.to;
@@ -76,8 +83,8 @@ const UsefetchAllBookings = ({
       }
     : null;
   return useQuery({
-    queryKey: ["Bookings", dateKey, page, status],
-    queryFn: () => getAllBookings(DateRange, page, status),
+    queryKey: ["Bookings", dateKey, page, limit, status],
+    queryFn: () => getAllBookings(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
   });

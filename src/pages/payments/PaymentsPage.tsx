@@ -25,29 +25,21 @@ const showStatus = [
   { label: "Refunded", value: "refunded" },
 ];
 
-const showOptions = [
-  { label: "Show 10", value: 10 },
-  { label: "Show 15", value: 15 },
-  { label: "Show 20", value: 20 },
-  { label: "Show 25", value: 25 },
-];
-
 const PaymentsPage = () => {
-  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
+  const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [selectedOption, setSelectedOption] = useState(optionDefaultValue);
   const { data, isFetching, isError, refetch } = useFetchAllPayments({
     page: newPage,
-    limit: selectedOption,
+    limit: perPage,
     status: selectedStatus.value,
   });
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TPayments>(
       data?.payments,
       newPage,
-      selectedOption,
+      perPage,
       data?.pagination,
     );
 
@@ -75,11 +67,19 @@ const PaymentsPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    if (value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -92,52 +92,43 @@ const PaymentsPage = () => {
           breadcrumbs={[{ label: "Home", path: "/" }, { label: "Payments" }]}
         />
 
-        <div className="flex justify-between">
+        <div className="w-full flex flex-wrap items-center justify-end gap-4">
+          <Button
+            onClick={() => {
+              setSelectedStatus("");
+              setperPage(10);
+            }}
+            type="button"
+            variant={"outlineSecondary"}
+          >
+            <IconFilterX /> <span>Clear Filter</span>
+          </Button>
           <SelectDropDown
-            placeholder={selectedOption}
-            items={showOptions}
-            value={selectedOption}
-            setSelectedItem={setSelectedOption}
+            placeholder="Select Status"
+            items={showStatus}
+            value={selectedStatus}
+            setSelectedItem={setSelectedStatus}
           />
-
-          <div className="w-full max-w-fit flex flex-wrap items-center justify-between gap-4">
+          <span
+            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          >
             <Button
-              onClick={() => {
-                setSelectedStatus("");
-                setSelectedOption(optionDefaultValue);
-              }}
+              variant="outlineBlack"
               type="button"
-              variant={"outlineSecondary"}
+              disabled={
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
+              }
+              onClick={() => {
+                // setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
+                setRowSelection({});
+              }}
             >
-              <IconFilterX /> <span>Clear Filter</span>
+              Export
+              <Download />
             </Button>
-            <SelectDropDown
-              placeholder="Select Status"
-              items={showStatus}
-              value={selectedStatus}
-              setSelectedItem={setSelectedStatus}
-            />
-            <span
-              // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <Button
-                variant="outlineBlack"
-                type="button"
-                disabled={
-                  Object.keys(rowSelection).filter((k) => rowSelection[k])
-                    .length === 0
-                }
-                onClick={() => {
-                  // setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
-                  setRowSelection({});
-                }}
-              >
-                Export
-                <Download />
-              </Button>
-            </span>
-          </div>
+          </span>
         </div>
         {isFetching ? (
           <Spinner />
@@ -153,11 +144,13 @@ const PaymentsPage = () => {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.total}
+            perPage={perPage}
           />
         )}
       </div>

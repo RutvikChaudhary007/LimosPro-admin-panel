@@ -18,26 +18,17 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
-const showOptions = [
-  { value: 10, label: "Show 10" },
-  { value: 20, label: "Show 20" },
-  { value: 30, label: "Show 30" },
-];
-
 const CrewMemberPage = () => {
-  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [tableRef, setTableRef] = useState<any>(null);
   const [newPage, setNewPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(optionDefaultValue);
-  const [selectedOption, setSelectedOption] = useState(optionDefaultValue);
+  const [perPage, setPerPage] = useState<number>(10);
   // const [data, setData] = useState<TCrewMember[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllCrewMember({
     page: newPage,
@@ -47,7 +38,7 @@ const CrewMemberPage = () => {
     usePagination<TCrewMember>(
       data?.crewMembers || [],
       newPage,
-      selectedOption,
+      perPage,
       data?.pagination,
     );
 
@@ -88,11 +79,21 @@ const CrewMemberPage = () => {
   const [rowSelection, setRowSelection] = useState({});
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPageNum: number) => {
-    setPage(newPageNum);
-    setNewPage(newPageNum);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // If value is larger than current page size, it's a page size change
+    if (value > perPage || value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setSelectedOption(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -110,40 +111,32 @@ const CrewMemberPage = () => {
           }}
         />
 
-        <div className="flex justify-between">
-          <SelectDropDown
-            placeholder={selectedOption}
-            items={showOptions}
-            value={selectedOption}
-            setSelectedItem={setSelectedOption}
-          />
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteCrewMember}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Crew Members"
-                descTitle="crew members"
+        <div className="w-full flex items-center justify-end gap-4">
+          <span
+            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          >
+            <BulkDeleteBtn
+              rowSelection={rowSelection}
+              tableRef={tableRef}
+              bulkDeleteMutation={bulkDeleteCrewMember}
+              refetch={refetch}
+              setRowSelection={setRowSelection}
+              title="Crew Members"
+              descTitle="crew members"
+            />
+          </span>
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
-            </span>
-            <div className="">
-              <InputGroup>
-                <InputGroupInput
-                  type="search"
-                  placeholder="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
         {isFetching ? (
@@ -161,11 +154,13 @@ const CrewMemberPage = () => {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.total}
+            perPage={perPage}
           />
         )}
       </div>

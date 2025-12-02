@@ -318,7 +318,7 @@ export default function UploadWithUrl({
   /* RENDER */
   /* ------------------------------------------------------ */
   return (
-    <div className="space-y-4 w-full font-quicksand">
+    <div className="space-y-2 w-full font-quicksand">
       <Field>
         <FieldLabel className="text-base-black gap-0">{title}</FieldLabel>
 
@@ -359,7 +359,7 @@ export default function UploadWithUrl({
       <div>
         {mode === "url" ? (
           /* URL MODE */
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Input
                 type="text"
@@ -457,7 +457,7 @@ export default function UploadWithUrl({
 
       {/* INFO */}
       {info && (
-        <div className="flex justify-between text-xs text-base-gray mt-2 font-bold">
+        <div className="flex justify-between text-xs text-base-gray font-bold">
           <span>Supported formats: {accept}</span>
           <span>Max size: {maxSize} MB</span>
         </div>

@@ -21,9 +21,8 @@ export interface PaginationControlsProps {
   disabled?: boolean;
   totalItems?: number;
   showPageInfo?: boolean;
-  pageSize?: number;
-  onPageSizeChange?: (size: number) => void;
-  showPageSizeSelector?: boolean;
+  perPage?: number;
+  showperPageSelector?: boolean;
 }
 
 export function PaginationControls({
@@ -33,65 +32,80 @@ export function PaginationControls({
   siblingCount = 1,
   className,
   showPrevNext = true,
-  showFirstLast = true,
   disabled = false,
   totalItems,
   showPageInfo = true,
-  pageSize = 10,
-  onPageSizeChange,
-  showPageSizeSelector = true,
+  perPage = 10,
+  showperPageSelector = true,
 }: PaginationControlsProps) {
-  // Validate inputs
-  if (totalPages <= 0) return null;
-  if (totalPages === 1) return null;
-
-  // Calculate page range to display
   const getPageRange = (): (number | string)[] => {
-    const totalPageNumbers = siblingCount + 5;
+    const range: (number | string)[] = [];
+    const delta = siblingCount;
 
-    // If total pages fit in range, show all
-    if (totalPageNumbers >= totalPages) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const start = Math.max(1, currentPage - delta);
+    const end = Math.min(totalPages, currentPage + delta);
+
+    if (start > 1) {
+      range.push(1);
+      if (start > 2) {
+        range.push("...");
+      }
     }
 
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-    const shouldShowLeftDots = leftSiblingIndex > 2;
-    const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
-
-    // Only right dots
-    if (!shouldShowLeftDots && shouldShowRightDots) {
-      const leftRange = Array.from(
-        { length: 3 + 2 * siblingCount },
-        (_, i) => i + 1,
-      );
-      return [...leftRange, "...", totalPages];
+    for (let i = start; i <= end; i++) {
+      range.push(i);
     }
 
-    // Only left dots
-    if (shouldShowLeftDots && !shouldShowRightDots) {
-      const rightRange = Array.from(
-        { length: 3 + 2 * siblingCount },
-        (_, i) => totalPages - (3 + 2 * siblingCount) + i + 1,
-      );
-      return [1, "...", ...rightRange];
+    if (end < totalPages) {
+      if (end < totalPages - 1) {
+        range.push("...");
+      }
+      range.push(totalPages);
     }
 
-    // Both dots
-    const middleRange = Array.from(
-      { length: rightSiblingIndex - leftSiblingIndex + 1 },
-      (_, i) => leftSiblingIndex + i,
-    );
-    return [1, "...", ...middleRange, "...", totalPages];
+    return range;
   };
 
   const pageRange = getPageRange();
 
-  const handlePageClick = (page: number) => {
-    if (!disabled && page !== currentPage && page >= 1 && page <= totalPages) {
-      onPageChange(page);
-      // Scroll to top for better UX
+  const handlePagination = (
+    type: "page" | "perPage" | "next" | "prev",
+    value?: number,
+  ) => {
+    if (disabled) return;
+
+    let targetPage: number | null = null;
+
+    switch (type) {
+      case "perPage":
+        if (value !== undefined) {
+          onPageChange(value);
+        }
+        return;
+      case "page":
+        if (
+          value !== undefined &&
+          value >= 1 &&
+          value <= totalPages &&
+          value !== currentPage
+        ) {
+          targetPage = value;
+        }
+        break;
+      case "next":
+        if (currentPage < totalPages) {
+          targetPage = currentPage + 1;
+        }
+        break;
+      case "prev":
+        if (currentPage > 1) {
+          targetPage = currentPage - 1;
+        }
+        break;
+    }
+
+    if (targetPage !== null) {
+      onPageChange(targetPage);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
@@ -99,15 +113,15 @@ export function PaginationControls({
   const isPrevDisabled = currentPage === 1 || disabled;
   const isNextDisabled = currentPage === totalPages || disabled;
 
-  const pageSizeOptions = [
+  const perPageOptions = [
     { label: "10", value: "10" },
     { label: "20", value: "20" },
     { label: "30", value: "30" },
   ];
 
   return (
-    <div className="flex items-center gap-2">
-      {/* Page Info Section */}
+    <div className="flex justify-between items-center w-full gap-3">
+      {/* LEFT: Page Info Section */}
       {showPageInfo && (
         <div className="font-quicksand text-sm text-base-black shrink-0">
           Showing{" "}
@@ -121,25 +135,32 @@ export function PaginationControls({
               <span className="font-semibold text-black">
                 {totalItems.toLocaleString()}
               </span>{" "}
-              Results
+              results
             </>
           )}
         </div>
       )}
 
-      {/* Page Size Selector */}
-      {showPageSizeSelector && onPageSizeChange && (
-        <SelectDropDown
-          size="sm"
-          placeholder={pageSize.toString()}
-          items={pageSizeOptions}
-          value={pageSize.toString()}
-          setSelectedItem={(value) => onPageSizeChange(parseInt(value, 10))}
-        />
+      {/* LEFT: Rows per Page Selector */}
+      {showperPageSelector && (
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="font-quicksand text-sm text-base-black hidden">
+            Rows per page:
+          </span>
+          <SelectDropDown
+            size="sm"
+            placeholder={perPage.toString()}
+            items={perPageOptions}
+            value={perPage.toString()}
+            setSelectedItem={(value) =>
+              handlePagination("perPage", parseInt(value, 10))
+            }
+          />
+        </div>
       )}
 
-      {/* Pagination Controls */}
-      <Pagination className={cn("justify-end cursor-pointer", className)}>
+      {/* RIGHT: Pagination Controls */}
+      <Pagination className={cn("cursor-pointer justify-end", className)}>
         <PaginationContent>
           {/* Previous Button */}
           {showPrevNext && (
@@ -148,30 +169,13 @@ export function PaginationControls({
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageClick(currentPage - 1);
+                  handlePagination("prev");
                 }}
                 className={cn(
                   isPrevDisabled && "pointer-events-none opacity-50",
                 )}
                 aria-disabled={isPrevDisabled}
               />
-            </PaginationItem>
-          )}
-
-          {/* First Page Button */}
-          {showFirstLast && currentPage > 2 && (
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePageClick(1);
-                }}
-                isActive={false}
-                className={cn(disabled && "pointer-events-none opacity-50")}
-              >
-                1
-              </PaginationLink>
             </PaginationItem>
           )}
 
@@ -186,16 +190,6 @@ export function PaginationControls({
             }
 
             const pageNum = page as number;
-            if (showFirstLast && pageNum === 1 && currentPage > 2) {
-              return null;
-            }
-            if (
-              showFirstLast &&
-              pageNum === totalPages &&
-              currentPage < totalPages - 1
-            ) {
-              return null;
-            }
 
             return (
               <PaginationItem key={pageNum}>
@@ -203,7 +197,7 @@ export function PaginationControls({
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    handlePageClick(pageNum);
+                    handlePagination("page", pageNum);
                   }}
                   isActive={currentPage === pageNum}
                   className={cn(disabled && "pointer-events-none opacity-50")}
@@ -214,23 +208,6 @@ export function PaginationControls({
             );
           })}
 
-          {/* Last Page Button */}
-          {showFirstLast && currentPage < totalPages - 1 && (
-            <PaginationItem>
-              <PaginationLink
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handlePageClick(totalPages);
-                }}
-                isActive={false}
-                className={cn(disabled && "pointer-events-none opacity-50")}
-              >
-                {totalPages}
-              </PaginationLink>
-            </PaginationItem>
-          )}
-
           {/* Next Button */}
           {showPrevNext && (
             <PaginationItem>
@@ -238,7 +215,7 @@ export function PaginationControls({
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePageClick(currentPage + 1);
+                  handlePagination("next");
                 }}
                 className={cn(
                   isNextDisabled && "pointer-events-none opacity-50",

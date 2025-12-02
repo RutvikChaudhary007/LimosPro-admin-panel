@@ -26,12 +26,12 @@ import {
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost } from "@/types/content";
-import UploadWithUrl from "../ui/upload-with-url";
+import { styledLog } from "@/utils/styledLog";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 import * as z from "zod";
-import { styledLog } from "@/utils/styledLog";
 import { Form, FormMessage } from "../ui/form";
+import UploadWithUrl from "../ui/upload-with-url";
 
 const imageSchema = z.union([z.string(), z.instanceof(File)]);
 
@@ -600,6 +600,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                     name="ogImage"
                     render={({ field }) => (
                       <UploadWithUrl
+                        title="Open Graph Images"
                         multiple={false}
                         onChange={field.onChange}
                         value={field.value}
@@ -760,6 +761,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                     name="featuredImage"
                     render={({ field }) => (
                       <UploadWithUrl
+                        title="Upload Featured Image"
                         multiple={false}
                         onChange={field.onChange}
                         value={field.value}
@@ -782,6 +784,7 @@ const BlogForm: FC<IBlogFormProps> = ({
                     name="images"
                     render={({ field }) => (
                       <UploadWithUrl
+                        title="Upload Blog Images"
                         multiple={true}
                         onChange={field.onChange}
                         value={field.value}

@@ -15,13 +15,8 @@ export default function usePagination<T>(
   pagination?: pagination,
 ) {
   const [currentPage, setCurrentPage] = useState(initialPage);
-  // if pagination is provided from outside, use it
   const totalPages =
     pagination?.totalPages ?? Math.ceil(items.length / perPage);
-  // const totalPages =  pagination.totalPages  ;
-  // console.log(perPage)
-  // const offset = (currentPage - 1) * perPage;
-  // console.log("pagination currentItems:",offset, offset+perPage)
   const currentItems = items;
 
   const setPage = (page: number) => {

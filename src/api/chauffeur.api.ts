@@ -15,6 +15,7 @@ type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 export const getAllChauffeur = async (
   DateRange?: DateRange,
   page?: number,
+  limit?: number,
   status?: string,
 ) => {
   const params: Record<string, unknown> = {};
@@ -31,6 +32,10 @@ export const getAllChauffeur = async (
 
   if (page) {
     params.page = page;
+  }
+
+  if (limit) {
+    params.limit = limit;
   }
 
   if (status) {
@@ -57,15 +62,17 @@ export const getAllChauffeur = async (
 const useFetchAllChauffeur = ({
   DateRange,
   page,
+  limit,
   status,
 }: {
   DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
   page?: number;
+  limit?: number;
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["chauffeurs", DateRange, page, status],
-    queryFn: () => getAllChauffeur(DateRange, page, status),
+    queryKey: ["chauffeurs", DateRange, page, limit, status],
+    queryFn: () => getAllChauffeur(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

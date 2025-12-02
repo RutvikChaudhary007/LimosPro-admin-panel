@@ -8,6 +8,7 @@ type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 export const getAllAffiliate = async (
   DateRange?: DateRange,
   page?: number,
+  limit?: number,
   status?: string,
 ) => {
   const params: Record<string, unknown> = {};
@@ -24,6 +25,10 @@ export const getAllAffiliate = async (
 
   if (page) {
     params.page = page;
+  }
+
+  if (limit) {
+    params.limit = limit;
   }
 
   if (status) {
@@ -48,15 +53,17 @@ export const getAllAffiliate = async (
 const useFetchAllAffiliate = ({
   DateRange,
   page,
+  limit,
   status,
 }: {
   DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
   page?: number;
+  limit?: number;
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["affiliates", DateRange, page, status],
-    queryFn: () => getAllAffiliate(DateRange, page, status),
+    queryKey: ["affiliates", DateRange, page, limit, status],
+    queryFn: () => getAllAffiliate(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 1000 * 60 * 5,

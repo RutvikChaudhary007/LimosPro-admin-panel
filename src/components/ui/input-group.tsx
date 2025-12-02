@@ -45,7 +45,7 @@ interface InputGroupProps
 
 function InputGroup({ className, variant, size, ...props }: InputGroupProps) {
   return (
-    <InputGroupContext.Provider value={{ size: size || "lg" }}>
+    <InputGroupContext.Provider value={{ size: size || "md" }}>
       <div
         data-slot="input-group"
         role="group"

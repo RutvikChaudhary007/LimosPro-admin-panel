@@ -15,11 +15,11 @@ import adminAxiosInstance from "@/utils/axiosInstance";
  * ##############################################
  * @returns response data
  */
-export const getAllPartners = async (limit: number) => {
-  const params: Record<string, unknown> = {};
-  if (limit) {
-    params.limit = limit;
-  }
+export const getAllPartners = async (page?: number, limit?: number) => {
+  const params: Record<string, number> = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
   try {
     const response = await adminAxiosInstance.get(
       API_ENDPOINTS.GET_ALL_PARTNERS,
@@ -35,10 +35,16 @@ export const getAllPartners = async (limit: number) => {
   }
 };
 
-const useFetchALLPartners = (limit: number) => {
+const useFetchALLPartners = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) => {
   return useQuery({
-    queryKey: ["partners", limit],
-    queryFn: () => getAllPartners(limit),
+    queryKey: ["partners", page, limit],
+    queryFn: () => getAllPartners(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
   });

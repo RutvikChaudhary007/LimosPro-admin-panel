@@ -47,7 +47,7 @@ const showTime = [
 
 function AffiliatePage() {
   const navigate = useNavigate();
-  const perPage = 10;
+  const [perPage, setperPage] = useState<number>(10);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   // --- Time range helper ---
@@ -135,6 +135,7 @@ function AffiliatePage() {
   } = UsefetchAllAffiliate({
     DateRange: { startDate, endDate },
     page: newPage,
+    limit: perPage,
     status: selectedStatus,
   });
   const [tableRef, setTableRef] = useState<Table<IAffiliate> | null>(null);
@@ -142,12 +143,25 @@ function AffiliatePage() {
   useEffect(() => {
     if (FetchData?.pagination?.hasNextPage === true) {
       queryClient.prefetchQuery({
-        queryKey: ["affiliate", { startDate, endDate }, newPage + 1],
+        queryKey: ["affiliate", { startDate, endDate }, newPage + 1, perPage],
         queryFn: () =>
-          getAllAffiliate({ startDate, endDate }, newPage + 1, selectedStatus),
+          getAllAffiliate(
+            { startDate, endDate },
+            newPage + 1,
+            perPage,
+            selectedStatus,
+          ),
       });
     }
-  }, [queryClient, newPage, FetchData, startDate, endDate, selectedStatus]);
+  }, [
+    queryClient,
+    newPage,
+    FetchData,
+    startDate,
+    endDate,
+    selectedStatus,
+    perPage,
+  ]);
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<IAffiliate>(
@@ -161,6 +175,12 @@ function AffiliatePage() {
       setNewPage(currentPage);
     }
   }, [currentPage]);
+
+  // Reset to page 1 when perPage changes
+  useEffect(() => {
+    setPage(1);
+    setNewPage(1);
+  }, [perPage, setPage]);
 
   const handleView = (id: string) => {
     navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id", id));
@@ -203,11 +223,18 @@ function AffiliatePage() {
 
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+
+  const handlePageChange = (value: number) => {
+    if (value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // It's a page number change
+      setNewPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -295,11 +322,13 @@ function AffiliatePage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={FetchData?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

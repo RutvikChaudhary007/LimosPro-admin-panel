@@ -33,16 +33,22 @@ const showStatus = [
 
 function TripsPage(): JSX.Element {
   const navigate = useNavigate();
-  const perPage = 10;
+  const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [tableRef, setTableRef] = useState<Table<TTrips> | null>(null);
   const [selectedStatus, setSelectedStatus] = useState("");
   const { data, refetch, isFetching, isError } = useFetchAllTrips({
     tripStatus: selectedStatus,
     page: newPage,
+    limit: perPage,
   });
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TTrips>(data?.trips ?? data, 1, perPage, data?.pagination);
+    usePagination<TTrips>(
+      data?.trips ?? data,
+      newPage,
+      perPage,
+      data?.pagination,
+    );
 
   const handleView = (id: string) => {
     navigate(constant.ROUTING_URLS.VIEW_TRIPS.replace(":id", id));
@@ -60,11 +66,20 @@ function TripsPage(): JSX.Element {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // If value is larger than current page size, it's a page size change
+    if (value > perPage || value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -138,11 +153,13 @@ function TripsPage(): JSX.Element {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

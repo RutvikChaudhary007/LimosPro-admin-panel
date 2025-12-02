@@ -16,7 +16,6 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -24,29 +23,20 @@ import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 import { PaginationControls } from "../../components/pagination";
 
-const showOptions = [
-  { value: "10", label: "Show 10" },
-  { value: "20", label: "Show 20" },
-  { value: "30", label: "Show 30" },
-];
-
 function RegionDashboardPage() {
-  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
-  const [perPage, setPerPage] = useState(optionDefaultValue);
+  const [perPage, setPerPage] = useState<number>(10);
   const [page, setCPage] = useState(1);
-  const [selected, setSelected] = useState(optionDefaultValue);
-  const { data, refetch, isFetching } = useFetchAllRegions({ limit: perPage });
+  const { data, refetch, isFetching } = useFetchAllRegions({
+    page,
+    limit: perPage,
+  });
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TRegion>(data?.regions, page, perPage, data?.pagination);
 
   useEffect(() => {
     setCPage(currentPage);
   }, [currentPage]);
-
-  useEffect(() => {
-    setPerPage(Number(selected));
-  }, [selected]);
 
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
@@ -100,11 +90,20 @@ function RegionDashboardPage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setCPage(newPage);
-    setPage(newPage);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // If value is a page size option, update page size
+    if (value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setCPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setCPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   return (
@@ -125,55 +124,47 @@ function RegionDashboardPage() {
           }}
         />
 
-        <div className="flex justify-between">
-          <SelectDropDown
-            placeholder={selected}
-            items={showOptions}
-            value={selected}
-            setSelectedItem={setSelected}
-          />
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${
-                Object.keys(rowSelection).filter(
-                  (k) =>
-                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                    rowSelection[k],
-                ).length === 0
-                  ? "cursor-no-drop"
-                  : "cursor-pointer"
-              }`}
+        <div className="w-full flex items-center justify-end gap-4">
+          <span
+            className={`${
+              Object.keys(rowSelection).filter(
+                (k) =>
+                  // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+                  rowSelection[k],
+              ).length === 0
+                ? "cursor-no-drop"
+                : "cursor-pointer"
+            }`}
+          >
+            <Button
+              variant={"outlineBlack"}
+              disabled={
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
+              }
+              onClick={() => {
+                setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
+                console.log("data:", data);
+                console.log("rowSelection:", rowSelection);
+                setRowSelection({});
+              }}
             >
-              <Button
-                variant={"outlineBlack"}
-                disabled={
-                  Object.keys(rowSelection).filter((k) => rowSelection[k])
-                    .length === 0
-                }
-                onClick={() => {
-                  setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
-                  console.log("data:", data);
-                  console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span>Delete</span>
-                <Trash2 />
-              </Button>
-            </span>
-            <div className="">
-              <InputGroup>
-                <InputGroupInput
-                  type="search"
-                  placeholder="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
+              <span>Delete</span>
+              <Trash2 />
+            </Button>
+          </span>
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
         {isFetching ? (
@@ -189,11 +180,13 @@ function RegionDashboardPage() {
           />
         )}
 
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

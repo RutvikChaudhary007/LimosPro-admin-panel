@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { Search, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import useFetchAllContactRequest from "@/api/contactRequest.api";
 import ReplyFC from "@/components/ContactRequests/ReplyFC";
 import ViewModal from "@/components/ContactRequests/ViewModal";
@@ -20,30 +20,21 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { generatePageTitle } from "@/utils/seo";
 
-const showOptions = [
-  { value: "10", label: "Show 10" },
-  { value: "20", label: "Show 20" },
-  { value: "30", label: "Show 30" },
-];
-
 const ContactRequestsPage = () => {
-  const [{ value: optionDefaultValue }] = showOptions;
   const [isOpen, setIsOpen] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [newPage, setNewPage] = useState(1);
-  const [perPage, setPerPage] = useState<number>(
-    parseInt(optionDefaultValue, 10),
-  );
+  const [perPage, setPerPage] = useState<number>(10);
   const [msgId, setMsgId] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] =
-    useState<string>(optionDefaultValue);
-  const { data, isFetching } = useFetchAllContactRequest();
+  const { data, isFetching, refetch } = useFetchAllContactRequest({
+    page: newPage,
+    limit: perPage,
+  });
 
-  const { currentPage, nextPage, prevPage, setPage, totalPages, currentItems } =
+  const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TContactRequest>(
       data?.contactRequests,
       newPage,
@@ -51,9 +42,6 @@ const ContactRequestsPage = () => {
       data?.pagination,
     );
 
-  useEffect(() => {
-    setPerPage(parseInt(selectedOption, 10));
-  }, [selectedOption]);
   const handleView = useCallback((id: string) => {
     console.log("view:", id);
     setIsOpen(true);
@@ -73,12 +61,20 @@ const ContactRequestsPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(1);
-    setPage(1);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // Check if it's a page size change (10, 20, or 30)
+    if (value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   return (
@@ -92,50 +88,41 @@ const ContactRequestsPage = () => {
             { label: "Contact Requests" },
           ]}
         />
-
-        <div className="flex justify-between">
-          <SelectDropDown
-            placeholder={selectedOption}
-            items={showOptions}
-            value={selectedOption}
-            setSelectedItem={setSelectedOption}
-          />
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+        <div className="w-full flex items-center justify-end gap-4">
+          <span
+            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          >
+            <Button
+              variant="outlineBlack"
+              disabled={
+                Object.keys(rowSelection).filter((k) => rowSelection[k])
+                  .length === 0
+              }
+              onClick={() => {
+                // setData((prev) =>
+                //   prev.filter((row, i) => !rowSelection[i])
+                // );
+                //   console.log("data:", data);
+                //   console.log("rowSelection:", rowSelection);
+                setRowSelection({});
+              }}
             >
-              <Button
-                variant="outlineBlack"
-                disabled={
-                  Object.keys(rowSelection).filter((k) => rowSelection[k])
-                    .length === 0
-                }
-                onClick={() => {
-                  // setData((prev) =>
-                  //   prev.filter((row, i) => !rowSelection[i])
-                  // );
-                  //   console.log("data:", data);
-                  //   console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span>Delete</span>
-                <Trash2 />
-              </Button>
-            </span>
-            <div className="">
-              <InputGroup>
-                <InputGroupInput
-                  type="search"
-                  placeholder="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
+              <span>Delete</span>
+              <Trash2 />
+            </Button>
+          </span>
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
         {isFetching ? (
@@ -158,11 +145,13 @@ const ContactRequestsPage = () => {
         {/* View Dialog */}
         <ReplyFC isModal={isModal} setIsModal={setIsModal} />
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

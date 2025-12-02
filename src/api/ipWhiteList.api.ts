@@ -16,23 +16,31 @@ import adminAxiosInstance from "@/utils/axiosInstance";
  * ##############################################
  * @returns response data
  */
-export const getAllIPWhiteLists = async (limit: number) => {
+export const getAllIPWhiteLists = async (page?: number, limit?: number) => {
+  const params: Record<string, number> = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
   const response = await adminAxiosInstance.get(
     API_ENDPOINTS.GET_ALL_IP_WHITE_LIST,
     {
-      params: {
-        limit,
-      },
+      params,
     },
   );
 
   return response.data?.data;
 };
 
-const useFetchALLIPWhiteLists = (limit: number) => {
+const useFetchALLIPWhiteLists = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) => {
   return useQuery({
-    queryKey: ["ipWhiteLists", limit],
-    queryFn: () => getAllIPWhiteLists(limit),
+    queryKey: ["ipWhiteLists", page, limit],
+    queryFn: () => getAllIPWhiteLists(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
   });

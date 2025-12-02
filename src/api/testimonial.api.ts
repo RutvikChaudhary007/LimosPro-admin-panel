@@ -11,8 +11,11 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
  * @returns response data
  */
 
-export const getAllTestimonials = async (limit: number) => {
+export const getAllTestimonials = async (page?: number, limit?: number) => {
   const params: Record<string, unknown> = {};
+  if (page) {
+    params.page = page;
+  }
   if (limit) {
     params.limit = limit;
   }
@@ -33,10 +36,16 @@ export const getAllTestimonials = async (limit: number) => {
   }
 };
 
-const useFetchAllTestimonials = (limit: number) =>
+const useFetchAllTestimonials = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) =>
   useQuery({
-    queryKey: ["testimonials", { limit }],
-    queryFn: () => getAllTestimonials(limit),
+    queryKey: ["testimonials", page, limit],
+    queryFn: () => getAllTestimonials(page, limit),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

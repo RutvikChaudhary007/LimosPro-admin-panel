@@ -24,9 +24,9 @@ export const getAllUsers = async (
     };
   }
 
-  if (page !== undefined) params.page = page;
+  if (page) params.page = page;
   if (status) params.status = status;
-  if (limit !== undefined) params.limit = limit;
+  if (limit) params.limit = limit;
 
   try {
     const response = await axiosInstance.get(API_ENDPOINTS.GET_ALL_USERS, {

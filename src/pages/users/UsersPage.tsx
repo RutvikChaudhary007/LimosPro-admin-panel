@@ -39,7 +39,7 @@ const showTime = [
 
 function UsersPage() {
   const navigate = useNavigate();
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -100,11 +100,11 @@ function UsersPage() {
     DateRange: { startDate, endDate },
     page: newPage,
     status: selectedStatus,
-    limit: pageSize,
+    limit: perPage,
   });
 
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TUsers>(data?.users, newPage, pageSize, data?.pagination);
+    usePagination<TUsers>(data?.users, newPage, perPage, data?.pagination);
 
   const handleView = (id: string) => {
     // console.log("view:", id);
@@ -141,19 +141,20 @@ function UsersPage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setNewPage(newPage);
-    setPage(newPage);
-    window.scrollTo(0, 0);
-  };
-
-  // Handle page size change
-  const handlePageSizeChange = (newSize: number) => {
-    setPageSize(newSize);
-    setNewPage(1);
-    setPage(1);
-    refetch();
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // If value is larger than current page size, it's a page size change
+    if (value > perPage || value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -241,14 +242,13 @@ function UsersPage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
             totalItems={data?.pagination?.totalItems}
-            pageSize={pageSize}
-            onPageSizeChange={handlePageSizeChange}
+            perPage={perPage}
           />
         )}
       </div>

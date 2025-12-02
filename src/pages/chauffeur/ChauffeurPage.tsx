@@ -42,7 +42,7 @@ const showTime = [
 
 function ChauffeurPage() {
   const navigate = useNavigate();
-  const perPage = 10;
+  const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -100,6 +100,7 @@ function ChauffeurPage() {
   const { data, refetch, isFetching, isError } = useFetchAllChauffeur({
     DateRange: { startDate, endDate },
     page: newPage,
+    limit: perPage,
     status: selectedStatus,
   });
   const [tableRef, setTableRef] = useState<Table<TChauffeur> | null>(null);
@@ -162,10 +163,19 @@ function ChauffeurPage() {
   const calculatedTotalPages = Math.max(1, totalPages);
 
   // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+  const handlePageChange = (value: number) => {
+    // If value is larger than current page size, it's a page size change
+    if (value > perPage || value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -253,11 +263,13 @@ function ChauffeurPage() {
         )}
 
         {/* Pagination */}
-        {calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

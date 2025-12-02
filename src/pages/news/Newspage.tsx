@@ -2,7 +2,7 @@
 
 import type { Table } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchALLNews from "@/api/news.api";
@@ -19,37 +19,24 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
-const showOptions = [
-  { value: "10", label: "Show 10" },
-  { value: "20", label: "Show 20" },
-  { value: "30", label: "Show 30" },
-];
 const Newspage = () => {
-  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [tableRef, setTableRef] = useState<Table<TNews> | null>(null);
   const [perPage, setPerPage] = useState(10);
   const [newPage, setNewPage] = useState(1);
-  const [selectedOption, setSelectedOption] =
-    useState<string>(optionDefaultValue);
-  // const [data, setData] = useState<TNews[]>(tableData);
-  const { data, refetch, isFetching, isError } = useFetchALLNews();
+  const { data, refetch, isFetching, isError } = useFetchALLNews({
+    page: newPage,
+    limit: perPage,
+  });
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TNews>(data?.items, newPage, perPage, data?.pagination);
-  // console.log("currentItems:", currentItems);
 
-  useEffect(() => {
-    setPerPage(Number(selectedOption));
-    setPage(1);
-    setNewPage(1);
-  }, [selectedOption]);
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_NEWS.replace(":id", id));
@@ -79,14 +66,20 @@ const Newspage = () => {
 
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
-  // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+  const handlePageChange = (value: number) => {
+    if (value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -104,40 +97,32 @@ const Newspage = () => {
           }}
         />
 
-        <div className="flex justify-between">
-          <SelectDropDown
-            placeholder={selectedOption}
-            items={showOptions}
-            value={selectedOption}
-            setSelectedItem={setSelectedOption}
-          />
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteNews}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="News"
-                descTitle="news"
+        <div className="w-full flex items-center justify-end gap-4">
+          <span
+            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          >
+            <BulkDeleteBtn
+              rowSelection={rowSelection}
+              tableRef={tableRef}
+              bulkDeleteMutation={bulkDeleteNews}
+              refetch={refetch}
+              setRowSelection={setRowSelection}
+              title="News"
+              descTitle="news"
+            />
+          </span>
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
-            </span>
-            <div className="">
-              <InputGroup>
-                <InputGroupInput
-                  type="search"
-                  placeholder="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
         {isFetching ? (
@@ -155,11 +140,13 @@ const Newspage = () => {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.total}
+            perPage={perPage}
           />
         )}
       </div>

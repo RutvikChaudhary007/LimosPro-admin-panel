@@ -118,9 +118,10 @@ const BlogPostsPage: React.FC = () => {
   );
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [isGrid, setIsGrid] = useState(true);
+  const [perPage, setperPage] = useState<number>(10);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 6,
+    limit: perPage,
     total: 0,
     totalPages: 0,
   });
@@ -189,19 +190,36 @@ const BlogPostsPage: React.FC = () => {
   const totalPages = pagination.totalPages;
   const currentItems = blogPosts;
   const calculatedTotalPages = Math.max(1, totalPages);
-  const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > Math.max(1, pagination.totalPages)) return;
-    const newPagination = { ...pagination, page: newPage };
-    setPagination(newPagination);
-    fetchBlogPosts({
-      setLoading,
-      searchTerm,
-      statusFilter,
-      setBlogPosts,
-      pagination: newPagination,
-      setPagination,
-    });
-    window.scrollTo(0, 0);
+
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    if (value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      const newPagination = { ...pagination, page: 1, limit: value };
+      setPagination(newPagination);
+      fetchBlogPosts({
+        setLoading,
+        searchTerm,
+        statusFilter,
+        setBlogPosts,
+        pagination: newPagination,
+        setPagination,
+      });
+    } else {
+      // Otherwise it's a page change
+      if (value < 1 || value > Math.max(1, pagination.totalPages)) return;
+      const newPagination = { ...pagination, page: value };
+      setPagination(newPagination);
+      fetchBlogPosts({
+        setLoading,
+        searchTerm,
+        statusFilter,
+        setBlogPosts,
+        pagination: newPagination,
+        setPagination,
+      });
+      window.scrollTo(0, 0);
+    }
   };
 
   const columns = getBlogColumns(handleEdit, handleView, handleDelete);
@@ -474,11 +492,13 @@ const BlogPostsPage: React.FC = () => {
         </div>
 
         {/* Pagination */}
-        {pagination.totalPages > 1 && (
+        {pagination.totalPages >= 1 && (
           <PaginationControls
             currentPage={pagination.page}
             totalPages={pagination.totalPages}
             onPageChange={handlePageChange}
+            totalItems={pagination.total}
+            perPage={perPage}
             disabled={loading}
           />
         )}

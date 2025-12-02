@@ -8,11 +8,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import {
   Popover,
   PopoverContent,
@@ -57,76 +53,75 @@ export function AutoCompleteInput({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <InputGroup>
-          <InputGroupInput
-            id={inputId}
-            type="text"
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => {
-              const v = e.target.value;
-              setValue(v);
-              if (typingTimer) clearTimeout(typingTimer);
-              const t = setTimeout(() => setOpen(v.trim().length > 0), 250);
-              setTypingTimer(t);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowDown") {
-                e.preventDefault();
-                if (filtered.length > 0) {
-                  const nextIndex =
-                    activeIndex === null
-                      ? 0
-                      : Math.min(activeIndex + 1, filtered.length - 1);
-                  itemRefs.current[nextIndex]?.focus();
-                  setActiveIndex(nextIndex);
-                }
-              }
-
-              if (e.key === "ArrowUp") {
-                e.preventDefault();
-                if (activeIndex !== null) {
-                  const prevIndex = activeIndex - 1;
-                  if (prevIndex < 0) {
-                    document.getElementById(inputId ?? "")?.focus();
-                    setActiveIndex(null);
-                  } else {
-                    itemRefs.current[prevIndex]?.focus();
-                    setActiveIndex(prevIndex);
+        <div className="flex items-center gap-2">
+          <InputGroup>
+            <InputGroupInput
+              id={inputId}
+              type="text"
+              placeholder={placeholder}
+              value={value}
+              onChange={(e) => {
+                const v = e.target.value;
+                setValue(v);
+                if (typingTimer) clearTimeout(typingTimer);
+                const t = setTimeout(() => setOpen(v.trim().length > 0), 250);
+                setTypingTimer(t);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  if (filtered.length > 0) {
+                    const nextIndex =
+                      activeIndex === null
+                        ? 0
+                        : Math.min(activeIndex + 1, filtered.length - 1);
+                    itemRefs.current[nextIndex]?.focus();
+                    setActiveIndex(nextIndex);
                   }
                 }
-              }
 
-              if (e.key === "Enter") {
-                e.preventDefault();
-                if (value.trim().length > 0) {
-                  onAdd(value.trim());
-                  setValue("");
-                  setOpen(false);
-                  setActiveIndex(null);
+                if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  if (activeIndex !== null) {
+                    const prevIndex = activeIndex - 1;
+                    if (prevIndex < 0) {
+                      document.getElementById(inputId ?? "")?.focus();
+                      setActiveIndex(null);
+                    } else {
+                      itemRefs.current[prevIndex]?.focus();
+                      setActiveIndex(prevIndex);
+                    }
+                  }
                 }
-              }
-            }}
-          />
 
-          <InputGroupAddon align={"inline-end"}>
-            <Button
-              type="button"
-              onClick={() => {
-                if (value.trim().length > 0) {
-                  onAdd(value.trim());
-                  setValue("");
-                  setOpen(false);
-                  setActiveIndex(null);
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  if (value.trim().length > 0) {
+                    onAdd(value.trim());
+                    setValue("");
+                    setOpen(false);
+                    setActiveIndex(null);
+                  }
                 }
               }}
-              size="xl"
-              spacing="lg"
-            >
-              <Plus />
-            </Button>
-          </InputGroupAddon>
-        </InputGroup>
+            />
+          </InputGroup>
+          <Button
+            type="button"
+            onClick={() => {
+              if (value.trim().length > 0) {
+                onAdd(value.trim());
+                setValue("");
+                setOpen(false);
+                setActiveIndex(null);
+              }
+            }}
+            size="xl"
+            spacing="lg"
+          >
+            <Plus />
+          </Button>
+        </div>
       </PopoverTrigger>
 
       <PopoverContent

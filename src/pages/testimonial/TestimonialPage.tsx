@@ -1,6 +1,6 @@
 import type { Table } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchAllTestimonials from "@/api/testimonial.api";
@@ -17,29 +17,21 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
-const showOptions = [
-  { value: "10", label: "Show 10" },
-  { value: "20", label: "Show 20" },
-  { value: "30", label: "Show 30" },
-];
-
 const TestimonialPage = () => {
-  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [tableRef, setTableRef] = useState<Table<TTestimonial> | null>(null);
-  const [perPage, setPerPage] = useState<number>(Number(optionDefaultValue));
+  const [perPage, setPerPage] = useState<number>(10);
   const [newPage, setNewPage] = useState(1);
-  const [selectedOption, setSelectedOption] =
-    useState<string>(optionDefaultValue);
-  const { data, refetch, isFetching, isError } =
-    useFetchAllTestimonials(perPage);
+  const { data, refetch, isFetching, isError } = useFetchAllTestimonials({
+    page: newPage,
+    limit: perPage,
+  });
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TTestimonial>(
@@ -49,11 +41,6 @@ const TestimonialPage = () => {
       data?.pagination,
     );
 
-  useEffect(() => {
-    setPerPage(Number(selectedOption));
-    setPage(1);
-    setNewPage(1);
-  }, [selectedOption, setPage]);
   const handleEdit = useCallback(
     (id: string) => {
       console.log("Edit:", id);
@@ -91,11 +78,20 @@ const TestimonialPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPageNum: number) => {
-    setPage(newPageNum);
-    setNewPage(newPageNum);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // Check if it's a page size change (10, 20, or 30)
+    if (value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -116,48 +112,40 @@ const TestimonialPage = () => {
           }}
         />
 
-        <div className="flex justify-between">
-          <SelectDropDown
-            placeholder={selectedOption}
-            items={showOptions}
-            value={selectedOption}
-            setSelectedItem={setSelectedOption}
-          />
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${
-                Object.keys(rowSelection).filter(
-                  (k) =>
-                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                    rowSelection[k],
-                ).length === 0
-                  ? "cursor-no-drop"
-                  : "cursor-pointer"
-              }`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteTestimonial}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Testimonials"
-                descTitle="testimonials"
+        <div className="w-full flex items-center justify-end gap-4">
+          <span
+            className={`${
+              Object.keys(rowSelection).filter(
+                (k) =>
+                  // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+                  rowSelection[k],
+              ).length === 0
+                ? "cursor-no-drop"
+                : "cursor-pointer"
+            }`}
+          >
+            <BulkDeleteBtn
+              rowSelection={rowSelection}
+              tableRef={tableRef}
+              bulkDeleteMutation={bulkDeleteTestimonial}
+              refetch={refetch}
+              setRowSelection={setRowSelection}
+              title="Testimonials"
+              descTitle="testimonials"
+            />
+          </span>
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
-            </span>
-            <div className="">
-              <InputGroup>
-                <InputGroupInput
-                  type="search"
-                  placeholder="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
         {isFetching ? (
@@ -175,11 +163,13 @@ const TestimonialPage = () => {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.total}
+            perPage={perPage}
           />
         )}
       </div>

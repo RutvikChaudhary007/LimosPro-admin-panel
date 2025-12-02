@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
@@ -18,30 +18,22 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { SelectDropDown } from "@/components/ui/select";
 import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
-const showOptions = [
-  { value: "10", label: "Show 10" },
-  { value: "20", label: "Show 20" },
-  { value: "30", label: "Show 30" },
-];
-
 const IpWhiteListPage = () => {
-  const [{ value: optionDefaultValue }] = showOptions;
   const navigate = useNavigate();
   const [newPage, setNewPage] = useState(1);
   const [tableRef, setTableRef] = useState<any>(null);
   const [perPage, setPerPage] = useState(10);
-  const [selectedOption, setSelectedOption] =
-    useState<string>(optionDefaultValue);
   // const [data, setData] = useState<TIpWhiteList[]>(tableData);
-  const { data, refetch, isFetching, isError } =
-    useFetchALLIPWhiteLists(perPage);
+  const { data, refetch, isFetching, isError } = useFetchALLIPWhiteLists({
+    page: newPage,
+    limit: perPage,
+  });
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TIpWhiteList>(
@@ -50,12 +42,6 @@ const IpWhiteListPage = () => {
       perPage,
       data?.pagination,
     );
-  // console.log("tableData:",tableData.length)
-  useEffect(() => {
-    setPerPage(Number(selectedOption));
-    setPage(1);
-    setNewPage(1);
-  }, [selectedOption]);
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_IP_WHITE_LIST.replace(":id", id));
@@ -89,11 +75,20 @@ const IpWhiteListPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // Check if it's a page size change (10, 20, or 30)
+    if (value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -114,40 +109,32 @@ const IpWhiteListPage = () => {
           }}
         />
 
-        <div className="flex justify-between">
-          <SelectDropDown
-            placeholder={selectedOption}
-            items={showOptions}
-            value={selectedOption}
-            setSelectedItem={setSelectedOption}
-          />
-          <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteIPWhiteListMutation}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Ip WhiteLists"
-                descTitle="ip whiteLists"
+        <div className="w-full flex items-center justify-end gap-4">
+          <span
+            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          >
+            <BulkDeleteBtn
+              rowSelection={rowSelection}
+              tableRef={tableRef}
+              bulkDeleteMutation={bulkDeleteIPWhiteListMutation}
+              refetch={refetch}
+              setRowSelection={setRowSelection}
+              title="Ip WhiteLists"
+              descTitle="ip whiteLists"
+            />
+          </span>
+          <div className="">
+            <InputGroup>
+              <InputGroupInput
+                type="search"
+                placeholder="search"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
-            </span>
-            <div className="">
-              <InputGroup>
-                <InputGroupInput
-                  type="search"
-                  placeholder="search"
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                <InputGroupAddon>
-                  <Search />
-                </InputGroupAddon>
-              </InputGroup>
-            </div>
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
           </div>
         </div>
         {isFetching ? (
@@ -165,11 +152,13 @@ const IpWhiteListPage = () => {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

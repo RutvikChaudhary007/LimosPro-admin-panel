@@ -16,12 +16,14 @@ import adminAxiosInstance from "@/utils/axiosInstance";
  * ##############################################
  * @returns response data
  */
-export const getAllFAQs = async (limit: number) => {
+export const getAllFAQs = async (page?: number, limit?: number) => {
+  const params: Record<string, number> = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
   try {
     const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_FAQ, {
-      params: {
-        limit,
-      },
+      params,
     });
 
     return response.data?.data;
@@ -33,10 +35,10 @@ export const getAllFAQs = async (limit: number) => {
   }
 };
 
-const useFetchALLFAQs = (limit: number) => {
+const useFetchALLFAQs = ({ page, limit }: { page: number; limit: number }) => {
   return useQuery({
-    queryKey: ["faqs", limit],
-    queryFn: () => getAllFAQs(limit),
+    queryKey: ["faqs", page, limit],
+    queryFn: () => getAllFAQs(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
   });

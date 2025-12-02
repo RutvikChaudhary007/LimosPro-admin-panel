@@ -11,10 +11,18 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
  * @returns response data
  */
 
-export const getAllContactRequest = async () => {
+export const getAllContactRequest = async (page?: number, limit?: number) => {
+  const params: Record<string, number> = {};
+
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
   try {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.CONTACT_REQUEST.CREATE}`,
+      {
+        params,
+      },
     );
     // console.log("response:",response)
 
@@ -28,10 +36,16 @@ export const getAllContactRequest = async () => {
   }
 };
 
-const useFetchAllContactRequest = () =>
+const useFetchAllContactRequest = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) =>
   useQuery({
-    queryKey: ["contactRequest"],
-    queryFn: () => getAllContactRequest(),
+    queryKey: ["contactRequest", page, limit],
+    queryFn: () => getAllContactRequest(page, limit),
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,

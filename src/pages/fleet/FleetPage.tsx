@@ -34,7 +34,7 @@ const showTime = [
 
 function FleetPage() {
   const navigate = useNavigate();
-  const perPage = 10;
+  const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [tableRef, setTableRef] = useState<any>(null);
   const [selectedTime, setSelectedTime] = useState("");
@@ -92,9 +92,10 @@ function FleetPage() {
   const { data, refetch, isPending, isError } = UsefetchAllFleets({
     DateRange: { startDate, endDate },
     page: newPage,
+    limit: perPage,
   });
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TFleet>(data?.vehicles, 1, perPage, data?.pagination);
+    usePagination<TFleet>(data?.vehicles, newPage, perPage, data?.pagination);
 
   const handleView = (id: string) => {
     navigate(constant.ROUTING_URLS.VIEW_FLEET.replace(":id", id));
@@ -121,12 +122,20 @@ function FleetPage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // if(isFetching) return <Spinner/>
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setNewPage(newPage);
-    setPage(newPage);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // If value is larger than current page size, it's a page size change
+    if (value > perPage || value === 10 || value === 20 || value === 30) {
+      setperPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -207,11 +216,13 @@ function FleetPage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

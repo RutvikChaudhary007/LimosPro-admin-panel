@@ -52,19 +52,33 @@ export function DataTable<TData, TValue>({
     onGlobalFilterChange: onGlobalFilterChange,
     enableRowSelection: true,
     enableMultiRowSelection: true,
+    getRowId: (row: TData) => (row as any).id || "",
   });
 
   useEffect(() => {
     if (onTableReady) onTableReady(table);
   }, [table, onTableReady]);
+
+  // Force re-render when rowSelection changes - include rowSelection in dependency
+  const headerGroups = table?.getHeaderGroups();
+
+  // Trigger re-render when selection state changes
+  const selectedCount = rowSelection
+    ? Object.values(rowSelection).filter(Boolean).length
+    : 0;
+
+  // Memoize rows to ensure they re-render when rowSelection changes
+  const rows = table?.getRowModel()?.rows || [];
+
   return (
     <div className="rounded border border-base-light-gray shadow-base-md overflow-auto">
+      {/* Hidden element to trigger re-render when selection changes */}
+      <div style={{ display: "none" }}>{selectedCount}</div>
       <Table>
         <TableHeader className="bg-base-light-gray">
-          {table?.getHeaderGroups()?.map((headerGroup) => (
+          {headerGroups?.map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                // console.log("header:",header)
                 return (
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder
@@ -80,9 +94,8 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length > 0 ? (
-            table?.getRowModel()?.rows?.map((row) => {
-              // styledLog(row,"table row","alert")
+          {rows?.length > 0 ? (
+            rows?.map((row) => {
               return (
                 <TableRow
                   key={row.id}

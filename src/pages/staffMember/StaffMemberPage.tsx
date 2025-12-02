@@ -25,9 +25,9 @@ import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
 const StaffMemberPage = () => {
-  const perPage = 10;
   const navigate = useNavigate();
   const [newPage, setNewPage] = useState(1);
+  const [perPage, setPerPage] = useState<number>(10);
   const [tableRef, setTableRef] = useState<any>(null);
   const { data, refetch, isFetching, isError } = useFetchAllStaffMember({
     page: newPage,
@@ -88,11 +88,20 @@ const StaffMemberPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    setNewPage(newPage);
-    window.scrollTo(0, 0);
+  // Unified handler for page and page size changes
+  const handlePageChange = (value: number) => {
+    // Check if it's a page size change (10, 20, or 30)
+    if (value === 10 || value === 20 || value === 30) {
+      setPerPage(value);
+      setNewPage(1);
+      setPage(1);
+      refetch();
+    } else {
+      // Otherwise it's a page change
+      setNewPage(value);
+      setPage(value);
+      window.scrollTo(0, 0);
+    }
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -159,11 +168,13 @@ const StaffMemberPage = () => {
         )}
 
         {/* Pagination */}
-        {totalPages > 0 && calculatedTotalPages > 1 && (
+        {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            totalItems={data?.pagination?.totalItems}
+            perPage={perPage}
           />
         )}
       </div>

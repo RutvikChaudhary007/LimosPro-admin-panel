@@ -4,9 +4,12 @@ import type { TRegion } from "@/components/regionManagement/region/RegionForm";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../lib/api-endpoints";
 
-type TPara = { limit?: number };
+type TPara = { page?: number; limit?: number };
 export const getAllRegions = async (data?: TPara) => {
   const params: Record<string, unknown> = {};
+  if (data?.page) {
+    params.page = data.page;
+  }
   if (data?.limit) {
     params.limit = data.limit;
   }

@@ -10,9 +10,15 @@ import { API_ENDPOINTS } from "../lib/api-endpoints";
  * @param data
  * @returns response data
  */
-export const getNews = async () => {
+export const getNews = async (page?: number, limit?: number) => {
+  const params: Record<string, number> = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
   try {
-    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_NEWS);
+    const response = await adminAxiosInstance.get(API_ENDPOINTS.GET_ALL_NEWS, {
+      params,
+    });
 
     return response.data?.data;
   } catch (error) {
@@ -23,10 +29,10 @@ export const getNews = async () => {
   }
 };
 
-const useFetchALLNews = () => {
+const useFetchALLNews = ({ page, limit }: { page: number; limit: number }) => {
   return useQuery({
-    queryKey: ["news"],
-    queryFn: getNews,
+    queryKey: ["news", page, limit],
+    queryFn: () => getNews(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
   });
