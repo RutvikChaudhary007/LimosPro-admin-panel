@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/drawer";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -98,10 +98,12 @@ export function SiteHeader() {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent>
-                <DropdownMenuItem>English</DropdownMenuItem>
-                <DropdownMenuItem>Spanish</DropdownMenuItem>
-                <DropdownMenuItem>Arabic</DropdownMenuItem>
-                <DropdownMenuItem>French</DropdownMenuItem>
+                <DropdownMenuCheckboxItem checked={true}>
+                  English
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem>Spanish</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem>Arabic</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem>French</DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
