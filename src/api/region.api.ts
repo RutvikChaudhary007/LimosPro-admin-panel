@@ -47,7 +47,7 @@ export const useFetchRegionById = (id: string) =>
     refetchOnWindowFocus: false,
     // refetchInterval: 60000,
     retry: false,
-    // keepPreviousData: true, // for pagination
+    // keepPreviousData: false, // for pagination
   });
 
 export const createRegion = async (data: TRegion) => {

@@ -169,7 +169,7 @@ function TableAndPieChart({
                       <div className="w-full flex justify-between items-center">
                         <FieldLabel>{content.fleet}</FieldLabel>
                         <p className="text-base-black text-sm">
-                          <span>$ {content.price}</span>{" "}
+                          <span>${content.price}</span>{" "}
                           <span>{content.duration}</span>
                         </p>
                       </div>

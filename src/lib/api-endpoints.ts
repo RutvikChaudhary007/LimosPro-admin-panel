@@ -13,7 +13,7 @@ export const BOOKING_SERVICE_URL = env?.VITE_API_BOOKING_SERVICE_URL;
 //  export const ADMIN_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.8:3001/api/v1';
 //  export const BOOKING_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.8:3002/api/v1';
 
-export const API_ENDPOINTS = {
+export const API_ENDPOINTS: Record<string, any> = {
   // Auth
   SIGN_UP: `${USER_SERVICE_URL}/signup`,
   LOG_IN: `${USER_SERVICE_URL}/login`,
@@ -201,5 +201,16 @@ export const API_ENDPOINTS = {
     GET_ALL: `${ADMIN_SERVICE_URL}/contact-requests`,
     GET_BY_ID: `${ADMIN_SERVICE_URL}/contact-requests/:id`,
     CREATE: `${ADMIN_SERVICE_URL}/contact-requests`,
+  },
+  NOTIFICATION: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/notifications`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/notification/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/notification`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/notification/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/notification/${id}`,
+    MARK_AS_READ_BY_ID: (id: string) =>
+      `${ADMIN_SERVICE_URL}/notification/${id}/read`,
+    MARK_AS_READ_ALL: `${ADMIN_SERVICE_URL}/notifications/mark-all-read`,
+    BULK_DELETE: `${ADMIN_SERVICE_URL}/notifications/bulk-delete`,
   },
 };

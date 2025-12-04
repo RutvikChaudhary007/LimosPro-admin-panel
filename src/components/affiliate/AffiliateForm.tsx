@@ -9,7 +9,7 @@ import {
   IconPhone,
   IconUser,
 } from "@tabler/icons-react";
-import { type FC, useCallback, useEffect, useState } from "react";
+import { type FC, useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
@@ -238,15 +238,13 @@ const transformInitialData = (
   };
 };
 
-let isEdit = false;
-
 const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   initialData,
   onSubmit,
   disabledFields,
   type,
-  // businessAddress,
 }) => {
+  const isEdit = type === "Edit Affiliate";
   // console.log("businessAddress:", businessAddress);
   const formatPhoneNumber = (value: string): string => {
     if (!value) return "";
@@ -348,12 +346,6 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
     },
   });
 
-  useEffect(() => {
-    if (initialData) {
-      isEdit = true;
-    }
-  }, [initialData]);
-
   const handleAddressChange = useCallback(
     (value: string) => {
       if (form.formState.errors.businessAddress) {
@@ -370,8 +362,6 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
 
   const handleFormSubmit = async (values: IAffiliate) => {
     try {
-      if (isEdit) {
-      }
       const formData = new FormData();
       if (addressObj) {
         console.log("addressObj:", addressObj);
@@ -384,7 +374,10 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
       formData.append("firstName", values.firstName);
       formData.append("lastName", values.lastName);
       formData.append("email", values.email);
-      formData.append("password", values.password);
+      // Only append password on create, not on edit
+      if (!isEdit) {
+        formData.append("password", values.password);
+      }
       formData.append("companyName", values.companyName);
       formData.append("businessEmail", values.businessEmail);
       formData.append(
@@ -544,50 +537,52 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
                 )}
               </Field>
 
-              <Field>
-                <FieldLabel
-                  htmlFor="password"
-                  className="text-base-black gap-0"
-                >
-                  Password
-                </FieldLabel>
+              {!isEdit && (
+                <Field>
+                  <FieldLabel
+                    htmlFor="password"
+                    className="text-base-black gap-0"
+                  >
+                    Password
+                  </FieldLabel>
 
-                <Controller
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="e.g., mysecretpasswd123"
-                        disabled={isFieldDisabled(disabledFields, "password")}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconLock />
-                      </InputGroupAddon>
-                      <InputGroupAddon
-                        align="inline-end"
-                        className="cursor-pointer"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <IconEye /> : <IconEyeClosed />}
-                      </InputGroupAddon>
-                    </InputGroup>
+                  <Controller
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <InputGroup>
+                        <InputGroupInput
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="e.g., mysecretpasswd123"
+                          disabled={isFieldDisabled(disabledFields, "password")}
+                          {...field}
+                        />
+                        <InputGroupAddon>
+                          <IconLock />
+                        </InputGroupAddon>
+                        <InputGroupAddon
+                          align="inline-end"
+                          className="cursor-pointer"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <IconEye /> : <IconEyeClosed />}
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
+                  />
+
+                  <FieldDescription>
+                    Choose a strong password with at least 8 characters.
+                  </FieldDescription>
+
+                  {form.formState.errors.password && (
+                    <FormMessage>
+                      {form.formState.errors.password.message}
+                    </FormMessage>
                   )}
-                />
-
-                <FieldDescription>
-                  Choose a strong password with at least 8 characters.
-                </FieldDescription>
-
-                {form.formState.errors.password && (
-                  <FormMessage>
-                    {form.formState.errors.password.message}
-                  </FormMessage>
-                )}
-              </Field>
+                </Field>
+              )}
 
               <Field>
                 <FieldLabel htmlFor="email" className="text-base-black gap-0">

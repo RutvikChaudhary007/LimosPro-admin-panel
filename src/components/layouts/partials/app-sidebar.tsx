@@ -233,12 +233,12 @@ export function AppSidebar({
                 <img
                   src="/logo/limospro-icon.png"
                   alt="LimosProIcon"
-                  className="size-10 group-data-[collapsible=icon]:size-12"
+                  className="size-10 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:size-12"
                 />
                 <img
                   src="/logo/limospro-text.png"
                   alt="LimosProText"
-                  className="h-[26px] w-[95px] group-data-[collapsible=icon]:hidden"
+                  className="h-[26px] w-[95px] transition-all duration-300 ease-in-out group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0"
                 />
               </Link>
             </SidebarMenuButton>

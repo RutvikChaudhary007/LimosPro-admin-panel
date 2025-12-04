@@ -2,6 +2,7 @@ import {
   IconArrowNarrowUp,
   IconArrowsUpDown,
   IconBrandWhatsapp,
+  IconFileCheck,
   IconMap,
 } from "@tabler/icons-react";
 import type { ColumnDef, Table } from "@tanstack/react-table";
@@ -18,6 +19,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import type { INotification } from "@/api/notification.api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -31,6 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
+import { formatDate as notificationDateFormat } from "../layouts/partials/notifications-context";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";
 import {
@@ -1253,22 +1256,10 @@ export function getTrips(
   ];
 }
 
-const getDate = (date: string) => {
-  return `${new Date(date?.split("T")[0])
-    .toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "numeric",
-    })
-    .replaceAll("/", "-")}`;
-};
-export type TNotification = {
-  id: string;
-  notification: string;
-  description: string;
-  created_at: string;
-};
-export function getNotification(): ColumnDef<TNotification>[] {
+export function getNotification(
+  onMarkAsRead?: (id: string) => void,
+  onDelete?: (id: string) => void,
+): ColumnDef<INotification>[] {
   return [
     {
       id: "select",
@@ -1284,26 +1275,73 @@ export function getNotification(): ColumnDef<TNotification>[] {
       enableHiding: false,
     },
     {
-      accessorKey: "notification",
+      accessorKey: "title",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Notification" />
+        <DataTableColumnHeader column={column} title="Title" />
       ),
       enableSorting: false,
     },
     {
-      accessorKey: "description",
+      accessorKey: "message",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Description" />
       ),
       enableSorting: false,
     },
     {
-      accessorKey: "created_at",
+      accessorKey: "isRead",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      enableSorting: false,
+      cell: ({ row }) => (
+        <Badge variant={row.original.isRead ? "success" : "warning"}>
+          <span>{row.original.isRead ? "Read" : "Unread"}</span>
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Created On" />
       ),
       enableSorting: false,
-      cell: ({ row }) => getDate(row.original.created_at),
+      cell: ({ row }) => notificationDateFormat(row.original.createdAt),
+    },
+    {
+      id: "action",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          {!row.original.isRead && onMarkAsRead && (
+            <Button
+              onClick={() => onMarkAsRead(row.original.id)}
+              variant="outlineNavBtnBlack"
+              size="xl"
+              spacing="lg"
+              tooltip="Mark as Read"
+            >
+              <IconFileCheck />
+            </Button>
+          )}
+          {onDelete && (
+            <Button
+              onClick={() => onDelete(row.original.id)}
+              variant="outlineNavBtnDestructive"
+              size="xl"
+              spacing="lg"
+              tooltip="Delete"
+            >
+              <Trash2 />
+            </Button>
+          )}
+        </div>
+      ),
+      enableSorting: false,
     },
   ];
 }

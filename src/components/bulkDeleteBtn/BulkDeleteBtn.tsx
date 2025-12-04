@@ -88,6 +88,7 @@ const BulkDeleteBtn = <TData, TResponse>({
             Object.keys(rowSelection).filter((k) => rowSelection[k]).length ===
             0
           }
+          tooltip="Delete Selected Items"
         >
           <span>Delete</span>
           <Trash2 />

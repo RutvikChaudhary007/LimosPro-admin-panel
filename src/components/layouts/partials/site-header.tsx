@@ -1,4 +1,7 @@
-import { X } from "lucide-react";
+import { IconFileCheck } from "@tabler/icons-react";
+import { Eraser, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { INotification } from "@/api/notification.api";
 import IconBell from "@/assets/Icons/ic-bell.svg?react";
 import IconMail from "@/assets/Icons/ic-mail.svg?react";
 import IconSearch from "@/assets/Icons/ic-search.svg?react";
@@ -24,56 +27,21 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { constant } from "@/lib/constant";
 import { NavUser } from "./nav-user";
-import { useNotifications } from "./notifications-context";
-
-const notificationData = [
-  {
-    id: 1,
-    title: "Regional Admin Update",
-    message: "Regional admin Sarah updated her profile details.",
-    time: "5 minutes ago",
-    read: false,
-  },
-  {
-    id: 2,
-    title: "New Staff Member Added",
-    message: "A new staff member, Rohan Patel, has been added to your team.",
-    time: "20 minutes ago",
-    read: false,
-  },
-  {
-    id: 3,
-    title: "Fleet Update",
-    message: "Vehicle BMW X7 (Plate: MH12AB1234) has been added to the fleet.",
-    time: "1 hour ago",
-    read: false,
-  },
-  {
-    id: 4,
-    title: "Chauffeur Assignment",
-    message: "Chauffeur Imran has been assigned to booking #45678.",
-    time: "3 hours ago",
-    read: true,
-  },
-  {
-    id: 5,
-    title: "System Alert",
-    message: "Tonight’s scheduled maintenance will start at 2:00 AM.",
-    time: "1 day ago",
-    read: true,
-  },
-  {
-    id: 6,
-    title: "Fleet Maintenance Update",
-    message: "Mercedes S-Class is due for maintenance tomorrow.",
-    time: "2 days ago",
-    read: true,
-  },
-];
+import { formatDate, useNotifications } from "./notifications-context";
 
 export function SiteHeader() {
-  const { isDrawerOpen, setIsDrawerOpen } = useNotifications();
+  const navigate = useNavigate();
+  const {
+    isDrawerOpen,
+    setIsDrawerOpen,
+    notifications,
+    setNotifications,
+    isFetching,
+    markAllAsRead,
+  } = useNotifications();
 
   return (
     <header className="bg-base-background-light sticky top-0 z-40 flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -127,33 +95,50 @@ export function SiteHeader() {
                   <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
                     <IconBell />
                   </Button>
-                  {notificationData.filter((n) => !n.read).length > 0 && (
+                  {notifications.filter((n) => !n.isRead).length > 0 && (
                     <Badge className="absolute -right-1 -top-1 p-0 size-5">
-                      {notificationData.filter((n) => !n.read).length}
+                      {notifications.filter((n) => !n.isRead).length}
                     </Badge>
                   )}
                 </div>
               </DrawerTrigger>
-              <DrawerContent className="font-quicksand h-screen max-h-screen w-full rounded-none bg-base-white">
+              <DrawerContent className="font-quicksand rounded-none bg-base-white">
                 <div className="flex h-full flex-col">
                   <div className="flex items-center justify-between border-b border-base-gray p-4">
-                    <DrawerTitle className="text-base-black">
+                    <DrawerTitle className="text-black text-lg font-montserrat">
                       Notifications
                     </DrawerTitle>
                     <div className="flex items-center gap-2">
                       <Button
-                        variant="outlineBlack"
-                        size="sm"
+                        variant="outlineNavBtnDestructive"
+                        className="border border-destructive"
+                        size="xl"
+                        spacing="lg"
                         onClick={() => {
-                          // Clear notifications logic here
-                          console.log("Clear notifications");
+                          setNotifications([]);
+                          console.log("Clear all notifications");
                         }}
+                        tooltip="Clear All"
                       >
-                        Clear
+                        <Eraser />
+                      </Button>
+                      <Button
+                        variant="outlineNavBtnPrimary"
+                        className="border border-base-primary"
+                        size="xl"
+                        spacing="lg"
+                        onClick={() => {
+                          markAllAsRead();
+                          console.log("Mark all as read");
+                        }}
+                        tooltip="Mark All as Read"
+                      >
+                        <IconFileCheck />
                       </Button>
                       <DrawerClose asChild>
                         <Button
                           variant="outlineNavBtnBlack"
+                          className="border border-base-black"
                           size="xl"
                           spacing="lg"
                           tooltip="Close"
@@ -165,37 +150,60 @@ export function SiteHeader() {
                   </div>
                   <div className="flex-1 overflow-y-auto">
                     <div className="divide-y divide-base-gray">
-                      {notificationData.map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`border-l-4 p-4 transition-colors hover:bg-base-light-gray ${
-                            notification.read
-                              ? "border-l-transparent bg-base-white"
-                              : "border-l-base-primary bg-base-primary/5"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1 space-y-1">
-                              <h3 className="font-semibold text-black">
-                                {notification.title}
-                              </h3>
-                              <p className="text-sm text-base-black">
-                                {notification.message}
-                              </p>
-                              <p className="mt-2 text-xs text-base-black">
-                                {notification.time}
-                              </p>
+                      {isFetching ? (
+                        <div className="space-y-4 p-4">
+                          {[...Array(3)].map((_, i) => (
+                            <div key={i} className="space-y-2">
+                              <Skeleton className="h-4 w-3/4 rounded" />
+                              <Skeleton className="h-3 w-full rounded" />
+                              <Skeleton className="h-3 w-1/2 rounded" />
                             </div>
-                            {!notification.read && (
-                              <div className="ml-2 h-2 w-2 flex-shrink-0 rounded-full bg-base-primary" />
-                            )}
-                          </div>
+                          ))}
                         </div>
-                      ))}
+                      ) : notifications.length === 0 ? (
+                        <div className="flex items-center justify-center p-8">
+                          <p className="text-base-black">No notifications</p>
+                        </div>
+                      ) : (
+                        notifications.map((notification: INotification) => (
+                          <div
+                            key={notification.id}
+                            className={`border-l-4 p-4 transition-colors hover:bg-base-light-gray ${
+                              notification.isRead
+                                ? "border-l-transparent bg-base-white"
+                                : "border-l-base-primary bg-base-primary/5"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 space-y-1">
+                                <h3 className="font-semibold text-black">
+                                  {notification.title}
+                                </h3>
+                                <p className="text-sm text-base-black">
+                                  {notification.message}
+                                </p>
+                                <p className="mt-2 text-xs text-base-black">
+                                  {formatDate(notification.createdAt)}
+                                </p>
+                              </div>
+                              {!notification.isRead && (
+                                <div className="ml-2 h-2 w-2 flex-shrink-0 rounded-full bg-base-primary" />
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                   <div className="border-t border-base-gray p-4">
-                    <Button variant="outlinePrimary" className="w-full">
+                    <Button
+                      variant="outlinePrimary"
+                      className="w-full"
+                      onClick={() => {
+                        setIsDrawerOpen(false);
+                        navigate(constant.ROUTING_URLS.NOTIFICATION);
+                      }}
+                    >
                       View All Notifications
                     </Button>
                   </div>

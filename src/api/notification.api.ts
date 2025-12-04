@@ -1,0 +1,300 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
+import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
+import axiosInstance from "@/utils/axiosInstance";
+import { API_ENDPOINTS } from "../lib/api-endpoints";
+
+/**
+ * Notification Types
+ */
+export interface INotification {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: string;
+  category: string;
+  isRead: boolean;
+  actionUrl?: string;
+  metadata?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICreateNotificationPayload {
+  userId: string;
+  title: string;
+  message: string;
+  type: string;
+  category: string;
+  actionUrl?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface IUpdateNotificationPayload {
+  title?: string;
+  message?: string;
+  type?: string;
+  category?: string;
+  isRead?: boolean;
+  actionUrl?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface INotificationResponse {
+  success: boolean;
+  data: INotification | INotification[];
+  message?: string;
+}
+
+/**
+ * Get All Notifications
+ * @param userId - User ID to fetch notifications for (required)
+ * @param limit - Number of notifications to fetch (optional, default: 20)
+ * @param skip - Number of notifications to skip for pagination (optional, default: 0)
+ */
+export const getAllNotifications = async (
+  userId: string,
+  limit?: number,
+  skip?: number,
+) => {
+  try {
+    const params: Record<string, any> = { userId };
+
+    if (limit !== undefined) params.limit = limit;
+    if (skip !== undefined) params.skip = skip;
+
+    const response = await axiosInstance.get<INotificationResponse>(
+      API_ENDPOINTS.NOTIFICATION.GET_ALL,
+      { params },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    throw error;
+  }
+};
+
+/**
+ * Get Notification by ID
+ * @param notificationId - Notification ID to fetch
+ */
+export const getNotificationById = async (notificationId: string) => {
+  try {
+    const response = await axiosInstance.get<INotificationResponse>(
+      API_ENDPOINTS.NOTIFICATION.GET_BY_ID(notificationId),
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching notification:", error);
+    throw error;
+  }
+};
+
+/**
+ * Create Notification
+ * @param payload - Notification creation payload
+ */
+export const createNotification = async (
+  payload: ICreateNotificationPayload,
+) => {
+  try {
+    const response = await axiosInstance.post<INotificationResponse>(
+      API_ENDPOINTS.NOTIFICATION.CREATE,
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating notification:", error);
+    throw error;
+  }
+};
+
+/**
+ * Update Notification
+ * @param notificationId - Notification ID to update
+ * @param payload - Notification update payload
+ */
+export const updateNotification = async (
+  notificationId: string,
+  payload: IUpdateNotificationPayload,
+) => {
+  try {
+    const response = await axiosInstance.patch<INotificationResponse>(
+      API_ENDPOINTS.NOTIFICATION.UPDATE(notificationId),
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating notification:", error);
+    throw error;
+  }
+};
+
+/**
+ * Mark Notification as Read by ID
+ * @param notificationId - Notification ID to mark as read
+ */
+export const markNotificationAsRead = async (notificationId: string) => {
+  try {
+    const response = await axiosInstance.patch<INotificationResponse>(
+      `${API_ENDPOINTS.NOTIFICATION.MARK_AS_READ_BY_ID(notificationId)}`,
+      {},
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    throw error;
+  }
+};
+
+/**
+ * Mark All Notifications as Read
+ * @param userId - User ID to mark all notifications as read
+ */
+export const markAllNotificationsAsRead = async (userId: string) => {
+  try {
+    const params: Record<string, any> = { userId };
+
+    const response = await axiosInstance.patch<INotificationResponse>(
+      API_ENDPOINTS.NOTIFICATION.MARK_AS_READ_ALL,
+      {},
+      { params },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error marking all notifications as read:", error);
+    throw error;
+  }
+};
+
+/**
+ * Delete Notification
+ * @param notificationId - Notification ID to delete
+ */
+export const deleteNotification = async (notificationId: string) => {
+  try {
+    const response = await axiosInstance.delete<INotificationResponse>(
+      API_ENDPOINTS.NOTIFICATION.DELETE(notificationId),
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    throw error;
+  }
+};
+
+/**
+ * Bulk Delete Notifications
+ * @param notificationIds - Array of notification IDs to delete
+ */
+export const bulkDeleteNotifications = async (notificationIds: string[]) => {
+  try {
+    const response = await axiosInstance.post<TBlkDelRes>(
+      API_ENDPOINTS.NOTIFICATION.BULK_DELETE,
+      { notificationIds },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error bulk deleting notifications:", error);
+    throw error;
+  }
+};
+
+/**
+ * React Query Hooks
+ */
+
+/**
+ * Hook to fetch all notifications
+ */
+export const useGetAllNotifications = (
+  userId: string,
+  limit?: number,
+  skip?: number,
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: ["notifications", userId, limit, skip],
+    queryFn: () => getAllNotifications(userId, limit, skip),
+    enabled: enabled && !!userId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+/**
+ * Hook to fetch notification by ID
+ */
+export const useGetNotificationById = (
+  notificationId: string,
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: ["notification", notificationId],
+    queryFn: () => getNotificationById(notificationId),
+    enabled: enabled && !!notificationId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+};
+
+/**
+ * Hook to create notification
+ */
+export const useCreateNotification = () => {
+  return useMutation({
+    mutationFn: (payload: ICreateNotificationPayload) =>
+      createNotification(payload),
+  });
+};
+
+/**
+ * Hook to update notification
+ */
+export const useUpdateNotification = () => {
+  return useMutation({
+    mutationFn: ({
+      notificationId,
+      payload,
+    }: {
+      notificationId: string;
+      payload: IUpdateNotificationPayload;
+    }) => updateNotification(notificationId, payload),
+  });
+};
+
+/**
+ * Hook to mark notification as read
+ */
+export const useMarkNotificationAsRead = () => {
+  return useMutation({
+    mutationFn: (notificationId: string) =>
+      markNotificationAsRead(notificationId),
+  });
+};
+
+/**
+ * Hook to mark all notifications as read
+ */
+export const useMarkAllNotificationsAsRead = () => {
+  return useMutation({
+    mutationFn: (userId: string) => markAllNotificationsAsRead(userId),
+  });
+};
+
+/**
+ * Hook to delete notification
+ */
+export const useDeleteNotification = () => {
+  return useMutation({
+    mutationFn: (notificationId: string) => deleteNotification(notificationId),
+  });
+};
+
+/**
+ * Hook to bulk delete notifications
+ */
+export const useBulkDeleteNotification = () => {
+  return useMutation({
+    mutationFn: (notificationIds: string[]) =>
+      bulkDeleteNotifications(notificationIds),
+  });
+};

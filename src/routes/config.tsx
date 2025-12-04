@@ -69,6 +69,11 @@ const CreateUserPage = lazy(
 const EditUserPage = lazy(() => import("../pages/users/formPage/EditUserPage"));
 const ViewUserPage = lazy(() => import("../pages/users/ViewUserPage"));
 
+// Notifications
+const NotificationsPage = lazy(
+  () => import("../pages/notifications/NotificationsPage"),
+);
+
 // Fleet
 const FleetPage = lazy(() => import("../pages/fleet/FleetPage"));
 const CreateFleetPage = lazy(
@@ -303,6 +308,13 @@ export const routesConfig = [
       { path: constant.ROUTING_URLS.CREATE_USERS, element: CreateUserPage },
       { path: constant.ROUTING_URLS.EDIT_USERS, element: EditUserPage },
       { path: constant.ROUTING_URLS.VIEW_USERS, element: ViewUserPage },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "notifications",
+    routes: [
+      { path: constant.ROUTING_URLS.NOTIFICATION, element: NotificationsPage },
     ],
   },
   {
