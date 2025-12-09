@@ -1,8 +1,8 @@
-import { zodResolver } from "@ho@/api/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import useFetchAllRegions from "@/api/region.api";
+import { useFetchAllRegions } from "@/api";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardFooter, CardTitle } from "@/components/ui/card";
@@ -150,7 +150,7 @@ function RegionAdminForm({
               />
               <FieldDescription>Provide first name</FieldDescription>
               {form.formState.errors.firstName && (
-                <p className="text-base-danger text-sm mt-1">
+                <p className="text-base-danger text-sm">
                   {form.formState.errors.firstName.message}
                 </p>
               )}
@@ -175,7 +175,7 @@ function RegionAdminForm({
               />
               <FieldDescription>Provide last name</FieldDescription>
               {form.formState.errors.lastName && (
-                <p className="text-base-danger text-sm mt-1">
+                <p className="text-base-danger text-sm">
                   {form.formState.errors.lastName.message}
                 </p>
               )}
@@ -200,7 +200,7 @@ function RegionAdminForm({
               />
               <FieldDescription>Provide email address</FieldDescription>
               {form.formState.errors.email && (
-                <p className="text-base-danger text-sm mt-1">
+                <p className="text-base-danger text-sm">
                   {form.formState.errors.email.message}
                 </p>
               )}
@@ -225,7 +225,7 @@ function RegionAdminForm({
               />
               <FieldDescription>{passwordDescription}</FieldDescription>
               {form.formState.errors.password && (
-                <p className="text-base-danger text-sm mt-1">
+                <p className="text-base-danger text-sm">
                   {form.formState.errors.password.message}
                 </p>
               )}
@@ -269,7 +269,7 @@ function RegionAdminForm({
 
               <FieldDescription>Select assigned region</FieldDescription>
               {form.formState.errors.region && (
-                <p className="text-base-danger text-sm mt-1">
+                <p className="text-base-danger text-sm">
                   {form.formState.errors.region.message}
                 </p>
               )}

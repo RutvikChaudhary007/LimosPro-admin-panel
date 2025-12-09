@@ -2,3 +2,5 @@
 echo "🔎 Checking commit message format..."
 
 bunx commitlint --edit "$1"
+
+echo "✅ Commit message format check passed."
