@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
-import useFetchUserById from "@/api/getUserById.api";
+import { useFetchUserById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";

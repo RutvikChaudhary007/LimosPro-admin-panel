@@ -3,9 +3,11 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
-import useFetchFleetById from "@/api/getFleetById.api";
-import useFetchAllRegions from "@/api/region.api";
+import {
+  useFetchAllAffiliate,
+  useFetchAllRegions,
+  useFetchFleetById,
+} from "@/api";
 import FleetForm from "@/components/fleet/FleetForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";

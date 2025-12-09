@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchIPWhiteListById } from "@/api/ipWhiteList.api";
+import { useFetchIPWhiteListById } from "@/api";
 import IpWhiteListForm, {
   type TIpWhiteListForm,
 } from "@/components/ipWhiteList/IpWhiteListForm";

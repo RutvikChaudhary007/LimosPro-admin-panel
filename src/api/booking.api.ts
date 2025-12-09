@@ -1,10 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
-import { API_ENDPOINTS } from "../lib/api-endpoints";
+
+/**
+ * ============================================
+ * Booking API Module
+ * ============================================
+ * All booking-related API calls consolidated
+ */
 
 type DateRange = { from?: Date; to?: Date };
 
+// ============================================
+// GET OPERATIONS
+// ============================================
+
+/**
+ * Fetch all bookings with optional filters
+ */
 export const getAllBookings = async (
   DateRange: DateRange,
   page?: number,
@@ -52,7 +66,10 @@ export const getAllBookings = async (
   }
 };
 
-const UsefetchAllBookings = ({
+/**
+ * Hook to fetch all bookings
+ */
+export const useFetchAllBookings = ({
   DateRange,
   page,
   limit,
@@ -70,8 +87,30 @@ const UsefetchAllBookings = ({
     queryFn: () => getAllBookings(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 0, // no caching
+    staleTime: 0,
     ...queryOptions,
   });
 
-export default UsefetchAllBookings;
+/**
+ * Fetch booking by ID
+ */
+export const getBookingById = async (id?: string) => {
+  if (id) {
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_BOOKING_BY_ID.replace(":id", id)}`,
+    );
+    return response?.data?.data;
+  }
+  return null;
+};
+
+/**
+ * Hook to fetch booking by ID
+ */
+export const useFetchBookingById = ({ id }: { id?: string }) =>
+  useQuery({
+    queryKey: ["bookingById", id],
+    queryFn: () => getBookingById(id),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });

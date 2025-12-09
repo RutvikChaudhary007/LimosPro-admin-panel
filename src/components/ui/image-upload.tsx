@@ -8,9 +8,9 @@ import {
   X,
 } from "lucide-react";
 import type React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { mediaService } from "@/api/contentServices.api";
+import { mediaService } from "@/api";
 import { Button } from "./button";
 import { Card, CardBody, CardContent } from "./card";
 import { Field, FieldDescription, FieldLabel } from "./field";

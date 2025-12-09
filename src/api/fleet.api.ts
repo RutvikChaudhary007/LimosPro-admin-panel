@@ -1,14 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
  * ============================================
- * Chauffeur API Module
+ * Fleet API Module
  * ============================================
- * All chauffeur-related API calls consolidated
+ * All fleet-related API calls consolidated
  */
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
@@ -18,13 +17,12 @@ type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 // ============================================
 
 /**
- * Fetch all chauffeurs with optional filters
+ * Fetch all fleets with optional filters
  */
-export const getAllChauffeur = async (
-  DateRange?: DateRange,
+export const getAllFleets = async (
+  DateRange: DateRange,
   page?: number,
   limit?: number,
-  status?: string,
 ) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
@@ -37,22 +35,15 @@ export const getAllChauffeur = async (
         : undefined,
     };
   }
-
   if (page) {
     params.page = page;
   }
-
   if (limit) {
     params.limit = limit;
   }
-
-  if (status) {
-    params.status = status;
-  }
-
   try {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.GET_ALL_CHAUFFEUR}`,
+      `${API_ENDPOINTS.GET_ALL_FLEETS}`,
       { params },
     );
     return response.data.data;
@@ -65,43 +56,41 @@ export const getAllChauffeur = async (
 };
 
 /**
- * Hook to fetch all chauffeurs
+ * Hook to fetch all fleets
  */
-export const useFetchAllChauffeur = ({
+export const useFetchAllFleets = ({
   DateRange,
   page,
   limit,
-  status,
 }: {
-  DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
+  DateRange: DateRange;
   page?: number;
   limit?: number;
-  status?: string;
 }) =>
   useQuery({
-    queryKey: ["chauffeurs", DateRange, page, limit, status],
-    queryFn: () => getAllChauffeur(DateRange, page, limit, status),
+    queryKey: ["Fleets", { DateRange }, { page }, { limit }],
+    queryFn: () => getAllFleets(DateRange, page, limit),
     refetchOnWindowFocus: false,
     retry: false,
   });
 
 /**
- * Fetch chauffeur by ID
+ * Fetch fleet by ID (with Suspense)
  */
-export const getChauffeurById = async (id: string) => {
+export const getFleetById = async (id: string) => {
   const response = await axiosInstance.get(
-    `${API_ENDPOINTS.GET_CHAUFFEUR_BY_ID.replace(":id", id)}`,
+    `${API_ENDPOINTS.GET_FLEET_BY_ID.replace(":id", id)}`,
   );
-  return response?.data?.data;
+  return response.data.data;
 };
 
 /**
- * Hook to fetch chauffeur by ID
+ * Hook to fetch fleet by ID (with Suspense)
  */
-export const useFetchChauffeurById = ({ id }: { id: string }) =>
-  useQuery({
-    queryKey: ["chauffeurById", id],
-    queryFn: () => getChauffeurById(id),
+export const useFetchFleetById = ({ id }: { id: string }) =>
+  useSuspenseQuery({
+    queryKey: ["FleetById", id],
+    queryFn: () => getFleetById(id),
     refetchOnWindowFocus: false,
     retry: false,
   });
@@ -111,18 +100,14 @@ export const useFetchChauffeurById = ({ id }: { id: string }) =>
 // ============================================
 
 /**
- * Create a new chauffeur
+ * Create a new fleet
  */
-export const createChauffeur = async (data: TChauffeurForm) => {
-  const response = await axiosInstance.post(
-    API_ENDPOINTS.CREATE_CHAFFEUR,
-    data,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+export const createFleet = async (data: object) => {
+  const response = await axiosInstance.post(API_ENDPOINTS.CREATE_FLEET, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
     },
-  );
+  });
 
   return response.data;
 };
@@ -132,17 +117,17 @@ export const createChauffeur = async (data: TChauffeurForm) => {
 // ============================================
 
 /**
- * Edit chauffeur by ID
+ * Edit fleet by ID
  */
-export const editChauffeur = async ({
-  data,
+export const editFleetById = async ({
   id,
+  data,
 }: {
-  data: TChauffeurForm;
   id: string;
+  data: object;
 }) => {
-  const response = await axiosInstance.patch(
-    API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id),
+  const response = await axiosInstance.put(
+    API_ENDPOINTS.EDIT_FLEET_BY_ID.replace(":id", id),
     data,
     {
       headers: {
@@ -159,26 +144,27 @@ export const editChauffeur = async ({
 // ============================================
 
 /**
- * Delete a single chauffeur
+ * Delete a single fleet
  */
-export const deleteChauffeur = async (id: string) => {
+export const deleteFleet = async (id: string) => {
   const response = await axiosInstance.delete(
-    API_ENDPOINTS.DELETE_CHAFFEUR.replace(":id", id),
+    API_ENDPOINTS.DELETE_FLEET.replace(":id", id),
   );
 
   return response.data;
 };
 
 /**
- * Bulk delete chauffeurs
+ * Bulk delete fleets
  */
-export const bulkDeleteChauffeur = async (ids: string[]) => {
+export const bulkDeleteFleet = async (ids: string[]) => {
   const data = {
-    chauffeurIds: ids,
+    vehicleIds: ids,
   };
   const response = await axiosInstance.post(
-    API_ENDPOINTS.BULK_DELETE_CHAFFEUR,
+    API_ENDPOINTS.BULK_DELETE_FLEET,
     data,
   );
+
   return response.data;
 };

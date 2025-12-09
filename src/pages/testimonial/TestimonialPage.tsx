@@ -3,7 +3,7 @@ import { Plus, Search } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import useFetchAllTestimonials from "@/api/testimonial.api";
+import { useFetchAllTestimonials } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";

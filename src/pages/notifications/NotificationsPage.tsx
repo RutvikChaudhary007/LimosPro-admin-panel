@@ -2,14 +2,14 @@ import { IconFileCheck, IconFilterX } from "@tabler/icons-react";
 import type { Table } from "@tanstack/react-table";
 import { Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { INotification } from "@/api/notification.api";
+import type { INotification } from "@/api";
 import {
   useBulkDeleteNotification,
   useDeleteNotification,
   useGetAllNotifications,
   useMarkAllNotificationsAsRead,
   useMarkNotificationAsRead,
-} from "@/api/notification.api";
+} from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";

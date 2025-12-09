@@ -3,7 +3,7 @@ import { formatDate } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import useFetchTripById from "@/api/getTripById.api";
+import { useFetchTripById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import { useFetchContactRequestById } from "@/api/contactRequest.api";
+import { useFetchContactRequestById } from "@/api";
 import {
   Dialog,
   DialogContent,

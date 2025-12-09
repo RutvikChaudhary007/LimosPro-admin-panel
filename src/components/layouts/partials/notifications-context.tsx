@@ -9,7 +9,7 @@ import {
   type INotification,
   useGetAllNotifications,
   useMarkAllNotificationsAsRead,
-} from "@/api/notification.api";
+} from "@/api";
 import { useUserStore } from "@/stores/useAuthStore";
 
 interface NotificationsContextType {

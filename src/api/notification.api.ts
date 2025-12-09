@@ -1,7 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import axiosInstance from "@/utils/axiosInstance";
-import { API_ENDPOINTS } from "../lib/api-endpoints";
+
+/**
+ * ============================================
+ * Notification API Module
+ * ============================================
+ * All notification-related API calls consolidated
+ */
 
 /**
  * Notification Types
@@ -46,11 +53,12 @@ export interface INotificationResponse {
   message?: string;
 }
 
+// ============================================
+// GET OPERATIONS
+// ============================================
+
 /**
- * Get All Notifications
- * @param userId - User ID to fetch notifications for (required)
- * @param limit - Number of notifications to fetch (optional, default: 20)
- * @param skip - Number of notifications to skip for pagination (optional, default: 0)
+ * Get all notifications
  */
 export const getAllNotifications = async (
   userId: string,
@@ -75,8 +83,24 @@ export const getAllNotifications = async (
 };
 
 /**
- * Get Notification by ID
- * @param notificationId - Notification ID to fetch
+ * Hook to fetch all notifications
+ */
+export const useGetAllNotifications = (
+  userId: string,
+  limit?: number,
+  skip?: number,
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: ["notifications", userId, limit, skip],
+    queryFn: () => getAllNotifications(userId, limit, skip),
+    enabled: enabled && !!userId,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+/**
+ * Get notification by ID
  */
 export const getNotificationById = async (notificationId: string) => {
   try {
@@ -91,8 +115,26 @@ export const getNotificationById = async (notificationId: string) => {
 };
 
 /**
- * Create Notification
- * @param payload - Notification creation payload
+ * Hook to fetch notification by ID
+ */
+export const useGetNotificationById = (
+  notificationId: string,
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: ["notification", notificationId],
+    queryFn: () => getNotificationById(notificationId),
+    enabled: enabled && !!notificationId,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+// ============================================
+// CREATE OPERATIONS
+// ============================================
+
+/**
+ * Create notification
  */
 export const createNotification = async (
   payload: ICreateNotificationPayload,
@@ -110,9 +152,21 @@ export const createNotification = async (
 };
 
 /**
- * Update Notification
- * @param notificationId - Notification ID to update
- * @param payload - Notification update payload
+ * Hook to create notification
+ */
+export const useCreateNotification = () => {
+  return useMutation({
+    mutationFn: (payload: ICreateNotificationPayload) =>
+      createNotification(payload),
+  });
+};
+
+// ============================================
+// UPDATE OPERATIONS
+// ============================================
+
+/**
+ * Update notification
  */
 export const updateNotification = async (
   notificationId: string,
@@ -131,8 +185,22 @@ export const updateNotification = async (
 };
 
 /**
- * Mark Notification as Read by ID
- * @param notificationId - Notification ID to mark as read
+ * Hook to update notification
+ */
+export const useUpdateNotification = () => {
+  return useMutation({
+    mutationFn: ({
+      notificationId,
+      payload,
+    }: {
+      notificationId: string;
+      payload: IUpdateNotificationPayload;
+    }) => updateNotification(notificationId, payload),
+  });
+};
+
+/**
+ * Mark notification as read by ID
  */
 export const markNotificationAsRead = async (notificationId: string) => {
   try {
@@ -148,8 +216,17 @@ export const markNotificationAsRead = async (notificationId: string) => {
 };
 
 /**
- * Mark All Notifications as Read
- * @param userId - User ID to mark all notifications as read
+ * Hook to mark notification as read
+ */
+export const useMarkNotificationAsRead = () => {
+  return useMutation({
+    mutationFn: (notificationId: string) =>
+      markNotificationAsRead(notificationId),
+  });
+};
+
+/**
+ * Mark all notifications as read
  */
 export const markAllNotificationsAsRead = async (userId: string) => {
   try {
@@ -168,8 +245,20 @@ export const markAllNotificationsAsRead = async (userId: string) => {
 };
 
 /**
- * Delete Notification
- * @param notificationId - Notification ID to delete
+ * Hook to mark all notifications as read
+ */
+export const useMarkAllNotificationsAsRead = () => {
+  return useMutation({
+    mutationFn: (userId: string) => markAllNotificationsAsRead(userId),
+  });
+};
+
+// ============================================
+// DELETE OPERATIONS
+// ============================================
+
+/**
+ * Delete notification
  */
 export const deleteNotification = async (notificationId: string) => {
   try {
@@ -184,8 +273,16 @@ export const deleteNotification = async (notificationId: string) => {
 };
 
 /**
- * Bulk Delete Notifications
- * @param notificationIds - Array of notification IDs to delete
+ * Hook to delete notification
+ */
+export const useDeleteNotification = () => {
+  return useMutation({
+    mutationFn: (notificationId: string) => deleteNotification(notificationId),
+  });
+};
+
+/**
+ * Bulk delete notifications
  */
 export const bulkDeleteNotifications = async (notificationIds: string[]) => {
   try {
@@ -198,95 +295,6 @@ export const bulkDeleteNotifications = async (notificationIds: string[]) => {
     console.error("Error bulk deleting notifications:", error);
     throw error;
   }
-};
-
-/**
- * React Query Hooks
- */
-
-/**
- * Hook to fetch all notifications
- */
-export const useGetAllNotifications = (
-  userId: string,
-  limit?: number,
-  skip?: number,
-  enabled: boolean = true,
-) => {
-  return useQuery({
-    queryKey: ["notifications", userId, limit, skip],
-    queryFn: () => getAllNotifications(userId, limit, skip),
-    enabled: enabled && !!userId,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-};
-
-/**
- * Hook to fetch notification by ID
- */
-export const useGetNotificationById = (
-  notificationId: string,
-  enabled: boolean = true,
-) => {
-  return useQuery({
-    queryKey: ["notification", notificationId],
-    queryFn: () => getNotificationById(notificationId),
-    enabled: enabled && !!notificationId,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
-};
-
-/**
- * Hook to create notification
- */
-export const useCreateNotification = () => {
-  return useMutation({
-    mutationFn: (payload: ICreateNotificationPayload) =>
-      createNotification(payload),
-  });
-};
-
-/**
- * Hook to update notification
- */
-export const useUpdateNotification = () => {
-  return useMutation({
-    mutationFn: ({
-      notificationId,
-      payload,
-    }: {
-      notificationId: string;
-      payload: IUpdateNotificationPayload;
-    }) => updateNotification(notificationId, payload),
-  });
-};
-
-/**
- * Hook to mark notification as read
- */
-export const useMarkNotificationAsRead = () => {
-  return useMutation({
-    mutationFn: (notificationId: string) =>
-      markNotificationAsRead(notificationId),
-  });
-};
-
-/**
- * Hook to mark all notifications as read
- */
-export const useMarkAllNotificationsAsRead = () => {
-  return useMutation({
-    mutationFn: (userId: string) => markAllNotificationsAsRead(userId),
-  });
-};
-
-/**
- * Hook to delete notification
- */
-export const useDeleteNotification = () => {
-  return useMutation({
-    mutationFn: (notificationId: string) => deleteNotification(notificationId),
-  });
 };
 
 /**

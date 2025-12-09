@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchTestimonialById } from "@/api/testimonial.api";
+import { useFetchTestimonialById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import TestimonialForm from "@/components/testimonail/TestimonialForm";

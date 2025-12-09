@@ -1,7 +1,7 @@
 import { Eye } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import useFetchDashboard from "@/api/dashboard.api";
+import { useFetchDashboard } from "@/api";
 import TableAndPieChart, {
   type FleetStat,
 } from "@/components/dashboard/TableAndPieChart";

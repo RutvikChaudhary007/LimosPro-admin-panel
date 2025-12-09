@@ -3,7 +3,7 @@ import { IconFileDownload, IconFileInfo } from "@tabler/icons-react";
 import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import UsefetchAffiliateById from "@/api/getAffiliateById.api";
+import { useFetchAffiliateById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -44,7 +44,7 @@ const ViewAffiliatePage = () => {
   });
 
   // console.log("id:",id)
-  const { data, isFetching, isError, refetch } = UsefetchAffiliateById({ id });
+  const { data, isFetching, isError, refetch } = useFetchAffiliateById({ id });
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;

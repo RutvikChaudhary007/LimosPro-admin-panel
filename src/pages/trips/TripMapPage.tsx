@@ -3,7 +3,7 @@
 import { ArrowLeft, MessageSquareMore, Phone, Route, Send } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import useFetchTripById from "@/api/getTripById.api";
+import { useFetchTripById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import LiveTracking from "@/components/liveTracking/LiveTracking";
 import { Spinner } from "@/components/Spinner";

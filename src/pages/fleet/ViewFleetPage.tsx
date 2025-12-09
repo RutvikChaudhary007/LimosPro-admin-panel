@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
-import useFetchFleetById from "@/api/getFleetById.api";
+import { useFetchFleetById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";

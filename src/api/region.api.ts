@@ -1,10 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TRegion } from "@/components/regionManagement/region/RegionForm";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
-import { API_ENDPOINTS } from "../lib/api-endpoints";
 
-type TPara = { page?: number; limit?: number };
+/**
+ * ============================================
+ * Region API Module
+ * ============================================
+ * All region and region admin API calls consolidated
+ */
+
+type TPara = { limit?: number; page?: number };
+
+// ============================================
+// REGION OPERATIONS
+// ============================================
+
+/**
+ * Fetch all regions
+ */
 export const getAllRegions = async (data?: TPara) => {
   const params: Record<string, unknown> = {};
   if (data?.page) {
@@ -20,18 +35,20 @@ export const getAllRegions = async (data?: TPara) => {
   return response.data.data;
 };
 
-const useFetchAllRegions = (Data: TPara) =>
+/**
+ * Hook to fetch all regions
+ */
+export const useFetchAllRegions = (Data: TPara) =>
   useQuery({
     queryKey: ["Regions", { Data }],
     queryFn: () => getAllRegions(Data),
     refetchOnWindowFocus: false,
-    // refetchInterval: 60000,
     retry: false,
-    // keepPreviousData: true, // for pagination
   });
 
-export default useFetchAllRegions;
-
+/**
+ * Fetch region by ID
+ */
 export const getSingleRegions = async (id: string) => {
   const response = await axiosInstance.get(
     `${API_ENDPOINTS.GET_REGION_BY_ID.replace(":region_id", id)}`,
@@ -40,16 +57,20 @@ export const getSingleRegions = async (id: string) => {
   return response?.data?.data;
 };
 
+/**
+ * Hook to fetch region by ID
+ */
 export const useFetchRegionById = (id: string) =>
   useQuery({
     queryKey: ["RegionById", { id }],
     queryFn: () => getSingleRegions(id),
     refetchOnWindowFocus: false,
-    // refetchInterval: 60000,
     retry: false,
-    // keepPreviousData: false, // for pagination
   });
 
+/**
+ * Create region
+ */
 export const createRegion = async (data: TRegion) => {
   try {
     const response = await axiosInstance.post(
@@ -63,6 +84,9 @@ export const createRegion = async (data: TRegion) => {
   }
 };
 
+/**
+ * Edit region
+ */
 export const editRegion = async ({
   id,
   data,
@@ -82,7 +106,132 @@ export const editRegion = async ({
   }
 };
 
+/**
+ * Delete region
+ */
 export const deleteRegion = async (id: string) => {
+  try {
+    const response = await axiosInstance.delete(
+      `${API_ENDPOINTS.DELETE_REGION.replace(":regionId", id)}`,
+    );
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
+  }
+};
+
+// ============================================
+// REGION ADMIN OPERATIONS
+// ============================================
+
+/**
+ * Fetch all region admins
+ */
+export const getAllRegionAdmins = async (data?: TPara) => {
+  const params: Record<string, unknown> = {};
+  if (data?.limit) {
+    params.limit = data.limit;
+  }
+  if (data?.page) {
+    params.page = data.page;
+  }
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ALL}`,
+    { params },
+  );
+
+  return response.data.data;
+};
+
+/**
+ * Hook to fetch all region admins
+ */
+export const useFetchAllRegionAdmins = (Data: TPara) =>
+  useQuery({
+    queryKey: ["RegionAdmins", Data],
+    queryFn: () => getAllRegionAdmins(Data),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+/**
+ * Fetch region admin by ID
+ */
+export const getSingleRegionAdmin = async (id: string) => {
+  const response = await axiosInstance.get(
+    `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ONE.replace(":id", id)}`,
+  );
+
+  return response?.data?.data;
+};
+
+/**
+ * Hook to fetch region admin by ID
+ */
+export const useFetchRegionAdminById = (id: string) =>
+  useQuery({
+    queryKey: ["RegionAdminById", { id }],
+    queryFn: () => getSingleRegionAdmin(id),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+/**
+ * Create region admin
+ */
+export const createRegionAdmin = async (data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  region: string;
+  password: string;
+}) => {
+  try {
+    if (data?.region) {
+      const regionId = data.region;
+      const response = await axiosInstance.post(
+        `${API_ENDPOINTS.REGIONAL_ADMIN.CREATE?.replace(":regionId", regionId)}`,
+        data,
+      );
+      return response.data;
+    } else {
+      throw new Error("Region id is missing.");
+    }
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.error(error.message || "Opps! An unkown error occured");
+    }
+    throw error;
+  }
+};
+
+/**
+ * Edit region admin
+ */
+export const editRegionAdmin = async ({
+  id,
+  data,
+}: {
+  id: string;
+  data: TRegion;
+}) => {
+  try {
+    const response = await axiosInstance.put(
+      `${API_ENDPOINTS.EDIT_REGION.replace(":regionId", id)}`,
+      data,
+    );
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
+  }
+};
+
+/**
+ * Delete region admin
+ */
+export const deleteRegionAdmin = async (id: string) => {
   try {
     const response = await axiosInstance.delete(
       `${API_ENDPOINTS.DELETE_REGION.replace(":regionId", id)}`,

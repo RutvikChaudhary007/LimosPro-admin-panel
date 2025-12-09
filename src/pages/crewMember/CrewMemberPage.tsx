@@ -4,7 +4,7 @@ import { Plus, Search } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import useFetchAllCrewMember from "@/api/crewMember.api";
+import { useFetchAllCrewMember } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -29,7 +29,6 @@ const CrewMemberPage = () => {
   const [tableRef, setTableRef] = useState<any>(null);
   const [newPage, setNewPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(10);
-  // const [data, setData] = useState<TCrewMember[]>(tableData);
   const { data, refetch, isFetching, isError } = useFetchAllCrewMember({
     page: newPage,
     limit: perPage,

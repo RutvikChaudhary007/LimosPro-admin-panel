@@ -4,7 +4,7 @@ import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import useFetchALLIPWhiteLists from "@/api/ipWhiteList.api";
+import { useFetchAllIPWhiteLists } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -30,7 +30,7 @@ const IpWhiteListPage = () => {
   const [tableRef, setTableRef] = useState<any>(null);
   const [perPage, setPerPage] = useState(10);
   // const [data, setData] = useState<TIpWhiteList[]>(tableData);
-  const { data, refetch, isFetching, isError } = useFetchALLIPWhiteLists({
+  const { data, refetch, isFetching, isError } = useFetchAllIPWhiteLists({
     page: newPage,
     limit: perPage,
   });

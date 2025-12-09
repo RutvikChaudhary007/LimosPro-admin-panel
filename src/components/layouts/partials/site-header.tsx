@@ -2,7 +2,7 @@ import { IconFileCheck, IconX } from "@tabler/icons-react";
 import { Car, Eraser, FileText, Phone, User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { INotification } from "@/api/notification.api";
+import type { INotification } from "@/api";
 import IconBell from "@/assets/Icons/ic-bell.svg?react";
 import IconMail from "@/assets/Icons/ic-mail.svg?react";
 import IconSearch from "@/assets/Icons/ic-search.svg?react";

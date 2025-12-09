@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import type React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchContentBlockById } from "@/api/contentBlock.api";
+import { useFetchContentBlockById } from "@/api";
 import ContentManagementForm, {
   type TContentForm,
 } from "@/components/contentManagement/ContentManagementForm";

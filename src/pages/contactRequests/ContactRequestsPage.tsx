@@ -2,7 +2,7 @@
 
 import { Search, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import useFetchAllContactRequest from "@/api/contactRequest.api";
+import { useFetchAllContactRequest } from "@/api";
 import ReplyFC from "@/components/ContactRequests/ReplyFC";
 import ViewModal from "@/components/ContactRequests/ViewModal";
 import PageTitle from "@/components/common/PageTitle";

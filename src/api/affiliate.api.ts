@@ -1,14 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
  * ============================================
- * Chauffeur API Module
+ * Affiliate API Module
  * ============================================
- * All chauffeur-related API calls consolidated
+ * All affiliate-related API calls consolidated
  */
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
@@ -18,9 +17,9 @@ type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 // ============================================
 
 /**
- * Fetch all chauffeurs with optional filters
+ * Fetch all affiliates with optional filters
  */
-export const getAllChauffeur = async (
+export const getAllAffiliate = async (
   DateRange?: DateRange,
   page?: number,
   limit?: number,
@@ -49,13 +48,12 @@ export const getAllChauffeur = async (
   if (status) {
     params.status = status;
   }
-
   try {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.GET_ALL_CHAUFFEUR}`,
+      `${API_ENDPOINTS.GET_ALL_AFFILIATE}`,
       { params },
     );
-    return response.data.data;
+    return response?.data?.data;
   } catch (error) {
     if (error instanceof AxiosError && error?.status === 400) {
       return [];
@@ -65,9 +63,9 @@ export const getAllChauffeur = async (
 };
 
 /**
- * Hook to fetch all chauffeurs
+ * Hook to fetch all affiliates
  */
-export const useFetchAllChauffeur = ({
+export const useFetchAllAffiliate = ({
   DateRange,
   page,
   limit,
@@ -79,29 +77,36 @@ export const useFetchAllChauffeur = ({
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["chauffeurs", DateRange, page, limit, status],
-    queryFn: () => getAllChauffeur(DateRange, page, limit, status),
+    queryKey: ["affiliates", DateRange, page, limit, status],
+    queryFn: () => getAllAffiliate(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
+    staleTime: 1000 * 60 * 5,
+    placeholderData: (previousData) => previousData,
   });
 
 /**
- * Fetch chauffeur by ID
+ * Fetch affiliate by ID
  */
-export const getChauffeurById = async (id: string) => {
+export const getAffiliateById = async (id: string) => {
   const response = await axiosInstance.get(
-    `${API_ENDPOINTS.GET_CHAUFFEUR_BY_ID.replace(":id", id)}`,
+    `${API_ENDPOINTS.GET_AFFILIATE_BY_ID.replace(":id", id)}`,
   );
   return response?.data?.data;
 };
 
 /**
- * Hook to fetch chauffeur by ID
+ * Hook to fetch affiliate by ID
  */
-export const useFetchChauffeurById = ({ id }: { id: string }) =>
+export const useFetchAffiliateById = ({ id }: { id: string | undefined }) =>
   useQuery({
-    queryKey: ["chauffeurById", id],
-    queryFn: () => getChauffeurById(id),
+    queryKey: ["affiliateById", id],
+    queryFn: () =>
+      id
+        ? getAffiliateById(id)
+        : () => {
+            console.log("id missing");
+          },
     refetchOnWindowFocus: false,
     retry: false,
   });
@@ -111,11 +116,11 @@ export const useFetchChauffeurById = ({ id }: { id: string }) =>
 // ============================================
 
 /**
- * Create a new chauffeur
+ * Create a new affiliate
  */
-export const createChauffeur = async (data: TChauffeurForm) => {
+export const createAffiliate = async (data: object) => {
   const response = await axiosInstance.post(
-    API_ENDPOINTS.CREATE_CHAFFEUR,
+    API_ENDPOINTS.CREATE_AFFILIATE,
     data,
     {
       headers: {
@@ -132,17 +137,34 @@ export const createChauffeur = async (data: TChauffeurForm) => {
 // ============================================
 
 /**
- * Edit chauffeur by ID
+ * Edit affiliate by ID
  */
-export const editChauffeur = async ({
+export const editAffiliate = async ({
   data,
   id,
 }: {
-  data: TChauffeurForm;
-  id: string;
+  data: object;
+  id: string | undefined;
 }) => {
-  const response = await axiosInstance.patch(
-    API_ENDPOINTS.EDIT_CHAFFEUR.replace(":id", id),
+  const response = await axiosInstance.put(
+    API_ENDPOINTS.UPDATE_AFFILIATE.replace(":id", id as string),
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+
+  return response.data;
+};
+
+/**
+ * Update affiliate (alternative endpoint)
+ */
+export const updateAffiliate = async (data: object) => {
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.UPDATE_AFFILIATE,
     data,
     {
       headers: {
@@ -159,26 +181,27 @@ export const editChauffeur = async ({
 // ============================================
 
 /**
- * Delete a single chauffeur
+ * Delete a single affiliate
  */
-export const deleteChauffeur = async (id: string) => {
+export const deleteAffiliate = async (id: string) => {
   const response = await axiosInstance.delete(
-    API_ENDPOINTS.DELETE_CHAFFEUR.replace(":id", id),
+    API_ENDPOINTS.DELETE_AFFILIATE.replace(":id", id),
   );
 
   return response.data;
 };
 
 /**
- * Bulk delete chauffeurs
+ * Bulk delete affiliates
  */
-export const bulkDeleteChauffeur = async (ids: string[]) => {
+export const bulkDeleteAffiliate = async (ids: string[]) => {
   const data = {
-    chauffeurIds: ids,
+    affiliateIds: ids,
   };
   const response = await axiosInstance.post(
-    API_ENDPOINTS.BULK_DELETE_CHAFFEUR,
+    API_ENDPOINTS.BULK_DELETE_AFFILIATE,
     data,
   );
+
   return response.data;
 };

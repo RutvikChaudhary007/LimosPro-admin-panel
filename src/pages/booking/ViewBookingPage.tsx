@@ -3,7 +3,7 @@ import { formatDate } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import UsefetchBookingById from "@/api/getBookingById.api";
+import { useFetchBookingById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
@@ -34,7 +34,7 @@ const ViewBookingPage = () => {
     pickUpAddress: string;
     dropOffAddress: string;
   }>({ pickUpAddress: "", dropOffAddress: "" });
-  const { data, isFetching, isError, refetch } = UsefetchBookingById({ id });
+  const { data, isFetching, isError, refetch } = useFetchBookingById({ id });
   // Load Google Maps script
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: googleMapsApiKey || "",

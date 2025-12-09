@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import type { SetStateAction } from "react";
-import useFetchAllPermissions from "@/api/permission.api";
+import { useFetchAllPermissions } from "@/api";
 import {
   MultiSelect,
   MultiSelectContent,

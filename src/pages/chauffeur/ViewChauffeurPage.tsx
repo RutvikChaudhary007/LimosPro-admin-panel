@@ -3,7 +3,7 @@ import { IconFileDownload, IconFileInfo } from "@tabler/icons-react";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useFetchChauffeurById } from "@/api/chauffeur.api";
+import { useFetchChauffeurById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";

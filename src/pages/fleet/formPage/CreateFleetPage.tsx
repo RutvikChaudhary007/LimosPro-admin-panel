@@ -1,7 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
-import useFetchAllRegions from "@/api/region.api";
+import { useFetchAllAffiliate, useFetchAllRegions } from "@/api";
 import FleetForm from "@/components/fleet/FleetForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { toastPromise } from "@/hooks/use-toast";

@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import UsefetchAffiliateById from "@/api/getAffiliateById.api";
+import { useFetchAffiliateById } from "@/api";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -33,7 +33,7 @@ function EditAffiliatePage() {
     libraries: libraries as Libraries,
   });
 
-  const { data, isFetching } = UsefetchAffiliateById({ id });
+  const { data, isFetching } = useFetchAffiliateById({ id });
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;

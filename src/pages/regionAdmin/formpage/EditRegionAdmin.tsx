@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useFetchRegionAdminById } from "@/api/regionAdmin.api";
+import { useFetchRegionAdminById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import RegionAdminForm, {
   type TRegionAdmin,

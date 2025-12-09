@@ -1,8 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchNewsById } from "@/api/news.api";
-// import type { TNews } from "@/components/table/column";
+import { useFetchNewsById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import NewsForm, { type TNewsForm } from "@/components/news/NewsForm";
 import { Spinner } from "@/components/Spinner";

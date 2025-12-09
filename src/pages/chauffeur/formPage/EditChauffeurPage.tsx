@@ -2,7 +2,7 @@ import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useFetchChauffeurById } from "@/api/chauffeur.api";
+import { useFetchChauffeurById } from "@/api";
 import ChauffeurForm, {
   type TChauffeurForm,
 } from "@/components/chauffeur/ChauffeurForm";

@@ -1,7 +1,7 @@
 import { Plus, Search, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetchAllRegionAdmins from "@/api/regionAdmin.api";
+import { useFetchAllRegionAdmins } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";

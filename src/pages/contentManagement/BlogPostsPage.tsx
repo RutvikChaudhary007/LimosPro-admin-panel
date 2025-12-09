@@ -5,7 +5,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { blogService } from "@/api/contentServices.api";
+import { blogService } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import BlogPostCard from "@/components/contentManagement/BlogPostCard";
 import { PageHeader } from "@/components/layouts/PageHeader";

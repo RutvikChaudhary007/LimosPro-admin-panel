@@ -5,7 +5,7 @@ import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import UsefetchAllBookings from "@/api/getAllBookings.api";
+import { useFetchAllBookings } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -52,7 +52,7 @@ function BookingPage() {
     to: undefined,
   });
   // const [data, setData] = useState<TBooking[]>(tableData);
-  const { data, isFetching, error, isError, refetch } = UsefetchAllBookings({
+  const { data, isFetching, error, isError, refetch } = useFetchAllBookings({
     DateRange: dateRange,
     page: newPage,
     limit: perPage,

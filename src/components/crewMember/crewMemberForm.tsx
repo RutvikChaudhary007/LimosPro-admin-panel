@@ -8,7 +8,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import IntlTelInput from "intl-tel-input/react";
-import useFetchAllAffiliate from "@/api/getAllAffiliate.api";
+import { useFetchAllAffiliate } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "intl-tel-input/styles";

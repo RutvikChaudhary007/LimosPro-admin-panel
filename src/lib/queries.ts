@@ -7,77 +7,61 @@ import {
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import {
-  bulkDeleteChauffeur,
-  createChauffeur,
-  deleteChauffeur,
-  editChauffeur,
-} from "@/api/chauffeur.api";
-import {
-  createContentBlock,
-  deleteContentBlock,
-  editContentBlock,
-} from "@/api/contentBlock.api";
-import { createAffiliate } from "@/api/createAffiliate.api";
-import { createFleet } from "@/api/createFleet.api";
-import {
-  bulkDeleteCrewMember,
-  createCrewMember,
-  deleteCrewMember,
-  editCrewMember,
-} from "@/api/crewMember.api";
-import {
   bulkDeleteAffiliate,
-  deleteAffiliate,
-} from "@/api/deleteAffiliate.api";
-import { bulkDeletefleet, deletefleet } from "@/api/deleteFleet.api";
-import { bulkDeleteTrips } from "@/api/deleteTrips.api";
-import { bulkDeleteUser, deleteUser } from "@/api/deleteUser.api";
-import { editAffiliate } from "@/api/editAffiliate.api";
-import { editFleetById } from "@/api/editFleetById.api";
-import {
+  bulkDeleteChauffeur,
+  bulkDeleteCrewMember,
   bulkDeleteFAQById,
-  createFAQ,
-  deleteFAQById,
-  editFAQById,
-} from "@/api/faq.api";
-import {
+  bulkDeleteFleet,
   bulkDeleteIPWhiteListById,
-  createIPWhiteList,
-  deleteIPWhiteListById,
-  editIPWhiteListById,
-} from "@/api/ipWhiteList.api";
-import { login } from "@/api/login.api";
-import {
   bulkDeleteNewsById,
-  createNews,
-  deleteNewsById,
-  editNewsById,
-} from "@/api/news.api";
-import {
   bulkDeletePartnerById,
-  createPartner,
-  deletePartnerById,
-  editPartnerById,
-} from "@/api/ourPartners.api";
-import { createRegion, deleteRegion, editRegion } from "@/api/region.api";
-import {
-  createRegionAdmin,
-  deleteRegionAdmin,
-  editRegionAdmin,
-} from "@/api/regionAdmin.api";
-import {
   bulkDeleteStaffMember,
-  createStaffMember,
-  deleteStaffMember,
-  editStaffMember,
-} from "@/api/staffMember.api";
-import {
   bulkDeleteTestimonial,
+  bulkDeleteTrips,
+  bulkDeleteUser,
+  createAffiliate,
+  createChauffeur,
+  createContentBlock,
+  createCrewMember,
+  createFAQ,
+  createFleet,
+  createIPWhiteList,
+  createNews,
+  createPartner,
+  createRegion,
+  createRegionAdmin,
+  createStaffMember,
   createTestimonial,
+  deleteAffiliate,
+  deleteChauffeur,
+  deleteContentBlock,
+  deleteCrewMember,
+  deleteFAQById,
+  deleteFleet,
+  deleteIPWhiteListById,
+  deleteNewsById,
+  deletePartnerById,
+  deleteRegion,
+  deleteRegionAdmin,
+  deleteStaffMember,
   deleteTestimonial,
+  deleteUser,
+  editAffiliate,
+  editChauffeur,
+  editContentBlock,
+  editCrewMember,
+  editFAQById,
+  editFleetById,
+  editIPWhiteListById,
+  editNewsById,
+  editPartnerById,
+  editRegion,
+  editRegionAdmin,
+  editStaffMember,
   editTestimonial,
-} from "@/api/testimonial.api";
-import { updateUser } from "@/api/updateUserById.api";
+  login,
+  updateUser,
+} from "@/api";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
@@ -188,7 +172,7 @@ const useEditfleetMutation = () =>
 
 const useDeletefleetMutation = (refetch: TRefetch) =>
   useMutation({
-    mutationFn: deletefleet,
+    mutationFn: deleteFleet,
     onSuccess: () => {
       refetch();
     },
@@ -215,7 +199,7 @@ const useDeletefleetMutation = (refetch: TRefetch) =>
 
 const useBulkDeletefleetMutation = () =>
   useMutation({
-    mutationFn: bulkDeletefleet,
+    mutationFn: bulkDeleteFleet,
     onSuccess: (res) => res,
     onError: (err: unknown) => {
       let errorMessage = "An unexpected error occurred";

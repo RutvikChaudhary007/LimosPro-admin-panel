@@ -19,7 +19,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
-import type { INotification } from "@/api/notification.api";
+import type { INotification } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

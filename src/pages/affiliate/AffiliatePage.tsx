@@ -5,9 +5,7 @@ import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import UsefetchAllAffiliate, {
-  getAllAffiliate,
-} from "@/api/getAllAffiliate.api";
+import { getAllAffiliate, useFetchAllAffiliate } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -132,7 +130,7 @@ function AffiliatePage() {
     refetch,
     isFetching,
     isError,
-  } = UsefetchAllAffiliate({
+  } = useFetchAllAffiliate({
     DateRange: { startDate, endDate },
     page: newPage,
     limit: perPage,

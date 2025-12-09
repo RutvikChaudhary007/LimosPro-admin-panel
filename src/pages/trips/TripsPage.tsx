@@ -3,7 +3,7 @@ import type { Table } from "@tanstack/react-table";
 import { Search } from "lucide-react";
 import { type JSX, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetchAllTrips from "@/api/getAllTrips.api";
+import { useFetchAllTrips } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";

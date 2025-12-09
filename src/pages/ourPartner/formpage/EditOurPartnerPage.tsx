@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchPartnerById } from "@/api/ourPartners.api";
+import { useFetchPartnerById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import OurPartnerForm, {
   type TOurPartnerForm,

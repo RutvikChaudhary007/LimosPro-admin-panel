@@ -5,7 +5,7 @@ import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import useFetchALLPartners from "@/api/ourPartners.api";
+import { useFetchAllPartners } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -31,7 +31,7 @@ const OurPartnerPage = () => {
   const [perPage, setPerPage] = useState(10);
   const [newPage, setNewPage] = useState(1);
   // const [data, setData] = useState<TOurPartner[]>(tableData);
-  const { data, refetch, isFetching, isError } = useFetchALLPartners({
+  const { data, refetch, isFetching, isError } = useFetchAllPartners({
     page: newPage,
     limit: perPage,
   });

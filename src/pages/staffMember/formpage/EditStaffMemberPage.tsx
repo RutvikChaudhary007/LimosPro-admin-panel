@@ -3,7 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchOneStaffMember } from "@/api/staffMember.api";
+import { useFetchOneStaffMember } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import StaffMemberForm from "@/components/staffMember/StaffMemberForm";

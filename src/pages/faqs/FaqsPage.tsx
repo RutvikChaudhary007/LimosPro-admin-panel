@@ -3,7 +3,7 @@
 import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetchALLFAQs from "@/api/faq.api";
+import { useFetchAllFAQs } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -29,7 +29,7 @@ const FaqsPage = () => {
   const [newPage, setNewPage] = useState(1);
   const [tableRef, setTableRef] = useState<any>(null);
   const [perPage, setPerPage] = useState(10);
-  const { data, refetch, isFetching, isError } = useFetchALLFAQs({
+  const { data, refetch, isFetching, isError } = useFetchAllFAQs({
     page: newPage,
     limit: perPage,
   });

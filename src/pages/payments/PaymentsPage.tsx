@@ -4,7 +4,7 @@ import { IconFilterX } from "@tabler/icons-react";
 import { Download } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetchAllPayments from "@/api/payment.api";
+import { useFetchAllPayments } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";

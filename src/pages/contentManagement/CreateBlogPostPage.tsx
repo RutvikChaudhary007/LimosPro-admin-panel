@@ -4,7 +4,7 @@ import type { FC } from "react";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { blogService } from "@/api/contentServices.api";
+import { blogService } from "@/api";
 import BlogForm from "@/components/contentManagement/BlogForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { constant } from "@/lib/constant";

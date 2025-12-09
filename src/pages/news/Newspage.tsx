@@ -5,7 +5,7 @@ import { Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import useFetchALLNews from "@/api/news.api";
+import { useFetchAllNews } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -30,7 +30,7 @@ const Newspage = () => {
   const [tableRef, setTableRef] = useState<Table<TNews> | null>(null);
   const [perPage, setPerPage] = useState(10);
   const [newPage, setNewPage] = useState(1);
-  const { data, refetch, isFetching, isError } = useFetchALLNews({
+  const { data, refetch, isFetching, isError } = useFetchAllNews({
     page: newPage,
     limit: perPage,
   });

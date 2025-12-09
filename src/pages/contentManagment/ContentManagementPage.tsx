@@ -3,9 +3,7 @@
 import { Plus, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetchAllContentBlock, {
-  useFetchPageContentBlockTab,
-} from "@/api/contentBlock.api";
+import { useFetchAllContentBlock, useFetchPageContentBlockTab } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { getHomeContent, type THomeContent } from "@/components/table/column";

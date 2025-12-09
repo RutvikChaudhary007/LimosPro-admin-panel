@@ -3,7 +3,7 @@ import type { Table } from "@tanstack/react-table";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UsefetchAllUsers from "@/api/getAllUser.api";
+import { useFetchAllUsers } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -96,7 +96,7 @@ function UsersPage() {
 
   const [tableRef, setTableRef] = useState<Table<TUsers> | null>(null);
 
-  const { data, refetch, isFetching, isError } = UsefetchAllUsers({
+  const { data, refetch, isFetching, isError } = useFetchAllUsers({
     DateRange: { startDate, endDate },
     page: newPage,
     status: selectedStatus,

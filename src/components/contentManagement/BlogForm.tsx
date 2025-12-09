@@ -4,9 +4,11 @@ import { Save, X } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
-import UsefetchAllUsers from "@/api/getAllUser.api";
-import useFetchAllMetaKeywords from "@/api/metaKeyWord.api";
-import useFetchAllTags from "@/api/tag.api";
+import {
+  useFetchAllMetaKeywords,
+  useFetchAllTags,
+  useFetchAllUsers,
+} from "@/api";
 import { AutoCompleteInput } from "@/components/AutoCompleteInput";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -181,7 +183,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
 
     const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
     const { data: tagsData } = useFetchAllTags({});
-    const { data: usersData, isFetching: userIsFetching } = UsefetchAllUsers({
+    const { data: usersData, isFetching: userIsFetching } = useFetchAllUsers({
       DateRange: { startDate: undefined, endDate: undefined },
       limit: 100,
       queryOptions: {

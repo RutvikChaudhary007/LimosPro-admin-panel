@@ -4,7 +4,7 @@ import { IconFilterX } from "@tabler/icons-react";
 import { Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UsefetchAllFleets from "@/api/getAllFleets.api";
+import { useFetchAllFleets } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -89,7 +89,7 @@ function FleetPage() {
     return { startDate: start, endDate: selectedTime ? end : undefined };
   }, [selectedTime]);
 
-  const { data, refetch, isPending, isError } = UsefetchAllFleets({
+  const { data, refetch, isPending, isError } = useFetchAllFleets({
     DateRange: { startDate, endDate },
     page: newPage,
     limit: perPage,
