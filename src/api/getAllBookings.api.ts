@@ -70,6 +70,7 @@ const UsefetchAllBookings = ({
     queryFn: () => getAllBookings(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
+    staleTime: 0, // no caching
     ...queryOptions,
   });
 

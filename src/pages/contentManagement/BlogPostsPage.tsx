@@ -292,7 +292,10 @@ const BlogPostsPage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {blogPosts.filter((post) => post.status === "archive").length}
+                  {
+                    blogPosts.filter((post) => post.status === "archived")
+                      .length
+                  }
                 </div>
               </CardContent>
             </CardBody>

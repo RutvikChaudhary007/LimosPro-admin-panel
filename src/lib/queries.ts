@@ -2,6 +2,7 @@ import {
   type QueryObserverResult,
   type RefetchOptions,
   useMutation,
+  useQueryClient,
 } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -1129,62 +1130,80 @@ const useBulkDeleteTripsMutation = () =>
  * @returns
  */
 
-const useCreateRegionMutation = () =>
-  useMutation({
+const useCreateRegionMutation = () => {
+  const clientQuery = useQueryClient();
+
+  return useMutation({
     mutationFn: createRegion,
+
     onSuccess: (data) => {
+      ["Regions", "notifications"].forEach((key) =>
+        clientQuery.invalidateQueries({ queryKey: [key] }),
+      );
       return data;
     },
+
     onError: (err: unknown) => {
-      if (err && typeof err === "object" && "isAxiosError" in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        throw new Error(
-          axiosError.response?.data?.message ||
-            axiosError.response?.data?.error ||
-            "An unexpected error occurred",
-        );
-      }
-      throw new Error("An unexpected error occurred");
+      const axiosErr = err as AxiosError<ApiErrorResponse>;
+      const message =
+        axiosErr?.response?.data?.message ||
+        axiosErr?.response?.data?.error ||
+        "An unexpected error occurred";
+
+      throw new Error(message);
     },
   });
+};
 
-const useEditRegionMutation = () =>
-  useMutation({
+const useEditRegionMutation = () => {
+  const clientQuery = useQueryClient();
+
+  return useMutation({
     mutationFn: editRegion,
-    onSuccess: (data) => {
-      return data;
-    },
-    onError: (err: unknown) => {
-      if (err && typeof err === "object" && "isAxiosError" in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        throw new Error(
-          axiosError.response?.data?.message ||
-            axiosError.response?.data?.error ||
-            "An unexpected error occurred",
-        );
-      }
-      throw new Error("An unexpected error occurred");
-    },
-  });
 
-const useDeleteRegionMutation = () =>
-  useMutation({
-    mutationFn: deleteRegion,
     onSuccess: (data) => {
+      ["Regions", "notifications"].forEach((key) =>
+        clientQuery.invalidateQueries({ queryKey: [key] }),
+      );
       return data;
     },
+
     onError: (err: unknown) => {
-      if (err && typeof err === "object" && "isAxiosError" in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
-        throw new Error(
-          axiosError.response?.data?.message ||
-            axiosError.response?.data?.error ||
-            "An unexpected error occurred",
-        );
-      }
-      throw new Error("An unexpected error occurred");
+      const axiosErr = err as AxiosError<ApiErrorResponse>;
+      const message =
+        axiosErr?.response?.data?.message ||
+        axiosErr?.response?.data?.error ||
+        "An unexpected error occurred";
+
+      throw new Error(message);
     },
   });
+};
+
+const useDeleteRegionMutation = () => {
+  const clientQuery = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteRegion,
+
+    onSuccess: (data) => {
+      ["Regions", "notifications"].forEach((key) =>
+        clientQuery.invalidateQueries({ queryKey: [key] }),
+      );
+      return data;
+    },
+
+    onError: (err: unknown) => {
+      const axiosErr = err as AxiosError<ApiErrorResponse>;
+      const message =
+        axiosErr?.response?.data?.message ||
+        axiosErr?.response?.data?.error ||
+        "An unexpected error occurred";
+
+      throw new Error(message);
+    },
+  });
+};
 
 /**
  * #####################################

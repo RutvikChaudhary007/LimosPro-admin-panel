@@ -119,6 +119,8 @@ export function PaginationControls({
     { label: "30", value: "30" },
   ];
 
+  const [{ value: perPageValue }] = perPageOptions;
+
   return (
     <div className="flex justify-between items-center w-full gap-3">
       {/* LEFT: Page Info Section */}
@@ -144,7 +146,7 @@ export function PaginationControls({
       {/* LEFT: Rows per Page Selector */}
       {showperPageSelector &&
         totalItems !== undefined &&
-        totalItems > perPage && (
+        totalItems > Number(perPageValue) && (
           <div className="flex items-center gap-2 shrink-0">
             <span className="font-quicksand text-sm text-base-black hidden">
               Rows per page:
@@ -162,7 +164,7 @@ export function PaginationControls({
         )}
 
       {/* RIGHT: Pagination Controls */}
-      {totalItems !== undefined && totalItems > perPage && (
+      {totalItems !== undefined && totalItems > Number(perPageValue) && (
         <Pagination className={cn("justify-end", className)}>
           <PaginationContent>
             {/* Previous Button */}

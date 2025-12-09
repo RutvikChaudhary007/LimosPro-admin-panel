@@ -131,7 +131,7 @@ const ReportPage = () => {
         />
 
         {/* Graph data */}
-        <div className="w-full flex gap-8">
+        <div className="w-full flex gap-6">
           <div className="w-full h-[400px] rounded border border-base-light-gray shadow-base-md p-4">
             <h2 className="font-semibold text-black pb-1">Total Revenue</h2>
             <ResponsiveContainer width="100%" height={355}>
@@ -177,7 +177,7 @@ const ReportPage = () => {
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="w-full flex gap-8">
+        <div className="w-full flex gap-6">
           <div className="w-full h-[473px] rounded border border-base-light-gray shadow-base-md p-4">
             <Doughnut
               data={Chartdata}

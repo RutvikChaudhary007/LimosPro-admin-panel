@@ -122,7 +122,7 @@ const OurPartnerPage = () => {
             <InputGroup>
               <InputGroupInput
                 type="search"
-                placeholder="search"
+                placeholder="Search"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
               />

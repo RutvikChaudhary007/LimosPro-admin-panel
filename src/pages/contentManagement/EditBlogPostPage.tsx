@@ -1,6 +1,6 @@
-import { ArrowLeft } from "lucide-react";
+import { Archive, ArrowLeft } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { blogService } from "@/api/contentServices.api";
@@ -17,6 +17,7 @@ const EditBlogPostPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
+  const blogFormRef = useRef<{ archivePost: () => void }>(null);
 
   const fetchBlogPost = async () => {
     try {
@@ -91,9 +92,19 @@ const EditBlogPostPage: React.FC = () => {
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.BLOG_POSTS,
         }}
+        action={{
+          variant: "outlineNavBtnSecondary",
+          label: "Archive Post",
+          icon: <Archive />,
+          className: "border border-base-secondary",
+          onClick: () => {
+            blogFormRef.current?.archivePost();
+          },
+        }}
       />
 
       <BlogForm
+        ref={blogFormRef}
         initialData={blogPost}
         onSubmit={handleUpdateBlogPost}
         mode="edit"

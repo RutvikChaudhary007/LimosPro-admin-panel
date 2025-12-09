@@ -1,7 +1,7 @@
 import axios from "axios";
-import { ArrowLeft } from "lucide-react";
+import { Archive, ArrowLeft } from "lucide-react";
 import type { FC } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { blogService } from "@/api/contentServices.api";
@@ -12,6 +12,7 @@ import { constant } from "@/lib/constant";
 const CreateBlogPostPage: FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const blogFormRef = useRef<{ archivePost: () => void }>(null);
 
   const handleCreateBlogPost = async (data: FormData) => {
     try {
@@ -49,9 +50,19 @@ const CreateBlogPostPage: FC = () => {
           icon: <ArrowLeft />,
           link: constant.ROUTING_URLS.BLOG_POSTS,
         }}
+        action={{
+          variant: "outlineNavBtnSecondary",
+          label: "Archive Post",
+          icon: <Archive />,
+          className: "border border-base-secondary",
+          onClick: () => {
+            blogFormRef.current?.archivePost();
+          },
+        }}
       />
 
       <BlogForm
+        ref={blogFormRef}
         onSubmit={handleCreateBlogPost}
         mode="create"
         loading={loading}

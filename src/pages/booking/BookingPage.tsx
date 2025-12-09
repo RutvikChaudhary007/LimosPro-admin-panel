@@ -52,7 +52,7 @@ function BookingPage() {
     to: undefined,
   });
   // const [data, setData] = useState<TBooking[]>(tableData);
-  const { data, isFetching, error, isError } = UsefetchAllBookings({
+  const { data, isFetching, error, isError, refetch } = UsefetchAllBookings({
     DateRange: dateRange,
     page: newPage,
     limit: perPage,
