@@ -120,7 +120,7 @@ export default function Dashboard() {
     return { startDate: start, endDate: end };
   }, [selectedTime, selectedYear]);
 
-  const { data, isFetching, isPlaceholderData } = useFetchDashboard({
+  const { data, isFetching } = useFetchDashboard({
     DateRange: { startDate, endDate },
   });
 
