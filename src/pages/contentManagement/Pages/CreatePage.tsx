@@ -1,10 +1,11 @@
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import { useCreateBusinessPageLayout } from "@/api/pages/businessPageLayout.api";
+import { useCreateBusinessPageLayout } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import type { PageTemplateFormData } from "@/components/pagebuilder.businessForm";
 import { toastPromise } from "@/hooks/use-toast";
+import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 import { styledLog } from "@/utils/styledLog";
 import PageForm from "./PageForm";
@@ -37,8 +38,11 @@ function CreatePage() {
           breadcrumbs={[
             { label: "Home", path: "/" },
             { label: "Content Management" },
-            { label: "Pages", path: "/content-management/pages" },
-            { label: "Create" },
+            {
+              label: "Pages",
+              path: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
+            },
+            { label: "Create Page" },
           ]}
         />
         <PageForm onSubmit={handleSubmit} />

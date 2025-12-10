@@ -8,7 +8,7 @@ const HeaderPrimary = () => (
         {/* Logo */}
         <a href="/">
           <img
-            src="/Logos/logo-limospro-1.png"
+            src="https://beta.limospro.com/_next/image?url=%2FLogos%2Flogo-limospro-1.png&w=256&q=75"
             alt="Limospro Logo"
             width={200}
             height={60}
@@ -63,12 +63,12 @@ const HeaderPrimary = () => (
 // Mock Footer Component
 const FooterPrimary = () => (
   <footer className="w-full bg-gradient-to-r from-[#000911] to-[#001F3E] flex items-center justify-center">
-    <div className="w-[80%] max-w-[1440px] flex flex-col py-16">
+    <div className="w-full  flex flex-col py-16">
       <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 justify-between">
         {/* Logo and description */}
         <div className="flex flex-col gap-6">
           <img
-            src="/Logos/logo-limospro-1.png"
+            src="https://beta.limospro.com/_next/image?url=%2FLogos%2Flogo-limospro-1.png&w=256&q=75"
             alt="Limospro Logo"
             width={300}
             height={100}

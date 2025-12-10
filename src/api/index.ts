@@ -27,6 +27,8 @@ export * from "./content.api";
 export * from "./fleet.api";
 // Notification Module
 export * from "./notification.api";
+// Pages & Page Layout Module
+export * from "./pages/businessPageLayout.api";
 // Payment & Refund Module
 export * from "./payment.api";
 // Region Module

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useFetchBusinessPageLayoutById,
   useUpdateBusinessPageLayout,
-} from "@/api/pages/businessPageLayout.api";
+} from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";

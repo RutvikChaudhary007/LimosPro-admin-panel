@@ -1,6 +1,6 @@
 // // import React from "react";
 // import { useParams } from "react-router-dom";
-// // import { useFetchPageTemplateById } from "@/api/pages/businessPageLayout.api";
+// // import { useFetchPageTemplateById } from "@/api";
 // import { ErrorCard } from "@/components/common/ErrorCard";
 // import { Spinner } from "@/components/Spinner";
 // // import PageTitle from "@/components/common/PageTitle";
