@@ -124,15 +124,15 @@ export default function Dashboard() {
     DateRange: { startDate, endDate },
   });
 
-  console.log("Dashboard Render:", {
-    selectedTime,
-    selectedYear,
-    startDate,
-    endDate,
-    isFetching,
-    isPlaceholderData,
-    data,
-  });
+  // console.log("Dashboard Render:", {
+  //   selectedTime,
+  //   selectedYear,
+  //   startDate,
+  //   endDate,
+  //   isFetching,
+  //   isPlaceholderData,
+  //   data,
+  // });
 
   const fleetDistributionData = useMemo(
     () => ({

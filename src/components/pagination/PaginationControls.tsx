@@ -127,9 +127,15 @@ export function PaginationControls({
       {showPageInfo && totalItems !== undefined && totalItems > 0 && (
         <div className="font-quicksand text-sm text-base-black shrink-0">
           Showing{" "}
-          <span className="font-semibold text-black">{currentPage}</span>
+          <span className="font-semibold text-black">
+            {totalItems && totalItems > 0 ? (currentPage - 1) * perPage + 1 : 0}
+          </span>
           {" - "}
-          <span className="font-semibold text-black">{totalPages}</span>
+          <span className="font-semibold text-black">
+            {totalItems && currentPage * perPage < totalItems
+              ? currentPage * perPage
+              : totalItems}
+          </span>
           {totalItems !== undefined && (
             <>
               {" "}

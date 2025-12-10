@@ -107,6 +107,7 @@ export type TDashboardBooking = {
 export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
   return [
     {
+      id: "userName",
       accessorKey: "userName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Users" />
@@ -114,6 +115,7 @@ export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
       enableSorting: false,
     },
     {
+      id: "bookingId",
       accessorKey: "bookingId",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Booking ID" />
@@ -121,6 +123,7 @@ export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
       enableSorting: false,
     },
     {
+      id: "price",
       accessorKey: "price",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Price" />
@@ -128,6 +131,7 @@ export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
       enableSorting: false,
     },
     {
+      id: "status",
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
@@ -885,6 +889,7 @@ export function getBooking(
       enableHiding: false,
     },
     {
+      id: "affiliateId",
       accessorKey: "affiliateId",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Affiliate Id" />
@@ -892,6 +897,7 @@ export function getBooking(
       enableSorting: false,
     },
     {
+      id: "bookingType",
       accessorKey: "bookingType",
       header: ({ column }) => (
         <DataTableColumnHeader
@@ -934,6 +940,7 @@ export function getBooking(
       enableSorting: false,
     },
     {
+      id: "scheduledTime",
       accessorKey: "scheduledTime",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Scheduled Time" />
@@ -942,6 +949,7 @@ export function getBooking(
       enableSorting: false,
     },
     {
+      id: "status",
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
