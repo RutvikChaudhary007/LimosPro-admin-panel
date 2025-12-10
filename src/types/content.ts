@@ -103,43 +103,26 @@ export interface PageTemplate {
   id: string;
   pageName: string;
   slug: string;
-  layout: {
-    header: {
-      logo: string;
-      navigation: Array<{
-        label: string;
-        url: string;
-        children?: Array<{
-          label: string;
-          url: string;
-        }>;
-      }>;
-    };
-    footer: {
-      companyInfo: {
-        name: string;
-        description: string;
-        address: string;
-        phone: string;
-        email: string;
-      };
-      socialLinks: Array<{
-        platform: string;
-        url: string;
-        icon: string;
-      }>;
-      quickLinks: Array<{
-        label: string;
-        url: string;
-      }>;
-    };
-    contentBlocks: string[];
+  hero: {
+    image?: string;
+    alt?: string;
+    h1?: string;
+    p?: string;
+    btn?: string;
   };
+  content: Array<{
+    type: string;
+    id?: string;
+    [key: string]: any;
+  }>;
   seo?: {
-    title: string;
-    description: string;
-    keywords: string[];
-    ogImage: string;
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    ogImage?: string;
+    openGraph?: any;
+    twitter?: any;
+    jsonLd?: any;
   };
   isActive: boolean;
   createdAt: Date;
@@ -216,14 +199,27 @@ export interface ContentBlockFormData {
 export interface PageTemplateFormData {
   pageName: string;
   slug: string;
-  layout: unknown;
-  seo?: {
-    title: string;
-    description: string;
-    keywords: string[];
-    ogImage: string;
+  hero: {
+    image?: string;
+    alt?: string;
+    h1?: string;
+    p?: string;
+    btn?: string;
   };
-  isActive: boolean;
+  content: Array<{
+    type: string;
+    id?: string;
+    [key: string]: any;
+  }>;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    openGraph?: any;
+    twitter?: any;
+    jsonLd?: any;
+  };
+  isActive?: boolean;
 }
 
 export interface MediaUploadFormData {

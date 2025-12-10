@@ -5,10 +5,7 @@ import { IconLock, IconMail, IconUser } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
-import {
-  default as useFetchAllRegions,
-  default as useFetchAllStaffRoles,
-} from "@/api";
+import { useFetchAllRegions, useFetchAllStaffRoles } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";

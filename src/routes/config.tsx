@@ -173,14 +173,17 @@ const ReportPage = lazy(() => import("../pages/report/ReportPage"));
 
 // Content Management
 const ContentManagement = lazy(
-  () => import("../pages/contentManagment/ContentManagementPage"),
+  () => import("../pages/contentManagement/Pages/PageListPage"),
 );
 const CreateContent = lazy(
-  () => import("../pages/contentManagment/formpage/CreateContent"),
+  () => import("../pages/contentManagement/Pages/CreatePage"),
 );
 const EditContent = lazy(
-  () => import("../pages/contentManagment/formpage/EditContent"),
+  () => import("../pages/contentManagement/Pages/EditPage"),
 );
+// const PagePreview = lazy(
+//   () => import("../pages/contentManagement/Pages/PagePreview"),
+// );
 const SeoPage = lazy(() => import("../pages/contentManagment/SeoPage"));
 
 // Blog Posts
@@ -461,6 +464,10 @@ export const routesConfig = [
         path: constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT,
         element: EditContent,
       },
+      // {
+      //   path: constant.ROUTING_URLS.PAGE_PREVIEW,
+      //   element: PagePreview,
+      // },
     ],
   },
   {

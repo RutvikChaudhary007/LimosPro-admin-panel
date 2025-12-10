@@ -76,6 +76,7 @@
 
   /* Font Families */
   --font-family: var(--font-family);
+  --font-varela: var(--font-varela);
   --font-montserrat: var(--font-montserrat);
   --font-quicksand: var(--font-quicksand);
 }
@@ -115,6 +116,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   --font-family: "Montserrat", "Quicksand", sans-serif;
+  --font-varela: "Varela Round", sans-serif;
   --font-montserrat: "Montserrat", sans-serif;
   --font-quicksand: "Quicksand", sans-serif;
 
@@ -211,6 +213,17 @@
 }
 
 @layer utilities {
+  .editor-content > h2 {
+    font-family: var(--font-montserrat);
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  .editor-content > p {
+    font-family: var(--font-varela);
+    font-size: 1rem;
+  }
+
   @keyframes skeletonShimmer {
     0% {
       background-position: -500px 0;

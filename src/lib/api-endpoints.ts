@@ -143,22 +143,6 @@ export const API_ENDPOINTS: Record<string, any> = {
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/blog/posts/${id}`,
     GET_STATS: `${ADMIN_SERVICE_URL}/blog/stats`,
   },
-  META_KEY_WORD: {
-    GET_ALL: `${ADMIN_SERVICE_URL}/meta-keywords`,
-    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
-    CREATE: `${ADMIN_SERVICE_URL}/meta-keywords`,
-    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
-    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
-    BULK_DELETE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
-  },
-  TAG: {
-    GET_ALL: `${ADMIN_SERVICE_URL}/tags`,
-    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
-    CREATE: `${ADMIN_SERVICE_URL}/tags`,
-    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
-    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
-    BULK_DELETE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
-  },
   MEDIA: {
     GET_ALL: `${BOOKING_SERVICE_URL}/media/media`,
     GET_BY_ID: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,
@@ -189,18 +173,13 @@ export const API_ENDPOINTS: Record<string, any> = {
   },
   REGIONAL_ADMIN: {
     GET_ALL: `${ADMIN_SERVICE_URL}/regional-admins`,
-    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admin/:id`,
+    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admins`,
     CREATE: `${ADMIN_SERVICE_URL}/regional-admin/:regionId`,
     EDIT: `${ADMIN_SERVICE_URL}/regional-admins`,
     DELETE: `${ADMIN_SERVICE_URL}/regional-admins`,
   },
   DASHBOARD: {
     GET: `${ADMIN_SERVICE_URL}/report/dashboard`,
-  },
-  CONTACT_REQUEST: {
-    GET_ALL: `${ADMIN_SERVICE_URL}/contact-requests`,
-    GET_BY_ID: `${ADMIN_SERVICE_URL}/contact-requests/:id`,
-    CREATE: `${ADMIN_SERVICE_URL}/contact-requests`,
   },
   NOTIFICATION: {
     GET_ALL: `${ADMIN_SERVICE_URL}/notifications`,
@@ -212,5 +191,13 @@ export const API_ENDPOINTS: Record<string, any> = {
       `${ADMIN_SERVICE_URL}/notification/${id}/read`,
     MARK_AS_READ_ALL: `${ADMIN_SERVICE_URL}/notifications/mark-all-read`,
     BULK_DELETE: `${ADMIN_SERVICE_URL}/notifications/bulk-delete`,
+  },
+  BUSINESS_PAGE_LAYOUT: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/business-layout`,
+    GET_BY_ID: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/business-layout/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/business-layout`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/business-layout/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/business-layout/${id}`,
   },
 };

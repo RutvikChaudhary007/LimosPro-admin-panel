@@ -124,7 +124,7 @@ const data = {
           title: "Pages",
           url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
         },
-        { title: "Seo", url: constant.ROUTING_URLS.SEO },
+        { title: "SEO", url: constant.ROUTING_URLS.SEO },
       ],
     },
     {

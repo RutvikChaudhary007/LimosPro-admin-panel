@@ -72,6 +72,7 @@ export const constant = {
     CONTENT_MANAGEMENT_ALL_PAGES: "/content-management/pages",
     CREATE_CONTENT_MANAGEMENT: "/content-management/pages/create",
     EDIT_CONTENT_MANAGEMENT: "/content-management/pages/:id/edit",
+    PAGE_PREVIEW: "/content-management/pages/:id/preview",
 
     // Content Management SEO URLs
     SEO: "/content-management/seo",
@@ -123,5 +124,66 @@ export const constant = {
     // NOTIFICATION URLS
     NOTIFICATION: "/notifications",
     VIEW_NOTIFICATION: "/notifications:/id",
+  },
+  EDITOR_FORMATS: {
+    modules: {
+      syntax: true, // highlight.js needed!
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, 4, 5, 6, false] }, { font: [] }],
+          [{ size: ["small", false, "large", "huge"] }],
+
+          ["bold", "italic", "underline", "strike"],
+          ["blockquote", "code-block"],
+
+          [{ align: [] }, { direction: "rtl" }],
+
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ indent: "-1" }, { indent: "+1" }],
+
+          [{ color: [] }, { background: [] }],
+
+          [{ script: "sub" }, { script: "super" }],
+
+          ["link", "image", "video"],
+
+          // ["emoji"],  ❌ ONLY if emoji module installed
+
+          ["clean"],
+          ["undo", "redo"],
+        ],
+      },
+    },
+
+    formats: [
+      "header",
+      "font",
+      "size",
+
+      "bold",
+      "italic",
+      "underline",
+      "strike",
+
+      "blockquote",
+      "code-block",
+
+      "align",
+      "direction",
+
+      "list", // bullet + ordered handled internally
+      "indent",
+
+      "color",
+      "background",
+
+      "script",
+
+      "link",
+      "image",
+      "video",
+
+      "table", // only works if you installed quill-table
+    ],
   },
 };
