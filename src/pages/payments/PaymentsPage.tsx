@@ -14,7 +14,7 @@ import { getPayments, type TPayments } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { SelectDropDown } from "@/components/ui/select";
-import usePagination from "@/hooks/use-pagination";
+import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 

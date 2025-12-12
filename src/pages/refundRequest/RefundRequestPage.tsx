@@ -34,7 +34,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import usePagination from "@/hooks/use-pagination";
+import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 

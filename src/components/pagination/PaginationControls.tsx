@@ -68,6 +68,13 @@ export function PaginationControls({
 
   const pageRange = getPageRange();
 
+  const startIndex =
+    totalItems && totalItems > 0 ? (currentPage - 1) * perPage + 1 : 0;
+  const endIndex =
+    totalItems && currentPage * perPage < totalItems
+      ? currentPage * perPage
+      : totalItems;
+
   const handlePagination = (
     type: "page" | "perPage" | "next" | "prev",
     value?: number,
@@ -126,16 +133,9 @@ export function PaginationControls({
       {/* LEFT: Page Info Section */}
       {showPageInfo && totalItems !== undefined && totalItems > 0 && (
         <div className="font-quicksand text-sm text-base-black shrink-0">
-          Showing{" "}
-          <span className="font-semibold text-black">
-            {totalItems && totalItems > 0 ? (currentPage - 1) * perPage + 1 : 0}
-          </span>
+          Showing <span className="font-semibold text-black">{startIndex}</span>
           {" - "}
-          <span className="font-semibold text-black">
-            {totalItems && currentPage * perPage < totalItems
-              ? currentPage * perPage
-              : totalItems}
-          </span>
+          <span className="font-semibold text-black">{endIndex}</span>
           {totalItems !== undefined && (
             <>
               {" "}

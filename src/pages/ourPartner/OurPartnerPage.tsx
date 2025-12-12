@@ -19,8 +19,8 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
+import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";

@@ -20,8 +20,8 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
-import usePagination from "@/hooks/use-pagination";
 import { toastPromise } from "@/hooks/use-toast";
+import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";

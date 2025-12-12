@@ -20,7 +20,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import usePagination from "@/hooks/use-pagination";
+import usePagination from "@/hooks/usePagination";
 import { generatePageTitle } from "@/utils/seo";
 
 const ContactRequestsPage = () => {

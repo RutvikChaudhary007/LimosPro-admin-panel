@@ -19,7 +19,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
-import usePagination from "@/hooks/use-pagination";
+import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";

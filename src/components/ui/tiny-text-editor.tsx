@@ -149,7 +149,7 @@ const TinyEditorRHF = ({
   }, []);
 
   return (
-    <div className="w-full mb-4" {...rest}>
+    <div {...rest}>
       <Editor
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
@@ -763,8 +763,8 @@ const TinyEditorRHF = ({
           },
 
           ...init,
-          skin: "oxide-dark",
-          content_css: "dark",
+          // skin: "oxide-dark",
+          // content_css: "light",
           branding: false,
           promotion: false,
         }}

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { AreaLineChart } from "@/components/chart/AreaLineChart";
 import { Card, CardBody, CardContent } from "@/components/ui/card";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/useMobile";
 
 type TData = {
   month: string;

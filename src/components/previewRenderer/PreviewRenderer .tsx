@@ -531,14 +531,17 @@ export default function PreviewRenderer({ data }: PreviewRendererProps) {
                       {block.serviceCards &&
                         block.serviceCards.length > 0 &&
                         block.serviceCards.map(
-                          (servicecard: ServiceCardProps, cardIndex: number) => (
+                          (
+                            servicecard: ServiceCardProps,
+                            cardIndex: number,
+                          ) => (
                             <ServiceCard
                               key={cardIndex}
                               src={servicecard.src}
                               alt={servicecard.alt}
                               title={servicecard.title}
                               description={servicecard.description}
-                              button={servicecard?.button }
+                              button={servicecard?.button}
                               fontColour="text-[#003366]"
                               fontWidth="font-bold"
                               fontSize="text-[22px] leading-[120%]"
@@ -694,7 +697,10 @@ export default function PreviewRenderer({ data }: PreviewRendererProps) {
           <meta property="og:title" content={seo?.openGraph?.title ?? ""} />
         )}
         {seo?.openGraph?.description && (
-          <meta property="og:description" content={seo?.openGraph?.description ?? ""} />
+          <meta
+            property="og:description"
+            content={seo?.openGraph?.description ?? ""}
+          />
         )}
         {seo?.openGraph?.images?.map((img: string, i: number) => (
           <meta key={i} property="og:image" content={img} />
@@ -703,7 +709,10 @@ export default function PreviewRenderer({ data }: PreviewRendererProps) {
           <meta name="twitter:title" content={seo?.twitter?.title ?? ""} />
         )}
         {seo?.twitter?.description && (
-          <meta name="twitter:description" content={seo?.twitter?.description ?? ""} />
+          <meta
+            name="twitter:description"
+            content={seo?.twitter?.description ?? ""}
+          />
         )}
       </div>
     </div>
