@@ -1,4 +1,4 @@
-import { MetricCard } from "../../../components/ui/card";
+import { MetricCard } from "@/components/ui/card";
 
 type TData = {
   totalAffiliates: number;

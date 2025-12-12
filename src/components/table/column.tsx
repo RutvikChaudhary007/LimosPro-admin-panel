@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dialog";
 import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
-import { formatDate as notificationDateFormat } from "../layouts/partials/notifications-context";
+import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
 import AccessCell from "../regionAccess/RegionAccess";
 import { Badge } from "../ui/badge";
 import {

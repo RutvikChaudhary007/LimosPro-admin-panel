@@ -41,9 +41,9 @@ import IconSettings from "@/assets/Icons/settings.svg?react";
 // import IconTrips from "@/assets/Icons/trips.svg?react"
 import IconUsers from "@/assets/Icons/users.svg?react";
 
-import { NavDocuments } from "@/components/layouts/partials/nav-documents";
-import { NavMain } from "@/components/layouts/partials/nav-main";
-import { NavSecondary } from "@/components/layouts/partials/nav-secondary";
+import { NavDocuments } from "@/components/layouts/sidebar/nav-documents";
+import { NavMain } from "@/components/layouts/sidebar/nav-main";
+import { NavSecondary } from "@/components/layouts/sidebar/nav-secondary";
 import {
   Sidebar,
   SidebarContent,

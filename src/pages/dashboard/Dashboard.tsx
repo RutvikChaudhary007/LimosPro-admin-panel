@@ -5,7 +5,7 @@ import { useFetchDashboard } from "@/api";
 import TableAndPieChart, {
   type FleetStat,
 } from "@/components/dashboard/TableAndPieChart";
-import { ChartAreaInteractive } from "@/components/layouts/partials/chart-area-interactive";
+import { ChartAreaInteractive } from "@/components/layouts/shared/chart-area-interactive";
 import { Spinner } from "@/components/Spinner";
 import { getDashboardColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";

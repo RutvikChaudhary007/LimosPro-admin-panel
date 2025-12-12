@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { AuthHeader } from "./partials/auth-header";
+import { AuthHeader } from "./header/auth-header";
 
 function AuthLayout() {
   return (

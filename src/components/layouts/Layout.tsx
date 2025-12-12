@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import { AppSidebar } from "@/components/layouts/partials/app-sidebar";
-import { NotificationsProvider } from "@/components/layouts/partials/notifications-context";
-import { SiteFooter } from "@/components/layouts/partials/site-footer";
-import { SiteHeader } from "@/components/layouts/partials/site-header";
+import { SiteFooter } from "@/components/layouts/footer/site-footer";
+import { NotificationsProvider } from "@/components/layouts/header/notifications-context";
+import { SiteHeader } from "@/components/layouts/header/site-header";
+import { AppSidebar } from "@/components/layouts/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Layout() {
