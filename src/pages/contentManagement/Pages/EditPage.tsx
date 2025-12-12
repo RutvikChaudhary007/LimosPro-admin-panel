@@ -7,9 +7,9 @@ import {
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
-import type { PageTemplateFormData } from "@/components/pagebuilder.businessForm";
 import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
+import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import { generatePageTitle } from "@/utils/seo";
 import { styledLog } from "@/utils/styledLog";
 import PageForm from "./PageForm";

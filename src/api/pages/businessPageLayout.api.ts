@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { PageTemplateFormData } from "@/components/pagebuilder.businessForm";
 import type { PageTemplateQueryParams } from "@/types/content";
+import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../../lib/api-endpoints";
 

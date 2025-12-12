@@ -1,12 +1,14 @@
-import PageTemplateEditor, {
-  type PageTemplateFormData,
-} from "@/components/pagebuilder.businessForm";
+import PageTemplateEditor from "@/components/pagebuilder/PageBuilderBusinessForm";
+import type {
+  PageTemplateFormData,
+  PageTemplateWithTimestamps,
+} from "@/types/pagebuilder.types";
 
 function PageForm({
   initialData,
   onSubmit,
 }: {
-  initialData?: PageTemplateFormData;
+  initialData?: PageTemplateWithTimestamps;
   onSubmit: (data: PageTemplateFormData) => void;
 }) {
   return <PageTemplateEditor onSubmit={onSubmit} initialData={initialData} />;
