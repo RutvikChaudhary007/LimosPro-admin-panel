@@ -73,7 +73,6 @@ function TripsPage(): JSX.Element {
       setperPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
     } else {
       // Otherwise it's a page change
       setNewPage(value);
@@ -142,6 +141,7 @@ function TripsPage(): JSX.Element {
           <Spinner />
         ) : (
           <DataTable
+            key={`${perPage}-${newPage}`}
             columns={columns}
             data={currentItems}
             rowSelection={rowSelection}

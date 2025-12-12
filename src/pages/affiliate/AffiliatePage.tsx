@@ -197,7 +197,9 @@ function AffiliatePage() {
         loading: "Deleting Affiliate...",
         success: "Yeah! Affiliate deleted successfully!",
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to delete affiliate",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to delete affiliate",
       });
     } catch (error) {
       // Error handling is done in onError callback

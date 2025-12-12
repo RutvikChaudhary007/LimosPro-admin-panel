@@ -132,7 +132,9 @@ function ChauffeurPage() {
           return "Yeah! Chauffeur deleted successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to delete chauffeur",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to delete chauffeur",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -169,7 +171,7 @@ function ChauffeurPage() {
       setperPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
+      // refetch();
     } else {
       // Otherwise it's a page change
       setNewPage(value);

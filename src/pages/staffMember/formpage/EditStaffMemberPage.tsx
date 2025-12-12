@@ -1,5 +1,6 @@
 //@ts-nocheck
 
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -40,14 +41,14 @@ const EditStaffMemberPage = () => {
             return "Yeah! Staff member updated successfully";
           },
           error: (e) =>
-            e instanceof Error
-              ? e.message
+            e instanceof AxiosError
+              ? e.response?.data?.message
               : "Opps! Failed to update staff member",
         },
       );
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message);
       } else {
         toast.error("An unknown error occurred");
       }

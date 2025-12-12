@@ -63,7 +63,6 @@ export const useFetchAllTrips = ({
     queryFn: () => getAllTrips(tripStatus, page, limit),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 0,
   });
 
 /**

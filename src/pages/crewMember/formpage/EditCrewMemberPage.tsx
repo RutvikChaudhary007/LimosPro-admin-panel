@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import CrewMemberForm from "@/components/crewMember/crewMemberForm";
@@ -30,11 +31,13 @@ const EditCrewMemberPage = () => {
           return "Crew Member Updated Successfully!";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to Update Crew Member!",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to Update Crew Member!",
       });
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.message);
       } else {
         toast.error("Failed to Update Crew Member!");
       }

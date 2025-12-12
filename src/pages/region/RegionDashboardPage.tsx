@@ -52,7 +52,9 @@ function RegionDashboardPage() {
           return "Yeah! Region deleted successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Error deleting region",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Error deleting region",
       });
     } catch (error) {
       if (error instanceof Error) {

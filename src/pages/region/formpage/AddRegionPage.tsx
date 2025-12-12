@@ -24,7 +24,9 @@ function AddRegionPage() {
           return "Yeah! Region created successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to create region",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to create region",
       });
     } catch (error) {
       if (error instanceof Error) {

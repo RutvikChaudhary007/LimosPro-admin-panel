@@ -74,7 +74,9 @@ function EditAffiliatePage() {
           return "Yeah! Affiliate updated successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! failed to update affiliate.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! failed to update affiliate.",
       });
     } catch (error) {
       if (error instanceof Error) {

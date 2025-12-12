@@ -60,7 +60,9 @@ const CrewMemberPage = () => {
           return `Crew member deleted successfully`;
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to delete crew member",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to delete crew member",
       });
     } catch (error) {
       if (error instanceof Error) {

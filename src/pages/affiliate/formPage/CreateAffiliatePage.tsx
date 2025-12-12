@@ -26,7 +26,9 @@ function CreateAffiliatePage() {
           return "Affiliate created successfully!";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to create affiliate",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to create affiliate",
       });
     } catch (error) {
       // Error handling is done in onError callback

@@ -125,7 +125,9 @@ function UsersPage() {
         return "yeah! user deleted successfully";
       },
       error: (e) => {
-        return e instanceof Error ? e.message : "Failed to delete user.";
+        return e instanceof AxiosError
+          ? e.response?.data?.data?.error || e.response?.data?.message
+          : "Failed to delete user.";
       },
     });
     //   setData((prev) =>
@@ -148,7 +150,7 @@ function UsersPage() {
       setperPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
+      // refetch();
     } else {
       // Otherwise it's a page change
       setNewPage(value);

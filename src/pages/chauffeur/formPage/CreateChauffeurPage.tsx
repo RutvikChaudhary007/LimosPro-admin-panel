@@ -17,7 +17,9 @@ const CreateChauffeurPage = () => {
         loading: "Submitting...",
         success: "Chauffeur created successfully!",
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to create chauffeur",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to create chauffeur",
       });
     } catch (error) {
       // Error handling is done in onError callback

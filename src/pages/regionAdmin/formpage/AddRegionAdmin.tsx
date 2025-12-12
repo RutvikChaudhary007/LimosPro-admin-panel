@@ -23,7 +23,9 @@ function AddRegionAdmin() {
           return "Region admin created successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Error creating region admin",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Error creating region admin",
       });
     } catch (error) {
       if (error instanceof Error) {

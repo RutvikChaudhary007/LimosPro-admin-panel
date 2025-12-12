@@ -26,7 +26,9 @@ const CreateFleetPage = () => {
           return "Yeah! fleet created successfully.";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! failed to create fleet.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! failed to create fleet.",
       });
     } catch (error) {
       console.error("Error while creating fleet", error);

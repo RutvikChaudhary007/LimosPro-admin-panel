@@ -53,7 +53,9 @@ const OurPartnerPage = () => {
           return "Yeah! Partner deleted successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to delete partner",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to delete partner",
       });
     } catch (error) {
       if (error instanceof Error) {

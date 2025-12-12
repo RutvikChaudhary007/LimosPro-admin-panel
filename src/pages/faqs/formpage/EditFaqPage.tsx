@@ -27,7 +27,9 @@ const EditFaqPage = () => {
           return "Yeah! FAQ updated successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Edit FAQ failed",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Edit FAQ failed",
       });
     } catch (err) {
       if (err instanceof Error)

@@ -118,7 +118,9 @@ function FleetPage() {
   };
   const columns = getFleets(handleView, handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
@@ -129,7 +131,7 @@ function FleetPage() {
       setperPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
+      // refetch();
     } else {
       // Otherwise it's a page change
       setNewPage(value);

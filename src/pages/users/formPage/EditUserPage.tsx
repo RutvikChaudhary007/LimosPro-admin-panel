@@ -33,7 +33,9 @@ const EditUserPage = () => {
         loading: "Loading...",
         success: "Yeah! sucessfully updated the user.",
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to update the user.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to update the user.",
       });
     } catch (error) {
       console.error(error);

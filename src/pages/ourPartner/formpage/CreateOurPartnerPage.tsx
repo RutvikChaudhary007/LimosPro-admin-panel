@@ -25,7 +25,9 @@ const CreateOurPartnerPage = () => {
           return "Partner created successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to create partner.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to create partner.",
       });
     } catch (error) {
       if (error instanceof Error) {

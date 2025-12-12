@@ -23,7 +23,9 @@ const CreateContent: React.FC = () => {
           return "Yeah! Content created successfully.";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to create content.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to create content.",
       });
     } catch (error) {
       if (error instanceof Error) {

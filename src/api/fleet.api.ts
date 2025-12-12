@@ -68,7 +68,7 @@ export const useFetchAllFleets = ({
   limit?: number;
 }) =>
   useQuery({
-    queryKey: ["Fleets", { DateRange }, { page }, { limit }],
+    queryKey: ["Fleets", DateRange, page, limit],
     queryFn: () => getAllFleets(DateRange, page, limit),
     refetchOnWindowFocus: false,
     retry: false,

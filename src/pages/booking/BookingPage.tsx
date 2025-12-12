@@ -156,7 +156,7 @@ function BookingPage() {
       setperPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
+      // refetch();
     } else {
       setNewPage(value);
       setPage(value);
@@ -220,6 +220,8 @@ function BookingPage() {
           <Spinner />
         ) : (
           <DataTable
+            // key={perPage}
+            key={`${perPage}-${newPage}`}
             columns={columns}
             data={currentItems}
             rowSelection={rowSelection}

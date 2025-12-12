@@ -32,7 +32,9 @@ const CreateTestimonailPage = () => {
           return "Yeah! Testimonial created successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to create testimonial",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to create testimonial",
       });
     } catch (error) {
       if (error instanceof Error) {

@@ -87,7 +87,7 @@ export const useFetchAllBookings = ({
     queryFn: () => getAllBookings(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 0,
+    // staleTime: 0,
     ...queryOptions,
   });
 

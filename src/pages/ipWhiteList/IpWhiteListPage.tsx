@@ -58,7 +58,9 @@ const IpWhiteListPage = () => {
           return "Yeah! IP White List deleted successfully.";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to delete IP White List.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to delete IP White List.",
       });
     } catch (error) {
       if (error instanceof Error) {

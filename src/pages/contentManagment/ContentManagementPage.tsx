@@ -78,7 +78,9 @@ const ContentManagement = () => {
         return "Yeah! successfully deleted the content.";
       },
       error: (e) =>
-        e instanceof Error ? e.message : "Opps! failed to delete content.",
+        e instanceof AxiosError
+          ? e.response?.data?.data?.error || e.response?.data?.message
+          : "Opps! failed to delete content.",
     });
   };
   const columns = getHomeContent(handleEdit, handleDelete);

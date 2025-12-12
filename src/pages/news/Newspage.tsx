@@ -52,7 +52,9 @@ const Newspage = () => {
           return "News deleted successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to delete news",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to delete news",
       });
     } catch (error) {
       if (error instanceof Error) {

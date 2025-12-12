@@ -1,4 +1,5 @@
 import type { Table } from "@tanstack/react-table";
+import { AxiosError } from "axios";
 import { Plus, Search } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -59,7 +60,9 @@ const TestimonialPage = () => {
           return "Yeah! Testimonial deleted successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to delete testimonial",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to delete testimonial",
       });
     } catch (error) {
       if (error instanceof Error) {

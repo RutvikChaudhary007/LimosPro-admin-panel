@@ -27,7 +27,9 @@ const EditContent: React.FC = () => {
           return "Yeah! Content edited successfully.";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Failed to update content.",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to update content.",
       });
     } catch (error) {
       if (error instanceof Error) console.error(error.message);

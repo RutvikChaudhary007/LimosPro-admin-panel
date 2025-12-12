@@ -51,7 +51,9 @@ const FaqsPage = () => {
           return "Yeah! FAQ deleted successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Opps! Delete FAQ failed",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Delete FAQ failed",
       });
     } catch (err) {
       if (err instanceof Error) {

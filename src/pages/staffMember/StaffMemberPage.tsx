@@ -1,7 +1,6 @@
-//@ts-nocheck
-
+import { AxiosError } from "axios";
 import { Plus, Search } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchAllStaffMember } from "@/api";
@@ -42,6 +41,15 @@ const StaffMemberPage = () => {
       data?.pagination,
     );
 
+  // console.log("StaffMemberPage Render:", {
+  //   perPage,
+  //   newPage,
+  //   isFetching,
+  //   dataLen: data?.staffMembers?.length,
+  //   pagination: data?.pagination,
+  //   ids: data?.staffMembers?.map((m: any) => m.id)
+  // });
+
   const handleEdit = useCallback(
     (id: string) => {
       console.log("Edit:", id);
@@ -64,7 +72,9 @@ const StaffMemberPage = () => {
             return "Staff member deleted successfully";
           },
           error: (e) =>
-            e instanceof Error ? e.message : "An unknown error occurred",
+            e instanceof AxiosError
+              ? e.response?.data?.message
+              : "An unknown error occurred",
         });
       } catch (error) {
         if (error instanceof Error) {
@@ -78,13 +88,14 @@ const StaffMemberPage = () => {
     },
     [deleteStaffMember.mutateAsync, refetch],
   );
-  const columns = useMemo(
-    () => getStaffMember(handleEdit, handleAccess, handleDelete),
-    [handleEdit, handleAccess, handleDelete],
-  );
+
+  // Remove useMemo to match UsersPage
+  const columns = getStaffMember(handleEdit, handleAccess, handleDelete);
 
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
+    {},
+  );
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
@@ -95,7 +106,6 @@ const StaffMemberPage = () => {
       setPerPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
     } else {
       // Otherwise it's a page change
       setNewPage(value);

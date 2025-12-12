@@ -150,7 +150,7 @@ export const getAllStaffMember = async ({ limit, page }: TStaffArg) => {
  */
 export const useFetchAllStaffMember = ({ page, limit }: TStaffArg) =>
   useQuery({
-    queryKey: ["staffMember", { limit }, { page }],
+    queryKey: ["staffMember", limit, page],
     queryFn: () => getAllStaffMember({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,

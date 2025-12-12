@@ -66,7 +66,9 @@ const EditChauffeurPage = () => {
             return "Yeah! Chauffeur updated successfully.";
           },
           error: (e) =>
-            e instanceof Error ? e.message : "Opps! failed to update chauffeur",
+            e instanceof AxiosError
+              ? e.response?.data?.data?.error || e.response?.data?.message
+              : "Opps! failed to update chauffeur",
         },
       );
     } catch (error) {

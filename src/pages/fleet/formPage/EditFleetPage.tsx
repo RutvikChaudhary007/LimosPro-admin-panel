@@ -36,7 +36,9 @@ const EditFleetPage = () => {
           return "Fleet updated successfully";
         },
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to update fleet",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to update fleet",
       });
     } catch (error) {
       if (error instanceof Error) {

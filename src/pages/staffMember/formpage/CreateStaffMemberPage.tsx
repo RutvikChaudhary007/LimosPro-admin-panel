@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -15,11 +16,16 @@ const CreateStaffMemberPage = () => {
         loading: "Creating Staff Member...",
         success: "Staff Member Created Successfully",
         error: (e) =>
-          e instanceof Error ? e.message : "Failed to create Staff Member",
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to create Staff Member",
       });
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.data?.error ||
+            error.response?.data?.data?.message,
+        );
       } else {
         toast.error("An unexpected error occurred");
       }
