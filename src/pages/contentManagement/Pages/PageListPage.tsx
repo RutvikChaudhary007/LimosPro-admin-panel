@@ -34,7 +34,7 @@ const PageListPage = () => {
   });
 
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TPage>(data?.items, newPage, perPage, data?.pagination);
+    usePagination<TPage>(data?.pageLayout, newPage, perPage, data?.pagination);
 
   const handleEdit = (id: string) => {
     console.log("Edit:", id);
@@ -78,7 +78,6 @@ const PageListPage = () => {
       setPerPage(value);
       setNewPage(1);
       setPage(1);
-      refetch();
     } else {
       // Otherwise it's a page change
       setNewPage(value);

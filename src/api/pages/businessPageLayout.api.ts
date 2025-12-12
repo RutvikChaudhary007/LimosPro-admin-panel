@@ -7,9 +7,12 @@ import { API_ENDPOINTS } from "../../lib/api-endpoints";
 export const getAllBusinessPageLayouts = async (
   params?: PageTemplateQueryParams,
 ) => {
-  const response = await axiosInstance.get(API_ENDPOINTS.PAGE_LAYOUT.GET_ALL, {
-    params,
-  });
+  const response = await axiosInstance.get(
+    API_ENDPOINTS.BUSINESS_PAGE_LAYOUT.GET_ALL,
+    {
+      params,
+    },
+  );
   return response.data.data;
 };
 

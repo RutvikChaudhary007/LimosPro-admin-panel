@@ -10,7 +10,7 @@ import queries from "@/lib/queries";
 const CreateStaffMemberPage = () => {
   const createStaffMutation = queries.useCreateStaffMemberMutation();
   async function onSubmit(values: object) {
-    console.log("data:", values);
+    // console.log("data:", values);
     try {
       toastPromise(createStaffMutation.mutateAsync(values), {
         loading: "Creating Staff Member...",
