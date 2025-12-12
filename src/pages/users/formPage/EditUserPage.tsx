@@ -1,5 +1,6 @@
 // import { updateUser } from "@/api/updateUserById"
 
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
 // import type { ApiErrorResponse } from "@/types/global/ErrorResponse"

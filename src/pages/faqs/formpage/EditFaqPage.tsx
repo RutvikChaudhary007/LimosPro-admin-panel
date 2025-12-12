@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { TFaqForm } from "@/components/faq/FaqForm";

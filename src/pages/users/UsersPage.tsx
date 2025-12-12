@@ -1,5 +1,6 @@
 import { IconFilterX } from "@tabler/icons-react";
 import type { Table } from "@tanstack/react-table";
+import { AxiosError } from "axios";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";

@@ -1,4 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
