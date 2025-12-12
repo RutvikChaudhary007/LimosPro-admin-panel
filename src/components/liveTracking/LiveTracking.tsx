@@ -1,201 +1,5 @@
 // @ts-nocheck
 
-// import React, { useEffect, useState } from "react";
-// import {
-//   GoogleMap,
-//   Marker,
-//   Polyline,
-//   OverlayView,
-//   useJsApiLoader,
-//   InfoWindow,
-// } from "@react-google-maps/api";
-
-// const containerStyle: React.CSSProperties = { width: "100%", height: "100%", userSelect: "none" };
-
-// const mapStyle = [
-//   { featureType: "all", elementType: "labels", stylers: [{ visibility: "off" }] },
-//   { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-//   { featureType: "water", elementType: "geometry", stylers: [{ color: "#d4f1f9" }] },
-//   { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
-// ];
-
-// const APIKEY = import.meta.env.VITE_GOOGLE_MAP_KEY;
-// const libraries: ("geometry" | "places")[] = ["geometry", "places"];
-
-// interface LatLng {
-//   lat: number;
-//   lng: number;
-// }
-
-// interface Props {
-//   dropPosition: LatLng;
-//   livePosition: LatLng;
-// }
-
-// const CAR_SIZE = 40;
-
-// const LiveTracking: React.FC<Props> = ({ dropPosition, livePosition }) => {
-//   const { isLoaded } = useJsApiLoader({
-//     googleMapsApiKey: APIKEY,
-//     libraries,
-//   });
-//  const [activeMarker, setActiveMarker] = useState<string | null>(null);
-//   const [carPosition, setCarPosition] = useState<google.maps.LatLngLiteral>(livePosition);
-//   const [heading, setHeading] = useState<number>(0);
-//   const [isFollowing, setIsFollowing] = useState(true);
-//   const [routePath, setRoutePath] = useState<LatLng[]>([livePosition]);
-
-//   // Calculate route using DirectionsService
-//   useEffect(() => {
-//     if (!isLoaded || !window.google?.maps) return;
-
-//     const directionsService = new google.maps.DirectionsService();
-//     directionsService.route(
-//       {
-//         origin: livePosition,
-//         destination: dropPosition,
-//         travelMode: google.maps.TravelMode.DRIVING,
-//       },
-//       (result, status) => {
-//         if (status === "OK" && result?.routes?.[0]?.overview_path) {
-//           const path = result.routes[0].overview_path.map((p) => ({
-//             lat: p.lat(),
-//             lng: p.lng(),
-//           }));
-//           setRoutePath(path);
-//         } else {
-//           console.error("Error fetching directions", result);
-//           setRoutePath([livePosition, dropPosition]); // fallback to straight line
-//         }
-//       }
-//     );
-//   }, [isLoaded, livePosition, dropPosition]);
-
-//   // Move car along the route
-//   useEffect(() => {
-//     if (!isLoaded || !window.google?.maps?.geometry || routePath.length === 0) return;
-
-//     let index = 0;
-//     const interval = setInterval(() => {
-//       setCarPosition((prev) => {
-//         if (index >= routePath.length) {
-//           clearInterval(interval);
-//           return dropPosition;
-//         }
-
-//         const next = routePath[index];
-//         const h = window.google.maps.geometry.spherical.computeHeading(prev, next);
-//         setHeading(h);
-
-//         const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
-//           new window.google.maps.LatLng(prev),
-//           new window.google.maps.LatLng(next)
-//         );
-// console.log("distance:",distance)
-//         index++;
-//         return next;
-//       });
-//     }, 500);
-
-//     return () => clearInterval(interval);
-//   }, [isLoaded, routePath, dropPosition]);
-
-//   if (!isLoaded) return <div>Loading…</div>;
-
-//   return (
-//     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-//       <GoogleMap
-//         mapContainerStyle={containerStyle}
-//         center={isFollowing ? carPosition : undefined}
-//         zoom={12}
-//         onDragStart={() => setIsFollowing(false)}
-//         options={{
-//           styles: mapStyle,
-//           disableDefaultUI: true,
-//           zoomControl: true,
-//           streetViewControl: false,
-//           mapTypeControl: false,
-//           draggable: true,
-//         }}
-//       >
-//         <Marker position={livePosition} icon={{ url: "/icons/pin.png",
-//           scaledSize: new window.google.maps.Size(20, 20),
-//           }}
-//           label={"Pickup Point"}
-//           onClick={() => setActiveMarker("pickUpClicked")}
-//           />
-//           {activeMarker === "pickUpClicked" && (
-//         <InfoWindow onCloseClick={() => setActiveMarker(null)} position={livePosition}>
-//           <div>
-//             <strong>Pickup:</strong> 5678 Oak Avenue Austin, TX 73301
-//           </div>
-//         </InfoWindow>
-//       )}
-//         <Marker position={dropPosition} icon={{ url: "/icons/pin.png",
-//           scaledSize: new window.google.maps.Size(20, 20),
-//          }}
-//          label={"Drop Point"}
-//         onClick={() => setActiveMarker("dropClicked")}
-//          />
-//          {activeMarker === "dropClicked" && (
-//          <InfoWindow onCloseClick={() => setActiveMarker(null)} position={dropPosition}>
-//           <div>
-//             <strong>Drop:</strong> John F. Kennedy International Airport (JFK)
-//           </div>
-//         </InfoWindow>)}
-
-//         <Polyline
-//           path={routePath}
-//           options={{
-//             strokeColor: "#007bff",
-//             strokeWeight: 4,
-//             strokeOpacity: 0.8,
-//           }}
-//         />
-
-//         <OverlayView position={carPosition} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
-//           <div
-//             style={{
-//               width: `${CAR_SIZE}px`,
-//               height: `${CAR_SIZE}px`,
-//               display: "flex",
-//               justifyContent: "center",
-//               alignItems: "center",
-//               transform: `translate(-50%, -50%) rotate(${heading - 135}deg)`,
-//               transformOrigin: "center",
-//               transition: "transform 0.2s linear",
-//               pointerEvents: "none",
-//             }}
-//           >
-//             <img src="/icons/car.png" alt="car" style={{ width: "100%", height: "100%" }} />
-//           </div>
-//         </OverlayView>
-//       </GoogleMap>
-
-//       {!isFollowing && (
-//         <button
-//           onClick={() => setIsFollowing(true)}
-//           style={{
-//             position: "absolute",
-//             bottom: 20,
-//             right: 60,
-//             padding: "8px 12px",
-//             background: "#007bff",
-//             color: "#fff",
-//             border: "none",
-//             borderRadius: 8,
-//             cursor: "pointer",
-//           }}
-//         >
-//           Follow Car
-//         </button>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default LiveTracking;
-
 import {
   GoogleMap,
   InfoWindow,
@@ -204,8 +8,10 @@ import {
   Polyline,
   useJsApiLoader,
 } from "@react-google-maps/api";
+import { Navigation } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { env } from "@/utils/env";
 import { geoDecoding } from "@/utils/googleMaps";
 import { Spinner } from "../Spinner";
@@ -216,7 +22,7 @@ const mapStyle = [
   {
     featureType: "all",
     elementType: "labels",
-    stylers: [{ visibility: "off" }],
+    stylers: [{ visibility: "on" }],
   },
   {
     featureType: "road",
@@ -226,12 +32,17 @@ const mapStyle = [
   {
     featureType: "water",
     elementType: "geometry",
-    stylers: [{ color: "#d4f1f9" }],
+    stylers: [{ color: "#E3F2FD" }],
   },
   {
     featureType: "landscape",
     elementType: "geometry",
-    stylers: [{ color: "#f5f5f5" }],
+    stylers: [{ color: "#FAFAFA" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "geometry",
+    stylers: [{ color: "#EEEEEE" }],
   },
 ];
 
@@ -255,6 +66,90 @@ interface Props {
 }
 
 const CAR_SIZE = 40;
+
+// Custom SVG icon for pickup marker
+const PickupMarkerIcon = () => (
+  <svg
+    width="32"
+    height="40"
+    viewBox="0 0 32 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Pickup Marker"
+    aria-hidden="true"
+    aria-labelledby="Pickup Marker"
+    aria-describedby="Pickup Marker"
+  >
+    <path
+      d="M16 0C7.163 0 0 7.163 0 16c0 12 16 24 16 24s16-12 16-24c0-8.837-7.163-16-16-16z"
+      fill="#1976D2"
+    />
+    <circle cx="16" cy="16" r="6" fill="white" />
+    <circle cx="16" cy="16" r="3" fill="#1976D2" />
+  </svg>
+);
+
+// Custom SVG icon for drop marker
+const DropMarkerIcon = () => (
+  <svg
+    width="32"
+    height="40"
+    viewBox="0 0 32 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Drop Marker"
+    aria-hidden="true"
+    aria-labelledby="Drop Marker"
+    aria-describedby="Drop Marker"
+  >
+    <path
+      d="M16 0C7.163 0 0 7.163 0 16c0 12 16 24 16 24s16-12 16-24c0-8.837-7.163-16-16-16z"
+      fill="#4CAF50"
+    />
+    <path d="M16 10l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6z" fill="white" />
+  </svg>
+);
+
+// Custom SVG icon for car
+const CarIcon = () => (
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 40 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="Car Icon"
+    aria-hidden="true"
+    aria-labelledby="car"
+    aria-describedby="car"
+  >
+    <g filter="url(#shadow)">
+      <path
+        d="M8 18l2-6h20l2 6v10a2 2 0 01-2 2h-2a2 2 0 01-2-2v-1H14v1a2 2 0 01-2 2H10a2 2 0 01-2-2V18z"
+        fill="#1976D2"
+      />
+      <circle cx="13" cy="24" r="2" fill="#333" />
+      <circle cx="27" cy="24" r="2" fill="#333" />
+      <path d="M11 12l1-2h16l1 2-2 4H13l-2-4z" fill="#90CAF9" />
+      <rect x="14" y="18" width="12" height="4" rx="1" fill="#BBDEFB" />
+    </g>
+    <defs>
+      <filter
+        id="shadow"
+        x="0"
+        y="0"
+        width="40"
+        height="40"
+        filterUnits="userSpaceOnUse"
+      >
+        <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.3" />
+      </filter>
+    </defs>
+  </svg>
+);
 
 const LiveTracking: React.FC<Props> = ({
   dropPosition,
@@ -388,40 +283,6 @@ const LiveTracking: React.FC<Props> = ({
     );
   }, [isLoaded, pickPosition, dropPosition]);
 
-  // Smooth animation along the polyline (for now, when WebSocket is not used)
-  // useEffect(() => {
-  //   if (!isLoaded || !window.google?.maps?.geometry || routePath.length === 0) return;
-  //   if (externalCarPosition) return; // skip internal animation if external position is provided
-
-  //   const speed = 50; // meters per second
-  //   const step = 16; // ms per frame (~60fps)
-
-  //   const animate = () => {
-  //     if (pathIndexRef.current >= routePath.length - 1) return;
-
-  //     const from = new window.google.maps.LatLng(carPosition);
-  //     const to = new window.google.maps.LatLng(routePath[pathIndexRef.current + 1]);
-
-  //     const distance = window.google.maps.geometry.spherical.computeDistanceBetween(from, to);
-  //     const fraction = (speed * step) / 1000 / distance;
-
-  //     if (fraction >= 1) {
-  //       pathIndexRef.current += 1;
-  //       setCarPosition(routePath[pathIndexRef.current]);
-  //     } else {
-  //       const nextPos = window.google.maps.geometry.spherical.interpolate(from, to, fraction);
-  //       setCarPosition({ lat: nextPos.lat(), lng: nextPos.lng() });
-  //       const h = window.google.maps.geometry.spherical.computeHeading(from, to);
-  //       setHeading(h);
-  //     }
-
-  //     animationRef.current = requestAnimationFrame(animate);
-  //   };
-
-  //   animationRef.current = requestAnimationFrame(animate);
-  //   return () => animationRef.current && cancelAnimationFrame(animationRef.current);
-  // }, [isLoaded, routePath, carPosition, externalCarPosition]);
-
   if (!isLoaded) return <Spinner />;
 
   return (
@@ -444,8 +305,11 @@ const LiveTracking: React.FC<Props> = ({
         <Marker
           position={pickPosition}
           icon={{
-            url: "/icons/pin.png",
-            scaledSize: new window.google.maps.Size(20, 20),
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+              '<svg width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.163 0 0 7.163 0 16c0 12 16 24 16 24s16-12 16-24c0-8.837-7.163-16-16-16z" fill="#1976D2"/><circle cx="16" cy="16" r="6" fill="white"/><circle cx="16" cy="16" r="3" fill="#1976D2"/></svg>',
+            )}`,
+            scaledSize: new window.google.maps.Size(32, 40),
+            anchor: new window.google.maps.Point(16, 40),
           }}
           onClick={() => setActiveMarker("pickUpClicked")}
         />
@@ -454,8 +318,13 @@ const LiveTracking: React.FC<Props> = ({
             onCloseClick={() => setActiveMarker(null)}
             position={pickPosition}
           >
-            <div>
-              <strong>Pickup:</strong> {pickUpAddress}
+            <div className="p-2 min-w-[200px]">
+              <div className="font-semibold text-base-black mb-1">
+                Pickup Location
+              </div>
+              <div className="text-sm text-base-black/70">
+                {pickUpAddress || "Loading..."}
+              </div>
             </div>
           </InfoWindow>
         )}
@@ -464,8 +333,11 @@ const LiveTracking: React.FC<Props> = ({
         <Marker
           position={dropPosition}
           icon={{
-            url: "/icons/pin.png",
-            scaledSize: new window.google.maps.Size(20, 20),
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+              '<svg width="32" height="40" viewBox="0 0 32 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.163 0 0 7.163 0 16c0 12 16 24 16 24s16-12 16-24c0-8.837-7.163-16-16-16z" fill="#4CAF50"/><path d="M16 10l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6z" fill="white"/></svg>',
+            )}`,
+            scaledSize: new window.google.maps.Size(32, 40),
+            anchor: new window.google.maps.Point(16, 40),
           }}
           onClick={() => setActiveMarker("dropClicked")}
         />
@@ -474,8 +346,13 @@ const LiveTracking: React.FC<Props> = ({
             onCloseClick={() => setActiveMarker(null)}
             position={dropPosition}
           >
-            <div>
-              <strong>Drop:</strong> {dropOffAddress}
+            <div className="p-2 min-w-[200px]">
+              <div className="font-semibold text-base-black mb-1">
+                Drop Location
+              </div>
+              <div className="text-sm text-base-black/70">
+                {dropOffAddress || "Loading..."}
+              </div>
             </div>
           </InfoWindow>
         )}
@@ -484,9 +361,9 @@ const LiveTracking: React.FC<Props> = ({
         <Polyline
           path={routePath}
           options={{
-            strokeColor: "#007bff",
-            strokeWeight: 4,
-            strokeOpacity: 0.8,
+            strokeColor: "#1976D2",
+            strokeWeight: 5,
+            strokeOpacity: 0.9,
           }}
         />
 
@@ -502,38 +379,94 @@ const LiveTracking: React.FC<Props> = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              transform: `translate(-50%, -50%) rotate(${heading - 135}deg)`,
+              transform: `translate(-50%, -50%) rotate(${heading}deg)`,
               transformOrigin: "center",
               transition: "transform 0.1s linear",
               pointerEvents: "none",
             }}
           >
-            <img
-              src="/icons/car.png"
-              alt="car"
-              style={{ width: "100%", height: "100%" }}
-            />
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 40 40"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Car"
+              aria-hidden="true"
+              aria-labelledby="car"
+              aria-describedby="car"
+            >
+              <defs>
+                <filter
+                  id="car-shadow"
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="2"
+                    stdDeviation="3"
+                    floodOpacity="0.4"
+                  />
+                </filter>
+              </defs>
+              <g filter="url(#car-shadow)">
+                <path
+                  d="M8 18l2-6h20l2 6v10a2 2 0 01-2 2h-2a2 2 0 01-2-2v-1H14v1a2 2 0 01-2 2h-2a2 2 0 01-2-2V18z"
+                  fill="#1976D2"
+                  stroke="#0D47A1"
+                  strokeWidth="0.5"
+                />
+                <circle
+                  cx="13"
+                  cy="24"
+                  r="2.5"
+                  fill="#333"
+                  stroke="#666"
+                  strokeWidth="0.5"
+                />
+                <circle
+                  cx="27"
+                  cy="24"
+                  r="2.5"
+                  fill="#333"
+                  stroke="#666"
+                  strokeWidth="0.5"
+                />
+                <path d="M11 12l1-2h16l1 2-2 4H13l-2-4z" fill="#90CAF9" />
+                <rect
+                  x="14"
+                  y="18"
+                  width="12"
+                  height="4"
+                  rx="1"
+                  fill="#BBDEFB"
+                  opacity="0.8"
+                />
+                <circle cx="13" cy="24" r="1" fill="#666" />
+                <circle cx="27" cy="24" r="1" fill="#666" />
+              </g>
+            </svg>
           </div>
         </OverlayView>
       </GoogleMap>
 
       {!isFollowing && (
-        <button
-          onClick={() => setIsFollowing(true)}
-          style={{
-            position: "absolute",
-            bottom: 20,
-            right: 60,
-            padding: "8px 12px",
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            cursor: "pointer",
-          }}
-        >
-          Follow Car
-        </button>
+        <div className="absolute bottom-5 right-16">
+          <Button
+            onClick={() => setIsFollowing(true)}
+            variant="default"
+            size="sm"
+            spacing="sm"
+            className="shadow-lg"
+          >
+            <Navigation className="size-4" />
+            Follow Car
+          </Button>
+        </div>
       )}
     </div>
   );

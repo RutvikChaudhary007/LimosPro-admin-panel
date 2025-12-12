@@ -2484,6 +2484,125 @@ export function getIpWhiteList(
   ];
 }
 
+export type TPage = {
+  id: string;
+  pageName: string;
+  slug: string;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export function getPageColumns(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TPage>[] {
+  return [
+    {
+      id: "select",
+      header: ({ table }) => <SelectHeaderCheckbox table={table} />,
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "pageName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Page Name" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "slug",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Slug" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "isActive",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => (
+        <Badge
+          variant={row.original.isActive ? "default" : "gray"}
+          className="capitalize"
+        >
+          {row.original.isActive ? "Active" : "Inactive"}
+        </Badge>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "action",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onEdit(row.original.id)}
+            variant="outlineNavBtnPrimary"
+            size="xl"
+            spacing="lg"
+            tooltip="Edit Page"
+          >
+            <Edit />
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant="outlineNavBtnDestructive"
+                size="xl"
+                spacing="lg"
+                tooltip="Delete"
+              >
+                <Trash2 />
+              </Button>
+            </DialogTrigger>
+            <DialogContent
+              className="sm:max-w-[425px]"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
+              <DialogHeader>
+                <DialogTitle>Delete Page</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this page? This action cannot
+                  be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  <strong>Are you absolutely sure?</strong> This action cannot
+                  be undone.
+                </p>
+              </div>
+              <DialogFooter>
+                <Button
+                  onClick={() => onDelete(row.original.id)}
+                  variant="destructive"
+                >
+                  Confirm Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ];
+}
+
 export type TFaqs = {
   id: string;
   question: string;

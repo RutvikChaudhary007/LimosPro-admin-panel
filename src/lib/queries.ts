@@ -65,7 +65,6 @@ import {
 import { useUserStore } from "@/stores/useAuthStore";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
-import { styledLog } from "@/utils/styledLog";
 import { constant } from "./constant";
 
 type TRefetch = (

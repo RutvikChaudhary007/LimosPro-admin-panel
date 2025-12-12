@@ -1,15 +1,17 @@
 //@ts-nocheck
 
 import { ArrowLeft, MessageSquareMore, Phone, Route, Send } from "lucide-react";
-import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFetchTripById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import LiveTracking from "@/components/liveTracking/LiveTracking";
 import { Spinner } from "@/components/Spinner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardBody, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { constant } from "@/lib/constant";
-import { cn } from "@/lib/utils";
 
 const TripMapPage = () => {
   const { id } = useParams();
@@ -36,13 +38,17 @@ const TripMapPage = () => {
         <Spinner />
       ) : (
         <>
-          <div className="w-full h-[600px] mt-5 rounded overflow-hidden shadow-base-md">
-            <LiveTracking
-              dropPosition={data?.dropoffLocation}
-              pickPosition={data?.pickupLocation}
-              // carPosition={car}
-            />
-          </div>
+          <Card>
+            <CardBody className="p-0">
+              <div className="w-full h-[600px] rounded border border-base-gray overflow-hidden">
+                <LiveTracking
+                  dropPosition={data?.dropoffLocation}
+                  pickPosition={data?.pickupLocation}
+                  // carPosition={car}
+                />
+              </div>
+            </CardBody>
+          </Card>
 
           {/* Passenger & Chauffeur info section */}
           <Content data={data} />
@@ -53,219 +59,210 @@ const TripMapPage = () => {
 };
 
 const Content = ({ data }: { data: object }) => {
-  const [activeTab, setActiveTab] = useState("passengerDetails");
   return (
-    <div className="w-full mx-auto bg-white rounded shadow mt-6 flex flex-col md:flex-col items-center justify-center px-6 py-2 gap-6 border">
-      {/* Nav Tabs */}
-      <div className="w-full h-full flex items-center justify-between">
-        <Label
-          className="w-full cursor-pointer block"
-          onClick={() => setActiveTab("carAndChauffeur")}
-        >
-          <div className="text-xs font-semibold text-black mb-1 items-start text-center">
-            Car and Chauffeur
-          </div>
-          <hr
-            className={cn(
-              "w-full h-full border",
-              activeTab === "carAndChauffeur"
-                ? "border-black"
-                : "border-[#D9D9D9]",
-            )}
-          />
-        </Label>
+    <Card>
+      <CardBody>
+        <Tabs defaultValue="passengerDetails" className="w-full">
+          <TabsList className="w-full grid grid-cols-3">
+            <TabsTrigger value="carAndChauffeur">Car and Chauffeur</TabsTrigger>
+            <TabsTrigger value="passengerDetails">
+              Passenger's Details
+            </TabsTrigger>
+            <TabsTrigger value="trackingDetails">Tracking Details</TabsTrigger>
+          </TabsList>
 
-        <Label
-          className="w-full cursor-pointer block"
-          onClick={() => setActiveTab("passengerDetails")}
-        >
-          <div className="text-xs font-semibold text-black mb-1 items-center text-center">
-            Passenger’s Details
-          </div>
-          <hr
-            className={cn(
-              "w-full h-full border",
-              activeTab === "passengerDetails"
-                ? "border-black"
-                : "border-[#D9D9D9]",
-            )}
-          />
-        </Label>
-        <Label
-          className="w-full cursor-pointer block"
-          onClick={() => setActiveTab("trackingDetails")}
-        >
-          <div className="text-xs font-semibold text-black mb-1 items-end text-center">
-            Tracking Details
-          </div>
-          <hr
-            className={cn(
-              "w-full h-full border",
-              activeTab === "trackingDetails"
-                ? "border-black"
-                : "border-[#D9D9D9]",
-            )}
-          />
-        </Label>
-      </div>
-      {/* Car and Chauffeur Details */}
-      {activeTab === "carAndChauffeur" && (
-        <div className="flex items-center justify-between w-full h-full">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-lg font-semibold text-gray-600">
-                {data?.chauffeur?.firstName?.slice(0, 1)}
-              </span>
-            </div>
-            <div>
-              <div className="font-semibold text-gray-700">
-                {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
+          {/* Car and Chauffeur Details */}
+          <TabsContent value="carAndChauffeur">
+            <CardContent className="pt-6">
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-base-secondary rounded-full flex items-center justify-center">
+                    <span className="text-lg font-semibold text-base-white">
+                      {data?.chauffeur?.firstName?.slice(0, 1)}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-base-black">
+                      {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
+                    </div>
+                    <Badge variant="secondary" className="mt-1">
+                      Chauffeur
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Tax Id Number */}
+                <div>
+                  <Label className="font-montserrat font-semibold">
+                    Tax Id Number:
+                  </Label>
+                  <div className="text-sm text-base-black/70 mt-1">
+                    {data?.chauffeur?.taxIdNumber || "N/A"}
+                  </div>
+                </div>
+
+                {/* License */}
+                <div>
+                  <Label className="font-montserrat font-semibold">
+                    License:
+                  </Label>
+                  <div className="text-sm text-base-black/70 mt-1">
+                    {data?.chauffeur?.licenseNumber || "N/A"}
+                  </div>
+                </div>
+
+                {/* Car */}
+                <div>
+                  <Label className="font-montserrat font-semibold">Car:</Label>
+                  <div className="text-sm text-base-black/70 mt-1">
+                    {data?.vehicle?.make} {data?.vehicle?.model}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button variant="black" size="sm" spacing="sm" asChild>
+                    <Link to={`tel:${data?.chauffeur?.phoneNumber}`}>
+                      <Phone />
+                      Call
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outlineBlack"
+                    size="sm"
+                    spacing="sm"
+                    type="button"
+                  >
+                    <MessageSquareMore />
+                    Chat
+                  </Button>
+                </div>
               </div>
-              <div className="text-xs text-gray-500">Chauffeur</div>
-            </div>
-          </div>
-          {/* Tax Id Number */}
-          <div>
-            <div className="font-semibold text-gray-700">Tax Id Number:</div>
-            <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">
-                {data?.chauffeur?.taxIdNumber}
-              </span>
-            </div>
-          </div>
+            </CardContent>
+          </TabsContent>
 
-          {/* license */}
-          <div>
-            <div className="font-semibold text-gray-700">License:</div>
-            <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">
-                {data?.chauffeur?.licenseNumber}
-              </span>
-            </div>
-          </div>
+          {/* Passenger's Details */}
+          <TabsContent value="passengerDetails">
+            <CardContent className="pt-6">
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-base-primary rounded-full flex items-center justify-center">
+                    <span className="text-lg font-semibold text-base-white">
+                      {data?.user?.firstName?.slice(0, 1)}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-base-black">
+                      {data?.user?.firstName} {data?.user?.lastName}
+                    </div>
+                    <Badge variant="default" className="mt-1">
+                      Passenger
+                    </Badge>
+                  </div>
+                </div>
 
-          {/* Car */}
-          <div>
-            <div className="font-semibold text-gray-700">Car:</div>
-            <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">
-                Executive Sedan Cadillac. Lincoln. Or Similar.
-              </span>
-            </div>
-          </div>
+                {/* Email */}
+                <div>
+                  <Label className="font-montserrat font-semibold">
+                    Email:
+                  </Label>
+                  <div className="text-sm text-base-black/70 mt-1">
+                    {data?.user?.email}
+                  </div>
+                </div>
 
-          <div className="flex items-center gap-2">
-            <Link
-              to={`tel:${data?.chauffeur?.phoneNumber}`}
-              className="inline-flex items-center px-3 py-1 bg-[#5A5A5A] text-white rounded-lg shadow text-xs font-semibold hover:bg-gray-300 transition "
-            >
-              <Phone className="w-4 h-4 mr-1 fill-none" />
-              Call
-              {/* </button> */}
-            </Link>
-            <button
-              type="button"
-              className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition"
-            >
-              <MessageSquareMore className="w-4 h-4 mr-1 fill-none" />
-              Chat
-            </button>
-          </div>
-        </div>
-      )}
+                {/* Location */}
+                <div>
+                  <Label className="font-montserrat font-semibold">
+                    Location:
+                  </Label>
+                  <div className="text-sm text-base-black/70 mt-1">
+                    {data?.user?.location || "California"}
+                  </div>
+                </div>
 
-      {/* Passenger’s Details */}
-      {activeTab === "passengerDetails" && (
-        <div className="flex items-center justify-between w-full h-full">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-              <span className="text-lg font-semibold text-gray-600">
-                {data?.user?.firstName?.slice(0, 1)}
-              </span>
-            </div>
-            <div>
-              <div className="font-semibold text-gray-700">
-                {data?.user?.firstName} {data?.user?.lastName}
+                {/* Primary Address */}
+                <div>
+                  <Label className="font-montserrat font-semibold">
+                    Primary Address:
+                  </Label>
+                  <div className="text-sm text-base-black/70 mt-1">
+                    {data?.user?.address ||
+                      "1234 Elm Street, Los Angeles, CA 90001"}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Button variant="black" size="sm" spacing="sm" asChild>
+                    <Link to={`tel:${data?.user?.phoneNumber}`}>
+                      <Phone />
+                      Call
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="outlineBlack"
+                    size="sm"
+                    spacing="sm"
+                    type="button"
+                  >
+                    <MessageSquareMore />
+                    Chat
+                  </Button>
+                </div>
               </div>
-              <div className="text-xs text-gray-500">Passenger</div>
-            </div>
-          </div>
-          {/* Email */}
-          <div>
-            <div className="font-semibold text-gray-700">Email:</div>
-            <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">{data?.user?.email}</span>
-            </div>
-          </div>
+            </CardContent>
+          </TabsContent>
 
-          {/* Location */}
-          <div>
-            <div className="font-semibold text-gray-700">Location:</div>
-            <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">California</span>
-            </div>
-          </div>
+          {/* Tracking Details */}
+          <TabsContent value="trackingDetails">
+            <CardContent className="pt-6">
+              <div className="flex flex-wrap items-center justify-between gap-6">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-base-info/10 rounded-full flex items-center justify-center">
+                    <Send className="text-base-info" />
+                  </div>
+                  <div>
+                    <Label className="font-montserrat font-semibold">
+                      Current Location
+                    </Label>
+                    <div className="text-sm text-base-black/70 mt-1">
+                      San Francisco
+                    </div>
+                  </div>
+                </div>
 
-          {/* Primary Address: */}
-          <div>
-            <div className="font-semibold text-gray-700">Primary Address:</div>
-            <div className="text-xs text-gray-500 mt-2">
-              <span className="font-semibold">
-                1234 Elm Street, Los Angeles, CA 90001
-              </span>
-            </div>
-          </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-base-success/10 rounded-full flex items-center justify-center">
+                    <Route className="text-base-success" />
+                  </div>
+                  <div>
+                    <Label className="font-montserrat font-semibold">
+                      Distance Covered
+                    </Label>
+                    <div className="text-sm text-base-black/70 mt-1">
+                      14 miles
+                    </div>
+                  </div>
+                </div>
 
-          <div className="flex items-center gap-2">
-            <Link
-              to={`tel:${data?.user?.phoneNumber}`}
-              className="inline-flex items-center px-3 py-1 bg-[#5A5A5A] text-white rounded-lg shadow text-xs font-semibold hover:bg-gray-300 transition"
-            >
-              <Phone className="w-4 h-4 mr-1 fill-none" />
-              Call
-            </Link>
-            <button
-              type="button"
-              className="inline-flex items-center px-3 py-1 bg-[#F9F9F9] text-[#5A5A5A] rounded-lg shadow text-xs font-semibold hover:bg-[#F9F9F9] transition"
-            >
-              <MessageSquareMore className="w-4 h-4 mr-1 fill-none" />
-              Chat
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Tracking Details */}
-      {activeTab === "trackingDetails" && (
-        <div className="flex items-center justify-between w-full h-full">
-          <div className="flex items-center space-x-3">
-            <Send className="text-[#5A5A5A]" />
-            <div>
-              <div className="font-medium text-gray-700">Current Location</div>
-              <div className="text-xs font-medium text-gray-500">
-                San Francisco
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-base-warning/10 rounded-full flex items-center justify-center">
+                    <Route className="text-base-warning" />
+                  </div>
+                  <div>
+                    <Label className="font-montserrat font-semibold">
+                      Total Distance
+                    </Label>
+                    <div className="text-sm text-base-black/70 mt-1">
+                      98 Miles
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <img src="/icons/Vector_19.svg" />
-            <div>
-              <div className="font-medium text-gray-700">Distance Covered</div>
-              <div className="text-xs font-medium text-gray-500">14 miles</div>
-            </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <Route className="text-[#5A5A5A]" />
-            <div>
-              <div className="font-medium text-gray-700">Total Distance</div>
-              <div className="text-xs font-medium text-gray-500">98 Miles</div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+            </CardContent>
+          </TabsContent>
+        </Tabs>
+      </CardBody>
+    </Card>
   );
 };
 
