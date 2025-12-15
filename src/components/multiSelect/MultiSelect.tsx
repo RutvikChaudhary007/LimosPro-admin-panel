@@ -15,32 +15,43 @@ type TData = {
   id: string;
   name: string;
 };
+
+type MultiSelectCompProps = {
+  setSelected: SetStateAction<string[]>;
+  selected: string[];
+  items?: TData[]; // Optional: if provided, use these items; otherwise fetch from API
+  placeholder?: string;
+};
+
 const MultiSelectComp = ({
   setSelected,
   selected,
-}: {
-  setSelected: SetStateAction;
-  selected: string[];
-}) => {
-  const { data } = useFetchAllPermissions();
-  // if (isFetching) return <Spinner />;
+  items,
+  placeholder = "Select permissions...",
+}: MultiSelectCompProps) => {
+  // Only fetch if items are not provided
+  const { data } = useFetchAllPermissions({
+    enabled: !items,
+  });
+
+  const permissions = items ?? data?.permissions ?? [];
+
   return (
     <MultiSelect
       usePortal={true}
       values={selected}
       onValuesChange={setSelected}
     >
-      <MultiSelectTrigger className="w-full max-w-[400px]">
+      <MultiSelectTrigger className="w-full">
         <MultiSelectValue
-          placeholder="Select frameworks..."
+          placeholder={placeholder}
           overflowBehavior={"cutoff"}
         />
       </MultiSelectTrigger>
       <MultiSelectContent>
-        {/* Items must be wrapped in a group for proper styling */}
         <MultiSelectGroup>
-          {data?.permissions?.length > 0 &&
-            data?.permissions?.map((item: TData) => (
+          {permissions.length > 0 &&
+            permissions.map((item: TData) => (
               <MultiSelectItem key={item.id} value={item.id}>
                 {item.name}
               </MultiSelectItem>

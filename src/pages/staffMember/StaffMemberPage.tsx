@@ -41,15 +41,6 @@ const StaffMemberPage = () => {
       data?.pagination,
     );
 
-  // console.log("StaffMemberPage Render:", {
-  //   perPage,
-  //   newPage,
-  //   isFetching,
-  //   dataLen: data?.staffMembers?.length,
-  //   pagination: data?.pagination,
-  //   ids: data?.staffMembers?.map((m: any) => m.id)
-  // });
-
   const handleEdit = useCallback(
     (id: string) => {
       console.log("Edit:", id);

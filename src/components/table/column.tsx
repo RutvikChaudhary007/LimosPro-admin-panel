@@ -1767,6 +1767,7 @@ export type TStaffMember = {
   email: string;
   password: string;
   role: string;
+  permissions?: Array<{ permissionName: string }>;
   user?: {
     firstName: string;
     lastName: string;

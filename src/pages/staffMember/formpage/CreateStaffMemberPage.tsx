@@ -9,17 +9,30 @@ import queries from "@/lib/queries";
 
 const CreateStaffMemberPage = () => {
   const createStaffMutation = queries.useCreateStaffMemberMutation();
-  async function onSubmit(values: object) {
-    // console.log("data:", values);
+  async function onSubmit(values: any) {
     try {
-      toastPromise(createStaffMutation.mutateAsync(values), {
-        loading: "Creating Staff Member...",
-        success: "Staff Member Created Successfully",
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Failed to create Staff Member",
-      });
+      const { permissions, ...staffData } = values;
+
+      const result = await toastPromise(
+        createStaffMutation.mutateAsync(staffData),
+        {
+          loading: "Creating Staff Member...",
+          success: "Staff Member Created Successfully",
+          error: (e) =>
+            e instanceof AxiosError
+              ? e.response?.data?.data?.error || e.response?.data?.message
+              : "Failed to create Staff Member",
+        },
+      );
+
+      // Sync permissions if provided and staff member was created
+      if (permissions && permissions.length > 0 && (result as any)?.data?.id) {
+        const { syncStaffPermissions } = await import("@/api/staff.api");
+        await syncStaffPermissions({
+          staffId: (result as any).data.id,
+          permissionIds: permissions,
+        });
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(

@@ -24,28 +24,39 @@ const EditStaffMemberPage = () => {
   const navigate = useNavigate();
   const { data, isFetching } = useFetchOneStaffMember({ id: id as string });
   const editStaffMember = queries.useUpdateStaffMemberMutation();
-  async function onSubmit(values: object) {
+
+  async function onSubmit(values: any) {
     try {
-      // console.log("values:",values)
-      if (values?.password.includes("*")) delete values.password;
-      toastPromise(
+      const { permissions, ...staffData } = values;
+
+      if (staffData?.password?.includes("*")) delete staffData.password;
+
+      await toastPromise(
         editStaffMember.mutateAsync({
           id: id as string,
           regionId: data?.region?.id as string,
-          data: values,
+          data: staffData,
         }),
         {
           loading: "Updating staff member...",
-          success: (res) => {
-            if (res) navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
-            return "Yeah! Staff member updated successfully";
-          },
+          success: "Staff member updated successfully",
           error: (e) =>
             e instanceof AxiosError
               ? e.response?.data?.message
-              : "Opps! Failed to update staff member",
+              : "Failed to update staff member",
         },
       );
+
+      // Sync permissions separately
+      if (permissions) {
+        const { syncStaffPermissions } = await import("@/api/staff.api");
+        await syncStaffPermissions({
+          staffId: id as string,
+          permissionIds: permissions,
+        });
+      }
+
+      navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message);

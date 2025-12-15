@@ -62,7 +62,7 @@ const transformInitialData = (
 
   return {
     region: data?.region?.id ?? "",
-    email: data?.user.email ?? "",
+    email: data?.user?.email ?? "",
     firstName: data?.user?.firstName ?? "",
     lastName: data?.user?.lastName ?? "",
     password: "**********", // Placeholder for edit mode

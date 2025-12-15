@@ -1,17 +1,8 @@
-//  export const USER_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://localhost:3000/api/v1';
-//  export const USER_SERVICE_URL  = 'http://localhost:3000/api/v1';
-//  export const ADMIN_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL1 ||'http://localhost:3001/api/v1';
-//  export const BOOKING_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL2 ||'http://localhost:3002/api/v1';
-
 import { env } from "@/utils/env";
 
 export const USER_SERVICE_URL = env?.VITE_API_USER_SERVICE_URL;
 export const ADMIN_SERVICE_URL = env?.VITE_API_ADMIN_SERVICE_URL;
 export const BOOKING_SERVICE_URL = env?.VITE_API_BOOKING_SERVICE_URL;
-
-//  export const USER_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL ||'http://192.168.1.8:3000/api/v1';
-//  export const ADMIN_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL1 ||'http://192.168.1.8:3001/api/v1';
-//  export const BOOKING_SERVICE_URL  = import.meta.env.VITE_API_BASE_URL2 ||'http://192.168.1.8:3002/api/v1';
 
 export const API_ENDPOINTS: Record<string, any> = {
   // Auth
@@ -93,6 +84,8 @@ export const API_ENDPOINTS: Record<string, any> = {
   EDIT_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id/:regionId`,
   DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id`,
   BULK_DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-members/bulk-delete`,
+  GET_STAFF_PERMISSIONS: `${ADMIN_SERVICE_URL}/staff-member/:id/permissions`,
+  SYNC_STAFF_PERMISSIONS: `${ADMIN_SERVICE_URL}/staff-member/:id/permissions`,
 
   // Testimonials
   GET_ALL_TESTIMONIALS: `${ADMIN_SERVICE_URL}/testimonials`,
