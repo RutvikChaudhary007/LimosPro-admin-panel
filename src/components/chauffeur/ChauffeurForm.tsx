@@ -170,13 +170,13 @@ const transformInitialData = (
   data?: TChauffeur,
 ): TChauffeurForm | undefined => {
   if (!data) return undefined;
-  console.log("edit chauffeur formdata:>", data);
+  // console.log("edit chauffeur formdata:>", data);
   return {
     firstName: data?.userFirstName || "",
     lastName: data?.userLastName || "",
     email: data?.userEmail || "",
     password: data?.password?.replaceAll(/./g, "*") || "*************",
-    businessAddress: data?.location,
+    businessAddress: data?.businessAddress,
     documents:
       data.documents?.map((file) => {
         // console.log("file:", file);
@@ -208,26 +208,28 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   const [addressObj, setAddressObj] = useState<IAddressObj>();
 
   //   const fileRef = useRef<HTMLInputElement | null>(null);
+  const defaultValues = transformInitialData(initialData) || {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    businessAddress: "",
+    location: {
+      latitude: 0,
+      longitude: 0,
+    },
+    documents: [],
+    status: "",
+  };
   const form = useForm<TChauffeurForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: transformInitialData(initialData) || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      businessAddress: "",
-      location: {
-        latitude: 0,
-        longitude: 0,
-      },
-      documents: [],
-      status: "",
-    },
+    defaultValues: defaultValues,
+    values: defaultValues,
   });
 
   const handleAddressChange = useCallback(
     (value: string) => {
-      console.log("lllvalue:", value);
+      // console.log("lllvalue:", value);
       if (form.formState.errors.businessAddress) {
         form.clearErrors("businessAddress");
       }
@@ -256,8 +258,8 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       if (values.password && values.password !== "*************") {
         formData.append("password", values.password);
       }
-      console.log("filetypes...:", Array.isArray(values.documents));
-      console.log("values.documents:", values.documents);
+      // console.log("filetypes...:", Array.isArray(values.documents));
+      // console.log("values.documents:", values.documents);
       values.documents.forEach((file) => {
         if (file instanceof File) {
           formData.append(`documents`, file);
@@ -265,7 +267,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       });
       formData.append("status", values.status);
       // console.log("data:>>", values);
-      console.log("addressObj1:", addressObj);
+      // console.log("addressObj1:", addressObj);
       if (addressObj) {
         formData.append(
           "location",

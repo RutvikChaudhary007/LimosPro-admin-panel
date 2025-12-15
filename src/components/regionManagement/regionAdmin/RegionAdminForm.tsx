@@ -57,7 +57,7 @@ type TRegionAdminFormProps = {
 const transformInitialData = (
   data?: TRegionAdminRes,
 ): TRegionAdmin | undefined => {
-  //   console.log("initial data:", data);
+  // console.log("initial data:", data);
   if (!data) return undefined;
 
   return {

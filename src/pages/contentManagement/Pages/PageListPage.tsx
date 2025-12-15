@@ -37,7 +37,7 @@ const PageListPage = () => {
     usePagination<TPage>(data?.pageLayout, newPage, perPage, data?.pagination);
 
   const handleEdit = (id: string) => {
-    console.log("Edit:", id);
+    // console.log("Edit:", id);
     navigate(constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(":id", id));
   };
 

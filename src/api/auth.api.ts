@@ -67,7 +67,7 @@ export const getAllPermissions = async (data?: TPara) => {
  */
 export const useFetchAllPermissions = (Data: TPara) =>
   useQuery({
-    queryKey: ["Permissions", { Data }],
+    queryKey: ["Permissions", Data],
     queryFn: () => getAllPermissions(Data),
     refetchOnWindowFocus: false,
     retry: false,

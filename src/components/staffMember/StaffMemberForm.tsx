@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconLock, IconMail, IconUser } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { useFetchAllRegions, useFetchAllStaffRoles } from "@/api";
@@ -59,44 +59,45 @@ const StaffMemberForm = ({
     useFetchAllRegions({ DateRange: {} });
   const { data: rolesData, isFetching: isFetchingRoles } =
     useFetchAllStaffRoles();
-  const transformInitialData = (data?: z.infer<typeof formSchema>) => {
-    if (!data) return undefined;
-    // console.log("edit chauffeur formdata:>",data)
-    return {
-      firstName: data?.user?.firstName,
-      lastName: data?.user?.lastName,
-      email: data?.user?.email,
-      password: data?.password?.replace(/./g, "*") ?? "***********",
-      role: data?.user?.roles.id ?? "",
-      region: data?.region?.id ?? "",
-      permissionIds: data?.permissions?.map((p: any) => p.permissionId) || [],
-    };
-  };
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: transformInitialData(initialData) || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      role: "",
-      region: "",
-      permissions: [],
-    },
-  });
-  useEffect(() => {
-    if (rolesData?.length > 0 && initialData?.user) {
-      console.log("roleFD:", rolesData);
-      console.log("initialData?.user?.roles:", initialData?.user?.roles);
-      const role = rolesData?.find(
+  const defaultValues = useMemo(() => {
+    if (!initialData) {
+      return {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        role: "",
+        region: "",
+        permissionIds: [],
+      };
+    }
+
+    let roleValue = initialData?.user?.roles?.id ?? "";
+    if (rolesData?.length > 0) {
+      const foundRole = rolesData.find(
         (rawData) => rawData?.roleName === initialData?.user?.roles,
       );
-      form.setValue("role", role?.roleName);
+      if (foundRole) {
+        roleValue = foundRole.roleName;
+      }
     }
-    if (initialData?.region) {
-      form.setValue("region", initialData?.region?.id);
-    }
-  }, [initialData, rolesData, form]);
+
+    return {
+      firstName: initialData?.user?.firstName || "",
+      lastName: initialData?.user?.lastName || "",
+      email: initialData?.user?.email || "",
+      password: initialData?.password?.replace(/./g, "*") ?? "***********",
+      role: roleValue,
+      region: initialData?.region?.id ?? "",
+      permissionIds: initialData?.permissions?.map((perm) => perm.id) ?? [],
+    };
+  }, [initialData, rolesData]);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues,
+    values: defaultValues,
+  });
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -313,7 +314,7 @@ const StaffMemberForm = ({
 
               <Field>
                 <FieldLabel
-                  htmlFor="permissions"
+                  htmlFor="permissionIds"
                   className="text-base-black gap-0"
                 >
                   Permissions
