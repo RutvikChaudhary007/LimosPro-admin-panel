@@ -162,7 +162,8 @@ const EditIpWhiteListPage = lazy(
 );
 
 // FAQs
-const FaqsPage = lazy(() => import("../pages/faqs/FaqsPage"));
+// const FaqsPage = lazy(() => import("../pages/faqs/FaqsPage")); //** Old Index Page  **//
+const FAQsPage = lazy(() => import("../pages/faqs/page"));
 const CreateFaqPage = lazy(
   () => import("../pages/faqs/formpage/CreateFaqPage"),
 );
@@ -172,8 +173,9 @@ const EditFaqPage = lazy(() => import("../pages/faqs/formpage/EditFaqPage"));
 const ReportPage = lazy(() => import("../pages/report/ReportPage"));
 
 // Content Management
+// const ContentManagement = lazy(() => import("../pages/contentManagement/Pages/PageListPage"));
 const ContentManagement = lazy(
-  () => import("../pages/contentManagement/Pages/PageListPage"),
+  () => import("../pages/contentManagement/Pages/CMSPageList"),
 );
 const CreateContent = lazy(
   () => import("../pages/contentManagement/Pages/CreatePage"),
@@ -438,7 +440,7 @@ export const routesConfig = [
     layout: "protected",
     module: "faqs",
     routes: [
-      { path: constant.ROUTING_URLS.FAQ, element: FaqsPage },
+      { path: constant.ROUTING_URLS.FAQ, element: FAQsPage },
       { path: constant.ROUTING_URLS.CREATE_FAQ, element: CreateFaqPage },
       { path: constant.ROUTING_URLS.EDIT_FAQ, element: EditFaqPage },
     ],

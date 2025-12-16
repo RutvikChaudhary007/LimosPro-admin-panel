@@ -118,9 +118,9 @@ export function GlobalSearch() {
 
       {/* Dropdown with Keyboard Navigation */}
       {show && query.length > 0 && (
-        <div className="font-quicksand absolute mt-2 w-full bg-base-white shadow-sm rounded border border-base-gray z-20 max-h-80 [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+        <div className="font-quicksand absolute mt-2 w-full bg-base-white shadow-sm rounded border border-base-gray z-20 max-h-80 scroll-area">
           <Command className="bg-transparent">
-            <CommandList className="max-h-80 overflow-y-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+            <CommandList className="max-h-80 scroll-area">
               {!hasResults ? (
                 <div className="px-4 py-6 font-medium text-base text-center text-base-black">
                   No results found

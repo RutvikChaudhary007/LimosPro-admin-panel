@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-export function useSticky(topOffset: number = 100, activeDependency?: any) {
+export function useSticky(topOffset: number = 100, ...dependencies: any[]) {
   const stickyRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -9,13 +9,17 @@ export function useSticky(topOffset: number = 100, activeDependency?: any) {
     const sentinelEl = sentinelRef.current;
     if (!stickyEl || !sentinelEl) return;
 
-    stickyEl.style.transition = "all 0.3s ease";
+    stickyEl.style.transition = "top 0.3s ease";
+
+    const updateWidth = () => {
+      const rect = sentinelEl.getBoundingClientRect();
+      stickyEl.style.width = `${rect.width}px`;
+    };
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) {
-          stickyEl.style.width = `${stickyEl.offsetWidth}px`;
-          stickyEl.style.height = `${stickyEl.offsetHeight}px`;
+          updateWidth();
           stickyEl.classList.add("fixed");
           stickyEl.style.top = `${topOffset}px`;
         } else {
@@ -35,8 +39,19 @@ export function useSticky(topOffset: number = 100, activeDependency?: any) {
 
     observer.observe(sentinelEl);
 
-    return () => observer.disconnect();
-  }, [activeDependency, topOffset]);
+    const resizeObserver = new ResizeObserver(() => {
+      if (stickyEl.classList.contains("fixed")) {
+        updateWidth();
+      }
+    });
+
+    resizeObserver.observe(sentinelEl);
+
+    return () => {
+      observer.disconnect();
+      resizeObserver.disconnect();
+    };
+  }, [...dependencies, topOffset]);
 
   return { stickyRef, sentinelRef };
 }

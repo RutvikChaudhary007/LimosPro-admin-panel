@@ -25,7 +25,6 @@ import IconBooking from "@/assets/Icons/booking.svg?react";
 // import IconChauffeur from "@/assets/Icons/chauffeur.svg?react"
 // import IconCMS from "@/assets/Icons/cms.svg?react"
 // import IconContactRequests from "@/assets/Icons/contact-requests.svg?react"
-import IconCrew from "@/assets/Icons/crew.svg?react";
 import IconHome from "@/assets/Icons/dashboard.svg?react";
 // import IconFaq from "@/assets/Icons/faq.svg?react"
 // import IconFleet from "@/assets/Icons/fleet.svg?react"
@@ -124,13 +123,7 @@ const data = {
           title: "Pages",
           url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
         },
-        { title: "SEO", url: constant.ROUTING_URLS.SEO },
       ],
-    },
-    {
-      title: "Crew Members",
-      url: constant.ROUTING_URLS.CREW_MEMBERS,
-      icon: IconCrew,
     },
     {
       title: "Staff Members",

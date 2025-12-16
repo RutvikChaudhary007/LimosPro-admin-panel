@@ -182,19 +182,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   svg.lucide,
   svg.tabler-icon {
     @apply stroke-[1.5] origin-center;
   }
+
   .loader {
     @apply size-12 rounded-full inline-block box-border;
     border-top: 4px solid #fff;
     border-right: 4px solid transparent;
     animation: rotation 1s linear infinite;
   }
+
   .loader::after {
     content: "";
     @apply absolute left-0 top-0 size-12 rounded-full box-border;
@@ -202,10 +206,12 @@
     border-bottom: 4px solid transparent;
     animation: rotation 0.5s linear infinite reverse;
   }
+
   @keyframes rotation {
     0% {
       transform: rotate(0deg);
     }
+
     100% {
       transform: rotate(360deg);
     }
@@ -228,6 +234,7 @@
     0% {
       background-position: -500px 0;
     }
+
     100% {
       background-position: 500px 0;
     }
@@ -243,6 +250,7 @@
     0% {
       background-position: -400px 0;
     }
+
     100% {
       background-position: 400px 0;
     }
@@ -252,5 +260,16 @@
     background: linear-gradient(90deg, #e0e0e0 25%, #f8f8f8 50%, #e0e0e0 75%);
     background-size: 800px 100%;
     animation: shimmer 1.2s infinite;
+  }
+
+  .scroll-area {
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    cursor: pointer;
+  }
+
+  .scroll-area::-webkit-scrollbar {
+    display: none;
   }
 }

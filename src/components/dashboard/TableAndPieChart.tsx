@@ -119,7 +119,7 @@ function TableAndPieChart({
                 </Link>
               </CardAction>
             </CardHeader>
-            <CardContent className="max-h-60 overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+            <CardContent className="max-h-60 scroll-area">
               <DataTable
                 columns={columns}
                 data={chauffeurAvailability}
@@ -135,7 +135,7 @@ function TableAndPieChart({
         <Card className="shadow-none border border-base-gray">
           <CardBody>
             <CardTitle>Fleet Availability & Demand Ratio</CardTitle>
-            <div className="max-h-[260px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden space-y-4">
+            <div className="max-h-[260px] scroll-area space-y-4">
               <CardContent className="h-56 grid place-items-center">
                 <Doughnut
                   data={Chartdata}
