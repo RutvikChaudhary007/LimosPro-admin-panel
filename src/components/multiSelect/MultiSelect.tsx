@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import type { SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { useFetchAllPermissions } from "@/api";
 import {
   MultiSelect,
@@ -17,7 +17,7 @@ type TData = {
 };
 
 type MultiSelectCompProps = {
-  setSelected: SetStateAction<string[]>;
+  setSelected: Dispatch<SetStateAction<string[]>>;
   selected: string[];
   items?: TData[]; // Optional: if provided, use these items; otherwise fetch from API
   placeholder?: string;

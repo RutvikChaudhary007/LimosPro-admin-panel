@@ -39,3 +39,111 @@ export function transformData(
   styledLog(formData, "transformData output (timestamps removed):", "success");
   return formData;
 }
+
+/**
+ * Get default initial data for a JSON-LD item type
+ */
+export const getDefaultJsonLdItem = (type: string) => {
+  const base = {
+    "@context": "https://schema.org",
+    name: "",
+    description: "",
+    url: "",
+    image: "",
+  };
+
+  switch (type) {
+    case "Organization":
+      return {
+        type: "Organization",
+        data: {
+          ...base,
+          "@type": "Organization",
+          logo: "",
+          sameAs: [],
+          contactPoint: [],
+        },
+      };
+    case "LocalBusiness":
+      return {
+        type: "LocalBusiness",
+        data: {
+          ...base,
+          "@type": "LocalBusiness",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "",
+            addressLocality: "",
+            addressRegion: "",
+            postalCode: "",
+            addressCountry: "",
+          },
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: 0,
+            longitude: 0,
+          },
+          openingHours: "",
+          telephone: "",
+          priceRange: "",
+        },
+      };
+    case "FAQPage":
+      return {
+        type: "FAQPage",
+        data: {
+          ...base,
+          "@type": "FAQPage",
+          renderHtml: false,
+          mainEntity: [],
+        },
+      };
+    case "BreadcrumbList":
+      return {
+        type: "BreadcrumbList",
+        data: {
+          ...base,
+          "@type": "BreadcrumbList",
+          itemListElement: [],
+        },
+      };
+    case "Article":
+      return {
+        type: "Article",
+        data: {
+          ...base,
+          "@type": "Article",
+          headline: "",
+          datePublished: new Date().toISOString(),
+          author: {
+            "@type": "Person",
+            name: "",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "",
+          },
+        },
+      };
+    case "BlogPosting":
+      return {
+        type: "BlogPosting",
+        data: {
+          ...base,
+          "@type": "BlogPosting",
+          headline: "",
+          datePublished: new Date().toISOString(),
+          author: {
+            "@type": "Person",
+            name: "",
+          },
+          publisher: {
+            "@type": "Organization",
+            name: "",
+          },
+        },
+      };
+    default:
+      return null;
+  }
+};

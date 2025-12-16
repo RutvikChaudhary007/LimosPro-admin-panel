@@ -37,6 +37,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { SelectDropDown } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,8 +49,12 @@ import {
   type PageTemplateWithTimestamps,
   pageTemplateSchema,
 } from "@/types/pagebuilder.types";
-import { formatDateTime, transformData, uid } from "@/utils/pagebuilder.utils";
-import { styledLog } from "@/utils/styledLog";
+import {
+  formatDateTime,
+  getDefaultJsonLdItem,
+  transformData,
+  uid,
+} from "@/utils/pagebuilder.utils";
 import { Separator } from "../ui/separator";
 import {
   ContactForServiceBlock,
@@ -72,9 +77,9 @@ export default function PageTemplateEditor({
   onSubmit: (data: PageTemplateFormData) => void;
 }) {
   // ... state declarations remain the same ...
-  const [activeTab, setActiveTab] = useState<"hero" | "content" | "seo">(
-    "hero",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "hero" | "content" | "seo" | "jsonld"
+  >("hero");
   const [mediaOpen, setMediaOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [mediaCb, setMediaCb] = useState<null | ((url: string) => void)>(null);
@@ -91,15 +96,38 @@ export default function PageTemplateEditor({
           content: [],
           isActive: true,
           seo: undefined,
+          jsonLd: undefined,
         },
   });
 
-  const { control, register, handleSubmit, watch, setValue, getValues, reset } =
-    form;
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    reset,
+    formState: { errors },
+  } = form;
+
+  // Log validation errors
+  if (Object.keys(errors).length > 0) {
+    console.log("Form validation errors:", errors);
+  }
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "content" as const,
     keyName: "_key",
+  });
+
+  const {
+    fields: jsonLdFields,
+    append: appendJsonLd,
+    remove: removeJsonLd,
+  } = useFieldArray({
+    control,
+    name: "jsonLd" as const,
   });
 
   useEffect(() => {
@@ -154,10 +182,23 @@ export default function PageTemplateEditor({
     return liveValue || field;
   });
 
-  const previewData = { ...watched, content: previewContent };
+  const previewData = {
+    ...watched,
+    content: previewContent,
+    jsonLd: watched.jsonLd ?? form.getValues("jsonLd"),
+  };
 
-  const onHandleSubmit = (data: PageTemplateFormData) => {
-    onSubmit(data);
+  const onHandleSubmit = (data: any) => {
+    console.log("Form data before processing:", data);
+    const formData = data as PageTemplateFormData;
+    // Move jsonLd from top level to seo.jsonLd for backend compatibility
+    // if (!formData.seo) {
+    //   formData.seo = {};
+    // }
+    // formData.seo.jsonLd = formData.jsonLd || [];
+    // delete formData.jsonLd;
+    console.log("Form data after processing:", formData);
+    onSubmit(formData);
   };
 
   // Sticky hook for the Block Adder panel
@@ -220,7 +261,7 @@ export default function PageTemplateEditor({
               <CardContent className="">
                 {/* Tabs */}
                 <div className="flex gap-8">
-                  {["hero", "content", "seo"].map((tab) => (
+                  {["hero", "content", "seo", "jsonld"].map((tab) => (
                     <Button
                       type="button"
                       key={tab}
@@ -616,32 +657,32 @@ export default function PageTemplateEditor({
                                           ? field.value.join(", ")
                                           : field.value || ""
                                       }
-                                      onBlur={field.onBlur}
-                                      name={field.name}
                                       onChange={(val: string) => {
+                                        // Store raw string value to allow typing commas and spaces
+                                        field.onChange(val);
+                                      }}
+                                      onBlur={() => {
+                                        // Convert to array only when user leaves the field
                                         try {
-                                          styledLog(
-                                            val,
-                                            "keywords input:",
-                                            "info",
-                                          );
-                                          const keywords = val
-                                            .split(",")
-                                            .map((k) => k.trim())
-                                            .filter((k) => k.length > 0);
-                                          styledLog(
-                                            keywords,
-                                            "keywords parsed:",
-                                            "info",
-                                          );
-                                          field.onChange(keywords);
+                                          const currentValue = field.value;
+                                          if (
+                                            typeof currentValue === "string"
+                                          ) {
+                                            const keywords = currentValue
+                                              .split(",")
+                                              .map((k) => k.trim())
+                                              .filter((k) => k.length > 0);
+                                            field.onChange(keywords);
+                                          }
                                         } catch (err) {
                                           console.error(
                                             "Error parsing keywords",
                                             err,
                                           );
                                         }
+                                        field.onBlur();
                                       }}
+                                      name={field.name}
                                     />
                                   )}
                                 />
@@ -862,6 +903,389 @@ export default function PageTemplateEditor({
                           </Card>
                         </div>
                       )}
+
+                      {/* JSON-LD Tab */}
+                      {activeTab === "jsonld" && (
+                        <div className="space-y-6">
+                          <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">
+                              Structured Data (JSON-LD)
+                            </h3>
+                            <SelectDropDown
+                              placeholder="Add New Item"
+                              classname="w-64"
+                              items={[
+                                {
+                                  label: "Organization",
+                                  value: "Organization",
+                                },
+                                {
+                                  label: "Local Business",
+                                  value: "LocalBusiness",
+                                },
+                                { label: "FAQ Page", value: "FAQPage" },
+                                {
+                                  label: "Breadcrumb List",
+                                  value: "BreadcrumbList",
+                                },
+                                // { label: "Article", value: "Article" },
+                                // { label: "Blog Posting", value: "BlogPosting" },
+                              ]}
+                              setSelectedItem={(val) => {
+                                const newItem = getDefaultJsonLdItem(val);
+                                if (newItem) {
+                                  appendJsonLd(newItem as any);
+                                }
+                              }}
+                            />
+                          </div>
+
+                          {jsonLdFields.length === 0 ? (
+                            <div className="text-center py-10 border border-dashed rounded-lg text-gray-500">
+                              No structured data items added yet. Use the
+                              dropdown above to add one.
+                            </div>
+                          ) : (
+                            <div className="space-y-8">
+                              {jsonLdFields.map((field: any, index: number) => {
+                                const type = field.type;
+                                return (
+                                  <Card key={field.id}>
+                                    <CardBody>
+                                      <CardHeader className="flex flex-row items-center justify-between">
+                                        <CardTitle>{type}</CardTitle>
+                                        <Button
+                                          type="button"
+                                          variant="destructive"
+                                          spacing="sm"
+                                          onClick={() => removeJsonLd(index)}
+                                        >
+                                          Remove
+                                        </Button>
+                                      </CardHeader>
+                                      <CardContent className="space-y-4">
+                                        {/* Type Specific Fields */}
+                                        {type === "FAQPage" && (
+                                          <div className="space-y-4">
+                                            <div className="flex items-center space-x-2 border p-3 rounded-md bg-zinc-50">
+                                              <Controller
+                                                control={control}
+                                                name={`jsonLd.${index}.data.renderHtml`}
+                                                render={({ field }) => (
+                                                  <Checkbox
+                                                    id={`renderHtml-${index}`}
+                                                    checked={
+                                                      field.value as boolean
+                                                    }
+                                                    onCheckedChange={
+                                                      field.onChange
+                                                    }
+                                                  />
+                                                )}
+                                              />
+                                              <label
+                                                htmlFor={`renderHtml-${index}`}
+                                                className="text-sm font-medium leading-none cursor-pointer"
+                                              >
+                                                Render as visible FAQ section on
+                                                page
+                                              </label>
+                                            </div>
+
+                                            <Label>Questions & Answers</Label>
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.mainEntity`}
+                                              render={({ field }) => {
+                                                const faqs = (field.value ||
+                                                  []) as any[];
+                                                return (
+                                                  <div className="space-y-4">
+                                                    {faqs.map(
+                                                      (faq, faqIndex) => (
+                                                        <div
+                                                          key={faqIndex}
+                                                          className="grid grid-cols-1 gap-4 p-4 border rounded relative"
+                                                        >
+                                                          <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="absolute top-2 right-2 h-6 w-6"
+                                                            onClick={() => {
+                                                              const newFaqs = [
+                                                                ...faqs,
+                                                              ];
+                                                              newFaqs.splice(
+                                                                faqIndex,
+                                                                1,
+                                                              );
+                                                              field.onChange(
+                                                                newFaqs,
+                                                              );
+                                                            }}
+                                                          >
+                                                            ✕
+                                                          </Button>
+                                                          <LabeledInput
+                                                            label="Question"
+                                                            value={faq.name}
+                                                            onChange={(
+                                                              e: React.ChangeEvent<HTMLInputElement>,
+                                                            ) => {
+                                                              const newFaqs = [
+                                                                ...faqs,
+                                                              ];
+                                                              newFaqs[
+                                                                faqIndex
+                                                              ] = {
+                                                                ...newFaqs[
+                                                                  faqIndex
+                                                                ],
+                                                                name: e.target
+                                                                  .value,
+                                                              };
+                                                              field.onChange(
+                                                                newFaqs,
+                                                              );
+                                                            }}
+                                                          />
+                                                          <LabeledTextarea
+                                                            label="Answer"
+                                                            value={
+                                                              faq.acceptedAnswer
+                                                                .text
+                                                            }
+                                                            onChange={(val) => {
+                                                              const newFaqs = [
+                                                                ...faqs,
+                                                              ];
+                                                              newFaqs[
+                                                                faqIndex
+                                                              ] = {
+                                                                ...newFaqs[
+                                                                  faqIndex
+                                                                ],
+                                                                acceptedAnswer:
+                                                                  {
+                                                                    ...newFaqs[
+                                                                      faqIndex
+                                                                    ]
+                                                                      .acceptedAnswer,
+                                                                    text: val,
+                                                                  },
+                                                              };
+                                                              field.onChange(
+                                                                newFaqs,
+                                                              );
+                                                            }}
+                                                          />
+                                                        </div>
+                                                      ),
+                                                    )}
+                                                    <Button
+                                                      type="button"
+                                                      variant="outline"
+                                                      onClick={() =>
+                                                        field.onChange([
+                                                          ...faqs,
+                                                          {
+                                                            "@type": "Question",
+                                                            name: "",
+                                                            acceptedAnswer: {
+                                                              "@type": "Answer",
+                                                              text: "",
+                                                            },
+                                                          },
+                                                        ])
+                                                      }
+                                                    >
+                                                      + Add Question
+                                                    </Button>
+                                                  </div>
+                                                );
+                                              }}
+                                            />
+                                          </div>
+                                        )}
+
+                                        {(type === "Organization" ||
+                                          type === "LocalBusiness") && (
+                                          <div className="space-y-4">
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.name`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Name"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.url`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="URL"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.logo`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Logo URL"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.description`}
+                                              render={({ field }) => (
+                                                <LabeledTextarea
+                                                  label="Description"
+                                                  value={field.value}
+                                                  onChange={field.onChange}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.telephone`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Telephone"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+
+                                            {/* Address (Only for LocalBusiness) */}
+                                            {type === "LocalBusiness" && (
+                                              <div className="border p-4 rounded-md space-y-3">
+                                                <p className="font-semibold text-sm">
+                                                  Address
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.address.streetAddress`}
+                                                    render={({ field }) => (
+                                                      <LabeledInput
+                                                        label="Street"
+                                                        {...field}
+                                                      />
+                                                    )}
+                                                  />
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.address.addressLocality`}
+                                                    render={({ field }) => (
+                                                      <LabeledInput
+                                                        label="City"
+                                                        {...field}
+                                                      />
+                                                    )}
+                                                  />
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.address.addressRegion`}
+                                                    render={({ field }) => (
+                                                      <LabeledInput
+                                                        label="Region/State"
+                                                        {...field}
+                                                      />
+                                                    )}
+                                                  />
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.address.postalCode`}
+                                                    render={({ field }) => (
+                                                      <LabeledInput
+                                                        label="Zip Code"
+                                                        {...field}
+                                                      />
+                                                    )}
+                                                  />
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.address.addressCountry`}
+                                                    render={({ field }) => (
+                                                      <LabeledInput
+                                                        label="Country"
+                                                        {...field}
+                                                      />
+                                                    )}
+                                                  />
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+
+                                        {(type === "Article" ||
+                                          type === "BlogPosting") && (
+                                          <div className="space-y-4">
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.headline`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Headline"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.image`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Image URL"
+                                                  value={
+                                                    Array.isArray(field.value)
+                                                      ? field.value[0]
+                                                      : field.value
+                                                  }
+                                                  onChange={field.onChange}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.author.name`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Author Name"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+                                            <Controller
+                                              control={control}
+                                              name={`jsonLd.${index}.data.publisher.name`}
+                                              render={({ field }) => (
+                                                <LabeledInput
+                                                  label="Publisher Name"
+                                                  {...field}
+                                                />
+                                              )}
+                                            />
+                                          </div>
+                                        )}
+                                      </CardContent>
+                                    </CardBody>
+                                  </Card>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <Separator className="my-6" />
                     <div className="flex gap-2">
@@ -872,9 +1296,7 @@ export default function PageTemplateEditor({
                       >
                         Reset
                       </Button>
-                      <Button onClick={() => console.log(getValues())}>
-                        Next
-                      </Button>
+                      <Button type="submit">Submit</Button>
                     </div>
                   </div>
                   {/* Live Preview Panel */}

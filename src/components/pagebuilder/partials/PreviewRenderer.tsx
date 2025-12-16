@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 // Mock Header Primary Component
@@ -393,6 +394,89 @@ const ImageCardWithTextOnSideAndButton = ({
   </div>
 );
 
+// FAQ Components
+const AccordionItem = ({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-gray-200 last:border-0">
+      <button
+        type="button"
+        className="flex justify-between items-center w-full py-4 text-left focus:outline-none"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span
+          className="text-lg font-medium text-[#003366]"
+          style={{ fontFamily: "var(--font-montserrat)" }}
+        >
+          {question}
+        </span>
+        <span
+          className={`transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <title>Arrow</title>
+            <path
+              d="M6 9L12 15L18 9"
+              stroke="#003366"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96 opacity-100 mb-4" : "max-h-0 opacity-0"}`}
+      >
+        <div
+          className="text-gray-600 leading-relaxed"
+          style={{ fontFamily: "var(--font-varela)" }}
+          dangerouslySetInnerHTML={{ __html: answer }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const FAQSection = ({ data }: { data: any }) => {
+  if (!data?.mainEntity || data.mainEntity.length === 0) return null;
+
+  return (
+    <section className="py-16 bg-[#F9F9F9]">
+      <div className="w-[90%] md:w-[80%] max-w-[1000px] mx-auto">
+        <h2
+          className="text-3xl font-bold text-center mb-10 text-[#003366]"
+          style={{ fontFamily: "var(--font-montserrat)" }}
+        >
+          Frequently Asked Questions
+        </h2>
+        <div className="bg-white rounded-xl shadow-sm p-6 md:p-10">
+          {data.mainEntity.map((item: any, index: number) => (
+            <AccordionItem
+              key={index}
+              question={item.name}
+              answer={item.acceptedAnswer?.text || ""}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
 interface PreviewRendererProps {
   data: {
     hero?: {
@@ -406,16 +490,17 @@ interface PreviewRendererProps {
     seo?: {
       title?: string;
       description?: string;
-      keywords?: string[];
+      keywords?: string[] | string;
       openGraph?: any;
       twitter?: any;
     };
+    jsonLd?: any[];
   };
 }
 
 export default function PreviewRenderer({ data }: PreviewRendererProps) {
-  const { hero, content, seo } = data;
-
+  const { hero, content, seo, jsonLd } = data;
+  // console.log("jsonLd", jsonLd);
   return (
     <div className="bg-white">
       {/* Header */}
@@ -681,6 +766,15 @@ export default function PreviewRenderer({ data }: PreviewRendererProps) {
         })}
       </div>
 
+      {/* FAQ Section (from JSON-LD) */}
+      {jsonLd &&
+        jsonLd.map((item: any, index: number) => {
+          if (item.type === "FAQPage" && item.data.renderHtml) {
+            return <FAQSection key={`faq-${index}`} data={item.data} />;
+          }
+          return null;
+        })}
+
       {/* Footer */}
       <FooterPrimary />
 
@@ -691,7 +785,14 @@ export default function PreviewRenderer({ data }: PreviewRendererProps) {
           <meta name="description" content={seo.description} />
         )}
         {seo?.keywords && (
-          <meta name="keywords" content={seo.keywords.join(", ")} />
+          <meta
+            name="keywords"
+            content={
+              Array.isArray(seo.keywords)
+                ? seo.keywords.join(", ")
+                : seo.keywords
+            }
+          />
         )}
         {seo?.openGraph?.title && (
           <meta property="og:title" content={seo?.openGraph?.title ?? ""} />

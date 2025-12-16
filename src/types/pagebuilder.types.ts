@@ -126,7 +126,7 @@ export const openGraphSchema = z.object({
   url: z.string().url().or(z.literal("")).optional(),
   images: z.array(z.string().url()).optional(),
   siteName: z.string().optional(),
-  type: z.string().optional(),
+  type: z.string(),
 });
 
 export const twitterSchema = z.object({
@@ -136,70 +136,228 @@ export const twitterSchema = z.object({
   images: z.array(z.string().url()).optional(),
 });
 
-export const jsonLdDataSchema = z
+const baseJsonLdData = z
   .object({
-    "@context": z.url().default("https://schema.org"),
-    "@type": z.string().optional(),
+    "@context": z.literal("https://schema.org"),
+
     name: z.string().optional(),
     description: z.string().optional(),
-    url: z.url().optional(),
-    image: z.union([z.url(), z.array(z.url())]).optional(),
-    logo: z.url().optional(),
-    contactPoint: z
-      .array(
-        z.object({
-          "@type": z.literal("ContactPoint"),
-          telephone: z.string(),
-          contactType: z.string(),
-          areaServed: z.union([z.string(), z.array(z.string())]).optional(),
-          availableLanguage: z
-            .union([z.string(), z.array(z.string())])
-            .optional(),
-        }),
-      )
-      .optional(),
-    sameAs: z.array(z.string().url()).optional(),
-  })
-  .strict()
-  .catchall(z.any());
+    url: z.string().url().or(z.literal("")).optional(),
 
-export const jsonLdSchema = z
-  .any()
-  .transform((val) => {
-    if (!val) return [];
-    if (Array.isArray(val)) return val;
-    return [];
+    image: z
+      .union([z.string().url().or(z.literal("")), z.array(z.string().url())])
+      .optional(),
   })
-  .pipe(
-    z.array(
+  .catchall(z.unknown());
+
+const organizationData = baseJsonLdData.extend({
+  "@type": z.literal("Organization"),
+
+  logo: z.string().url().optional(),
+
+  sameAs: z.array(z.string().url()).optional(),
+
+  contactPoint: z
+    .array(
       z.object({
-        type: z.enum([
-          "Organization",
-          "WebSite",
-          "WebPage",
-          "Service",
-          "LocalBusiness",
-          "FAQPage",
-          "BlogPosting",
-          "BreadcrumbList",
-          "Product",
-          "Event",
-          "Person",
-          "Article",
-        ]),
-        data: jsonLdDataSchema,
+        "@type": z.literal("ContactPoint"),
+        telephone: z.string(),
+        contactType: z.string(),
+        areaServed: z.union([z.string(), z.array(z.string())]).optional(),
+        availableLanguage: z
+          .union([z.string(), z.array(z.string())])
+          .optional(),
       }),
-    ),
+    )
+    .optional(),
+});
+
+const localBusinessData = organizationData.extend({
+  "@type": z.literal("LocalBusiness"),
+
+  address: z
+    .object({
+      "@type": z.literal("PostalAddress"),
+      streetAddress: z.string(),
+      addressLocality: z.string(),
+      addressRegion: z.string(),
+      postalCode: z.string(),
+      addressCountry: z.string(),
+    })
+    .optional(),
+
+  geo: z
+    .object({
+      "@type": z.literal("GeoCoordinates"),
+      latitude: z.number(),
+      longitude: z.number(),
+    })
+    .optional(),
+
+  openingHours: z.string().optional(),
+  telephone: z.string().optional(),
+  priceRange: z.string().optional(),
+});
+
+const faqPageData = baseJsonLdData.extend({
+  "@type": z.literal("FAQPage"),
+
+  renderHtml: z.boolean().default(false).optional(),
+
+  mainEntity: z.array(
+    z.object({
+      "@type": z.literal("Question"),
+      name: z.string().optional(),
+      acceptedAnswer: z.object({
+        "@type": z.literal("Answer"),
+        text: z.string().optional(),
+      }),
+    }),
+  ),
+});
+
+const breadcrumbData = baseJsonLdData.extend({
+  "@type": z.literal("BreadcrumbList"),
+
+  itemListElement: z.array(
+    z.object({
+      "@type": z.literal("ListItem"),
+      position: z.number(),
+      name: z.string(),
+      item: z.string().url().optional(),
+    }),
+  ),
+});
+
+export const articleData = baseJsonLdData.extend({
+  "@type": z.union([z.literal("Article"), z.literal("BlogPosting")]),
+
+  headline: z.string(),
+
+  datePublished: z.string(),
+  dateModified: z.string().optional(),
+
+  author: z
+    .object({
+      "@type": z.string(),
+      name: z.string(),
+      url: z.string().url().optional(),
+    })
+    .optional(),
+
+  publisher: z
+    .object({
+      "@type": z.literal("Organization"),
+      name: z.string(),
+      logo: z
+        .object({
+          "@type": z.literal("ImageObject"),
+          url: z.string().url(),
+        })
+        .optional(),
+    })
+    .optional(),
+});
+
+const jsonLdSchema = z
+  .array(
+    z.discriminatedUnion("type", [
+      z.object({
+        type: z.literal("Organization"),
+        data: organizationData,
+      }),
+
+      z.object({
+        type: z.literal("LocalBusiness"),
+        data: localBusinessData,
+      }),
+
+      z.object({
+        type: z.literal("FAQPage"),
+        data: faqPageData,
+      }),
+
+      z.object({
+        type: z.literal("BreadcrumbList"),
+        data: breadcrumbData,
+      }),
+
+      // z.object({
+      //   type: z.literal("Article"),
+      //   data: articleData,
+      // }),
+
+      // z.object({
+      //   type: z.literal("BlogPosting"),
+      //   data: articleData,
+      // }),
+    ]),
   )
   .default([]);
+
+// export const jsonLdDataSchema = z
+//   .object({
+//     "@context": z.url().default("https://schema.org"),
+//     "@type": z.string().optional(),
+//     name: z.string().optional(),
+//     description: z.string().optional(),
+//     url: z.url().optional(),
+//     image: z.union([z.url(), z.array(z.url())]).optional(),
+//     logo: z.url().optional(),
+//     contactPoint: z
+//       .array(
+//         z.object({
+//           "@type": z.literal("ContactPoint"),
+//           telephone: z.string(),
+//           contactType: z.string(),
+//           areaServed: z.union([z.string(), z.array(z.string())]).optional(),
+//           availableLanguage: z
+//             .union([z.string(), z.array(z.string())])
+//             .optional(),
+//         }),
+//       )
+//       .optional(),
+//     sameAs: z.array(z.string().url()).optional(),
+//   })
+//   .strict()
+//   .catchall(z.any());
+
+// export const jsonLdSchema = z
+//   .any()
+//   .transform((val) => {
+//     if (!val) return [];
+//     if (Array.isArray(val)) return val;
+//     return [];
+//   })
+//   .pipe(
+//     z.array(
+//       z.object({
+//         type: z.enum([
+//           "Organization",
+//           "WebSite",
+//           "WebPage",
+//           "Service",
+//           "LocalBusiness",
+//           "FAQPage",
+//           "BlogPosting",
+//           "BreadcrumbList",
+//           "Product",
+//           "Event",
+//           "Person",
+//           "Article",
+//         ]),
+//         data: jsonLdDataSchema,
+//       }),
+//     ),
+//   )
+//   .default([]);
 
 export const seoSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  keywords: z.array(z.string()).optional(),
+  keywords: z.union([z.array(z.string()), z.string()]).optional(),
   openGraph: openGraphSchema.optional(),
   twitter: twitterSchema.optional(),
-  jsonLd: jsonLdSchema.optional(),
 });
 
 export const pageTemplateSchema = z.object({
@@ -210,9 +368,10 @@ export const pageTemplateSchema = z.object({
     .string()
     .max(100)
     .refine((v) => v.trim() !== "", { message: "Slug is required" }),
-  hero: heroSchema,
-  content: z.array(contentBlockSchema).min(1).optional(),
+  hero: heroSchema.optional(),
+  content: z.array(contentBlockSchema).optional(),
   seo: seoSchema.optional(),
+  jsonLd: jsonLdSchema.optional(),
   isActive: z.boolean().default(true).optional(),
 });
 
