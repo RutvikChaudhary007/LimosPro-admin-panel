@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCreateBusinessPageLayout } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
@@ -44,6 +45,12 @@ function CreatePage() {
             },
             { label: "Create Page" },
           ]}
+          backAction={{
+            variant: "outlinePrimary",
+            label: "Back",
+            icon: <ArrowLeft />,
+            link: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
+          }}
         />
         <PageForm onSubmit={handleSubmit} />
       </div>

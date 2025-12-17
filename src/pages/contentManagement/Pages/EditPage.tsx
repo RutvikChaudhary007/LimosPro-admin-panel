@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   useFetchBusinessPageLayoutById,
@@ -9,6 +10,7 @@ import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
+import { constant } from "@/lib/constant";
 import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import { generatePageTitle } from "@/utils/seo";
 import { styledLog } from "@/utils/styledLog";
@@ -50,9 +52,18 @@ function EditPage() {
           breadcrumbs={[
             { label: "Home", path: "/" },
             { label: "Content Management" },
-            { label: "Pages", path: "/content-management/pages" },
+            {
+              label: "Pages",
+              path: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
+            },
             { label: "Edit" },
           ]}
+          backAction={{
+            variant: "outlinePrimary",
+            label: "Back",
+            icon: <ArrowLeft />,
+            link: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
+          }}
         />
         {isFetching ? (
           <Spinner />

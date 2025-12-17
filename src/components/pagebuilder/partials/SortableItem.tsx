@@ -27,10 +27,10 @@ export function SortableItem({ id, children }: any) {
           type="button"
           variant="outlineNavBtnBlack"
           spacing="sm"
-          className="cursor-grab active:cursor-grabbing mb-2"
+          className="cursor-move active:cursor-grabbing mb-2"
         >
           <span className="drag-handle">⠿</span>
-          Drag to reorder
+          Drag To Reorder
         </Button>
 
         {/* Content */}

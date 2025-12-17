@@ -8,7 +8,7 @@ export default function FAQsPage() {
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
         title="Frequently Asked Questions"
-        breadcrumbs={[{ label: "Home", path: "/" }, { label: "Faqs" }]}
+        breadcrumbs={[{ label: "Home", path: "/" }, { label: "FAQs" }]}
       />
       <FAQList faqs={faqsData} categories={categoriesData} />
     </div>

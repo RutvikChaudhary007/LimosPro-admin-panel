@@ -111,6 +111,7 @@ export default function CMSPageList() {
   // Sticky hook
   const { stickyRef, sentinelRef } = useSticky(
     100,
+    1024,
     selectedCategory,
     searchQuery,
   );
@@ -133,7 +134,7 @@ export default function CMSPageList() {
 
       <div className="grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-4 gap-6">
         {/* Categories Sidebar */}
-        <div className="">
+        <div className="lg:col-span-2 xl:col-span-1">
           <div ref={sentinelRef} className="h-px"></div>
           <Card ref={stickyRef} className="h-fit">
             <CardBody>
