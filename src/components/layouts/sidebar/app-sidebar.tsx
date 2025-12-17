@@ -43,6 +43,7 @@ import IconUsers from "@/assets/Icons/users.svg?react";
 import { NavDocuments } from "@/components/layouts/sidebar/nav-documents";
 import { NavMain } from "@/components/layouts/sidebar/nav-main";
 import { NavSecondary } from "@/components/layouts/sidebar/nav-secondary";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
@@ -241,11 +242,13 @@ export function AppSidebar({
 
       {/* Main Content */}
       <SidebarContent>
-        <NavMain items={filteredNavigation} />
-        {showDocuments && <NavDocuments items={data.documents} />}
-        {showSecondary && (
-          <NavSecondary items={data.navSecondary} className="mt-auto" />
-        )}
+        <ScrollArea className="h-full flex min-h-0 flex-1 flex-col gap-2">
+          <NavMain items={filteredNavigation} />
+          {showDocuments && <NavDocuments items={data.documents} />}
+          {showSecondary && (
+            <NavSecondary items={data.navSecondary} className="mt-auto" />
+          )}
+        </ScrollArea>
       </SidebarContent>
 
       {/* Footer */}

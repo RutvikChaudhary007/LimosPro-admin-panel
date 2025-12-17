@@ -176,6 +176,29 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Base [Custom] Color Palette */
+  --base-primary: #60a5fa;
+  --base-primary-dark: #3b82f6;
+
+  --base-secondary: #fdba74;
+  --base-secondary-dark: #fb923c;
+
+  --base-info: #7dd3fc;
+  --base-gray: #a3a3a3;
+  --base-white: #1f2937;
+  --base-black: #f9fafb;
+  --base-danger: #f87171;
+  --base-success: #4ade80;
+  --base-warning: #fbbf24;
+  --base-light-gray: #374151;
+
+  /* Base [Custom] Background Palette */
+  --base-background: #020817;
+  --base-background-light: #1e293b;
+  --base-blue-cream: linear-gradient(90deg, #172554 0%, #2a1b0b 100%);
+  --base-shadow-sm: 0px 0px 16px 0px rgba(0, 0, 0, 0.4);
+  --base-shadow-md: 2px 0px 20px 0px rgba(0, 0, 0, 0.4);
 }
 
 @layer base {

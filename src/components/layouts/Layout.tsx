@@ -13,7 +13,7 @@ export default function Layout() {
           {
             "--sidebar-width": "calc(var(--spacing) * 80)", // 320px
             "--header-height": "calc(var(--spacing) * 22)", // 88px
-            "--footer-height": "calc(var(--spacing) * 12)", // 40px
+            "--footer-height": "calc(var(--spacing) * 12)", // 48px
           } as React.CSSProperties
         }
       >

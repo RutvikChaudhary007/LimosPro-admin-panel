@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { constant } from "@/lib/constant";
 import { formatDate, useNotifications } from "./notifications-context";
@@ -91,51 +92,53 @@ export function NotificationsDrawer() {
               </DrawerClose>
             </div>
           </div>
-          <div className="flex-1 scroll-area divide-y divide-base-gray">
-            {isFetching ? (
-              <div className="space-y-4 p-4">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="space-y-2">
-                    <Skeleton className="h-4 w-3/4 rounded" />
-                    <Skeleton className="h-3 w-full rounded" />
-                    <Skeleton className="h-3 w-1/2 rounded" />
-                  </div>
-                ))}
-              </div>
-            ) : notifications.length === 0 ? (
-              <div className="flex items-center justify-center p-8">
-                <p className="text-base-black">No notifications</p>
-              </div>
-            ) : (
-              notifications.map((notification: INotification) => (
-                <div
-                  key={notification.id}
-                  className={`border-l-4 p-4 transition-colors hover:bg-base-light-gray ${
-                    notification.isRead
-                      ? "border-l-transparent bg-base-white"
-                      : "border-l-base-primary bg-base-primary/5"
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-1">
-                      <h3 className="font-semibold text-black">
-                        {notification.title}
-                      </h3>
-                      <p className="text-sm text-base-black">
-                        {notification.message}
-                      </p>
-                      <p className="mt-2 text-xs text-base-black">
-                        {formatDate(notification.createdAt)}
-                      </p>
+          <ScrollArea className="h-full min-h-0 flex-1">
+            <div className="flex-1 divide-y divide-base-gray">
+              {isFetching ? (
+                <div className="space-y-4 p-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="space-y-2">
+                      <Skeleton className="h-4 w-3/4 rounded" />
+                      <Skeleton className="h-3 w-full rounded" />
+                      <Skeleton className="h-3 w-1/2 rounded" />
                     </div>
-                    {!notification.isRead && (
-                      <div className="ml-2 h-2 w-2 flex-shrink-0 rounded-full bg-base-primary" />
-                    )}
-                  </div>
+                  ))}
                 </div>
-              ))
-            )}
-          </div>
+              ) : notifications.length === 0 ? (
+                <div className="flex items-center justify-center p-8">
+                  <p className="text-base-black">No notifications</p>
+                </div>
+              ) : (
+                notifications.map((notification: INotification) => (
+                  <div
+                    key={notification.id}
+                    className={`border-l-4 p-4 transition-colors hover:bg-base-light-gray ${
+                      notification.isRead
+                        ? "border-l-transparent bg-base-white"
+                        : "border-l-base-primary bg-base-primary/5"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-1">
+                        <h3 className="font-semibold text-black">
+                          {notification.title}
+                        </h3>
+                        <p className="text-sm text-base-black">
+                          {notification.message}
+                        </p>
+                        <p className="mt-2 text-xs text-base-black">
+                          {formatDate(notification.createdAt)}
+                        </p>
+                      </div>
+                      {!notification.isRead && (
+                        <div className="ml-2 h-2 w-2 flex-shrink-0 rounded-full bg-base-primary" />
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </ScrollArea>
           <div className="border-t border-base-gray p-4">
             <Button
               variant="outlinePrimary"
