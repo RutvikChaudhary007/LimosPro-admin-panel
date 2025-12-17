@@ -192,34 +192,35 @@ const BlogPostsPage: React.FC = () => {
   const calculatedTotalPages = Math.max(1, totalPages);
 
   // Unified handler for page and page size changes
+  // Handle page change
   const handlePageChange = (value: number) => {
-    if (value === 10 || value === 20 || value === 30) {
-      setperPage(value);
-      const newPagination = { ...pagination, page: 1, limit: value };
-      setPagination(newPagination);
-      fetchBlogPosts({
-        setLoading,
-        searchTerm,
-        statusFilter,
-        setBlogPosts,
-        pagination: newPagination,
-        setPagination,
-      });
-    } else {
-      // Otherwise it's a page change
-      if (value < 1 || value > Math.max(1, pagination.totalPages)) return;
-      const newPagination = { ...pagination, page: value };
-      setPagination(newPagination);
-      fetchBlogPosts({
-        setLoading,
-        searchTerm,
-        statusFilter,
-        setBlogPosts,
-        pagination: newPagination,
-        setPagination,
-      });
-      window.scrollTo(0, 0);
-    }
+    if (value < 1 || value > Math.max(1, pagination.totalPages)) return;
+    const newPagination = { ...pagination, page: value };
+    setPagination(newPagination);
+    fetchBlogPosts({
+      setLoading,
+      searchTerm,
+      statusFilter,
+      setBlogPosts,
+      pagination: newPagination,
+      setPagination,
+    });
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setperPage(value);
+    const newPagination = { ...pagination, page: 1, limit: value };
+    setPagination(newPagination);
+    fetchBlogPosts({
+      setLoading,
+      searchTerm,
+      statusFilter,
+      setBlogPosts,
+      pagination: newPagination,
+      setPagination,
+    });
   };
 
   const columns = getBlogColumns(handleEdit, handleView, handleDelete);
@@ -500,6 +501,7 @@ const BlogPostsPage: React.FC = () => {
             currentPage={pagination.page}
             totalPages={pagination.totalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={pagination.total}
             perPage={perPage}
             disabled={loading}

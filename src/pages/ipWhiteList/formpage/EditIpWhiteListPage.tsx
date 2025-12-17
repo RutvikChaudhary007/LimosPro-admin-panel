@@ -45,7 +45,7 @@ const EditIpWhiteListPage = () => {
         breadcrumbs={[
           { label: "Home", path: "/" },
           {
-            label: "IP White Lists",
+            label: "IP Accesses",
             path: constant.ROUTING_URLS.IP_WHITE_LIST,
           },
           { label: "Edit IP" },

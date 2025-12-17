@@ -37,7 +37,12 @@ interface PageHeaderProps {
   breadcrumbs: { label: string; path?: string }[];
   action?: ActionButton | ActionButton[];
   actionDetails?: {
-    stats: { label: string; value: string | number }[];
+    stats: {
+      label: string;
+      value: string | number;
+      labelClassName?: string;
+      valueClassName?: string;
+    }[];
   };
   backAction?: ActionButton;
 }
@@ -133,10 +138,20 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
               <div className="flex flex-wrap gap-10 text-right">
                 {actionDetails.stats.map((item, i) => (
                   <div key={i}>
-                    <p className="font-quicksand text-center text-base font-semibold text-black">
+                    <p
+                      className={cn(
+                        "font-quicksand text-center text-lg font-semibold text-black",
+                        item.valueClassName,
+                      )}
+                    >
                       {item.value}
                     </p>
-                    <p className="font-quicksand text-center text-sm font-medium text-base-black">
+                    <p
+                      className={cn(
+                        "font-quicksand text-center text-sm font-medium text-base-black",
+                        item.labelClassName,
+                      )}
+                    >
                       {item.label}
                     </p>
                   </div>

@@ -41,7 +41,7 @@ const CreateIpWhiteListPage = () => {
         breadcrumbs={[
           { label: "Home", path: "/" },
           {
-            label: "IP White Lists",
+            label: "IP Accesses",
             path: constant.ROUTING_URLS.IP_WHITE_LIST,
           },
           { label: "Create IP" },

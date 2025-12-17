@@ -92,20 +92,19 @@ function RegionDashboardPage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Unified handler for page and page size changes
+  // Handle page change
   const handlePageChange = (value: number) => {
-    // If value is a page size option, update page size
-    if (value === 10 || value === 20 || value === 30) {
-      setPerPage(value);
-      setCPage(1);
-      setPage(1);
-      refetch();
-    } else {
-      // Otherwise it's a page change
-      setCPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setCPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setPerPage(value);
+    setCPage(1);
+    setPage(1);
+    refetch();
   };
 
   return (
@@ -187,6 +186,7 @@ function RegionDashboardPage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={data?.pagination?.totalItems}
             perPage={perPage}
           />

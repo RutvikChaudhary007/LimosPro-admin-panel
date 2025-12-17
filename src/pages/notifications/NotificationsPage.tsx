@@ -143,16 +143,16 @@ function NotificationsPage() {
   const calculatedTotalPages = Math.max(1, totalPages);
 
   const handlePageChange = (value: number) => {
-    if (value > perPage || value === 10 || value === 20 || value === 30) {
-      setperPage(value);
-      setNewPage(1);
-      setPage(1);
-      refetch();
-    } else {
-      setNewPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  const handlePerPageChange = (value: number) => {
+    setperPage(value);
+    setNewPage(1);
+    setPage(1);
+    refetch();
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -235,6 +235,7 @@ function NotificationsPage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={notificationsData.total}
             perPage={perPage}
           />

@@ -61,19 +61,18 @@ function RegionAdminPage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Unified handler for page and page size changes
+  // Handle page change
   const handlePageChange = (value: number) => {
-    // If value is a page size option, update page size
-    if (value === 10 || value === 20 || value === 30) {
-      setPerPage(value);
-      setNewPage(1);
-      setPage(1);
-    } else {
-      // Otherwise it's a page change
-      setPage(value);
-      setNewPage(value);
-      window.scrollTo(0, 0);
-    }
+    setPage(value);
+    setNewPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setPerPage(value);
+    setNewPage(1);
+    setPage(1);
   };
 
   return (
@@ -152,6 +151,7 @@ function RegionAdminPage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             perPage={perPage}
             totalItems={data?.pagination?.totalItems}
           />

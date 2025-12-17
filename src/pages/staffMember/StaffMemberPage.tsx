@@ -90,19 +90,18 @@ const StaffMemberPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Unified handler for page and page size changes
+  // Handle page change
   const handlePageChange = (value: number) => {
-    // Check if it's a page size change (10, 20, or 30)
-    if (value === 10 || value === 20 || value === 30) {
-      setPerPage(value);
-      setNewPage(1);
-      setPage(1);
-    } else {
-      // Otherwise it's a page change
-      setNewPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setPerPage(value);
+    setNewPage(1);
+    setPage(1);
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -174,6 +173,7 @@ const StaffMemberPage = () => {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={data?.pagination?.totalItems}
             perPage={perPage}
           />

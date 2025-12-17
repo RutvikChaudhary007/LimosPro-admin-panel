@@ -70,18 +70,19 @@ const Newspage = () => {
   const [rowSelection, setRowSelection] = useState({});
   const calculatedTotalPages = Math.max(1, totalPages);
 
+  // Handle page change
   const handlePageChange = (value: number) => {
-    if (value === 10 || value === 20 || value === 30) {
-      setPerPage(value);
-      setNewPage(1);
-      setPage(1);
-      refetch();
-    } else {
-      // Otherwise it's a page change
-      setNewPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setPerPage(value);
+    setNewPage(1);
+    setPage(1);
+    refetch();
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -147,7 +148,8 @@ const Newspage = () => {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
-            totalItems={data?.pagination?.total}
+            onPerPageChange={handlePerPageChange}
+            totalItems={data?.pagination?.totalItems}
             perPage={perPage}
           />
         )}

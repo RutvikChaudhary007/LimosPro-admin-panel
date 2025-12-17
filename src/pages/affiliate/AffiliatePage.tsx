@@ -225,17 +225,18 @@ function AffiliatePage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
+  // Handle page change
   const handlePageChange = (value: number) => {
-    if (value === 10 || value === 20 || value === 30) {
-      setperPage(value);
-      setNewPage(1);
-      setPage(1);
-      refetch();
-    } else {
-      // It's a page number change
-      setNewPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setperPage(value);
+    setNewPage(1);
+    setPage(1);
+    refetch();
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -328,6 +329,7 @@ function AffiliatePage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={FetchData?.pagination?.totalItems}
             perPage={perPage}
           />

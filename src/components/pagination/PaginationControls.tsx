@@ -14,6 +14,7 @@ export interface PaginationControlsProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  onPerPageChange?: (perPage: number) => void;
   siblingCount?: number;
   className?: string;
   showPrevNext?: boolean;
@@ -29,6 +30,7 @@ export function PaginationControls({
   currentPage,
   totalPages,
   onPageChange,
+  onPerPageChange,
   siblingCount = 1,
   className,
   showPrevNext = true,
@@ -86,7 +88,11 @@ export function PaginationControls({
     switch (type) {
       case "perPage":
         if (value !== undefined) {
-          onPageChange(value);
+          if (onPerPageChange) {
+            onPerPageChange(value);
+          } else {
+            onPageChange(value);
+          }
         }
         return;
       case "page":

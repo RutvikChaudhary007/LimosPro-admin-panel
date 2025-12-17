@@ -109,9 +109,9 @@ export const constant = {
     EDIT_FAQ: "/faq/:id/edit",
 
     // IP WHITE LIST URLS
-    IP_WHITE_LIST: "/ip-white-list",
-    CREATE_IP_WHITE_LIST: "/ip-white-list/create",
-    EDIT_IP_WHITE_LIST: "/ip-white-list/:id/edit",
+    IP_WHITE_LIST: "/ip-access",
+    CREATE_IP_WHITE_LIST: "/ip-access/create",
+    EDIT_IP_WHITE_LIST: "/ip-access/:id/edit",
 
     // PARTNERS URLS
     OUR_PARTNERS: "/our-partners",

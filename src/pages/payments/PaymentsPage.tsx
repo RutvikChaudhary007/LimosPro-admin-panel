@@ -67,19 +67,19 @@ const PaymentsPage = () => {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Unified handler for page and page size changes
+  // Handle page change
   const handlePageChange = (value: number) => {
-    if (value === 10 || value === 20 || value === 30) {
-      setperPage(value);
-      setNewPage(1);
-      setPage(1);
-      refetch();
-    } else {
-      // Otherwise it's a page change
-      setNewPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setperPage(value);
+    setNewPage(1);
+    setPage(1);
+    refetch();
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -149,6 +149,7 @@ const PaymentsPage = () => {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={data?.pagination?.total}
             perPage={perPage}
           />

@@ -151,7 +151,7 @@ const data = {
       icon: IconHelp,
     },
     {
-      title: "IP White List",
+      title: "IP Access",
       url: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: IconShield,
     },

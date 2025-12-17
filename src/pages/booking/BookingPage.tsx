@@ -149,19 +149,18 @@ function BookingPage() {
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Handle page change or per-page size change
+  // Handle page change
   const handlePageChange = (value: number) => {
-    // Check if it's a per-page size change (10, 20, or 30)
-    if (value > perPage || value === 10 || value === 20 || value === 30) {
-      setperPage(value);
-      setNewPage(1);
-      setPage(1);
-      // refetch();
-    } else {
-      setNewPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setperPage(value);
+    setNewPage(1);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -179,10 +178,30 @@ function BookingPage() {
           breadcrumbs={[{ label: "Home", path: "/" }, { label: "Bookings" }]}
           actionDetails={{
             stats: [
-              { label: "Accepted", value: statusCounts?.accepted },
-              { label: "Pending", value: statusCounts?.pending },
-              { label: "Cancelled", value: statusCounts?.cancelled },
-              { label: "Completed", value: statusCounts?.completed },
+              {
+                label: "Accepted",
+                labelClassName: "text-base-primary/75",
+                value: statusCounts?.accepted,
+                valueClassName: "text-base-primary",
+              },
+              {
+                label: "Pending",
+                labelClassName: "text-base-secondary/75",
+                value: statusCounts?.pending,
+                valueClassName: "text-base-secondary",
+              },
+              {
+                label: "Cancelled",
+                labelClassName: "text-base-danger/75",
+                value: statusCounts?.cancelled,
+                valueClassName: "text-base-danger",
+              },
+              {
+                label: "Completed",
+                labelClassName: "text-base-success/75",
+                value: statusCounts?.completed,
+                valueClassName: "text-base-success",
+              },
             ],
           }}
         />
@@ -237,6 +256,7 @@ function BookingPage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={data?.pagination?.totalItems}
             perPage={perPage}
           />

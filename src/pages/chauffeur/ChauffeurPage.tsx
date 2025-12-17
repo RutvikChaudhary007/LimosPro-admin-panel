@@ -166,19 +166,19 @@ function ChauffeurPage() {
   const calculatedTotalPages = Math.max(1, totalPages);
 
   // Handle page change
+  // Handle page change
   const handlePageChange = (value: number) => {
-    // If value is larger than current page size, it's a page size change
-    if (value > perPage || value === 10 || value === 20 || value === 30) {
-      setperPage(value);
-      setNewPage(1);
-      setPage(1);
-      // refetch();
-    } else {
-      // Otherwise it's a page change
-      setNewPage(value);
-      setPage(value);
-      window.scrollTo(0, 0);
-    }
+    setNewPage(value);
+    setPage(value);
+    window.scrollTo(0, 0);
+  };
+
+  // Handle per-page size change
+  const handlePerPageChange = (value: number) => {
+    setperPage(value);
+    setNewPage(1);
+    setPage(1);
+    refetch();
   };
 
   if (isError) return <ErrorCard refetch={refetch} />;
@@ -271,6 +271,7 @@ function ChauffeurPage() {
             currentPage={currentPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
+            onPerPageChange={handlePerPageChange}
             totalItems={data?.pagination?.totalItems}
             perPage={perPage}
           />
