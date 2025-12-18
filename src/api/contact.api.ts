@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TIpWhiteListForm } from "@/components/ipWhiteList/IpWhiteListForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
@@ -80,6 +80,33 @@ export const useFetchContactRequestById = ({ id }: { id: string }) =>
     queryFn: () => getContactRequestById(id),
     refetchOnWindowFocus: false,
     retry: false,
+  });
+
+/**
+ * Send reply to contact request
+ */
+export const replyToContactRequest = async ({
+  id,
+  subject,
+  message,
+}: {
+  id: string;
+  subject: string;
+  message: string;
+}) => {
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.CONTACT_REQUEST.REPLY(id),
+    { subject, message },
+  );
+  return response.data?.data;
+};
+
+/**
+ * Hook to send reply to contact request
+ */
+export const useReplyContactMutation = () =>
+  useMutation({
+    mutationFn: replyToContactRequest,
   });
 
 // ============================================

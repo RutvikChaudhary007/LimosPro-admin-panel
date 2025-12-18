@@ -1,12 +1,17 @@
+import { format } from "date-fns";
 import { useFetchContactRequestById } from "@/api";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  Card,
+  CardBody,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Field, FieldLabel, FieldSeparator } from "@/components/ui/field";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "../Spinner";
-import { FieldSeparator } from "../ui/field";
 
 function ViewModal({
   id,
@@ -21,60 +26,53 @@ function ViewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {isFetching ? (
-        <Spinner />
-      ) : (
-        <DialogContent className="font-quicksand w-full max-w-3xl max-h-screen rounded">
-          <DialogHeader>
-            <div className="w-full h-full space-y-6 ">
-              <div className="flex items-center justify-between">
-                <DialogTitle className="space-y-3">
-                  <h4 className="font-montserrat font-semibold text-xl text-base-black">
-                    {data?.email}
-                  </h4>
-                  <h5 className="font-montserrat text-base text-base-gray font-semibold">
-                    {data?.phone}
-                  </h5>
-                </DialogTitle>
-              </div>
-            </div>
-          </DialogHeader>
+      <DialogContent className="p-0 border-none max-w-2xl bg-transparent shadow-none">
+        {isFetching ? (
+          <Card className="min-h-[300px] flex items-center justify-center">
+            <Spinner />
+          </Card>
+        ) : (
+          <Card>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>Contact Request Details</CardTitle>
+                <CardDescription className="text-sm font-bold">
+                  Submitted on{" "}
+                  {data?.createdAt
+                    ? format(new Date(data.createdAt), "dd MMM yyyy, hh:mm a")
+                    : "N/A"}
+                </CardDescription>
+              </CardHeader>
+              <FieldSeparator />
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-[max-content_1fr] gap-4 items-center">
+                  <Label className="font-montserrat font-semibold">
+                    Email:
+                  </Label>
+                  <Label>{data?.email || "N/A"}</Label>
 
-          <FieldSeparator />
-          {data?.message}
-        </DialogContent>
-      )}
+                  <Label className="font-montserrat font-semibold">
+                    Phone:
+                  </Label>
+                  <Label>{data?.phone || "N/A"}</Label>
+                </div>
+                <FieldSeparator />
+
+                <Field className="mt-4">
+                  <FieldLabel className="font-montserrat font-semibold text-base-black text-sm">
+                    Message
+                  </FieldLabel>
+                  <div className="text-base text-base-black leading-relaxed whitespace-pre-wrap">
+                    {data?.message || "No message provided."}
+                  </div>
+                </Field>
+              </CardContent>
+            </CardBody>
+          </Card>
+        )}
+      </DialogContent>
     </Dialog>
   );
 }
 
 export default ViewModal;
-
-// const htmlContent = () => {
-//   return (<div className="w-full h-full space-y-4">
-//     <div className="flex items-center gap-6">
-//       <div className="text-[#3A3A3A] font-medium flex flex-col space-y-10"><span>Hi,
-//         </span>
-
-//        <span> Are you looking to boost your business with a custom mobile app? At Hoff & Mazor, we specialize in creating innovative and user-friendly apps tailored to your unique needs.</span>
-// <span>
-//         Benefits of choosing us:
-//         1. Customized solutions
-//         2. User-friendly design
-//         3. Timely delivery
-//         4. Ongoing support
-//         </span>
-// <span>
-//         Don't miss out on the opportunity to stand out from the competition. Contact us today for a consultation!
-// </span>
-//        <span> Best regards,</span>
-
-// <span>
-//         John Smith
-//         Hoff & Mazor
-//         john@hoffnmazordeveloper.com
-// </span>
-//         Respond with stop to optout.</div>
-//     </div>
-//     </div>)
-// }

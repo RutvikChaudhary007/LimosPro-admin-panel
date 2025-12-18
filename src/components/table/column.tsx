@@ -1887,6 +1887,8 @@ export type TContactRequest = {
   email: string;
   phone: string;
   message: string;
+  isResolved: boolean;
+  createdAt: string;
 };
 
 export function getContactRequest(
@@ -1925,6 +1927,35 @@ export function getContactRequest(
       accessorKey: "message",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Message" />
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-[300px] truncate">{row.original.message}</div>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Date" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {row.original.createdAt
+            ? format(new Date(row.original.createdAt), "dd MMM yyyy")
+            : "N/A"}
+        </span>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "isResolved",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => (
+        <Badge variant={row.original.isResolved ? "default" : "gray"}>
+          {row.original.isResolved ? "Replied" : "Pending"}
+        </Badge>
       ),
       enableSorting: false,
     },

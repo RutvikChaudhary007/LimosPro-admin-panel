@@ -193,4 +193,10 @@ export const API_ENDPOINTS: Record<string, any> = {
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/business-layout/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/business-layout/${id}`,
   },
+  CONTACT_REQUEST: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/contact-requests`,
+    GET_BY_ID: `${ADMIN_SERVICE_URL}/contact-requests/:id`,
+    CREATE: `${ADMIN_SERVICE_URL}/contact-requests`,
+    REPLY: (id: string) => `${ADMIN_SERVICE_URL}/contact-requests/${id}/reply`,
+  },
 };

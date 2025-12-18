@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { Search, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useFetchAllContactRequest } from "@/api";
@@ -29,6 +27,8 @@ const ContactRequestsPage = () => {
   const [newPage, setNewPage] = useState(1);
   const [perPage, setPerPage] = useState<number>(10);
   const [msgId, setMsgId] = useState<string | null>(null);
+  const [selectedRequest, setSelectedRequest] =
+    useState<TContactRequest | null>(null);
   const { data, isFetching, refetch } = useFetchAllContactRequest({
     page: newPage,
     limit: perPage,
@@ -36,46 +36,54 @@ const ContactRequestsPage = () => {
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<TContactRequest>(
-      data?.contactRequests,
+      data?.contactRequests ?? [],
       newPage,
       perPage,
       data?.pagination,
     );
 
   const handleView = useCallback((id: string) => {
-    console.log("view:", id);
     setIsOpen(true);
     setMsgId(id);
   }, []);
-  const handleEmail = useCallback((id: string) => {
-    console.log("Email:", id);
-    setIsModal(true);
-  }, []);
+
+  const handleEmail = useCallback(
+    (id: string) => {
+      const request = currentItems.find((item) => item.id === id);
+      if (request) {
+        setSelectedRequest(request);
+        setIsModal(true);
+      }
+    },
+    [currentItems],
+  );
+
   const columns = useMemo(
     () => getContactRequest(handleView, handleEmail),
     [handleView, handleEmail],
   );
 
   const [searchValue, setSearchValue] = useState("");
-  const [rowSelection, setRowSelection] = useState({});
-  // Number of pages based on filtered data
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+
   const calculatedTotalPages = Math.max(1, totalPages);
 
-  // Unified handler for page and page size changes
-  // Handle page change
   const handlePageChange = (value: number) => {
     setNewPage(value);
     setPage(value);
     window.scrollTo(0, 0);
   };
 
-  // Handle per-page size change
   const handlePerPageChange = (value: number) => {
     setPerPage(value);
     setNewPage(1);
     setPage(1);
     refetch();
   };
+
+  const selectedRowsCount = Object.keys(rowSelection).filter(
+    (k) => rowSelection[k],
+  ).length;
 
   return (
     <>
@@ -89,29 +97,17 @@ const ContactRequestsPage = () => {
           ]}
         />
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          <Button
+            variant="outlineBlack"
+            disabled={selectedRowsCount === 0}
+            onClick={() => {
+              setRowSelection({});
+            }}
           >
-            <Button
-              variant="outlineBlack"
-              disabled={
-                Object.keys(rowSelection).filter((k) => rowSelection[k])
-                  .length === 0
-              }
-              onClick={() => {
-                // setData((prev) =>
-                //   prev.filter((row, i) => !rowSelection[i])
-                // );
-                //   console.log("data:", data);
-                //   console.log("rowSelection:", rowSelection);
-                setRowSelection({});
-              }}
-            >
-              <span>Delete</span>
-              <Trash2 />
-            </Button>
-          </span>
-          <div className="">
+            <span>Delete</span>
+            <Trash2 />
+          </Button>
+          <div>
             <InputGroup>
               <InputGroupInput
                 type="search"
@@ -125,6 +121,7 @@ const ContactRequestsPage = () => {
             </InputGroup>
           </div>
         </div>
+
         {isFetching ? (
           <Spinner />
         ) : (
@@ -142,8 +139,17 @@ const ContactRequestsPage = () => {
         {msgId && (
           <ViewModal id={msgId} open={isOpen} onOpenChange={setIsOpen} />
         )}
-        {/* View Dialog */}
-        <ReplyFC isModal={isModal} setIsModal={setIsModal} />
+
+        {/* Reply Dialog */}
+        {selectedRequest && (
+          <ReplyFC
+            isModal={isModal}
+            setIsModal={setIsModal}
+            request={selectedRequest}
+            onSuccess={refetch}
+          />
+        )}
+
         {/* Pagination */}
         {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
