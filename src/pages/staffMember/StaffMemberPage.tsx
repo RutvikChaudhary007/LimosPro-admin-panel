@@ -48,9 +48,29 @@ const StaffMemberPage = () => {
     },
     [navigate],
   );
-  const handleAccess = useCallback((id: string) => {
-    console.log("Access:", id);
-  }, []);
+  const syncStaffPermissions = queries.useSyncStaffPermissionsMutation();
+  const handleAccess = useCallback(
+    async (id: string, permissionIds: string[]) => {
+      console.log("Access:", id, permissionIds);
+      try {
+        toastPromise(
+          syncStaffPermissions.mutateAsync({ staffId: id, permissionIds }),
+          {
+            loading: "Updating permissions...",
+            success: (res) => {
+              if (res) refetch();
+              return "Permissions updated successfully";
+            },
+            error: (e) =>
+              e instanceof Error ? e.message : "Failed to update permissions",
+          },
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [syncStaffPermissions, refetch],
+  );
   const deleteStaffMember = queries.useDeleteStaffMemberMutation();
   const bulkDeleteStaffMember = queries.useBulkDeleteStaffMemberMutation();
   const handleDelete = useCallback(

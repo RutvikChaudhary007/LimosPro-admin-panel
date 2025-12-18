@@ -27,7 +27,7 @@ const EditStaffMemberPage = () => {
 
   async function onSubmit(values: any) {
     try {
-      const { permissions, ...staffData } = values;
+      const staffData = { ...values };
 
       if (staffData?.password?.includes("*")) delete staffData.password;
 
@@ -46,15 +46,6 @@ const EditStaffMemberPage = () => {
               : "Failed to update staff member",
         },
       );
-
-      // Sync permissions separately
-      if (permissions) {
-        const { syncStaffPermissions } = await import("@/api/staff.api");
-        await syncStaffPermissions({
-          staffId: id as string,
-          permissionIds: permissions,
-        });
-      }
 
       navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
     } catch (error) {

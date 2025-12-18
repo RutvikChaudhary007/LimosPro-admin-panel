@@ -11,7 +11,6 @@ import {
   CreditCardIcon,
   Edit,
   Eye,
-  FolderKey,
   Mail,
   Phone,
   PhoneIcon,
@@ -34,7 +33,7 @@ import {
 import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
-import AccessCell from "../regionAccess/RegionAccess";
+import AccessCell from "../manageAccess/ManageAccess";
 import { Badge } from "../ui/badge";
 import {
   HoverCard,
@@ -323,7 +322,7 @@ export function getRegionAdminColumns(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -518,7 +517,7 @@ export function getAffiliate(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -660,7 +659,7 @@ export function getChauffeur(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -808,7 +807,7 @@ export function getUsers(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -1123,7 +1122,7 @@ export function getFleets(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -1727,7 +1726,7 @@ export function getCrewMember(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -1767,7 +1766,7 @@ export type TStaffMember = {
   email: string;
   password: string;
   role: string;
-  permissions?: Array<{ permissionName: string }>;
+  permissions?: Array<{ id: string; permissionName: string }>;
   user?: {
     firstName: string;
     lastName: string;
@@ -1776,7 +1775,7 @@ export type TStaffMember = {
 
 export function getStaffMember(
   onEdit: (id: string) => void,
-  onAccess: (id: string) => void,
+  onAccess: (id: string, permissionIds: string[]) => void,
   onDelete: (id: string) => void,
 ): ColumnDef<TStaffMember>[] {
   return [
@@ -1821,18 +1820,16 @@ export function getStaffMember(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            variant="outlineNavBtnBlack"
-            size="xl"
-            spacing="lg"
-            tooltip="Manage Access"
-            onClick={() => onAccess(row.original.id)}
-          >
-            <FolderKey />
-          </Button>
+          <AccessCell
+            row={row}
+            onAccess={onAccess}
+            initialSelected={row.original.permissions?.map((p) => p.id) || []}
+            entityType="staff"
+          />
           <Button
             onClick={() => onEdit(row.original.id)}
             variant="outlineNavBtnPrimary"
+            className="ml-4"
             size="xl"
             spacing="lg"
             tooltip="Edit Details"
@@ -1851,7 +1848,7 @@ export function getStaffMember(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2065,7 +2062,7 @@ export function getTestimonial(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2184,7 +2181,7 @@ export function getOurPartner(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2278,7 +2275,7 @@ export function getNews(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2452,7 +2449,7 @@ export function getIpWhiteList(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2571,7 +2568,7 @@ export function getPageColumns(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2672,7 +2669,7 @@ export function getFaqs(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2795,7 +2792,7 @@ export function getChauffeurAvailablility(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -2882,7 +2879,7 @@ export function getHomeContent(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -3007,7 +3004,7 @@ export function getContent(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>
@@ -3130,7 +3127,7 @@ export function getBlogColumns(
               </Button>
             </DialogTrigger>
             <DialogContent
-              className="sm:max-w-[425px]"
+              className="w-full sm:max-w-sm"
               onOpenAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader>

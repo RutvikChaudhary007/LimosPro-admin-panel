@@ -60,6 +60,7 @@ import {
   editStaffMember,
   editTestimonial,
   login,
+  syncStaffPermissions,
   updateUser,
 } from "@/api";
 import { useUserStore } from "@/stores/useAuthStore";
@@ -524,6 +525,22 @@ const useBulkDeleteStaffMemberMutation = () =>
       console.error("Mutation error:", err);
     },
   });
+
+const useSyncStaffPermissionsMutation = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: syncStaffPermissions,
+    onSuccess: (response, variables) => {
+      console.log(variables, response);
+      // userPermissions are automatically stored in localStorage by the login API
+      navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
+      // Navigate to dashboard
+    },
+    onError: (err: unknown) => {
+      console.error("Mutation error:", err);
+    },
+  });
+};
 
 /**
  * ###################################################
@@ -992,6 +1009,7 @@ export default {
   useCreateStaffMemberMutation,
   useDeleteStaffMemberMutation,
   useUpdateStaffMemberMutation,
+  useSyncStaffPermissionsMutation,
   useBulkDeleteStaffMemberMutation,
   // Testimonial
   useCreateTestimonialMutation,
