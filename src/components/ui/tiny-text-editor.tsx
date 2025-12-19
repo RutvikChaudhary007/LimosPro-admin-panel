@@ -3,6 +3,7 @@ import type React from "react";
 import { useEffect, useRef } from "react";
 
 type TinyEditorProps = {
+  id?: string;
   value: string;
   onChange: (v: string) => void;
   init?: any;
@@ -13,6 +14,7 @@ type TinyEditorProps = {
 } & Omit<React.ComponentProps<"div">, "ref">;
 
 const TinyEditorRHF = ({
+  id,
   value,
   onChange,
   init = {},
@@ -151,6 +153,7 @@ const TinyEditorRHF = ({
   return (
     <div {...rest}>
       <Editor
+        id={id}
         tinymceScriptSrc="/tinymce/tinymce.min.js"
         licenseKey="gpl"
         onInit={handleInit}

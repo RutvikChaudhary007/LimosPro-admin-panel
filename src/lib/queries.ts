@@ -85,7 +85,13 @@ const useLoginMutation = () => {
       // reject unauthorized role
       if (
         !userRole ||
-        !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)
+        ![
+          "Super Admin",
+          "Regional Admin",
+          "Affiliate",
+          "Dispatcher",
+          "SEO Agent",
+        ].includes(userRole)
       ) {
         //  return Promise.reject(new Error("Unauthorized user"));
         throw new Error("Unauthorized user");

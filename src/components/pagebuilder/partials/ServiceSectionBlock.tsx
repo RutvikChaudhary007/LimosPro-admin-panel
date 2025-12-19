@@ -32,9 +32,15 @@ export function ServiceSectionBlock({
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field>
-          <FieldLabel className="text-base-black gap-0">Service</FieldLabel>
+          <FieldLabel
+            className="text-base-black gap-0"
+            htmlFor={`content.${blockIndex}.service`}
+          >
+            Service
+          </FieldLabel>
           <InputGroup>
             <InputGroupInput
+              id={`content.${blockIndex}.service`}
               type="text"
               placeholder="e.g. Corporate Relocation"
               {...register(`content.${blockIndex}.service`)}
@@ -43,9 +49,15 @@ export function ServiceSectionBlock({
         </Field>
 
         <Field>
-          <FieldLabel className="text-base-black gap-0">Subservice</FieldLabel>
+          <FieldLabel
+            className="text-base-black gap-0"
+            htmlFor={`content.${blockIndex}.subService`}
+          >
+            Subservice
+          </FieldLabel>
           <InputGroup>
             <InputGroupInput
+              id={`content.${blockIndex}.subService`}
               type="text"
               placeholder="e.g. Office Move"
               {...register(`content.${blockIndex}.subService`)}
@@ -99,11 +111,15 @@ export function ServiceSectionBlock({
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.src`}
+                        >
                           Image URL
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.src`}
                             type="text"
                             placeholder="https://..."
                             {...register(
@@ -130,11 +146,15 @@ export function ServiceSectionBlock({
                       </Field>
 
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.alt`}
+                        >
                           Alt Text
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.alt`}
                             type="text"
                             placeholder="Image accessibility text"
                             {...register(
@@ -146,11 +166,15 @@ export function ServiceSectionBlock({
                     </div>
 
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.title`}
+                      >
                         Title
                       </FieldLabel>
                       <InputGroup>
                         <InputGroupInput
+                          id={`content.${blockIndex}.infoCards.${cardIndex}.title`}
                           type="text"
                           placeholder="Card title"
                           {...register(
@@ -161,7 +185,10 @@ export function ServiceSectionBlock({
                     </Field>
 
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.description`}
+                      >
                         Description
                       </FieldLabel>
                       <Controller
@@ -169,6 +196,7 @@ export function ServiceSectionBlock({
                         name={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                         render={({ field }) => (
                           <TinyEditorRHF
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                             value={field.value || ""}
                             onChange={field.onChange}
                             onBlur={field.onBlur}

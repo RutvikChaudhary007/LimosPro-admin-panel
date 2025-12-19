@@ -254,6 +254,7 @@ interface SelectDropDownItems {
 }
 
 interface SelectDropDownProps {
+  id?: string;
   variant?: "primary" | "secondary" | "dark";
   size?: "default" | "md" | "sm";
   classname?: string;
@@ -265,6 +266,7 @@ interface SelectDropDownProps {
 }
 
 function SelectDropDown({
+  id,
   variant = "primary",
   size = "md",
   classname,
@@ -285,6 +287,7 @@ function SelectDropDown({
       size={size}
     >
       <SelectTrigger
+        id={id}
         className={classname}
         data-has-value={value ? "true" : undefined}
       >

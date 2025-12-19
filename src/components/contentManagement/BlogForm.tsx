@@ -705,6 +705,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                           control={form.control}
                           render={({ field }) => (
                             <SelectDropDown
+                              id="authorId"
                               placeholder="Author Name"
                               items={(() => {
                                 const options: {
@@ -881,10 +882,6 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                                   addTag(t);
                                   setTagInput("");
                                 }}
-                                open={false}
-                                setOpen={() => {}}
-                                typingTimer={null}
-                                setTypingTimer={() => {}}
                                 placeholder="Add tag"
                                 inputId="tag-input"
                               />
@@ -1002,10 +999,6 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                                   addKeyword(kw);
                                   setKeywordInput("");
                                 }}
-                                open={false}
-                                setOpen={() => {}}
-                                typingTimer={null}
-                                setTypingTimer={() => {}}
                                 placeholder="Add keyword"
                                 inputId="keyword-input"
                               />

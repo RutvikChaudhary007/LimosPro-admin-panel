@@ -75,11 +75,15 @@ export function ImageCardsBlock({
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.imageCards.${cardIndex}.src`}
+                        >
                           Image URL
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.imageCards.${cardIndex}.src`}
                             type="text"
                             placeholder="https://..."
                             {...register(
@@ -106,11 +110,15 @@ export function ImageCardsBlock({
                       </Field>
 
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.imageCards.${cardIndex}.alt`}
+                        >
                           Alt Text
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.imageCards.${cardIndex}.alt`}
                             type="text"
                             placeholder="Image accessibility text"
                             {...register(
@@ -122,11 +130,15 @@ export function ImageCardsBlock({
                     </div>
 
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor={`content.${blockIndex}.imageCards.${cardIndex}.title`}
+                      >
                         Title
                       </FieldLabel>
                       <InputGroup>
                         <InputGroupInput
+                          id={`content.${blockIndex}.imageCards.${cardIndex}.title`}
                           type="text"
                           placeholder="Card title"
                           {...register(
@@ -137,7 +149,10 @@ export function ImageCardsBlock({
                     </Field>
 
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor={`content.${blockIndex}.imageCards.${cardIndex}.description`}
+                      >
                         Description
                       </FieldLabel>
                       <Controller
@@ -145,6 +160,7 @@ export function ImageCardsBlock({
                         name={`content.${blockIndex}.imageCards.${cardIndex}.description`}
                         render={({ field }) => (
                           <TinyEditorRHF
+                            id={`content.${blockIndex}.imageCards.${cardIndex}.description`}
                             value={field.value || ""}
                             onChange={field.onChange}
                             onBlur={field.onBlur}
@@ -155,11 +171,15 @@ export function ImageCardsBlock({
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.imageCards.${cardIndex}.button`}
+                        >
                           Button Link
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.imageCards.${cardIndex}.button`}
                             type="text"
                             placeholder="/services/..."
                             {...register(
@@ -170,11 +190,15 @@ export function ImageCardsBlock({
                       </Field>
 
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.imageCards.${cardIndex}.btnTitle`}
+                        >
                           Button Text
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.imageCards.${cardIndex}.btnTitle`}
                             type="text"
                             placeholder="e.g. Learn More"
                             {...register(

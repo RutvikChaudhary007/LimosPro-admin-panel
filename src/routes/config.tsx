@@ -185,7 +185,7 @@ const EditContent = () => <CMSCategoryRouter mode="edit" />;
 // const PagePreview = lazy(
 //   () => import("../pages/contentManagement/Pages/PagePreview"),
 // );
-const SeoPage = lazy(() => import("../pages/contentManagment/SeoPage"));
+const SeoPage = lazy(() => import("../pages/contentManagement/SeoPage"));
 
 // Blog Posts
 const BlogPostsPage = lazy(

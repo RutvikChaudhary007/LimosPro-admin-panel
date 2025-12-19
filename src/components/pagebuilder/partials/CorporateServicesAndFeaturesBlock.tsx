@@ -77,11 +77,15 @@ export function CorporateServicesAndFeaturesBlock({
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.src`}
+                        >
                           Image URL
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.src`}
                             type="text"
                             placeholder="https://..."
                             {...register(
@@ -108,11 +112,15 @@ export function CorporateServicesAndFeaturesBlock({
                       </Field>
 
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.alt`}
+                        >
                           Alt Text
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.alt`}
                             type="text"
                             placeholder="Image accessibility text"
                             {...register(
@@ -124,11 +132,15 @@ export function CorporateServicesAndFeaturesBlock({
                     </div>
 
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.title`}
+                      >
                         Title
                       </FieldLabel>
                       <InputGroup>
                         <InputGroupInput
+                          id={`content.${blockIndex}.infoCards.${cardIndex}.title`}
                           type="text"
                           placeholder="Card title"
                           {...register(
@@ -139,7 +151,10 @@ export function CorporateServicesAndFeaturesBlock({
                     </Field>
 
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.description`}
+                      >
                         Description
                       </FieldLabel>
                       <Controller
@@ -147,6 +162,7 @@ export function CorporateServicesAndFeaturesBlock({
                         name={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                         render={({ field }) => (
                           <TinyEditorRHF
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                             value={field.value || ""}
                             onChange={field.onChange}
                             onBlur={field.onBlur}
@@ -157,11 +173,15 @@ export function CorporateServicesAndFeaturesBlock({
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.height`}
+                        >
                           Height (px)
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.height`}
                             type="number"
                             {...register(
                               `content.${blockIndex}.infoCards.${cardIndex}.height`,
@@ -172,11 +192,15 @@ export function CorporateServicesAndFeaturesBlock({
                       </Field>
 
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.width`}
+                        >
                           Width (px)
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.width`}
                             type="number"
                             {...register(
                               `content.${blockIndex}.infoCards.${cardIndex}.width`,
@@ -187,7 +211,10 @@ export function CorporateServicesAndFeaturesBlock({
                       </Field>
 
                       <Field>
-                        <FieldLabel className="text-base-black gap-0">
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.orientation`}
+                        >
                           Orientation
                         </FieldLabel>
                         <Controller
@@ -195,6 +222,7 @@ export function CorporateServicesAndFeaturesBlock({
                           name={`content.${blockIndex}.infoCards.${cardIndex}.orientation`}
                           render={({ field }) => (
                             <SelectDropDown
+                              id={`content.${blockIndex}.infoCards.${cardIndex}.orientation`}
                               placeholder="Select orientation"
                               classname="w-full"
                               items={[

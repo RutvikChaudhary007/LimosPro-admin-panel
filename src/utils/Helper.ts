@@ -33,12 +33,15 @@ export function hasDynamicAccess(
   role?: string,
   userPermissions?: string[],
 ): boolean {
-  // If permissions are provided, use permission-based access
+  // If permissions are provided, try permission-based access first
   if (userPermissions && userPermissions.length > 0) {
-    return hasPermissionAccess(path, userPermissions);
+    if (hasPermissionAccess(path, userPermissions)) {
+      return true;
+    }
   }
 
-  // Fallback to role-based access if no permissions provided
+  // Also allow role-based access (role rules should still apply even when
+  // permissions exist but don't include a mapping for the route).
   if (role) {
     return hasAccess(path, role);
   }

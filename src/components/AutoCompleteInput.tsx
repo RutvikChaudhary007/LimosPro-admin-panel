@@ -21,10 +21,10 @@ interface AutoCompleteInputProps {
   setValue: (v: string) => void;
   list?: string[];
   onAdd: (s: string) => void;
-  open: boolean;
-  setOpen: (b: boolean) => void;
-  typingTimer: ReturnType<typeof setTimeout> | null;
-  setTypingTimer: (t: ReturnType<typeof setTimeout> | null) => void;
+  open?: boolean;
+  setOpen?: (b: boolean) => void;
+  typingTimer?: ReturnType<typeof setTimeout> | null;
+  setTypingTimer?: (t: ReturnType<typeof setTimeout> | null) => void;
   placeholder?: string;
   inputId?: string;
 }
@@ -43,6 +43,15 @@ export function AutoCompleteInput({
 }: AutoCompleteInputProps) {
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [internalTypingTimer, setInternalTypingTimer] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+
+  const effectiveOpen = open ?? internalOpen;
+  const effectiveSetOpen = setOpen ?? setInternalOpen;
+  const effectiveTypingTimer = typingTimer ?? internalTypingTimer;
+  const effectiveSetTypingTimer = setTypingTimer ?? setInternalTypingTimer;
 
   itemRefs.current.length = 0;
 
@@ -51,7 +60,7 @@ export function AutoCompleteInput({
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={effectiveOpen} onOpenChange={effectiveSetOpen}>
       <PopoverTrigger asChild>
         <div className="flex items-center gap-2">
           <InputGroup>
@@ -63,9 +72,12 @@ export function AutoCompleteInput({
               onChange={(e) => {
                 const v = e.target.value;
                 setValue(v);
-                if (typingTimer) clearTimeout(typingTimer);
-                const t = setTimeout(() => setOpen(v.trim().length > 0), 250);
-                setTypingTimer(t);
+                if (effectiveTypingTimer) clearTimeout(effectiveTypingTimer);
+                const t = setTimeout(
+                  () => effectiveSetOpen(v.trim().length > 0),
+                  250,
+                );
+                effectiveSetTypingTimer(t);
               }}
               onKeyDown={(e) => {
                 if (e.key === "ArrowDown") {
@@ -99,7 +111,7 @@ export function AutoCompleteInput({
                   if (value.trim().length > 0) {
                     onAdd(value.trim());
                     setValue("");
-                    setOpen(false);
+                    effectiveSetOpen(false);
                     setActiveIndex(null);
                   }
                 }
@@ -112,7 +124,7 @@ export function AutoCompleteInput({
               if (value.trim().length > 0) {
                 onAdd(value.trim());
                 setValue("");
-                setOpen(false);
+                effectiveSetOpen(false);
                 setActiveIndex(null);
               }
             }}
@@ -153,7 +165,7 @@ export function AutoCompleteInput({
                   onSelect={() => {
                     onAdd(item);
                     setValue("");
-                    setOpen(false);
+                    effectiveSetOpen(false);
                     setActiveIndex(null);
                   }}
                   onKeyDown={(e) => {
@@ -184,7 +196,7 @@ export function AutoCompleteInput({
                       e.preventDefault();
                       onAdd(item);
                       setValue("");
-                      setOpen(false);
+                      effectiveSetOpen(false);
                       setActiveIndex(null);
                     }
                   }}

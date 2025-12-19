@@ -28,6 +28,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { toast } from "sonner";
+import { useFetchAllMetaKeywords } from "@/api";
 import PreviewRenderer from "@/components/pagebuilder/partials/PreviewRenderer";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,6 +67,8 @@ import {
   uid,
 } from "@/utils/pagebuilder.utils";
 import { generateSlug } from "@/utils/slug";
+import { AutoCompleteInput } from "../AutoCompleteInput";
+import { Badge } from "../ui/badge";
 import {
   ContactForServiceBlock,
   CorporateServiceOfferingsBlock,
@@ -92,12 +95,42 @@ export default function PageTemplateEditor({
   const [showPreview, setShowPreview] = useState(false);
   const [mediaCb, setMediaCb] = useState<null | ((url: string) => void)>(null);
   const [apiOpen, setApiOpen] = useState(false);
+  const [keywordInput, setKeywordInput] = useState("");
+
+  const keywordSuggestions = [
+    "SEO",
+    "Search Engine Optimization",
+    "Social Media",
+    "Social Marketing",
+    "Marketing",
+    "Market Research",
+    "Google",
+    "Google Ads",
+    "Google Analytics",
+    "Content",
+    "Content Writing",
+    "Content Strategy",
+    "Copywriting",
+    "Conversion Rate",
+    "Campaign Management",
+    "Customer Engagement",
+    "Email Marketing",
+    "Ecommerce",
+    "Brand Strategy",
+    "Business Growth",
+  ];
+
+  const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
 
   const form = useForm<PageTemplateFormData>({
     resolver: zodResolver(pageTemplateSchema),
     defaultValues: initialData
-      ? transformData(initialData)
+      ? {
+          category: initialData.category ?? "business",
+          ...transformData(initialData),
+        }
       : {
+          category: "business",
           pageName: "",
           slug: "",
           hero: { image: "", alt: "", h1: "", p: "", btn: "" },
@@ -116,7 +149,7 @@ export default function PageTemplateEditor({
     setValue,
     getValues,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = form;
 
   // Log validation errors
@@ -179,19 +212,33 @@ export default function PageTemplateEditor({
     setMediaCb(null);
   };
 
+  const watched = watch();
+
   const handleSyncSlug = () => {
     const currentTitle = getValues("pageName");
     if (currentTitle) {
-      setValue("slug", generateSlug(currentTitle), { shouldValidate: true });
+      setValue("slug", generateSlug(currentTitle), {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
     }
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-    setValue("pageName", newTitle);
-  };
 
-  const watched = watch();
+    const previousTitle = watched.pageName || "";
+    const currentSlug = watched.slug || "";
+    const previousAutoSlug = previousTitle ? generateSlug(previousTitle) : "";
+
+    const shouldSyncSlug = !currentSlug || currentSlug === previousAutoSlug;
+    if (shouldSyncSlug) {
+      setValue("slug", generateSlug(newTitle), {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  };
 
   // Robustly derive preview content by combining 'fields' (correct order)
   // with 'watched.content' (live values) using the stable 'id'.
@@ -230,55 +277,29 @@ export default function PageTemplateEditor({
           {/* Header */}
           <Card>
             <CardBody>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>{watched.pageName || "Untitled Page"}</CardTitle>
-                  <CardDescription className="flex items-center gap-2">
-                    {initialData?.updatedAt ? (
-                      <span>
-                        Last updated {formatDateTime(initialData.updatedAt)}
-                      </span>
-                    ) : (
-                      <span>Draft Page</span>
-                    )}
-                    <Separator orientation="vertical" className="h-4" />
-                    <span
-                      className={
-                        watched.isActive
-                          ? "text-base-success"
-                          : "text-base-gray"
-                      }
-                    >
-                      {watched.isActive ? "Active" : "Inactive"}
+              <CardHeader>
+                <CardTitle>{watched.pageName || "Untitled Page"}</CardTitle>
+                <CardDescription className="flex items-center gap-2">
+                  {initialData?.updatedAt ? (
+                    <span>
+                      Last Modified {formatDateTime(initialData.updatedAt)}
                     </span>
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Button
-                    type="button"
-                    onClick={() => setApiOpen(true)}
-                    variant="outline"
-                  >
+                  ) : (
+                    <span>Draft Page</span>
+                  )}
+                </CardDescription>
+                <CardAction className="flex items-center gap-3">
+                  <Button type="button" onClick={() => setApiOpen(true)}>
                     API
                   </Button>
                   <Button
                     type="button"
                     onClick={() => setShowPreview(!showPreview)}
-                    variant="outline"
+                    variant="outlinePrimary"
                   >
                     {showPreview ? "Back to Editor" : "Live Preview"}
                   </Button>
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <RefreshCw className="animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      "Save Changes"
-                    )}
-                  </Button>
-                </div>
+                </CardAction>
               </CardHeader>
               <CardContent className="">
                 {/* Tabs */}
@@ -334,8 +355,9 @@ export default function PageTemplateEditor({
                                       id="pageName"
                                       type="text"
                                       placeholder="Enter page title"
-                                      {...register("pageName")}
-                                      onChange={handleTitleChange}
+                                      {...register("pageName", {
+                                        onChange: handleTitleChange,
+                                      })}
                                       className={
                                         errors.pageName
                                           ? "border-base-danger"
@@ -409,7 +431,10 @@ export default function PageTemplateEditor({
                               <CardContent className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor="hero.image"
+                                    >
                                       Hero Image URL
                                     </FieldLabel>
                                     <Controller
@@ -418,6 +443,7 @@ export default function PageTemplateEditor({
                                       render={({ field }) => (
                                         <InputGroup>
                                           <InputGroupInput
+                                            id="hero.image"
                                             type="text"
                                             placeholder="https://..."
                                             {...field}
@@ -428,7 +454,10 @@ export default function PageTemplateEditor({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor="hero.alt"
+                                    >
                                       Alt Text
                                     </FieldLabel>
                                     <Controller
@@ -437,6 +466,7 @@ export default function PageTemplateEditor({
                                       render={({ field }) => (
                                         <InputGroup>
                                           <InputGroupInput
+                                            id="hero.alt"
                                             type="text"
                                             placeholder="Image description"
                                             {...field}
@@ -449,7 +479,10 @@ export default function PageTemplateEditor({
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor="hero.h1"
+                                    >
                                       Heading (H1)
                                     </FieldLabel>
                                     <Controller
@@ -458,6 +491,7 @@ export default function PageTemplateEditor({
                                       render={({ field }) => (
                                         <InputGroup>
                                           <InputGroupInput
+                                            id="hero.h1"
                                             type="text"
                                             placeholder="Hero heading"
                                             {...field}
@@ -468,7 +502,10 @@ export default function PageTemplateEditor({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor="hero.btn"
+                                    >
                                       Button Text
                                     </FieldLabel>
                                     <Controller
@@ -477,6 +514,7 @@ export default function PageTemplateEditor({
                                       render={({ field }) => (
                                         <InputGroup>
                                           <InputGroupInput
+                                            id="hero.btn"
                                             type="text"
                                             placeholder="Button label"
                                             {...field}
@@ -488,7 +526,10 @@ export default function PageTemplateEditor({
                                 </div>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="hero.p"
+                                  >
                                     Description (Paragraph)
                                   </FieldLabel>
                                   <Controller
@@ -496,6 +537,7 @@ export default function PageTemplateEditor({
                                     name="hero.p"
                                     render={({ field }) => (
                                       <TinyEditorRHF
+                                        id="hero.p"
                                         value={(field.value as string) || ""}
                                         onChange={(val) => {
                                           field.onChange(val);
@@ -724,7 +766,10 @@ export default function PageTemplateEditor({
                               </CardHeader>
                               <CardContent className="space-y-4">
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.title"
+                                  >
                                     Meta Title
                                   </FieldLabel>
                                   <Controller
@@ -733,6 +778,7 @@ export default function PageTemplateEditor({
                                     render={({ field }) => (
                                       <InputGroup>
                                         <InputGroupInput
+                                          id="seo.title"
                                           type="text"
                                           placeholder="Enter meta title"
                                           {...field}
@@ -743,7 +789,10 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.description"
+                                  >
                                     Meta Description
                                   </FieldLabel>
                                   <Controller
@@ -751,6 +800,7 @@ export default function PageTemplateEditor({
                                     name="seo.description"
                                     render={({ field }) => (
                                       <Textarea
+                                        id="seo.description"
                                         rows={3}
                                         placeholder="Enter meta description"
                                         value={field.value || ""}
@@ -764,46 +814,94 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
-                                    Keywords (comma separated)
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="keyword-input"
+                                  >
+                                    Meta Keywords
                                   </FieldLabel>
+
                                   <Controller
-                                    control={control}
+                                    control={form.control}
                                     name="seo.keywords"
-                                    render={({ field }) => (
-                                      <Textarea
-                                        rows={2}
-                                        placeholder="keyword1, keyword2, ..."
-                                        value={
-                                          Array.isArray(field.value)
-                                            ? field.value.join(", ")
-                                            : field.value || ""
-                                        }
-                                        onChange={(e) =>
-                                          field.onChange(e.target.value)
-                                        }
-                                        onBlur={() => {
-                                          try {
-                                            const currentValue = field.value;
-                                            if (
-                                              typeof currentValue === "string"
-                                            ) {
-                                              const keywords = currentValue
-                                                .split(",")
-                                                .map((k) => k.trim())
-                                                .filter((k) => k.length > 0);
-                                              field.onChange(keywords);
+                                    render={({ field }) => {
+                                      const keywords = Array.isArray(
+                                        field.value,
+                                      )
+                                        ? field.value
+                                        : typeof field.value === "string"
+                                          ? field.value
+                                              .split(",")
+                                              .map((k) => k.trim())
+                                              .filter(Boolean)
+                                          : [];
+
+                                      const addKeyword = (kw: string) => {
+                                        if (!kw.trim() || keywords.includes(kw))
+                                          return;
+                                        field.onChange([...keywords, kw]);
+                                      };
+
+                                      const removeKeyword = (index: number) => {
+                                        field.onChange(
+                                          keywords.filter(
+                                            (_, i) => i !== index,
+                                          ),
+                                        );
+                                      };
+
+                                      return (
+                                        <>
+                                          <AutoCompleteInput
+                                            value={keywordInput}
+                                            setValue={setKeywordInput}
+                                            list={
+                                              metaKeywordsData?.metaKeywords?.map(
+                                                (k: { keyword: string }) =>
+                                                  k.keyword,
+                                              ) || keywordSuggestions
                                             }
-                                          } catch (err) {
-                                            console.error(
-                                              "Error parsing keywords",
-                                              err,
-                                            );
-                                          }
-                                          field.onBlur();
-                                        }}
-                                      />
-                                    )}
+                                            onAdd={(kw) => {
+                                              addKeyword(kw);
+                                              setKeywordInput("");
+                                            }}
+                                            placeholder="Add keyword"
+                                            inputId="keyword-input"
+                                          />
+                                          <FieldDescription>
+                                            Add SEO keywords here (type to
+                                            search, press Enter, or click +).
+                                          </FieldDescription>
+
+                                          {/* Keywords List */}
+                                          {keywords.length > 0 && (
+                                            <div className="flex flex-wrap gap-2">
+                                              {keywords.map(
+                                                (
+                                                  keyword: string,
+                                                  index: number,
+                                                ) => (
+                                                  <Badge
+                                                    key={index}
+                                                    className="capitalize"
+                                                  >
+                                                    <span>{keyword}</span>
+                                                    <span
+                                                      className="cursor-pointer"
+                                                      onClick={() =>
+                                                        removeKeyword(index)
+                                                      }
+                                                    >
+                                                      <X className="size-4" />
+                                                    </span>
+                                                  </Badge>
+                                                ),
+                                              )}
+                                            </div>
+                                          )}
+                                        </>
+                                      );
+                                    }}
                                   />
                                 </Field>
                               </CardContent>
@@ -820,7 +918,10 @@ export default function PageTemplateEditor({
                               </CardHeader>
                               <CardContent className="space-y-4">
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.openGraph.title"
+                                  >
                                     OG Title
                                   </FieldLabel>
                                   <Controller
@@ -829,6 +930,7 @@ export default function PageTemplateEditor({
                                     render={({ field }) => (
                                       <InputGroup>
                                         <InputGroupInput
+                                          id="seo.openGraph.title"
                                           type="text"
                                           placeholder="Defaults to Meta Title if empty"
                                           {...field}
@@ -839,7 +941,10 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.openGraph.description"
+                                  >
                                     OG Description
                                   </FieldLabel>
                                   <Controller
@@ -847,6 +952,7 @@ export default function PageTemplateEditor({
                                     name="seo.openGraph.description"
                                     render={({ field }) => (
                                       <Textarea
+                                        id="seo.openGraph.description"
                                         rows={3}
                                         placeholder="Defaults to Meta Description if empty"
                                         value={field.value || ""}
@@ -861,7 +967,10 @@ export default function PageTemplateEditor({
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor="seo.openGraph.url"
+                                    >
                                       OG URL
                                     </FieldLabel>
                                     <Controller
@@ -870,6 +979,7 @@ export default function PageTemplateEditor({
                                       render={({ field }) => (
                                         <InputGroup>
                                           <InputGroupInput
+                                            id="seo.openGraph.url"
                                             type="text"
                                             placeholder="https://yourdomain.com/page"
                                             {...field}
@@ -880,7 +990,10 @@ export default function PageTemplateEditor({
                                   </Field>
 
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor="seo.openGraph.siteName"
+                                    >
                                       Site Name
                                     </FieldLabel>
                                     <Controller
@@ -889,6 +1002,7 @@ export default function PageTemplateEditor({
                                       render={({ field }) => (
                                         <InputGroup>
                                           <InputGroupInput
+                                            id="seo.openGraph.siteName"
                                             type="text"
                                             placeholder="Your Site Name"
                                             {...field}
@@ -900,7 +1014,10 @@ export default function PageTemplateEditor({
                                 </div>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.openGraph.type"
+                                  >
                                     OG Type
                                   </FieldLabel>
                                   <Controller
@@ -908,6 +1025,7 @@ export default function PageTemplateEditor({
                                     name="seo.openGraph.type"
                                     render={({ field }) => (
                                       <SelectDropDown
+                                        id="seo.openGraph.type"
                                         placeholder="Select type"
                                         classname="w-full"
                                         items={[
@@ -933,7 +1051,10 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.openGraph.images"
+                                  >
                                     OG Images (URLs, one per line)
                                   </FieldLabel>
                                   <Controller
@@ -942,6 +1063,7 @@ export default function PageTemplateEditor({
                                     render={({ field }) => (
                                       <div className="space-y-2">
                                         <Textarea
+                                          id="seo.openGraph.images"
                                           rows={3}
                                           value={field.value?.join("\n") || ""}
                                           onChange={(e) => {
@@ -973,7 +1095,10 @@ export default function PageTemplateEditor({
                               </CardHeader>
                               <CardContent className="space-y-4">
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.twitter.card"
+                                  >
                                     Card Type
                                   </FieldLabel>
                                   <Controller
@@ -981,6 +1106,7 @@ export default function PageTemplateEditor({
                                     name="seo.twitter.card"
                                     render={({ field }) => (
                                       <SelectDropDown
+                                        id="seo.twitter.card"
                                         placeholder="Select card type"
                                         classname="w-full"
                                         items={[
@@ -1003,7 +1129,10 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.twitter.title"
+                                  >
                                     Twitter Title
                                   </FieldLabel>
                                   <Controller
@@ -1012,6 +1141,7 @@ export default function PageTemplateEditor({
                                     render={({ field }) => (
                                       <InputGroup>
                                         <InputGroupInput
+                                          id="seo.twitter.title"
                                           type="text"
                                           placeholder="Defaults to OG Title if empty"
                                           {...field}
@@ -1022,7 +1152,10 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.twitter.description"
+                                  >
                                     Twitter Description
                                   </FieldLabel>
                                   <Controller
@@ -1030,6 +1163,7 @@ export default function PageTemplateEditor({
                                     name="seo.twitter.description"
                                     render={({ field }) => (
                                       <Textarea
+                                        id="seo.twitter.description"
                                         rows={3}
                                         placeholder="Defaults to OG Description if empty"
                                         value={field.value || ""}
@@ -1043,7 +1177,10 @@ export default function PageTemplateEditor({
                                 </Field>
 
                                 <Field>
-                                  <FieldLabel className="text-base-black gap-0">
+                                  <FieldLabel
+                                    className="text-base-black gap-0"
+                                    htmlFor="seo.twitter.images"
+                                  >
                                     Twitter Images (URLs, one per line)
                                   </FieldLabel>
                                   <Controller
@@ -1052,6 +1189,7 @@ export default function PageTemplateEditor({
                                     render={({ field }) => (
                                       <div className="space-y-2">
                                         <Textarea
+                                          id="seo.twitter.images"
                                           rows={3}
                                           value={field.value?.join("\n") || ""}
                                           onChange={(e) => {
@@ -1181,11 +1319,15 @@ export default function PageTemplateEditor({
                                                                 ✕
                                                               </Button>
                                                               <Field>
-                                                                <FieldLabel className="text-base-black gap-0">
+                                                                <FieldLabel
+                                                                  className="text-base-black gap-0"
+                                                                  htmlFor={`jsonLd.${index}.data.mainEntity.${faqIndex}.name`}
+                                                                >
                                                                   Question
                                                                 </FieldLabel>
                                                                 <InputGroup>
                                                                   <InputGroupInput
+                                                                    id={`jsonLd.${index}.data.mainEntity.${faqIndex}.name`}
                                                                     type="text"
                                                                     value={
                                                                       faq.name
@@ -1215,10 +1357,14 @@ export default function PageTemplateEditor({
                                                                 </InputGroup>
                                                               </Field>
                                                               <Field>
-                                                                <FieldLabel className="text-base-black gap-0">
+                                                                <FieldLabel
+                                                                  className="text-base-black gap-0"
+                                                                  htmlFor={`jsonLd.${index}.data.mainEntity.${faqIndex}.acceptedAnswer.text`}
+                                                                >
                                                                   Answer
                                                                 </FieldLabel>
                                                                 <Textarea
+                                                                  id={`jsonLd.${index}.data.mainEntity.${faqIndex}.acceptedAnswer.text`}
                                                                   rows={3}
                                                                   value={
                                                                     faq
@@ -1289,7 +1435,10 @@ export default function PageTemplateEditor({
                                               type === "LocalBusiness") && (
                                               <div className="space-y-4">
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.name`}
+                                                  >
                                                     Name
                                                   </FieldLabel>
                                                   <Controller
@@ -1298,6 +1447,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.name`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1314,7 +1464,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.url`}
+                                                  >
                                                     URL
                                                   </FieldLabel>
                                                   <Controller
@@ -1323,6 +1476,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.url`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1339,7 +1493,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.logo`}
+                                                  >
                                                     Logo URL
                                                   </FieldLabel>
                                                   <Controller
@@ -1348,6 +1505,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.logo`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1364,7 +1522,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.description`}
+                                                  >
                                                     Description
                                                   </FieldLabel>
                                                   <Controller
@@ -1372,6 +1533,7 @@ export default function PageTemplateEditor({
                                                     name={`jsonLd.${index}.data.description`}
                                                     render={({ field }) => (
                                                       <Textarea
+                                                        id={`jsonLd.${index}.data.description`}
                                                         rows={3}
                                                         value={field.value}
                                                         onChange={(e) =>
@@ -1384,7 +1546,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.telephone`}
+                                                  >
                                                     Telephone
                                                   </FieldLabel>
                                                   <Controller
@@ -1393,6 +1558,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.telephone`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1417,7 +1583,10 @@ export default function PageTemplateEditor({
                                                     </p>
                                                     <div className="grid grid-cols-2 gap-4">
                                                       <Field>
-                                                        <FieldLabel className="text-base-black gap-0">
+                                                        <FieldLabel
+                                                          className="text-base-black gap-0"
+                                                          htmlFor={`jsonLd.${index}.data.address.streetAddress`}
+                                                        >
                                                           Street
                                                         </FieldLabel>
                                                         <Controller
@@ -1428,6 +1597,7 @@ export default function PageTemplateEditor({
                                                           }) => (
                                                             <InputGroup>
                                                               <InputGroupInput
+                                                                id={`jsonLd.${index}.data.address.streetAddress`}
                                                                 type="text"
                                                                 {...field}
                                                                 value={String(
@@ -1446,7 +1616,10 @@ export default function PageTemplateEditor({
                                                         />
                                                       </Field>
                                                       <Field>
-                                                        <FieldLabel className="text-base-black gap-0">
+                                                        <FieldLabel
+                                                          className="text-base-black gap-0"
+                                                          htmlFor={`jsonLd.${index}.data.address.addressLocality`}
+                                                        >
                                                           City
                                                         </FieldLabel>
                                                         <Controller
@@ -1457,6 +1630,7 @@ export default function PageTemplateEditor({
                                                           }) => (
                                                             <InputGroup>
                                                               <InputGroupInput
+                                                                id={`jsonLd.${index}.data.address.addressLocality`}
                                                                 type="text"
                                                                 {...field}
                                                                 value={String(
@@ -1475,7 +1649,10 @@ export default function PageTemplateEditor({
                                                         />
                                                       </Field>
                                                       <Field>
-                                                        <FieldLabel className="text-base-black gap-0">
+                                                        <FieldLabel
+                                                          className="text-base-black gap-0"
+                                                          htmlFor={`jsonLd.${index}.data.address.addressRegion`}
+                                                        >
                                                           Region/State
                                                         </FieldLabel>
                                                         <Controller
@@ -1486,6 +1663,7 @@ export default function PageTemplateEditor({
                                                           }) => (
                                                             <InputGroup>
                                                               <InputGroupInput
+                                                                id={`jsonLd.${index}.data.address.addressRegion`}
                                                                 type="text"
                                                                 {...field}
                                                                 value={String(
@@ -1504,7 +1682,10 @@ export default function PageTemplateEditor({
                                                         />
                                                       </Field>
                                                       <Field>
-                                                        <FieldLabel className="text-base-black gap-0">
+                                                        <FieldLabel
+                                                          className="text-base-black gap-0"
+                                                          htmlFor={`jsonLd.${index}.data.address.postalCode`}
+                                                        >
                                                           Zip Code
                                                         </FieldLabel>
                                                         <Controller
@@ -1515,6 +1696,7 @@ export default function PageTemplateEditor({
                                                           }) => (
                                                             <InputGroup>
                                                               <InputGroupInput
+                                                                id={`jsonLd.${index}.data.address.postalCode`}
                                                                 type="text"
                                                                 {...field}
                                                                 value={String(
@@ -1533,7 +1715,10 @@ export default function PageTemplateEditor({
                                                         />
                                                       </Field>
                                                       <Field className="col-span-full">
-                                                        <FieldLabel className="text-base-black gap-0">
+                                                        <FieldLabel
+                                                          className="text-base-black gap-0"
+                                                          htmlFor={`jsonLd.${index}.data.address.addressCountry`}
+                                                        >
                                                           Country
                                                         </FieldLabel>
                                                         <Controller
@@ -1544,6 +1729,7 @@ export default function PageTemplateEditor({
                                                           }) => (
                                                             <InputGroup>
                                                               <InputGroupInput
+                                                                id={`jsonLd.${index}.data.address.addressCountry`}
                                                                 type="text"
                                                                 {...field}
                                                                 value={String(
@@ -1571,7 +1757,10 @@ export default function PageTemplateEditor({
                                               type === "BlogPosting") && (
                                               <div className="space-y-4">
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.headline`}
+                                                  >
                                                     Headline
                                                   </FieldLabel>
                                                   <Controller
@@ -1580,6 +1769,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.headline`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1596,7 +1786,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.image`}
+                                                  >
                                                     Image URL
                                                   </FieldLabel>
                                                   <Controller
@@ -1605,6 +1798,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.image`}
                                                           type="text"
                                                           value={String(
                                                             (Array.isArray(
@@ -1625,7 +1819,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.author.name`}
+                                                  >
                                                     Author Name
                                                   </FieldLabel>
                                                   <Controller
@@ -1634,6 +1831,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.author.name`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1650,7 +1848,10 @@ export default function PageTemplateEditor({
                                                   />
                                                 </Field>
                                                 <Field>
-                                                  <FieldLabel className="text-base-black gap-0">
+                                                  <FieldLabel
+                                                    className="text-base-black gap-0"
+                                                    htmlFor={`jsonLd.${index}.data.publisher.name`}
+                                                  >
                                                     Publisher Name
                                                   </FieldLabel>
                                                   <Controller
@@ -1659,6 +1860,7 @@ export default function PageTemplateEditor({
                                                     render={({ field }) => (
                                                       <InputGroup>
                                                         <InputGroupInput
+                                                          id={`jsonLd.${index}.data.publisher.name`}
                                                           type="text"
                                                           {...field}
                                                           value={String(
@@ -1782,12 +1984,10 @@ export default function PageTemplateEditor({
                             </p>
                           </div>
                           <div className="flex items-center gap-3">
-                            <div className="text-xs px-3 py-1 bg-primary/10 text-primary rounded-full">
-                              Preview Mode
-                            </div>
+                            <Badge>Preview Mode</Badge>
                             <Button
                               onClick={() => setShowPreview(false)}
-                              variant="outline"
+                              variant="outlinePrimary"
                               spacing="sm"
                             >
                               Back to Edit

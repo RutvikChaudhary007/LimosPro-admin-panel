@@ -26,12 +26,12 @@ import { cn } from "@/lib/utils";
 
 // Dummy Data
 const categoriesData = [
-  { name: "All", count: 0 },
+  { name: "All", count: 6 },
   { name: "Services", count: 3 },
   { name: "Destinations", count: 2 },
   { name: "Business", count: 1 },
-  { name: "Home", count: 1 },
-  { name: "Chauffeur", count: 1 },
+  { name: "Home", count: 0 },
+  { name: "Chauffeur", count: 0 },
 ];
 
 const pagesData = [
@@ -142,7 +142,7 @@ export default function CMSPageList() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <InputGroupAddon>
-                    <Search className="h-4 w-4" />
+                    <Search />
                   </InputGroupAddon>
                 </InputGroup>
               </CardHeader>

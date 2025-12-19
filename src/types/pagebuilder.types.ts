@@ -361,6 +361,7 @@ export const seoSchema = z.object({
 });
 
 export const pageTemplateSchema = z.object({
+  category: z.string(),
   pageName: z
     .string()
     .refine((v) => v.trim() !== "", { message: "Page name is required" }),
@@ -375,9 +376,7 @@ export const pageTemplateSchema = z.object({
   isActive: z.boolean().default(true).optional(),
 });
 
-export type PageTemplateFormData = z.infer<typeof pageTemplateSchema> & {
-  category: string;
-};
+export type PageTemplateFormData = z.infer<typeof pageTemplateSchema>;
 
 // Extended type for API responses that includes timestamps (not used in form submission)
 export type PageTemplateWithTimestamps = PageTemplateFormData & {

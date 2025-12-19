@@ -18,9 +18,15 @@ export function DedicatedServiceSectionBlock({
   return (
     <div className="space-y-4">
       <Field>
-        <FieldLabel className="text-base-black gap-0">Image URL</FieldLabel>
+        <FieldLabel
+          className="text-base-black gap-0"
+          htmlFor={`content.${blockIndex}.img`}
+        >
+          Image URL
+        </FieldLabel>
         <InputGroup>
           <InputGroupInput
+            id={`content.${blockIndex}.img`}
             type="text"
             placeholder="https://..."
             {...register(`content.${blockIndex}.img`)}
@@ -40,12 +46,18 @@ export function DedicatedServiceSectionBlock({
       </Field>
 
       <Field>
-        <FieldLabel className="text-base-black gap-0">Description</FieldLabel>
+        <FieldLabel
+          className="text-base-black gap-0"
+          htmlFor={`content.${blockIndex}.textRich`}
+        >
+          Description
+        </FieldLabel>
         <Controller
           control={control}
           name={`content.${blockIndex}.textRich`}
           render={({ field }) => (
             <TinyEditorRHF
+              id={`content.${blockIndex}.textRich`}
               value={field.value || ""}
               onChange={field.onChange}
               onBlur={field.onBlur}

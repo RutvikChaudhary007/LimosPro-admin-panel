@@ -8,7 +8,6 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import { generatePageTitle } from "@/utils/seo";
-import { styledLog } from "@/utils/styledLog";
 import PageForm from "./PageForm";
 
 function CreatePage() {

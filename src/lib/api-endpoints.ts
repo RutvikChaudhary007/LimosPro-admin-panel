@@ -199,4 +199,20 @@ export const API_ENDPOINTS: Record<string, any> = {
     CREATE: `${ADMIN_SERVICE_URL}/contact-requests`,
     REPLY: (id: string) => `${ADMIN_SERVICE_URL}/contact-requests/${id}/reply`,
   },
+  META_KEY_WORD: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/meta-keywords`,
+    GET_BY_ID: `${ADMIN_SERVICE_URL}/meta-keywords/:id`,
+    CREATE: `${ADMIN_SERVICE_URL}/meta-keywords`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/meta-keywords/${id}`,
+    BULK_DELETE: `${ADMIN_SERVICE_URL}/meta-keywords/bulk-delete`,
+  },
+  TAG: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/tags`,
+    GET_BY_ID: `${ADMIN_SERVICE_URL}/tags/:id`,
+    CREATE: `${ADMIN_SERVICE_URL}/tags`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
+    BULK_DELETE: `${ADMIN_SERVICE_URL}/tags/bulk-delete`,
+  },
 };
