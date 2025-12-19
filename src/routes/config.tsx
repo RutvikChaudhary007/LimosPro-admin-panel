@@ -177,12 +177,11 @@ const ReportPage = lazy(() => import("../pages/report/ReportPage"));
 const ContentManagement = lazy(
   () => import("../pages/contentManagement/Pages/CMSPageList"),
 );
-const CreateContent = lazy(
-  () => import("../pages/contentManagement/Pages/CreatePage"),
+const CMSCategoryRouter = lazy(
+  () => import("../pages/contentManagement/Pages/CMSCategoryRouter"),
 );
-const EditContent = lazy(
-  () => import("../pages/contentManagement/Pages/EditPage"),
-);
+const CreateContent = () => <CMSCategoryRouter mode="create" />;
+const EditContent = () => <CMSCategoryRouter mode="edit" />;
 // const PagePreview = lazy(
 //   () => import("../pages/contentManagement/Pages/PagePreview"),
 // );
@@ -190,16 +189,16 @@ const SeoPage = lazy(() => import("../pages/contentManagment/SeoPage"));
 
 // Blog Posts
 const BlogPostsPage = lazy(
-  () => import("../pages/contentManagement/BlogPostsPage"),
+  () => import("../pages/contentManagement/blogs/BlogPostsPage"),
 );
 const CreateBlogPostPage = lazy(
-  () => import("../pages/contentManagement/CreateBlogPostPage"),
+  () => import("../pages/contentManagement/blogs/CreateBlogPostPage"),
 );
 const EditBlogPostPage = lazy(
-  () => import("../pages/contentManagement/EditBlogPostPage"),
+  () => import("../pages/contentManagement/blogs/EditBlogPostPage"),
 );
 const ViewBlogPostPage = lazy(
-  () => import("../pages/contentManagement/ViewBlogPostPage"),
+  () => import("../pages/contentManagement/blogs/ViewBlogPostPage"),
 );
 
 // Components (Demo)

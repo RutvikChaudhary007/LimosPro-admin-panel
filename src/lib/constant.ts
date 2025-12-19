@@ -70,8 +70,8 @@ export const constant = {
 
     // Content Management URLS
     CONTENT_MANAGEMENT_ALL_PAGES: "/content-management/pages",
-    CREATE_CONTENT_MANAGEMENT: "/content-management/pages/create",
-    EDIT_CONTENT_MANAGEMENT: "/content-management/pages/:id/edit",
+    CREATE_CONTENT_MANAGEMENT: "/content-management/pages/:category/create",
+    EDIT_CONTENT_MANAGEMENT: "/content-management/pages/:category/:id/edit",
     PAGE_PREVIEW: "/content-management/pages/:id/preview",
 
     // Content Management SEO URLs

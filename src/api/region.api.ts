@@ -190,6 +190,7 @@ export const createRegionAdmin = async (data: {
   try {
     if (data?.region) {
       const regionId = data.region;
+      delete data?.region;
       const response = await axiosInstance.post(
         `${API_ENDPOINTS.REGIONAL_ADMIN.CREATE?.replace(":regionId", regionId)}`,
         data,

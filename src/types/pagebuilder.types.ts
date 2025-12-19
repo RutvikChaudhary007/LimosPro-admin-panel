@@ -375,7 +375,9 @@ export const pageTemplateSchema = z.object({
   isActive: z.boolean().default(true).optional(),
 });
 
-export type PageTemplateFormData = z.infer<typeof pageTemplateSchema>;
+export type PageTemplateFormData = z.infer<typeof pageTemplateSchema> & {
+  category: string;
+};
 
 // Extended type for API responses that includes timestamps (not used in form submission)
 export type PageTemplateWithTimestamps = PageTemplateFormData & {

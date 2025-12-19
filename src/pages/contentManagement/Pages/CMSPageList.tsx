@@ -30,7 +30,8 @@ const categoriesData = [
   { name: "Services", count: 3 },
   { name: "Destinations", count: 2 },
   { name: "Business", count: 1 },
-  { name: "Legal", count: 2 },
+  { name: "Home", count: 1 },
+  { name: "Chauffeur", count: 1 },
 ];
 
 const pagesData = [
@@ -76,20 +77,6 @@ const pagesData = [
     lastUpdated: "5 days ago",
     category: "Business",
   },
-  {
-    id: 7,
-    title: "Terms of Service",
-    description: "Our terms and conditions for using the platform.",
-    lastUpdated: "3 months ago",
-    category: "Legal",
-  },
-  {
-    id: 8,
-    title: "Privacy Policy",
-    description: "How we collect, use, and handle your data.",
-    lastUpdated: "3 months ago",
-    category: "Legal",
-  },
 ];
 
 export default function CMSPageList() {
@@ -125,11 +112,18 @@ export default function CMSPageList() {
       <PageHeader
         title="Content Management"
         breadcrumbs={[{ label: "Home", path: "/" }, { label: "Pages" }]}
-        action={{
-          label: "Create Page",
-          icon: <Plus />,
-          link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT,
-        }}
+        action={
+          selectedCategory === "All"
+            ? undefined
+            : {
+                label: "Create Page",
+                icon: <Plus />,
+                link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT.replace(
+                  ":category",
+                  selectedCategory.toLowerCase(),
+                ),
+              }
+        }
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-4 gap-6">
@@ -237,9 +231,9 @@ export default function CMSPageList() {
                           onClick={() =>
                             navigate(
                               constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(
-                                ":id",
-                                page.id.toString(),
-                              ),
+                                ":category",
+                                page.category.toLowerCase(),
+                              ).replace(":id", page.id.toString()),
                             )
                           }
                         >
