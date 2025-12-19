@@ -5,11 +5,7 @@ export { ContactForServiceBlock } from "./partials/ContactForServiceBlock";
 export { CorporateServiceOfferingsBlock } from "./partials/CorporateServiceOfferingsBlock";
 export { CorporateServicesAndFeaturesBlock } from "./partials/CorporateServicesAndFeaturesBlock";
 export { DedicatedServiceSectionBlock } from "./partials/DedicatedServiceSectionBlock";
-export {
-  LabeledEditor,
-  LabeledInput,
-  LabeledTextarea,
-} from "./partials/HelperComponents";
+export { SortableWrapper } from "./partials/HelperComponents";
 export { ImageCardsBlock } from "./partials/ImageCardsBlock";
 export { LayoutBlock } from "./partials/LayoutBlock";
 export { ServiceSectionBlock } from "./partials/ServiceSectionBlock";

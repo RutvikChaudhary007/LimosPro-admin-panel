@@ -47,6 +47,10 @@ export interface BlogPost {
     userId?: string | null;
     websiteUrl?: string | null;
   };
+  faqs?: Array<{
+    question: string;
+    answer: string;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -185,6 +189,10 @@ export interface BlogPostFormData {
     metaKeywords?: string[];
     ogImage?: string;
   };
+  faqs?: Array<{
+    question: string;
+    answer: string;
+  }>;
 }
 
 export interface ContentBlockFormData {

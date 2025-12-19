@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconCreditCard,
   IconEye,
+  IconEyeOff,
   IconId,
   IconLock,
   IconMail,
@@ -206,6 +207,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   });
 
   const [addressObj, setAddressObj] = useState<IAddressObj>();
+  const [showPassword, setShowPassword] = useState(false);
 
   //   const fileRef = useRef<HTMLInputElement | null>(null);
   const defaultValues = transformInitialData(initialData) || {
@@ -498,7 +500,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     <InputGroup>
                       <InputGroupInput
                         id="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="e.g., mysecretpasswd123"
                         disabled={isFieldDisabled(disabledFields, "password")}
                         {...field}
@@ -509,8 +511,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                       <InputGroupAddon
                         align="inline-end"
                         className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
                       >
-                        <IconEye />
+                        {showPassword ? <IconEyeOff /> : <IconEye />}
                       </InputGroupAddon>
                     </InputGroup>
                   )}

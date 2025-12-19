@@ -1,6 +1,8 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { LabeledInput, LabeledTextarea } from "./HelperComponents";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 
 interface DedicatedServiceSectionBlockProps {
   blockIndex: number;
@@ -14,34 +16,43 @@ export function DedicatedServiceSectionBlock({
   const { register, setValue, control } = useFormContext();
 
   return (
-    <>
-      <LabeledInput
-        label="Image URL"
-        {...register(`content.${blockIndex}.img`)}
-      />
-      <Controller
-        control={control}
-        name={`content.${blockIndex}.textRich`}
-        render={({ field }) => (
-          <LabeledTextarea
-            label="Rich Text (HTML)"
-            value={field.value || ""}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            name={field.name}
+    <div className="space-y-4">
+      <Field>
+        <FieldLabel className="text-base-black gap-0">Image URL</FieldLabel>
+        <InputGroup>
+          <InputGroupInput
+            type="text"
+            placeholder="https://..."
+            {...register(`content.${blockIndex}.img`)}
           />
-        )}
-      />
-      <Button
-        type="button"
-        onClick={() =>
-          openMedia((url) => setValue(`content.${blockIndex}.img`, url))
-        }
-        variant="outlinePrimary"
-        spacing="sm"
-      >
-        Choose Image
-      </Button>
-    </>
+        </InputGroup>
+        <Button
+          type="button"
+          onClick={() =>
+            openMedia((url) => setValue(`content.${blockIndex}.img`, url))
+          }
+          variant="linkPrimary"
+          spacing="none"
+          className="mt-1 h-auto text-xs justify-start"
+        >
+          Choose from Media
+        </Button>
+      </Field>
+
+      <Field>
+        <FieldLabel className="text-base-black gap-0">Description</FieldLabel>
+        <Controller
+          control={control}
+          name={`content.${blockIndex}.textRich`}
+          render={({ field }) => (
+            <TinyEditorRHF
+              value={field.value || ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
+      </Field>
+    </div>
   );
 }

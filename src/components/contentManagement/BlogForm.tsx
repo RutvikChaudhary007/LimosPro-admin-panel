@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
-import { Save, X } from "lucide-react";
+import { Link2, Plus, RefreshCw, Save, Trash2, X } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import {
   useFetchAllMetaKeywords,
@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardBody,
   CardContent,
   CardHeader,
@@ -23,10 +24,12 @@ import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost } from "@/types/content";
+import { generateSlug } from "@/utils/slug";
 import { styledLog } from "@/utils/styledLog";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
@@ -51,6 +54,14 @@ const blogPostSchema = z.object({
   metaDescription: z.string().optional(),
   canonicalUrl: z.string().optional(),
   ogImage: imageSchema.optional().or(z.literal("")),
+  faqs: z
+    .array(
+      z.object({
+        question: z.string().min(1, "Question is required"),
+        answer: z.string().min(1, "Answer is required"),
+      }),
+    )
+    .optional(),
 });
 
 const modules = {
@@ -121,6 +132,7 @@ const transformInitialData = (data?: BlogPost): BlogPostForm | undefined => {
     metaDescription: data?.seo?.metaDescription || "",
     canonicalUrl: data?.seo?.canonicalUrl || "",
     ogImage: getImageUrl(data?.seo?.ogImage),
+    faqs: data?.faqs || [],
   };
 };
 
@@ -208,14 +220,26 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
         tags: [],
         metaKeywords: [],
         images: [],
+        faqs: [],
       },
     });
     const {
       setValue,
+      getValues,
+      control,
       watch,
       formState: { errors },
       handleSubmit,
     } = form;
+
+    const {
+      fields: faqFields,
+      append: appendFaq,
+      remove: removeFaq,
+    } = useFieldArray({
+      control,
+      name: "faqs",
+    });
 
     // Expose archivePost method via ref
     useImperativeHandle(ref, () => ({
@@ -228,13 +252,11 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
       },
     }));
 
-    // Generate slug from title
-    const generateSlug = (title: string) => {
-      return title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, "")
-        .replace(/\s+/g, "-")
-        .trim();
+    const handleSyncSlug = () => {
+      const currentTitle = getValues("title");
+      if (currentTitle) {
+        setValue("slug", generateSlug(currentTitle), { shouldValidate: true });
+      }
     };
 
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -305,6 +327,10 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
         };
 
         formdata.append("seo", JSON.stringify(seoData));
+
+        if (data.faqs && data.faqs.length > 0) {
+          formdata.append("faqs", JSON.stringify(data.faqs));
+        }
 
         await onSubmit(formdata);
       } catch (error) {
@@ -407,7 +433,17 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                               }
                             />
                             <InputGroupAddon>
-                              <IconFileText />
+                              <Link2 />
+                            </InputGroupAddon>
+                            <InputGroupAddon align="inline-end">
+                              <InputGroupButton
+                                onClick={handleSyncSlug}
+                                size="icon-sm"
+                                tooltip="Regenerate slug from title"
+                                className="hover:bg-transparent"
+                              >
+                                <RefreshCw />
+                              </InputGroupButton>
                             </InputGroupAddon>
                           </InputGroup>
                         )}
@@ -491,135 +527,125 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                 </CardBody>
               </Card>
 
-              {/* SEO Settings */}
+              {/* FAQs Section */}
               <Card>
                 <CardBody>
                   <CardHeader>
-                    <CardTitle>SEO Settings</CardTitle>
+                    <CardTitle>FAQs</CardTitle>
+                    <CardAction>
+                      <Button
+                        type="button"
+                        size="lg"
+                        spacing="sm"
+                        className="w-8"
+                        tooltip="Add FAQ"
+                        onClick={() => appendFaq({ question: "", answer: "" })}
+                      >
+                        <Plus />
+                      </Button>
+                    </CardAction>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <Field>
-                      <FieldLabel
-                        htmlFor="metaTitle"
-                        className="text-base-black gap-0"
-                      >
-                        Meta Title
-                      </FieldLabel>
-
-                      <Controller
-                        control={form.control}
-                        name="metaTitle"
-                        render={({ field }) => (
-                          <InputGroup>
-                            <InputGroupInput
-                              id="metaTitle"
-                              type="text"
-                              placeholder="SEO title for search engines"
-                              {...field}
-                              className={
-                                errors.metaTitle ? "border-base-danger" : ""
-                              }
-                            />
-                            <InputGroupAddon>
-                              <IconFileText />
-                            </InputGroupAddon>
-                          </InputGroup>
-                        )}
-                      />
-
-                      <FieldDescription>
-                        Enter the SEO title for this blog post.
-                      </FieldDescription>
-
-                      {errors.metaTitle && (
-                        <FormMessage>{errors.metaTitle.message}</FormMessage>
-                      )}
-                    </Field>
-
-                    <Field>
-                      <FieldLabel className="text-base-black gap-0">
-                        Meta Keywords
-                      </FieldLabel>
-
-                      <Controller
-                        control={form.control}
-                        name="metaKeywords"
-                        render={({ field }) => {
-                          const keywords = field.value || [];
-
-                          const addKeyword = (kw: string) => {
-                            if (!kw.trim() || keywords.includes(kw)) return;
-                            field.onChange([...keywords, kw]);
-                          };
-
-                          const removeKeyword = (index: number) => {
-                            field.onChange(
-                              keywords.filter((_, i) => i !== index),
-                            );
-                          };
-
-                          return (
-                            <>
-                              <AutoCompleteInput
-                                value={keywordInput}
-                                setValue={setKeywordInput}
-                                list={
-                                  metaKeywordsData?.metaKeywords?.map(
-                                    (k: { keyword: string }) => k.keyword,
-                                  ) || keywordSuggestions
-                                }
-                                onAdd={(kw) => {
-                                  addKeyword(kw);
-                                  setKeywordInput("");
-                                }}
-                                open={false}
-                                setOpen={() => {}}
-                                typingTimer={null}
-                                setTypingTimer={() => {}}
-                                placeholder="Add keyword"
-                                inputId="keyword-input"
+                    {faqFields.length === 0 && (
+                      <p className="text-sm text-base-gray text-center py-4">
+                        No FAQs added yet.
+                      </p>
+                    )}
+                    {faqFields.map((field, index) => (
+                      <Card key={field.id}>
+                        <CardBody>
+                          <CardHeader>
+                            <CardTitle>FAQ {index + 1}</CardTitle>
+                            <CardAction>
+                              <Button
+                                type="button"
+                                variant="outlineNavBtnDestructive"
+                                size="lg"
+                                spacing="sm"
+                                className="w-8"
+                                tooltip="Remove FAQ"
+                                onClick={() => removeFaq(index)}
+                              >
+                                <Trash2 />
+                              </Button>
+                            </CardAction>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <Field>
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor={`faqs.${index}.question`}
+                              >
+                                Question {index + 1}
+                              </FieldLabel>
+                              <Controller
+                                control={control}
+                                name={`faqs.${index}.question`}
+                                render={({ field }) => (
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...field}
+                                      id={`faqs.${index}.question`}
+                                      placeholder="Enter question"
+                                      className={
+                                        errors.faqs?.[index]?.question
+                                          ? "border-base-danger"
+                                          : ""
+                                      }
+                                    />
+                                  </InputGroup>
+                                )}
                               />
                               <FieldDescription>
-                                Add SEO keywords here (type to search, press
-                                Enter, or click +).
+                                Enter the FAQ question.
                               </FieldDescription>
 
-                              {/* Keywords List */}
-                              {keywords.length > 0 && (
-                                <div className="flex flex-wrap gap-2">
-                                  {keywords.map(
-                                    (keyword: string, index: number) => (
-                                      <Badge key={index} className="capitalize">
-                                        <span>{keyword}</span>
-                                        <span
-                                          className="cursor-pointer"
-                                          onClick={() => removeKeyword(index)}
-                                        >
-                                          <X className="size-4" />
-                                        </span>
-                                      </Badge>
-                                    ),
-                                  )}
-                                </div>
+                              {errors.faqs?.[index]?.question && (
+                                <FormMessage>
+                                  {errors.faqs[index].question?.message}
+                                </FormMessage>
                               )}
-                            </>
-                          );
-                        }}
-                      />
-                    </Field>
+                            </Field>
 
-                    <Controller
-                      control={form.control}
-                      name="ogImage"
-                      render={({ field }) => (
-                        <UploadWithUrl
-                          title="Open Graph Images"
-                          multiple={false}
-                          onChange={field.onChange}
-                          value={field.value}
-                        />
-                      )}
-                    />
+                            <Field>
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor={`faqs.${index}.answer`}
+                              >
+                                Answer {index + 1}
+                              </FieldLabel>
+                              <Controller
+                                control={control}
+                                name={`faqs.${index}.answer`}
+                                render={({ field }) => (
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...field}
+                                      id={`faqs.${index}.answer`}
+                                      placeholder="Enter answer"
+                                      className={
+                                        errors.faqs?.[index]?.answer
+                                          ? "border-base-danger"
+                                          : ""
+                                      }
+                                    />
+                                  </InputGroup>
+                                )}
+                              />
+                              <FieldDescription>
+                                Enter the FAQ answer.
+                              </FieldDescription>
+
+                              {errors.faqs?.[index]?.answer && (
+                                <FormMessage>
+                                  {errors.faqs[index].answer?.message}
+                                </FormMessage>
+                              )}
+                            </Field>
+                          </CardContent>
+                        </CardBody>
+                      </Card>
+                    ))}
                   </CardContent>
                 </CardBody>
               </Card>
@@ -663,7 +689,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
 
                     <Field>
                       <FieldLabel
-                        htmlFor="author"
+                        htmlFor="authorId"
                         className="text-base-black gap-0"
                       >
                         Author
@@ -819,7 +845,10 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                   </CardHeader>
                   <CardContent>
                     <Field>
-                      <FieldLabel className="text-base-black gap-0">
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor="tag-input"
+                      >
                         Tags
                       </FieldLabel>
 
@@ -885,6 +914,142 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                         }}
                       />
                     </Field>
+                  </CardContent>
+                </CardBody>
+              </Card>
+
+              {/* SEO Settings */}
+              <Card>
+                <CardBody>
+                  <CardHeader>
+                    <CardTitle>SEO Settings</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Field>
+                      <FieldLabel
+                        htmlFor="metaTitle"
+                        className="text-base-black gap-0"
+                      >
+                        Meta Title
+                      </FieldLabel>
+
+                      <Controller
+                        control={form.control}
+                        name="metaTitle"
+                        render={({ field }) => (
+                          <InputGroup>
+                            <InputGroupInput
+                              id="metaTitle"
+                              type="text"
+                              placeholder="SEO title for search engines"
+                              {...field}
+                              className={
+                                errors.metaTitle ? "border-base-danger" : ""
+                              }
+                            />
+                            <InputGroupAddon>
+                              <IconFileText />
+                            </InputGroupAddon>
+                          </InputGroup>
+                        )}
+                      />
+
+                      <FieldDescription>
+                        Enter the SEO title for this blog post.
+                      </FieldDescription>
+
+                      {errors.metaTitle && (
+                        <FormMessage>{errors.metaTitle.message}</FormMessage>
+                      )}
+                    </Field>
+
+                    <Field>
+                      <FieldLabel
+                        className="text-base-black gap-0"
+                        htmlFor="keyword-input"
+                      >
+                        Meta Keywords
+                      </FieldLabel>
+
+                      <Controller
+                        control={form.control}
+                        name="metaKeywords"
+                        render={({ field }) => {
+                          const keywords = field.value || [];
+
+                          const addKeyword = (kw: string) => {
+                            if (!kw.trim() || keywords.includes(kw)) return;
+                            field.onChange([...keywords, kw]);
+                          };
+
+                          const removeKeyword = (index: number) => {
+                            field.onChange(
+                              keywords.filter((_, i) => i !== index),
+                            );
+                          };
+
+                          return (
+                            <>
+                              <AutoCompleteInput
+                                value={keywordInput}
+                                setValue={setKeywordInput}
+                                list={
+                                  metaKeywordsData?.metaKeywords?.map(
+                                    (k: { keyword: string }) => k.keyword,
+                                  ) || keywordSuggestions
+                                }
+                                onAdd={(kw) => {
+                                  addKeyword(kw);
+                                  setKeywordInput("");
+                                }}
+                                open={false}
+                                setOpen={() => {}}
+                                typingTimer={null}
+                                setTypingTimer={() => {}}
+                                placeholder="Add keyword"
+                                inputId="keyword-input"
+                              />
+                              <FieldDescription>
+                                Add SEO keywords here (type to search, press
+                                Enter, or click +).
+                              </FieldDescription>
+
+                              {/* Keywords List */}
+                              {keywords.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {keywords.map(
+                                    (keyword: string, index: number) => (
+                                      <Badge key={index} className="capitalize">
+                                        <span>{keyword}</span>
+                                        <span
+                                          className="cursor-pointer"
+                                          onClick={() => removeKeyword(index)}
+                                        >
+                                          <X className="size-4" />
+                                        </span>
+                                      </Badge>
+                                    ),
+                                  )}
+                                </div>
+                              )}
+                            </>
+                          );
+                        }}
+                      />
+                    </Field>
+
+                    <Controller
+                      control={form.control}
+                      name="ogImage"
+                      render={({ field }) => (
+                        <UploadWithUrl
+                          title="Open Graph Images"
+                          multiple={false}
+                          onChange={field.onChange}
+                          value={field.value}
+                        />
+                      )}
+                    />
                   </CardContent>
                 </CardBody>
               </Card>

@@ -1,5 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { LabeledInput, LabeledTextarea } from "./HelperComponents";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 
 interface ContactForServiceBlockProps {
   blockIndex: number;
@@ -11,28 +13,45 @@ export function ContactForServiceBlock({
   const { register, control } = useFormContext();
 
   return (
-    <>
-      <Controller
-        control={control}
-        name={`content.${blockIndex}.textRich`}
-        render={({ field }) => (
-          <LabeledTextarea
-            label="Rich Text (HTML)"
-            value={field.value || ""}
-            onChange={field.onChange}
-            onBlur={field.onBlur}
-            name={field.name}
-          />
-        )}
-      />
-      <LabeledInput
-        label="Button Link"
-        {...register(`content.${blockIndex}.btn`)}
-      />
-      <LabeledInput
-        label="Button Text"
-        {...register(`content.${blockIndex}.btnTitle`)}
-      />
-    </>
+    <div className="space-y-4">
+      <Field>
+        <FieldLabel className="text-base-black gap-0">Description</FieldLabel>
+        <Controller
+          control={control}
+          name={`content.${blockIndex}.textRich`}
+          render={({ field }) => (
+            <TinyEditorRHF
+              value={field.value || ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
+      </Field>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field>
+          <FieldLabel className="text-base-black gap-0">Button Link</FieldLabel>
+          <InputGroup>
+            <InputGroupInput
+              type="text"
+              placeholder="e.g. /contact"
+              {...register(`content.${blockIndex}.btn`)}
+            />
+          </InputGroup>
+        </Field>
+
+        <Field>
+          <FieldLabel className="text-base-black gap-0">Button Text</FieldLabel>
+          <InputGroup>
+            <InputGroupInput
+              type="text"
+              placeholder="e.g. Contact Us"
+              {...register(`content.${blockIndex}.btnTitle`)}
+            />
+          </InputGroup>
+        </Field>
+      </div>
+    </div>
   );
 }

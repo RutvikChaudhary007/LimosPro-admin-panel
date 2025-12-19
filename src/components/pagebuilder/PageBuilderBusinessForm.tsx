@@ -18,6 +18,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconFileText } from "@tabler/icons-react";
+import { Copy, Link2, RefreshCw, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Controller,
@@ -38,12 +40,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { FormMessage } from "@/components/ui/form";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { SelectDropDown } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import { useSticky } from "@/hooks/useSticky";
-// Import modular components
 import {
   type PageTemplateFormData,
   type PageTemplateWithTimestamps,
@@ -55,15 +65,13 @@ import {
   transformData,
   uid,
 } from "@/utils/pagebuilder.utils";
-import { Separator } from "../ui/separator";
+import { generateSlug } from "@/utils/slug";
 import {
   ContactForServiceBlock,
   CorporateServiceOfferingsBlock,
   CorporateServicesAndFeaturesBlock,
   DedicatedServiceSectionBlock,
   ImageCardsBlock,
-  LabeledInput,
-  LabeledTextarea,
   LayoutBlock,
   ServiceSectionBlock,
   SortableItem,
@@ -96,7 +104,7 @@ export default function PageTemplateEditor({
           content: [],
           isActive: true,
           seo: undefined,
-          jsonLd: undefined,
+          jsonLd: [],
         },
   });
 
@@ -108,7 +116,7 @@ export default function PageTemplateEditor({
     setValue,
     getValues,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = form;
 
   // Log validation errors
@@ -171,6 +179,18 @@ export default function PageTemplateEditor({
     setMediaCb(null);
   };
 
+  const handleSyncSlug = () => {
+    const currentTitle = getValues("pageName");
+    if (currentTitle) {
+      setValue("slug", generateSlug(currentTitle), { shouldValidate: true });
+    }
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = e.target.value;
+    setValue("pageName", newTitle);
+  };
+
   const watched = watch();
 
   // Robustly derive preview content by combining 'fields' (correct order)
@@ -210,53 +230,55 @@ export default function PageTemplateEditor({
           {/* Header */}
           <Card>
             <CardBody>
-              <CardHeader>
-                <CardTitle>{watched.pageName || "Untitled"}</CardTitle>
-                {watched && initialData && (
-                  <CardDescription className="space-y-[2px] text-sm">
-                    <div>
-                      Status:{" "}
-                      <span className="text-base-secondary">Changed</span> ·{" "}
-                      <Button variant="linkPrimary" spacing="none">
-                        Revert to published
-                      </Button>
-                    </div>
-                    {initialData?.updatedAt && (
-                      <p>
-                        Last Modified: {formatDateTime(initialData.updatedAt)}
-                      </p>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>{watched.pageName || "Untitled Page"}</CardTitle>
+                  <CardDescription className="flex items-center gap-2">
+                    {initialData?.updatedAt ? (
+                      <span>
+                        Last updated {formatDateTime(initialData.updatedAt)}
+                      </span>
+                    ) : (
+                      <span>Draft Page</span>
                     )}
-                    {initialData?.createdAt && (
-                      <p>Created: {formatDateTime(initialData.createdAt)}</p>
-                    )}
+                    <Separator orientation="vertical" className="h-4" />
+                    <span
+                      className={
+                        watched.isActive
+                          ? "text-base-success"
+                          : "text-base-gray"
+                      }
+                    >
+                      {watched.isActive ? "Active" : "Inactive"}
+                    </span>
                   </CardDescription>
-                )}
-                <CardAction>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      onClick={() => setShowPreview(!showPreview)}
-                      spacing="sm"
-                    >
-                      {showPreview ? "Back to Editor" : "Edit"}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={() => setShowPreview(!showPreview)}
-                      variant={showPreview ? "default" : "outlinePrimary"}
-                      spacing="sm"
-                    >
-                      {showPreview ? "Hide Preview" : "Live Preview"}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={() => setApiOpen(true)}
-                      spacing="sm"
-                    >
-                      API
-                    </Button>
-                  </div>
-                </CardAction>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button
+                    type="button"
+                    onClick={() => setApiOpen(true)}
+                    variant="outline"
+                  >
+                    API
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setShowPreview(!showPreview)}
+                    variant="outline"
+                  >
+                    {showPreview ? "Back to Editor" : "Live Preview"}
+                  </Button>
+                  <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <RefreshCw className="animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="">
                 {/* Tabs */}
@@ -292,101 +314,214 @@ export default function PageTemplateEditor({
                     <div className="w-full space-y-6">
                       {/* Hero Tab */}
                       {activeTab === "hero" && (
-                        <>
-                          <div className="grid grid-cols-2 gap-4">
-                            <h3 className="text-xl font-semibold col-span-full">
-                              Page Title & Slug
-                            </h3>
-                            <LabeledInput
-                              label="Title"
-                              {...register("pageName")}
-                            />
-                            <LabeledInput label="Slug" {...register("slug")} />
-                          </div>
+                        <div className="space-y-6">
+                          <Card>
+                            <CardBody>
+                              <CardHeader>
+                                <CardTitle>Page Title & Slug</CardTitle>
+                              </CardHeader>
+                              <CardContent className="flex gap-4">
+                                <Field>
+                                  <FieldLabel
+                                    htmlFor="pageName"
+                                    className="text-base-black gap-0"
+                                  >
+                                    Title{" "}
+                                    <span className="text-base-danger">*</span>
+                                  </FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      id="pageName"
+                                      type="text"
+                                      placeholder="Enter page title"
+                                      {...register("pageName")}
+                                      onChange={handleTitleChange}
+                                      className={
+                                        errors.pageName
+                                          ? "border-base-danger"
+                                          : ""
+                                      }
+                                    />
+                                    <InputGroupAddon>
+                                      <IconFileText />
+                                    </InputGroupAddon>
+                                  </InputGroup>
+                                  <FieldDescription>
+                                    Enter the Title here.
+                                  </FieldDescription>
+                                  {errors.pageName && (
+                                    <FormMessage>
+                                      {errors.pageName.message}
+                                    </FormMessage>
+                                  )}
+                                </Field>
 
-                          <Separator className="my-6" />
+                                <Field>
+                                  <FieldLabel
+                                    htmlFor="slug"
+                                    className="text-base-black gap-0"
+                                  >
+                                    Slug{" "}
+                                    <span className="text-base-danger">*</span>
+                                  </FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      id="slug"
+                                      type="text"
+                                      placeholder="Enter page slug"
+                                      {...register("slug")}
+                                      className={
+                                        errors.slug ? "border-base-danger" : ""
+                                      }
+                                    />
+                                    <InputGroupAddon>
+                                      <Link2 />
+                                    </InputGroupAddon>
+                                    <InputGroupAddon align="inline-end">
+                                      <InputGroupButton
+                                        onClick={handleSyncSlug}
+                                        size="icon-sm"
+                                        tooltip="Regenerate slug from title"
+                                        className="hover:bg-transparent"
+                                      >
+                                        <RefreshCw />
+                                      </InputGroupButton>
+                                    </InputGroupAddon>
+                                  </InputGroup>
+                                  <FieldDescription>
+                                    Enter the Slug here.
+                                  </FieldDescription>
+                                  {errors.slug && (
+                                    <FormMessage>
+                                      {errors.slug.message}
+                                    </FormMessage>
+                                  )}
+                                </Field>
+                              </CardContent>
+                            </CardBody>
+                          </Card>
 
-                          <div className="grid grid-cols-2 gap-4">
-                            <h3 className="text-xl font-semibold col-span-full">
-                              Hero Section
-                            </h3>
-                            <Controller
-                              control={control}
-                              name="hero.image"
-                              render={({ field }) => (
-                                <LabeledInput
-                                  label="Hero Image URL"
-                                  {...field}
-                                />
-                              )}
-                            />
-                            <Controller
-                              control={control}
-                              name="hero.alt"
-                              render={({ field }) => (
-                                <LabeledInput label="Alt Text" {...field} />
-                              )}
-                            />
-                            <Controller
-                              control={control}
-                              name="hero.h1"
-                              render={({ field }) => (
-                                <LabeledInput label="Heading (H1)" {...field} />
-                              )}
-                            />
-                            <Controller
-                              control={control}
-                              name="hero.btn"
-                              render={({ field }) => (
-                                <LabeledInput label="Button Text" {...field} />
-                              )}
-                            />
-                            <div className="col-span-full space-y-2">
-                              <Label>Description (Paragraph)</Label>
-                              <Controller
-                                control={control}
-                                name="hero.p"
-                                render={({ field }) => (
-                                  <TinyEditorRHF
-                                    value={(field.value as string) || ""}
-                                    onChange={(val) => {
-                                      field.onChange(val);
-                                    }}
+                          <Card>
+                            <CardBody>
+                              <CardHeader>
+                                <CardTitle>Hero Section</CardTitle>
+                              </CardHeader>
+                              <CardContent className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <Field>
+                                    <FieldLabel className="text-base-black gap-0">
+                                      Hero Image URL
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name="hero.image"
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            type="text"
+                                            placeholder="https://..."
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel className="text-base-black gap-0">
+                                      Alt Text
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name="hero.alt"
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            type="text"
+                                            placeholder="Image description"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
+                                    />
+                                  </Field>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <Field>
+                                    <FieldLabel className="text-base-black gap-0">
+                                      Heading (H1)
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name="hero.h1"
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            type="text"
+                                            placeholder="Hero heading"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
+                                    />
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel className="text-base-black gap-0">
+                                      Button Text
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name="hero.btn"
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            type="text"
+                                            placeholder="Button label"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
+                                    />
+                                  </Field>
+                                </div>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Description (Paragraph)
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="hero.p"
+                                    render={({ field }) => (
+                                      <TinyEditorRHF
+                                        value={(field.value as string) || ""}
+                                        onChange={(val) => {
+                                          field.onChange(val);
+                                        }}
+                                      />
+                                    )}
                                   />
-                                )}
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              onClick={() =>
-                                openMedia((url) => setValue("hero.image", url))
-                              }
-                              variant="outlinePrimary"
-                              spacing="sm"
-                              className="hidden"
-                            >
-                              Choose Media
-                            </Button>
-                          </div>
-                        </>
+                                </Field>
+                              </CardContent>
+                            </CardBody>
+                          </Card>
+                        </div>
                       )}
 
                       {/* Content Tab */}
                       {activeTab === "content" && (
                         <div className="flex flex-col md:flex-row gap-6 h-full">
-                          {/* Left Column - Content Blocks */}
-                          <div className="w-full [992px]:w-3/4 lg:w-7/12 xl:w-8/12 flex flex-col gap-3">
-                            <h3 className="text-lg font-semibold">
-                              Layout Blocks
+                          <div className="w-full [992px]:w-3/4 lg:w-7/12 xl:w-9/12 flex flex-col gap-3">
+                            <h3 className="text-xl font-bold leading-[120%] font-montserrat">
+                              Content Blocks
                             </h3>
-
                             {fields.length === 0 ? (
                               <div className="flex-1 text-center border border-dashed border-base-gray rounded p-2 grid place-content-center">
                                 <p className="text-base-gray">
-                                  No content blocks added yet.
-                                </p>
-                                <p className="text-sm text-base-gray mt-1">
-                                  Add a block using the buttons on the right
+                                  No blocks added yet. Use the sidebar to add
+                                  your first block.
                                 </p>
                               </div>
                             ) : (
@@ -396,107 +531,104 @@ export default function PageTemplateEditor({
                                 onDragEnd={handleDragEnd}
                                 modifiers={[restrictToVerticalAxis]}
                               >
-                                <SortableContext
-                                  items={fields.map((f: any) => f._key)}
-                                  strategy={verticalListSortingStrategy}
-                                >
-                                  {fields.map((field: any, index: number) => {
-                                    const type = field.type;
-                                    return (
-                                      <SortableItem
-                                        key={field._key}
-                                        id={field._key}
-                                      >
-                                        <LayoutBlock
-                                          block={{ type }}
-                                          index={index}
-                                          onRemove={() => remove(index)}
-                                          onMoveUp={() =>
-                                            move(index, index - 1)
-                                          }
-                                          onMoveDown={() =>
-                                            move(index, index + 1)
-                                          }
-                                          canMoveUp={index > 0}
-                                          canMoveDown={
-                                            index < fields.length - 1
-                                          }
+                                <div className="space-y-4">
+                                  <SortableContext
+                                    items={fields.map((f: any) => f._key)}
+                                    strategy={verticalListSortingStrategy}
+                                  >
+                                    {fields.map((field: any, index: number) => {
+                                      const type = field.type;
+                                      return (
+                                        <SortableItem
+                                          key={field._key}
+                                          id={field._key}
                                         >
-                                          {type === "serviceSection" && (
-                                            <ServiceSectionBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type ===
-                                            "dedicatedServiceSection" && (
-                                            <DedicatedServiceSectionBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type ===
-                                            "corporateServiceOfferings" && (
-                                            <CorporateServiceOfferingsBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type ===
-                                            "corporateServicesAndFeatures" && (
-                                            <CorporateServicesAndFeaturesBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type === "imageCards" && (
-                                            <ImageCardsBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type === "whoWeSupport" && (
-                                            <ImageCardsBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type === "ourGlobalReach" && (
-                                            <ImageCardsBlock
-                                              blockIndex={index}
-                                              openMedia={openMedia}
-                                            />
-                                          )}
-                                          {type === "contactForService" && (
-                                            <ContactForServiceBlock
-                                              blockIndex={index}
-                                            />
-                                          )}
-                                        </LayoutBlock>
-                                      </SortableItem>
-                                    );
-                                  })}
-                                </SortableContext>
+                                          <LayoutBlock
+                                            block={{ type }}
+                                            index={index}
+                                            onRemove={() => remove(index)}
+                                            onMoveUp={() =>
+                                              move(index, index - 1)
+                                            }
+                                            onMoveDown={() =>
+                                              move(index, index + 1)
+                                            }
+                                            canMoveUp={index > 0}
+                                            canMoveDown={
+                                              index < fields.length - 1
+                                            }
+                                          >
+                                            {type === "serviceSection" && (
+                                              <ServiceSectionBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type ===
+                                              "dedicatedServiceSection" && (
+                                              <DedicatedServiceSectionBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type ===
+                                              "corporateServiceOfferings" && (
+                                              <CorporateServiceOfferingsBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type ===
+                                              "corporateServicesAndFeatures" && (
+                                              <CorporateServicesAndFeaturesBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type === "imageCards" && (
+                                              <ImageCardsBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type === "whoWeSupport" && (
+                                              <ImageCardsBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type === "ourGlobalReach" && (
+                                              <ImageCardsBlock
+                                                blockIndex={index}
+                                                openMedia={openMedia}
+                                              />
+                                            )}
+                                            {type === "contactForService" && (
+                                              <ContactForServiceBlock
+                                                blockIndex={index}
+                                              />
+                                            )}
+                                          </LayoutBlock>
+                                        </SortableItem>
+                                      );
+                                    })}
+                                  </SortableContext>
+                                </div>
                               </DndContext>
                             )}
                           </div>
 
-                          {/* Right Column - Add Block Buttons */}
-                          <div className="w-full [992px]:w-1/4 lg:w-5/12 xl:w-4/12">
+                          {/* Block Selector Sidebar */}
+                          <div className="w-full [992px]:w-1/4 lg:w-5/12 xl:w-3/12">
                             <div ref={sentinelRef} className="h-px"></div>
                             <Card ref={stickyRef}>
                               <CardBody>
                                 <CardHeader>
-                                  <CardTitle className="text-base">
-                                    Add New Block
-                                  </CardTitle>
-                                  <CardDescription>
-                                    Click a button to add a new content block
-                                  </CardDescription>
+                                  <CardTitle>Add Blocks</CardTitle>
                                 </CardHeader>
-                                <CardContent className="flex flex-wrap gap-2">
+                                <CardContent className="flex flex-col gap-2">
                                   <Button
-                                    type="button"
+                                    variant="outline"
                                     onClick={() =>
                                       append({
                                         id: uid(),
@@ -506,14 +638,12 @@ export default function PageTemplateEditor({
                                         infoCards: [],
                                       })
                                     }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
                                     className="justify-start"
                                   >
                                     + Service Section
                                   </Button>
                                   <Button
-                                    type="button"
+                                    variant="outline"
                                     onClick={() =>
                                       append({
                                         id: uid(),
@@ -522,14 +652,12 @@ export default function PageTemplateEditor({
                                         textRich: "",
                                       })
                                     }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
                                     className="justify-start"
                                   >
                                     + Dedicated Service
                                   </Button>
                                   <Button
-                                    type="button"
+                                    variant="outline"
                                     onClick={() =>
                                       append({
                                         id: uid(),
@@ -537,14 +665,12 @@ export default function PageTemplateEditor({
                                         serviceCards: undefined,
                                       })
                                     }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
                                     className="justify-start"
                                   >
                                     + Corporate Offerings
                                   </Button>
                                   <Button
-                                    type="button"
+                                    variant="outline"
                                     onClick={() =>
                                       append({
                                         id: uid(),
@@ -552,14 +678,12 @@ export default function PageTemplateEditor({
                                         infoCards: [],
                                       })
                                     }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
                                     className="justify-start"
                                   >
                                     + Features
                                   </Button>
                                   <Button
-                                    type="button"
+                                    variant="outline"
                                     onClick={() =>
                                       append({
                                         id: uid(),
@@ -567,37 +691,18 @@ export default function PageTemplateEditor({
                                         imageCards: [],
                                       })
                                     }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
                                     className="justify-start"
                                   >
                                     + Who We Support
                                   </Button>
                                   <Button
-                                    type="button"
-                                    onClick={() =>
-                                      append({
-                                        id: uid(),
-                                        type: "ourGlobalReach",
-                                        imageCards: [],
-                                      })
-                                    }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
-                                    className="justify-start"
-                                  >
-                                    + Global Reach
-                                  </Button>
-                                  <Button
-                                    type="button"
+                                    variant="outline"
                                     onClick={() =>
                                       append({
                                         id: uid(),
                                         type: "contactForService",
                                       })
                                     }
-                                    variant="outlinePrimary"
-                                    spacing="sm"
                                     className="justify-start"
                                   >
                                     + Contact CTA
@@ -609,83 +714,98 @@ export default function PageTemplateEditor({
                         </div>
                       )}
 
-                      {/* SEO Tab - UPDATED VERSION */}
+                      {/* SEO Tab */}
                       {activeTab === "seo" && (
                         <div className="space-y-6">
-                          <h3 className="text-lg font-semibold">
-                            Search Engine Optimization
-                          </h3>
-
-                          {/* Basic SEO Fields */}
                           <Card>
                             <CardBody>
                               <CardHeader>
                                 <CardTitle>Basic SEO</CardTitle>
                               </CardHeader>
                               <CardContent className="space-y-4">
-                                <Controller
-                                  control={control}
-                                  name="seo.title"
-                                  render={({ field }) => (
-                                    <LabeledInput
-                                      label="Meta Title"
-                                      {...field}
-                                    />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.description"
-                                  render={({ field }) => (
-                                    <LabeledTextarea
-                                      label="Meta Description"
-                                      value={field.value || ""}
-                                      onChange={field.onChange}
-                                      onBlur={field.onBlur}
-                                      name={field.name}
-                                    />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.keywords"
-                                  render={({ field }) => (
-                                    <LabeledTextarea
-                                      label="Keywords (comma separated)"
-                                      value={
-                                        Array.isArray(field.value)
-                                          ? field.value.join(", ")
-                                          : field.value || ""
-                                      }
-                                      onChange={(val: string) => {
-                                        // Store raw string value to allow typing commas and spaces
-                                        field.onChange(val);
-                                      }}
-                                      onBlur={() => {
-                                        // Convert to array only when user leaves the field
-                                        try {
-                                          const currentValue = field.value;
-                                          if (
-                                            typeof currentValue === "string"
-                                          ) {
-                                            const keywords = currentValue
-                                              .split(",")
-                                              .map((k) => k.trim())
-                                              .filter((k) => k.length > 0);
-                                            field.onChange(keywords);
-                                          }
-                                        } catch (err) {
-                                          console.error(
-                                            "Error parsing keywords",
-                                            err,
-                                          );
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Meta Title
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.title"
+                                    render={({ field }) => (
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          type="text"
+                                          placeholder="Enter meta title"
+                                          {...field}
+                                        />
+                                      </InputGroup>
+                                    )}
+                                  />
+                                </Field>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Meta Description
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.description"
+                                    render={({ field }) => (
+                                      <Textarea
+                                        rows={3}
+                                        placeholder="Enter meta description"
+                                        value={field.value || ""}
+                                        onChange={(e) =>
+                                          field.onChange(e.target.value)
                                         }
-                                        field.onBlur();
-                                      }}
-                                      name={field.name}
-                                    />
-                                  )}
-                                />
+                                        onBlur={field.onBlur}
+                                      />
+                                    )}
+                                  />
+                                </Field>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Keywords (comma separated)
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.keywords"
+                                    render={({ field }) => (
+                                      <Textarea
+                                        rows={2}
+                                        placeholder="keyword1, keyword2, ..."
+                                        value={
+                                          Array.isArray(field.value)
+                                            ? field.value.join(", ")
+                                            : field.value || ""
+                                        }
+                                        onChange={(e) =>
+                                          field.onChange(e.target.value)
+                                        }
+                                        onBlur={() => {
+                                          try {
+                                            const currentValue = field.value;
+                                            if (
+                                              typeof currentValue === "string"
+                                            ) {
+                                              const keywords = currentValue
+                                                .split(",")
+                                                .map((k) => k.trim())
+                                                .filter((k) => k.length > 0);
+                                              field.onChange(keywords);
+                                            }
+                                          } catch (err) {
+                                            console.error(
+                                              "Error parsing keywords",
+                                              err,
+                                            );
+                                          }
+                                          field.onBlur();
+                                        }}
+                                      />
+                                    )}
+                                  />
+                                </Field>
                               </CardContent>
                             </CardBody>
                           </Card>
@@ -699,61 +819,94 @@ export default function PageTemplateEditor({
                                 </CardTitle>
                               </CardHeader>
                               <CardContent className="space-y-4">
-                                <Controller
-                                  control={control}
-                                  name="seo.openGraph.title"
-                                  render={({ field }) => (
-                                    <LabeledInput
-                                      label="OG Title"
-                                      {...field}
-                                      placeholder="Defaults to Meta Title if empty"
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    OG Title
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.openGraph.title"
+                                    render={({ field }) => (
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          type="text"
+                                          placeholder="Defaults to Meta Title if empty"
+                                          {...field}
+                                        />
+                                      </InputGroup>
+                                    )}
+                                  />
+                                </Field>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    OG Description
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.openGraph.description"
+                                    render={({ field }) => (
+                                      <Textarea
+                                        rows={3}
+                                        placeholder="Defaults to Meta Description if empty"
+                                        value={field.value || ""}
+                                        onChange={(e) =>
+                                          field.onChange(e.target.value)
+                                        }
+                                        onBlur={field.onBlur}
+                                      />
+                                    )}
+                                  />
+                                </Field>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <Field>
+                                    <FieldLabel className="text-base-black gap-0">
+                                      OG URL
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name="seo.openGraph.url"
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            type="text"
+                                            placeholder="https://yourdomain.com/page"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
                                     />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.openGraph.description"
-                                  render={({ field }) => (
-                                    <LabeledTextarea
-                                      label="OG Description"
-                                      value={field.value || ""}
-                                      onChange={field.onChange}
-                                      onBlur={field.onBlur}
-                                      name={field.name}
-                                      placeholder="Defaults to Meta Description if empty"
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel className="text-base-black gap-0">
+                                      Site Name
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name="seo.openGraph.siteName"
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            type="text"
+                                            placeholder="Your Site Name"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
                                     />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.openGraph.url"
-                                  render={({ field }) => (
-                                    <LabeledInput
-                                      label="OG URL"
-                                      {...field}
-                                      placeholder="https://yourdomain.com/page"
-                                    />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.openGraph.siteName"
-                                  render={({ field }) => (
-                                    <LabeledInput
-                                      label="Site Name"
-                                      {...field}
-                                      placeholder="Your Site Name"
-                                    />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.openGraph.type"
-                                  render={({ field }) => (
-                                    <div className="space-y-2">
-                                      <Label className="text-xs uppercase tracking-wide">
-                                        OG Type
-                                      </Label>
+                                  </Field>
+                                </div>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    OG Type
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.openGraph.type"
+                                    render={({ field }) => (
                                       <SelectDropDown
                                         placeholder="Select type"
                                         classname="w-full"
@@ -775,37 +928,39 @@ export default function PageTemplateEditor({
                                         value={field.value}
                                         setSelectedItem={field.onChange}
                                       />
-                                    </div>
-                                  )}
-                                />
+                                    )}
+                                  />
+                                </Field>
 
-                                <div>
-                                  <Label className="text-xs uppercase tracking-wide mb-2 block">
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
                                     OG Images (URLs, one per line)
-                                  </Label>
+                                  </FieldLabel>
                                   <Controller
                                     control={control}
                                     name="seo.openGraph.images"
                                     render={({ field }) => (
-                                      <Textarea
-                                        rows={3}
-                                        value={field.value?.join("\n") || ""}
-                                        onChange={(e) => {
-                                          const images = e.target.value
-                                            .split("\n")
-                                            .map((url) => url.trim())
-                                            .filter((url) => url.length > 0);
-                                          field.onChange(images);
-                                        }}
-                                        onBlur={field.onBlur}
-                                        placeholder="https://limospro-media.s3.amazonaws.com/og/limospro-homepage-og.jpg"
-                                      />
+                                      <div className="space-y-2">
+                                        <Textarea
+                                          rows={3}
+                                          value={field.value?.join("\n") || ""}
+                                          onChange={(e) => {
+                                            const images = e.target.value
+                                              .split("\n")
+                                              .map((url) => url.trim())
+                                              .filter((url) => url.length > 0);
+                                            field.onChange(images);
+                                          }}
+                                          onBlur={field.onBlur}
+                                          placeholder="https://..."
+                                        />
+                                        <FieldDescription>
+                                          Recommended size: 1200×630 pixels
+                                        </FieldDescription>
+                                      </div>
                                     )}
                                   />
-                                  <p className="text-xs text-base-gray mt-1">
-                                    Recommended size: 1200×630 pixels
-                                  </p>
-                                </div>
+                                </Field>
                               </CardContent>
                             </CardBody>
                           </Card>
@@ -817,15 +972,14 @@ export default function PageTemplateEditor({
                                 <CardTitle>Twitter Cards</CardTitle>
                               </CardHeader>
                               <CardContent className="space-y-4">
-                                <Controller
-                                  control={control}
-                                  name="seo.twitter.card"
-                                  render={({ field }) => (
-                                    <div className="space-y-2">
-                                      <Label className="text-xs uppercase tracking-wide">
-                                        Card Type
-                                      </Label>
-
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Card Type
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.twitter.card"
+                                    render={({ field }) => (
                                       <SelectDropDown
                                         placeholder="Select card type"
                                         classname="w-full"
@@ -844,60 +998,79 @@ export default function PageTemplateEditor({
                                         value={field.value}
                                         setSelectedItem={field.onChange}
                                       />
-                                    </div>
-                                  )}
-                                />
+                                    )}
+                                  />
+                                </Field>
 
-                                <Controller
-                                  control={control}
-                                  name="seo.twitter.title"
-                                  render={({ field }) => (
-                                    <LabeledInput
-                                      label="Twitter Title"
-                                      {...field}
-                                      placeholder="Defaults to OG Title if empty"
-                                    />
-                                  )}
-                                />
-                                <Controller
-                                  control={control}
-                                  name="seo.twitter.description"
-                                  render={({ field }) => (
-                                    <LabeledTextarea
-                                      label="Twitter Description"
-                                      value={field.value}
-                                      onChange={field.onChange}
-                                      placeholder="Defaults to OG Description if empty"
-                                    />
-                                  )}
-                                />
-                                <div>
-                                  <Label className="text-xs uppercase tracking-wide mb-2 block">
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Twitter Title
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.twitter.title"
+                                    render={({ field }) => (
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          type="text"
+                                          placeholder="Defaults to OG Title if empty"
+                                          {...field}
+                                        />
+                                      </InputGroup>
+                                    )}
+                                  />
+                                </Field>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
+                                    Twitter Description
+                                  </FieldLabel>
+                                  <Controller
+                                    control={control}
+                                    name="seo.twitter.description"
+                                    render={({ field }) => (
+                                      <Textarea
+                                        rows={3}
+                                        placeholder="Defaults to OG Description if empty"
+                                        value={field.value || ""}
+                                        onChange={(e) =>
+                                          field.onChange(e.target.value)
+                                        }
+                                        onBlur={field.onBlur}
+                                      />
+                                    )}
+                                  />
+                                </Field>
+
+                                <Field>
+                                  <FieldLabel className="text-base-black gap-0">
                                     Twitter Images (URLs, one per line)
-                                  </Label>
+                                  </FieldLabel>
                                   <Controller
                                     control={control}
                                     name="seo.twitter.images"
                                     render={({ field }) => (
-                                      <Textarea
-                                        rows={3}
-                                        value={field.value?.join("\n") || ""}
-                                        onChange={(e) => {
-                                          const images = e.target.value
-                                            .split("\n")
-                                            .map((url) => url.trim())
-                                            .filter((url) => url.length > 0);
-                                          field.onChange(images);
-                                        }}
-                                        onBlur={field.onBlur}
-                                        placeholder="https://limospro-media.s3.amazonaws.com/og/limospro-homepage-og.jpg"
-                                      />
+                                      <div className="space-y-2">
+                                        <Textarea
+                                          rows={3}
+                                          value={field.value?.join("\n") || ""}
+                                          onChange={(e) => {
+                                            const images = e.target.value
+                                              .split("\n")
+                                              .map((url) => url.trim())
+                                              .filter((url) => url.length > 0);
+                                            field.onChange(images);
+                                          }}
+                                          onBlur={field.onBlur}
+                                          placeholder="https://..."
+                                        />
+                                        <FieldDescription>
+                                          Recommended size: 1200×628 pixels
+                                        </FieldDescription>
+                                      </div>
                                     )}
                                   />
-                                  <p className="text-xs text-base-gray mt-1">
-                                    Recommended size: 1200×628 pixels
-                                  </p>
-                                </div>
+                                </Field>
                               </CardContent>
                             </CardBody>
                           </Card>
@@ -908,7 +1081,7 @@ export default function PageTemplateEditor({
                       {activeTab === "jsonld" && (
                         <div className="flex flex-col md:flex-row gap-6 h-full">
                           <div className="w-full [992px]:w-3/4 lg:w-7/12 xl:w-8/12 flex flex-col gap-3">
-                            <h3 className="text-lg font-semibold">
+                            <h3 className="text-xl font-bold leading-[120%] font-montserrat">
                               Structured Data (JSON-LD)
                             </h3>
 
@@ -1007,61 +1180,79 @@ export default function PageTemplateEditor({
                                                               >
                                                                 ✕
                                                               </Button>
-                                                              <LabeledInput
-                                                                label="Question"
-                                                                value={faq.name}
-                                                                onChange={(
-                                                                  e: React.ChangeEvent<HTMLInputElement>,
-                                                                ) => {
-                                                                  const newFaqs =
-                                                                    [...faqs];
-                                                                  newFaqs[
-                                                                    faqIndex
-                                                                  ] = {
-                                                                    ...newFaqs[
-                                                                      faqIndex
-                                                                    ],
-                                                                    name: e
-                                                                      .target
-                                                                      .value,
-                                                                  };
-                                                                  field.onChange(
-                                                                    newFaqs,
-                                                                  );
-                                                                }}
-                                                              />
-                                                              <LabeledTextarea
-                                                                label="Answer"
-                                                                value={
-                                                                  faq
-                                                                    .acceptedAnswer
-                                                                    .text
-                                                                }
-                                                                onChange={(
-                                                                  val,
-                                                                ) => {
-                                                                  const newFaqs =
-                                                                    [...faqs];
-                                                                  newFaqs[
-                                                                    faqIndex
-                                                                  ] = {
-                                                                    ...newFaqs[
-                                                                      faqIndex
-                                                                    ],
-                                                                    acceptedAnswer:
-                                                                      {
+                                                              <Field>
+                                                                <FieldLabel className="text-base-black gap-0">
+                                                                  Question
+                                                                </FieldLabel>
+                                                                <InputGroup>
+                                                                  <InputGroupInput
+                                                                    type="text"
+                                                                    value={
+                                                                      faq.name
+                                                                    }
+                                                                    onChange={(
+                                                                      e: React.ChangeEvent<HTMLInputElement>,
+                                                                    ) => {
+                                                                      const newFaqs =
+                                                                        [
+                                                                          ...faqs,
+                                                                        ];
+                                                                      newFaqs[
+                                                                        faqIndex
+                                                                      ] = {
                                                                         ...newFaqs[
                                                                           faqIndex
-                                                                        ]
-                                                                          .acceptedAnswer,
-                                                                        text: val,
-                                                                      },
-                                                                  };
-                                                                  field.onChange(
-                                                                    newFaqs,
-                                                                  );
-                                                                }}
-                                                              />
+                                                                        ],
+                                                                        name: e
+                                                                          .target
+                                                                          .value,
+                                                                      };
+                                                                      field.onChange(
+                                                                        newFaqs,
+                                                                      );
+                                                                    }}
+                                                                  />
+                                                                </InputGroup>
+                                                              </Field>
+                                                              <Field>
+                                                                <FieldLabel className="text-base-black gap-0">
+                                                                  Answer
+                                                                </FieldLabel>
+                                                                <Textarea
+                                                                  rows={3}
+                                                                  value={
+                                                                    faq
+                                                                      .acceptedAnswer
+                                                                      .text
+                                                                  }
+                                                                  onChange={(
+                                                                    e,
+                                                                  ) => {
+                                                                    const newFaqs =
+                                                                      [...faqs];
+                                                                    newFaqs[
+                                                                      faqIndex
+                                                                    ] = {
+                                                                      ...newFaqs[
+                                                                        faqIndex
+                                                                      ],
+                                                                      acceptedAnswer:
+                                                                        {
+                                                                          ...newFaqs[
+                                                                            faqIndex
+                                                                          ]
+                                                                            .acceptedAnswer,
+                                                                          text: e
+                                                                            .target
+                                                                            .value,
+                                                                        },
+                                                                    };
+                                                                    field.onChange(
+                                                                      newFaqs,
+                                                                    );
+                                                                  }}
+                                                                />
+                                                              </Field>
                                                             </div>
                                                           ),
                                                         )}
@@ -1097,57 +1288,126 @@ export default function PageTemplateEditor({
                                             {(type === "Organization" ||
                                               type === "LocalBusiness") && (
                                               <div className="space-y-4">
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.name`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Name"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.url`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="URL"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.logo`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Logo URL"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.description`}
-                                                  render={({ field }) => (
-                                                    <LabeledTextarea
-                                                      label="Description"
-                                                      value={field.value}
-                                                      onChange={field.onChange}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.telephone`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Telephone"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Name
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.name`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    URL
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.url`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Logo URL
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.logo`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Description
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.description`}
+                                                    render={({ field }) => (
+                                                      <Textarea
+                                                        rows={3}
+                                                        value={field.value}
+                                                        onChange={(e) =>
+                                                          field.onChange(
+                                                            e.target.value,
+                                                          )
+                                                        }
+                                                      />
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Telephone
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.telephone`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
 
                                                 {/* Address (Only for LocalBusiness) */}
                                                 {type === "LocalBusiness" && (
@@ -1156,56 +1416,151 @@ export default function PageTemplateEditor({
                                                       Address
                                                     </p>
                                                     <div className="grid grid-cols-2 gap-4">
-                                                      <Controller
-                                                        control={control}
-                                                        name={`jsonLd.${index}.data.address.streetAddress`}
-                                                        render={({ field }) => (
-                                                          <LabeledInput
-                                                            label="Street"
-                                                            {...field}
-                                                          />
-                                                        )}
-                                                      />
-                                                      <Controller
-                                                        control={control}
-                                                        name={`jsonLd.${index}.data.address.addressLocality`}
-                                                        render={({ field }) => (
-                                                          <LabeledInput
-                                                            label="City"
-                                                            {...field}
-                                                          />
-                                                        )}
-                                                      />
-                                                      <Controller
-                                                        control={control}
-                                                        name={`jsonLd.${index}.data.address.addressRegion`}
-                                                        render={({ field }) => (
-                                                          <LabeledInput
-                                                            label="Region/State"
-                                                            {...field}
-                                                          />
-                                                        )}
-                                                      />
-                                                      <Controller
-                                                        control={control}
-                                                        name={`jsonLd.${index}.data.address.postalCode`}
-                                                        render={({ field }) => (
-                                                          <LabeledInput
-                                                            label="Zip Code"
-                                                            {...field}
-                                                          />
-                                                        )}
-                                                      />
-                                                      <Controller
-                                                        control={control}
-                                                        name={`jsonLd.${index}.data.address.addressCountry`}
-                                                        render={({ field }) => (
-                                                          <LabeledInput
-                                                            label="Country"
-                                                            {...field}
-                                                          />
-                                                        )}
-                                                      />
+                                                      <Field>
+                                                        <FieldLabel className="text-base-black gap-0">
+                                                          Street
+                                                        </FieldLabel>
+                                                        <Controller
+                                                          control={control}
+                                                          name={`jsonLd.${index}.data.address.streetAddress`}
+                                                          render={({
+                                                            field,
+                                                          }) => (
+                                                            <InputGroup>
+                                                              <InputGroupInput
+                                                                type="text"
+                                                                {...field}
+                                                                value={String(
+                                                                  field.value ??
+                                                                    "",
+                                                                )}
+                                                                onChange={(e) =>
+                                                                  field.onChange(
+                                                                    e.target
+                                                                      .value,
+                                                                  )
+                                                                }
+                                                              />
+                                                            </InputGroup>
+                                                          )}
+                                                        />
+                                                      </Field>
+                                                      <Field>
+                                                        <FieldLabel className="text-base-black gap-0">
+                                                          City
+                                                        </FieldLabel>
+                                                        <Controller
+                                                          control={control}
+                                                          name={`jsonLd.${index}.data.address.addressLocality`}
+                                                          render={({
+                                                            field,
+                                                          }) => (
+                                                            <InputGroup>
+                                                              <InputGroupInput
+                                                                type="text"
+                                                                {...field}
+                                                                value={String(
+                                                                  field.value ??
+                                                                    "",
+                                                                )}
+                                                                onChange={(e) =>
+                                                                  field.onChange(
+                                                                    e.target
+                                                                      .value,
+                                                                  )
+                                                                }
+                                                              />
+                                                            </InputGroup>
+                                                          )}
+                                                        />
+                                                      </Field>
+                                                      <Field>
+                                                        <FieldLabel className="text-base-black gap-0">
+                                                          Region/State
+                                                        </FieldLabel>
+                                                        <Controller
+                                                          control={control}
+                                                          name={`jsonLd.${index}.data.address.addressRegion`}
+                                                          render={({
+                                                            field,
+                                                          }) => (
+                                                            <InputGroup>
+                                                              <InputGroupInput
+                                                                type="text"
+                                                                {...field}
+                                                                value={String(
+                                                                  field.value ??
+                                                                    "",
+                                                                )}
+                                                                onChange={(e) =>
+                                                                  field.onChange(
+                                                                    e.target
+                                                                      .value,
+                                                                  )
+                                                                }
+                                                              />
+                                                            </InputGroup>
+                                                          )}
+                                                        />
+                                                      </Field>
+                                                      <Field>
+                                                        <FieldLabel className="text-base-black gap-0">
+                                                          Zip Code
+                                                        </FieldLabel>
+                                                        <Controller
+                                                          control={control}
+                                                          name={`jsonLd.${index}.data.address.postalCode`}
+                                                          render={({
+                                                            field,
+                                                          }) => (
+                                                            <InputGroup>
+                                                              <InputGroupInput
+                                                                type="text"
+                                                                {...field}
+                                                                value={String(
+                                                                  field.value ??
+                                                                    "",
+                                                                )}
+                                                                onChange={(e) =>
+                                                                  field.onChange(
+                                                                    e.target
+                                                                      .value,
+                                                                  )
+                                                                }
+                                                              />
+                                                            </InputGroup>
+                                                          )}
+                                                        />
+                                                      </Field>
+                                                      <Field className="col-span-full">
+                                                        <FieldLabel className="text-base-black gap-0">
+                                                          Country
+                                                        </FieldLabel>
+                                                        <Controller
+                                                          control={control}
+                                                          name={`jsonLd.${index}.data.address.addressCountry`}
+                                                          render={({
+                                                            field,
+                                                          }) => (
+                                                            <InputGroup>
+                                                              <InputGroupInput
+                                                                type="text"
+                                                                {...field}
+                                                                value={String(
+                                                                  field.value ??
+                                                                    "",
+                                                                )}
+                                                                onChange={(e) =>
+                                                                  field.onChange(
+                                                                    e.target
+                                                                      .value,
+                                                                  )
+                                                                }
+                                                              />
+                                                            </InputGroup>
+                                                          )}
+                                                        />
+                                                      </Field>
                                                     </div>
                                                   </div>
                                                 )}
@@ -1215,53 +1570,110 @@ export default function PageTemplateEditor({
                                             {(type === "Article" ||
                                               type === "BlogPosting") && (
                                               <div className="space-y-4">
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.headline`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Headline"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.image`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Image URL"
-                                                      value={
-                                                        Array.isArray(
-                                                          field.value,
-                                                        )
-                                                          ? field.value[0]
-                                                          : field.value
-                                                      }
-                                                      onChange={field.onChange}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.author.name`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Author Name"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
-                                                <Controller
-                                                  control={control}
-                                                  name={`jsonLd.${index}.data.publisher.name`}
-                                                  render={({ field }) => (
-                                                    <LabeledInput
-                                                      label="Publisher Name"
-                                                      {...field}
-                                                    />
-                                                  )}
-                                                />
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Headline
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.headline`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Image URL
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.image`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          value={String(
+                                                            (Array.isArray(
+                                                              field.value,
+                                                            )
+                                                              ? field.value[0]
+                                                              : field.value) ??
+                                                              "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Author Name
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.author.name`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
+                                                <Field>
+                                                  <FieldLabel className="text-base-black gap-0">
+                                                    Publisher Name
+                                                  </FieldLabel>
+                                                  <Controller
+                                                    control={control}
+                                                    name={`jsonLd.${index}.data.publisher.name`}
+                                                    render={({ field }) => (
+                                                      <InputGroup>
+                                                        <InputGroupInput
+                                                          type="text"
+                                                          {...field}
+                                                          value={String(
+                                                            field.value ?? "",
+                                                          )}
+                                                          onChange={(e) =>
+                                                            field.onChange(
+                                                              e.target.value,
+                                                            )
+                                                          }
+                                                        />
+                                                      </InputGroup>
+                                                    )}
+                                                  />
+                                                </Field>
                                               </div>
                                             )}
                                           </CardContent>
@@ -1441,59 +1853,61 @@ export default function PageTemplateEditor({
 
           {/* API Preview Modal */}
           {apiOpen && (
-            <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-              <Card className="w-96">
-                <CardHeader>
-                  <CardTitle>API Output</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(JSON.stringify(getValues(), null, 2))
-                        .then(() => {
-                          toast.success("Copied to clipboard!");
-                          setApiOpen(false);
-                        })
-                        .catch((err) => {
-                          console.error("Failed to copy: ", err);
-                          toast.error("Failed to copy to clipboard");
-                        });
-                    }}
-                    variant="default"
-                    spacing="sm"
-                    className="flex items-center gap-2"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <title id="copyJsonIconTitle">Copy JSON</title>
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Copy JSON
-                  </Button>
-                  <pre className="text-xs bg-muted p-3 rounded max-h-80 overflow-auto">
-                    {JSON.stringify(getValues(), null, 2)}
-                  </pre>
-
-                  <Button
-                    onClick={() => setApiOpen(false)}
-                    variant="outline"
-                    spacing="md"
-                    className="w-full"
-                  >
-                    Close
-                  </Button>
-                </CardContent>
+            <div
+              className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+              onClick={() => setApiOpen(false)}
+            >
+              <Card
+                className="w-full sm:max-w-sm overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <CardBody className="p-2">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>API Output</CardTitle>
+                    <CardAction className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outlineNavBtnPrimary"
+                        size="lg"
+                        spacing="sm"
+                        className="w-8"
+                        tooltip="Copy Json"
+                        onClick={() => {
+                          navigator.clipboard
+                            .writeText(JSON.stringify(getValues(), null, 2))
+                            .then(() => {
+                              toast.success("Copied to clipboard!");
+                              setApiOpen(false);
+                            })
+                            .catch((err) => {
+                              console.error("Failed to copy: ", err);
+                              toast.error("Failed to copy to clipboard");
+                            });
+                        }}
+                      >
+                        <Copy />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outlineNavBtnDestructive"
+                        size="lg"
+                        spacing="sm"
+                        className="w-8"
+                        tooltip="Close"
+                        onClick={() => setApiOpen(false)}
+                      >
+                        <X />
+                      </Button>
+                    </CardAction>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="rounded border border-base-gray bg-muted/40 overflow-hidden">
+                      <pre className="text-xs p-3 max-h-[55vh] overflow-auto">
+                        {JSON.stringify(getValues(), null, 2)}
+                      </pre>
+                    </div>
+                  </CardContent>
+                </CardBody>
               </Card>
             </div>
           )}

@@ -403,21 +403,3 @@ export interface ImageCardsBlockProps {
   blockIndex: number;
   openMedia: (cb: (url: string) => void) => void;
 }
-
-export interface LabeledEditorProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  onBlur?: () => void;
-  name?: string;
-  [key: string]: any;
-}
-
-export interface LabeledTextareaProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "onChange"> {
-  label: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
-  name?: string;
-}

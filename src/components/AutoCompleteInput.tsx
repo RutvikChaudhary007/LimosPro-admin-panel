@@ -118,6 +118,7 @@ export function AutoCompleteInput({
             }}
             size="xl"
             spacing="lg"
+            tooltip="Add item"
           >
             <Plus />
           </Button>

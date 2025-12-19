@@ -210,6 +210,21 @@
     @apply bg-background text-foreground;
   }
 
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-text-fill-color: inherit !important;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+  }
+
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill:focus {
+    -webkit-text-fill-color: inherit !important;
+    caret-color: inherit !important;
+  }
+
   svg.lucide,
   svg.tabler-icon {
     @apply stroke-[1.5] origin-center;
