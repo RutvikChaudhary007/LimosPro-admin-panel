@@ -51,7 +51,7 @@ export default function CreatePage() {
           link: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
         }}
       />
-      <HomeForm onSubmit={handleCreateHome} type={"Create Home"} />
+      <HomeForm onSubmit={handleCreateHome} type={"Create"} />
     </div>
   );
 }

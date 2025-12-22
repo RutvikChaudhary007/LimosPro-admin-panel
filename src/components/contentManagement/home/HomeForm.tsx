@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconFileText } from "@tabler/icons-react";
-import { Link2, Plus, RefreshCw, Save, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import {
   Controller,
@@ -24,36 +23,19 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import UploadWithUrl from "@/components/ui/upload-with-url";
 import { getDefaultJsonLdItem, uid } from "@/utils/pagebuilder.utils";
-import { generateSlug } from "@/utils/slug";
 
 const imageSchema = z.union([z.string(), z.instanceof(File)]);
 
 // Schema for Home Page
 const homeSchema = z.object({
-  pageName: z.string().min(1, "Page name is required"),
-  slug: z.string().min(1, "Slug is required"),
-  status: z.enum(["draft", "published", "archived"]),
   isActive: z.boolean().default(true),
-  heroSectionHome: z
-    .object({
-      image: z.string().optional(),
-      alt: z.string().optional(),
-      h1: z.string().optional(),
-      p: z.string().optional(),
-    })
-    .optional(),
   servicesOverview: z
     .object({
       paragraph: z.string().optional(),
@@ -268,9 +250,6 @@ export default function HomeForm({
   const form = useForm<HomeFormData>({
     resolver: zodResolver(homeSchema),
     defaultValues: initialData || {
-      pageName: "",
-      slug: "",
-      status: "draft",
       isActive: true,
       findYours: {
         heroSectionText: {
@@ -329,23 +308,6 @@ export default function HomeForm({
     name: "jsonLd",
   });
 
-  const handleSyncSlug = () => {
-    const currentTitle = form.getValues("pageName");
-    if (currentTitle) {
-      form.setValue("slug", generateSlug(currentTitle), {
-        shouldValidate: true,
-      });
-    }
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    form.setValue("pageName", newTitle);
-    if (newTitle && type === "Create") {
-      form.setValue("slug", generateSlug(newTitle));
-    }
-  };
-
   const onHandleSubmit = (data: HomeFormData) => {
     console.log("Home Data:", data);
     onSubmit(data);
@@ -357,24 +319,12 @@ export default function HomeForm({
         <Card>
           <CardBody>
             <CardHeader>
-              <CardTitle>
-                {form.watch("pageName") || "Untitled Home Page"}
-              </CardTitle>
-              <CardAction className="flex items-center gap-3">
-                <Button
-                  type="submit"
-                  variant={
-                    form.watch("status") === "published" ? "default" : "black"
-                  }
-                >
-                  <Save />
-                  {type === "Create" ? "Create & Publish" : "Update Home Page"}
-                </Button>
-              </CardAction>
+              <CardTitle>Home Page</CardTitle>
+              <CardAction className="flex items-center gap-3"></CardAction>
             </CardHeader>
             <CardContent>
               {/* Tabs */}
-              <div className="flex gap-8 mb-6">
+              <div className="flex gap-8">
                 {["general", "seo", "jsonld"].map((tab) => (
                   <Button
                     type="button"
@@ -399,187 +349,6 @@ export default function HomeForm({
               <div className="space-y-6">
                 {activeTab === "general" && (
                   <div className="space-y-6">
-                    {/* Page Title & Slug */}
-                    <Card>
-                      <CardBody>
-                        <CardHeader>
-                          <CardTitle>Page Title & Slug</CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <Field>
-                            <FieldLabel
-                              htmlFor="pageName"
-                              className="text-base-black gap-0"
-                            >
-                              Title <span className="text-base-danger">*</span>
-                            </FieldLabel>
-                            <InputGroup>
-                              <InputGroupInput
-                                id="pageName"
-                                type="text"
-                                placeholder="Enter page title"
-                                {...register("pageName", {
-                                  onChange: handleTitleChange,
-                                })}
-                                className={
-                                  form.formState.errors.pageName
-                                    ? "border-base-danger"
-                                    : ""
-                                }
-                              />
-                              <InputGroupAddon>
-                                <IconFileText />
-                              </InputGroupAddon>
-                            </InputGroup>
-                            <FieldDescription>
-                              Enter the Title here.
-                            </FieldDescription>
-                            {form.formState.errors.pageName && (
-                              <FormMessage>
-                                {form.formState.errors.pageName?.message}
-                              </FormMessage>
-                            )}
-                          </Field>
-
-                          <Field>
-                            <FieldLabel
-                              htmlFor="slug"
-                              className="text-base-black gap-0"
-                            >
-                              Slug <span className="text-base-danger">*</span>
-                            </FieldLabel>
-                            <InputGroup>
-                              <InputGroupInput
-                                id="slug"
-                                type="text"
-                                placeholder="Enter page slug"
-                                {...register("slug")}
-                                className={
-                                  form.formState.errors.slug
-                                    ? "border-base-danger"
-                                    : ""
-                                }
-                              />
-                              <InputGroupAddon>
-                                <Link2 />
-                              </InputGroupAddon>
-                              <InputGroupAddon align="inline-end">
-                                <InputGroupButton
-                                  onClick={handleSyncSlug}
-                                  size="icon-sm"
-                                  tooltip="Regenerate slug from title"
-                                  className="hover:bg-transparent"
-                                >
-                                  <RefreshCw />
-                                </InputGroupButton>
-                              </InputGroupAddon>
-                            </InputGroup>
-                            <FieldDescription>
-                              Enter the Slug here.
-                            </FieldDescription>
-                            {form.formState.errors.slug && (
-                              <FormMessage>
-                                {form.formState.errors.slug?.message}
-                              </FormMessage>
-                            )}
-                          </Field>
-
-                          <Field>
-                            <FieldLabel
-                              htmlFor="status"
-                              className="text-base-black gap-0"
-                            >
-                              Status
-                            </FieldLabel>
-                            <SelectDropDown
-                              placeholder="Select Status"
-                              items={[
-                                { label: "Draft", value: "draft" },
-                                { label: "Publish", value: "published" },
-                                { label: "Archived", value: "archived" },
-                              ]}
-                              value={form.watch("status")}
-                              setSelectedItem={(v) =>
-                                form.setValue("status", v as any, {
-                                  shouldValidate: true,
-                                })
-                              }
-                            />
-                            {form.formState.errors.status && (
-                              <FormMessage>
-                                {form.formState.errors.status?.message}
-                              </FormMessage>
-                            )}
-                          </Field>
-                        </CardContent>
-                      </CardBody>
-                    </Card>
-                    {/* Hero Section */}
-                    <Card>
-                      <CardBody>
-                        <CardHeader>
-                          <CardTitle>Hero Section Home</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <Field>
-                            <FieldLabel className="text-base-black gap-0">
-                              Hero Image URL
-                            </FieldLabel>
-                            <InputGroup>
-                              <InputGroupInput
-                                type="text"
-                                placeholder="Enter image URL"
-                                {...register("heroSectionHome.image")}
-                              />
-                            </InputGroup>
-                          </Field>
-
-                          <Field>
-                            <FieldLabel className="text-base-black gap-0">
-                              Hero Image Alt
-                            </FieldLabel>
-                            <InputGroup>
-                              <InputGroupInput
-                                type="text"
-                                placeholder="Enter image alt text"
-                                {...register("heroSectionHome.alt")}
-                              />
-                            </InputGroup>
-                          </Field>
-                          <Controller
-                            control={control}
-                            name="heroSectionHome.h1"
-                            render={({ field }) => (
-                              <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Heading (H1)
-                                </FieldLabel>
-                                <TinyEditorRHF
-                                  value={field.value || ""}
-                                  onChange={field.onChange}
-                                />
-                              </Field>
-                            )}
-                          />
-                          <Controller
-                            control={control}
-                            name="heroSectionHome.p"
-                            render={({ field }) => (
-                              <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Content/Paragraph
-                                </FieldLabel>
-                                <TinyEditorRHF
-                                  value={field.value || ""}
-                                  onChange={field.onChange}
-                                />
-                              </Field>
-                            )}
-                          />
-                        </CardContent>
-                      </CardBody>
-                    </Card>
-
                     {/* Services Overview */}
                     <Card>
                       <CardBody>
@@ -588,11 +357,15 @@ export default function HomeForm({
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="servicesOverview.paragraph"
+                            >
                               Paragraph
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="servicesOverview.paragraph"
                                 type="text"
                                 placeholder="Enter paragraph text"
                                 {...register("servicesOverview.paragraph")}
@@ -601,11 +374,15 @@ export default function HomeForm({
                           </Field>
 
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="servicesOverview.h2"
+                            >
                               Heading (H2)
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="servicesOverview.h2"
                                 type="text"
                                 placeholder="Enter heading"
                                 {...register("servicesOverview.h2")}
@@ -617,10 +394,14 @@ export default function HomeForm({
                             name="servicesOverview.description"
                             render={({ field }) => (
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Rich Text (P)
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="servicesOverview.description"
+                                >
+                                  Paragraph
                                 </FieldLabel>
                                 <TinyEditorRHF
+                                  id="servicesOverview.description"
                                   value={field.value || ""}
                                   onChange={field.onChange}
                                 />
@@ -670,11 +451,15 @@ export default function HomeForm({
                                       </Button>
                                     </div>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`servicesOverview.serviceCards.${index}.src`}
+                                      >
                                         Image URL
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`servicesOverview.serviceCards.${index}.src`}
                                           type="text"
                                           placeholder="Enter image URL"
                                           {...register(
@@ -684,11 +469,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`servicesOverview.serviceCards.${index}.alt`}
+                                      >
                                         Alt
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`servicesOverview.serviceCards.${index}.alt`}
                                           type="text"
                                           placeholder="Enter image alt"
                                           {...register(
@@ -698,11 +487,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`servicesOverview.serviceCards.${index}.title`}
+                                      >
                                         Title
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`servicesOverview.serviceCards.${index}.title`}
                                           type="text"
                                           placeholder="Enter card title"
                                           {...register(
@@ -712,11 +505,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`servicesOverview.serviceCards.${index}.description`}
+                                      >
                                         Description
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`servicesOverview.serviceCards.${index}.description`}
                                           type="text"
                                           placeholder="Enter description"
                                           {...register(
@@ -726,11 +523,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`servicesOverview.serviceCards.${index}.button`}
+                                      >
                                         Button Label
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`servicesOverview.serviceCards.${index}.button`}
                                           type="text"
                                           placeholder="Enter button label"
                                           {...register(
@@ -756,11 +557,15 @@ export default function HomeForm({
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="whyChoose.paragraph"
+                            >
                               Paragraph
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="whyChoose.paragraph"
                                 type="text"
                                 placeholder="Enter paragraph text"
                                 {...register("whyChoose.paragraph")}
@@ -769,11 +574,15 @@ export default function HomeForm({
                           </Field>
 
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="whyChoose.h2"
+                            >
                               Heading (H2)
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="whyChoose.h2"
                                 type="text"
                                 placeholder="Enter heading"
                                 {...register("whyChoose.h2")}
@@ -785,10 +594,14 @@ export default function HomeForm({
                             name="whyChoose.description"
                             render={({ field }) => (
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Rich Text (P)
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="whyChoose.description"
+                                >
+                                  Paragraph
                                 </FieldLabel>
                                 <TinyEditorRHF
+                                  id="whyChoose.description"
                                   value={field.value || ""}
                                   onChange={field.onChange}
                                 />
@@ -837,11 +650,15 @@ export default function HomeForm({
                                       </Button>
                                     </div>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`whyChoose.infoCards.${index}.src`}
+                                      >
                                         Image URL
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`whyChoose.infoCards.${index}.src`}
                                           type="text"
                                           placeholder="Enter image URL"
                                           {...register(
@@ -851,11 +668,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`whyChoose.infoCards.${index}.alt`}
+                                      >
                                         Alt
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`whyChoose.infoCards.${index}.alt`}
                                           type="text"
                                           placeholder="Enter image alt"
                                           {...register(
@@ -865,11 +686,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`whyChoose.infoCards.${index}.title`}
+                                      >
                                         Title
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`whyChoose.infoCards.${index}.title`}
                                           type="text"
                                           placeholder="Enter card title"
                                           {...register(
@@ -879,11 +704,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`whyChoose.infoCards.${index}.description`}
+                                      >
                                         Description
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`whyChoose.infoCards.${index}.description`}
                                           type="text"
                                           placeholder="Enter description"
                                           {...register(
@@ -909,11 +738,15 @@ export default function HomeForm({
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="cityRoutes.paragraph"
+                            >
                               Paragraph
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="cityRoutes.paragraph"
                                 type="text"
                                 placeholder="Enter paragraph text"
                                 {...register("cityRoutes.paragraph")}
@@ -922,11 +755,15 @@ export default function HomeForm({
                           </Field>
 
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="cityRoutes.h2"
+                            >
                               Heading (H2)
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="cityRoutes.h2"
                                 type="text"
                                 placeholder="Enter heading"
                                 {...register("cityRoutes.h2")}
@@ -938,10 +775,14 @@ export default function HomeForm({
                             name="cityRoutes.description"
                             render={({ field }) => (
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Rich Text (P)
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="cityRoutes.description"
+                                >
+                                  Paragraph
                                 </FieldLabel>
                                 <TinyEditorRHF
+                                  id="cityRoutes.description"
                                   value={field.value || ""}
                                   onChange={field.onChange}
                                 />
@@ -956,11 +797,15 @@ export default function HomeForm({
                                 Cities
                               </h3>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="cityRoutes.cities.h3"
+                                >
                                   Heading (H3)
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="cityRoutes.cities.h3"
                                     type="text"
                                     placeholder="Enter heading"
                                     {...register("cityRoutes.cities.h3")}
@@ -968,11 +813,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="cityRoutes.cities.link"
+                                >
                                   Link
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="cityRoutes.cities.link"
                                     type="text"
                                     placeholder="Enter link"
                                     {...register("cityRoutes.cities.link")}
@@ -1020,11 +869,15 @@ export default function HomeForm({
                                         </Button>
                                       </div>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.cities.cityCards.${index}.src`}
+                                        >
                                           Image URL
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.cities.cityCards.${index}.src`}
                                             type="text"
                                             placeholder="Enter image URL"
                                             {...register(
@@ -1034,11 +887,15 @@ export default function HomeForm({
                                         </InputGroup>
                                       </Field>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.cities.cityCards.${index}.alt`}
+                                        >
                                           Alt
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.cities.cityCards.${index}.alt`}
                                             type="text"
                                             placeholder="Enter image alt"
                                             {...register(
@@ -1048,11 +905,15 @@ export default function HomeForm({
                                         </InputGroup>
                                       </Field>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.cities.cityCards.${index}.title`}
+                                        >
                                           Title
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.cities.cityCards.${index}.title`}
                                             type="text"
                                             placeholder="Enter card title"
                                             {...register(
@@ -1062,11 +923,15 @@ export default function HomeForm({
                                         </InputGroup>
                                       </Field>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.cities.cityCards.${index}.description`}
+                                        >
                                           Description
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.cities.cityCards.${index}.description`}
                                             type="text"
                                             placeholder="Enter description"
                                             {...register(
@@ -1087,11 +952,15 @@ export default function HomeForm({
                                 Routes
                               </h3>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="cityRoutes.routes.h3"
+                                >
                                   Heading (H3)
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="cityRoutes.routes.h3"
                                     type="text"
                                     placeholder="Enter heading"
                                     {...register("cityRoutes.routes.h3")}
@@ -1099,11 +968,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="cityRoutes.routes.link"
+                                >
                                   Link
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="cityRoutes.routes.link"
                                     type="text"
                                     placeholder="Enter link"
                                     {...register("cityRoutes.routes.link")}
@@ -1151,11 +1024,15 @@ export default function HomeForm({
                                         </Button>
                                       </div>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.routes.routeCards.${index}.from`}
+                                        >
                                           From
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.routes.routeCards.${index}.from`}
                                             type="text"
                                             placeholder="Enter starting point"
                                             {...register(
@@ -1165,11 +1042,15 @@ export default function HomeForm({
                                         </InputGroup>
                                       </Field>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.routes.routeCards.${index}.to`}
+                                        >
                                           To
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.routes.routeCards.${index}.to`}
                                             type="text"
                                             placeholder="Enter destination"
                                             {...register(
@@ -1179,11 +1060,15 @@ export default function HomeForm({
                                         </InputGroup>
                                       </Field>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.routes.routeCards.${index}.time`}
+                                        >
                                           Time
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.routes.routeCards.${index}.time`}
                                             type="text"
                                             placeholder="Enter travel time"
                                             {...register(
@@ -1193,11 +1078,15 @@ export default function HomeForm({
                                         </InputGroup>
                                       </Field>
                                       <Field>
-                                        <FieldLabel className="text-base-black gap-0">
+                                        <FieldLabel
+                                          className="text-base-black gap-0"
+                                          htmlFor={`cityRoutes.routes.routeCards.${index}.distance`}
+                                        >
                                           Distance
                                         </FieldLabel>
                                         <InputGroup>
                                           <InputGroupInput
+                                            id={`cityRoutes.routes.routeCards.${index}.distance`}
                                             type="text"
                                             placeholder="Enter distance"
                                             {...register(
@@ -1225,11 +1114,15 @@ export default function HomeForm({
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg">
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.heroSectionText.src"
+                              >
                                 Hero Image URL
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.heroSectionText.src"
                                   type="text"
                                   placeholder="Enter image URL"
                                   {...register("findYours.heroSectionText.src")}
@@ -1237,11 +1130,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.heroSectionText.alt"
+                              >
                                 Alt Text
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.heroSectionText.alt"
                                   type="text"
                                   placeholder="Enter image alt"
                                   {...register("findYours.heroSectionText.alt")}
@@ -1249,11 +1146,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.heroSectionText.height"
+                              >
                                 Height
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.heroSectionText.height"
                                   type="text"
                                   placeholder="Enter height"
                                   {...register(
@@ -1263,11 +1164,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.heroSectionText.gradient"
+                              >
                                 Gradient
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.heroSectionText.gradient"
                                   type="text"
                                   placeholder="Enter gradient"
                                   {...register(
@@ -1279,11 +1184,15 @@ export default function HomeForm({
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.p1"
+                              >
                                 Paragraph 1
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.p1"
                                   type="text"
                                   placeholder="Enter paragraph 1 text"
                                   {...register("findYours.p1")}
@@ -1291,11 +1200,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.p2"
+                              >
                                 Paragraph 2
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.p2"
                                   type="text"
                                   placeholder="Enter paragraph 2 text"
                                   {...register("findYours.p2")}
@@ -1303,11 +1216,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.btn1"
+                              >
                                 Button 1
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.btn1"
                                   type="text"
                                   placeholder="Enter button 1 text"
                                   {...register("findYours.btn1")}
@@ -1315,11 +1232,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="findYours.btn2"
+                              >
                                 Button 2
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="findYours.btn2"
                                   type="text"
                                   placeholder="Enter button 2 text"
                                   {...register("findYours.btn2")}
@@ -1332,10 +1253,14 @@ export default function HomeForm({
                             name="findYours.description"
                             render={({ field }) => (
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Description (Rich Text)
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="findYours.description"
+                                >
+                                  Description
                                 </FieldLabel>
                                 <TinyEditorRHF
+                                  id="findYours.description"
                                   value={field.value || ""}
                                   onChange={field.onChange}
                                 />
@@ -1391,11 +1316,15 @@ export default function HomeForm({
                                     </Button>
                                   </div>
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`safetyAndPrivacy.infoCards.${index}.src`}
+                                    >
                                       Image URL
                                     </FieldLabel>
                                     <InputGroup>
                                       <InputGroupInput
+                                        id={`safetyAndPrivacy.infoCards.${index}.src`}
                                         type="text"
                                         placeholder="Enter image URL"
                                         {...register(
@@ -1405,11 +1334,15 @@ export default function HomeForm({
                                     </InputGroup>
                                   </Field>
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`safetyAndPrivacy.infoCards.${index}.alt`}
+                                    >
                                       Alt
                                     </FieldLabel>
                                     <InputGroup>
                                       <InputGroupInput
+                                        id={`safetyAndPrivacy.infoCards.${index}.alt`}
                                         type="text"
                                         placeholder="Enter image alt"
                                         {...register(
@@ -1419,11 +1352,15 @@ export default function HomeForm({
                                     </InputGroup>
                                   </Field>
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`safetyAndPrivacy.infoCards.${index}.title`}
+                                    >
                                       Title
                                     </FieldLabel>
                                     <InputGroup>
                                       <InputGroupInput
+                                        id={`safetyAndPrivacy.infoCards.${index}.title`}
                                         type="text"
                                         placeholder="Enter card title"
                                         {...register(
@@ -1433,11 +1370,15 @@ export default function HomeForm({
                                     </InputGroup>
                                   </Field>
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`safetyAndPrivacy.infoCards.${index}.description`}
+                                    >
                                       Description
                                     </FieldLabel>
                                     <InputGroup>
                                       <InputGroupInput
+                                        id={`safetyAndPrivacy.infoCards.${index}.description`}
                                         type="text"
                                         placeholder="Enter description"
                                         {...register(
@@ -1463,11 +1404,15 @@ export default function HomeForm({
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="corporateGroundTransportation.src"
+                              >
                                 Image URL
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="corporateGroundTransportation.src"
                                   type="text"
                                   placeholder="Enter image URL"
                                   {...register(
@@ -1477,11 +1422,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="corporateGroundTransportation.alt"
+                              >
                                 Alt Text
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="corporateGroundTransportation.alt"
                                   type="text"
                                   placeholder="Enter image alt"
                                   {...register(
@@ -1491,11 +1440,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="corporateGroundTransportation.t1"
+                              >
                                 Title Layer 1 (T1)
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="corporateGroundTransportation.t1"
                                   type="text"
                                   placeholder="Enter title layer 1"
                                   {...register(
@@ -1505,11 +1458,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="corporateGroundTransportation.t2"
+                              >
                                 Title Layer 2 (T2)
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="corporateGroundTransportation.t2"
                                   type="text"
                                   placeholder="Enter title layer 2"
                                   {...register(
@@ -1520,11 +1477,15 @@ export default function HomeForm({
                             </Field>
                           </div>
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="corporateGroundTransportation.description"
+                            >
                               Description
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="corporateGroundTransportation.description"
                                 type="text"
                                 placeholder="Enter description"
                                 {...register(
@@ -1569,11 +1530,15 @@ export default function HomeForm({
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="meetingsAndSpecialEvents.src"
+                              >
                                 Image URL
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="meetingsAndSpecialEvents.src"
                                   type="text"
                                   placeholder="Enter image URL"
                                   {...register("meetingsAndSpecialEvents.src")}
@@ -1581,11 +1546,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="meetingsAndSpecialEvents.alt"
+                              >
                                 Alt Text
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="meetingsAndSpecialEvents.alt"
                                   type="text"
                                   placeholder="Enter image alt"
                                   {...register("meetingsAndSpecialEvents.alt")}
@@ -1593,11 +1562,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="meetingsAndSpecialEvents.t1"
+                              >
                                 Title Layer 1 (T1)
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="meetingsAndSpecialEvents.t1"
                                   type="text"
                                   placeholder="Enter title layer 1"
                                   {...register("meetingsAndSpecialEvents.t1")}
@@ -1605,11 +1578,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="meetingsAndSpecialEvents.t2"
+                              >
                                 Title Layer 2 (T2)
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="meetingsAndSpecialEvents.t2"
                                   type="text"
                                   placeholder="Enter title layer 2"
                                   {...register("meetingsAndSpecialEvents.t2")}
@@ -1618,11 +1595,15 @@ export default function HomeForm({
                             </Field>
                           </div>
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="meetingsAndSpecialEvents.description"
+                            >
                               Description
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="meetingsAndSpecialEvents.description"
                                 type="text"
                                 placeholder="Enter description"
                                 {...register(
@@ -1667,11 +1648,15 @@ export default function HomeForm({
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="bookARide.h2"
+                            >
                               Heading (H2)
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="bookARide.h2"
                                 type="text"
                                 placeholder="Enter heading"
                                 {...register("bookARide.h2")}
@@ -1679,11 +1664,15 @@ export default function HomeForm({
                             </InputGroup>
                           </Field>
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="bookARide.p"
+                            >
                               Paragraph
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="bookARide.p"
                                 type="text"
                                 placeholder="Enter paragraph text"
                                 {...register("bookARide.p")}
@@ -1691,11 +1680,15 @@ export default function HomeForm({
                             </InputGroup>
                           </Field>
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="bookARide.btn"
+                            >
                               Button Label
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="bookARide.btn"
                                 type="text"
                                 placeholder="Enter button label"
                                 {...register("bookARide.btn")}
@@ -1714,11 +1707,15 @@ export default function HomeForm({
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="downloadOptions.h2"
+                            >
                               Heading (H2)
                             </FieldLabel>
                             <InputGroup>
                               <InputGroupInput
+                                id="downloadOptions.h2"
                                 type="text"
                                 placeholder="Enter heading"
                                 {...register("downloadOptions.h2")}
@@ -1730,10 +1727,14 @@ export default function HomeForm({
                             name="downloadOptions.p"
                             render={({ field }) => (
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
-                                  Rich Text (P)
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="downloadOptions.p"
+                                >
+                                  Paragraph
                                 </FieldLabel>
                                 <TinyEditorRHF
+                                  id="downloadOptions.p"
                                   value={field.value || ""}
                                   onChange={field.onChange}
                                 />
@@ -1746,11 +1747,15 @@ export default function HomeForm({
                                 App Store (iOS)
                               </h4>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="downloadOptions.appStoreLink"
+                                >
                                   App Store Link
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="downloadOptions.appStoreLink"
                                     type="text"
                                     placeholder="Enter App Store link"
                                     {...register(
@@ -1770,11 +1775,15 @@ export default function HomeForm({
                                 Play Store (Android)
                               </h4>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="downloadOptions.playStoreLink"
+                                >
                                   Play Store Link
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="downloadOptions.playStoreLink"
                                     type="text"
                                     placeholder="Enter Play Store link"
                                     {...register(
@@ -1796,11 +1805,15 @@ export default function HomeForm({
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="downloadOptions.image.src"
+                                >
                                   Image URL
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="downloadOptions.image.src"
                                     type="text"
                                     placeholder="Enter image URL"
                                     {...register("downloadOptions.image.src")}
@@ -1808,11 +1821,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="downloadOptions.image.alt"
+                                >
                                   Alt Text
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="downloadOptions.image.alt"
                                     type="text"
                                     placeholder="Enter image alt"
                                     {...register("downloadOptions.image.alt")}
@@ -1838,11 +1855,15 @@ export default function HomeForm({
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.testimonialCard.h2"
+                                >
                                   Heading (H2)
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.testimonialCard.h2"
                                     type="text"
                                     placeholder="Enter heading"
                                     {...register(
@@ -1852,11 +1873,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.testimonialCard.Quote"
+                                >
                                   Quote
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.testimonialCard.Quote"
                                     type="text"
                                     placeholder="Enter quote"
                                     {...register(
@@ -1866,11 +1891,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.testimonialCard.Name"
+                                >
                                   Author Name
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.testimonialCard.Name"
                                     type="text"
                                     placeholder="Enter author name"
                                     {...register(
@@ -1880,11 +1909,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.testimonialCard.Position"
+                                >
                                   Author Position
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.testimonialCard.Position"
                                     type="text"
                                     placeholder="Enter author position"
                                     {...register(
@@ -1894,11 +1927,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.testimonialCard.src"
+                                >
                                   Author Image URL
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.testimonialCard.src"
                                     type="text"
                                     placeholder="Enter author image URL"
                                     {...register(
@@ -1908,11 +1945,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.testimonialCard.alt"
+                                >
                                   Author Image Alt
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.testimonialCard.alt"
                                     type="text"
                                     placeholder="Enter author image alt"
                                     {...register(
@@ -1929,11 +1970,15 @@ export default function HomeForm({
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.image.src"
+                                >
                                   Image URL
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.image.src"
                                     type="text"
                                     placeholder="Enter image URL"
                                     {...register("testimonial.image.src")}
@@ -1941,11 +1986,15 @@ export default function HomeForm({
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel className="text-base-black gap-0">
+                                <FieldLabel
+                                  className="text-base-black gap-0"
+                                  htmlFor="testimonial.image.alt"
+                                >
                                   Alt Text
                                 </FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
+                                    id="testimonial.image.alt"
                                     type="text"
                                     placeholder="Enter image alt"
                                     {...register("testimonial.image.alt")}
@@ -1967,11 +2016,15 @@ export default function HomeForm({
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="ourPartners.p1"
+                              >
                                 Paragraph 1
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="ourPartners.p1"
                                   type="text"
                                   placeholder="Enter paragraph 1 text"
                                   {...register("ourPartners.p1")}
@@ -1979,11 +2032,15 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel className="text-base-black gap-0">
+                              <FieldLabel
+                                className="text-base-black gap-0"
+                                htmlFor="ourPartners.p2"
+                              >
                                 Paragraph 2
                               </FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
+                                  id="ourPartners.p2"
                                   type="text"
                                   placeholder="Enter paragraph 2 text"
                                   {...register("ourPartners.p2")}
@@ -2031,11 +2088,15 @@ export default function HomeForm({
                                       </Button>
                                     </div>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`ourPartners.images.${index}.src`}
+                                      >
                                         Logo URL
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`ourPartners.images.${index}.src`}
                                           type="text"
                                           placeholder="Enter logo URL"
                                           {...register(
@@ -2045,11 +2106,15 @@ export default function HomeForm({
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel className="text-base-black gap-0">
+                                      <FieldLabel
+                                        className="text-base-black gap-0"
+                                        htmlFor={`ourPartners.images.${index}.alt`}
+                                      >
                                         Alt Text
                                       </FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
+                                          id={`ourPartners.images.${index}.alt`}
                                           type="text"
                                           placeholder="Enter logo alt"
                                           {...register(
@@ -2124,7 +2189,10 @@ export default function HomeForm({
                           </Field>
 
                           <Field>
-                            <FieldLabel className="text-base-black gap-0">
+                            <FieldLabel
+                              className="text-base-black gap-0"
+                              htmlFor="seo.metaKeywords"
+                            >
                               Meta Keywords
                             </FieldLabel>
                             <Controller
@@ -2133,6 +2201,7 @@ export default function HomeForm({
                               render={({ field }) => (
                                 <div className="space-y-2">
                                   <AutoCompleteInput
+                                    inputId="seo.metaKeywords"
                                     list={metaKeywordsData?.keywords || []}
                                     value={keywordInput}
                                     setValue={setKeywordInput}
@@ -2260,7 +2329,10 @@ export default function HomeForm({
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                   <Field>
-                                    <FieldLabel className="text-base-black gap-0">
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`jsonLd.${index}`}
+                                    >
                                       Schema JSON
                                     </FieldLabel>
                                     <Controller
@@ -2268,6 +2340,7 @@ export default function HomeForm({
                                       name={`jsonLd.${index}`}
                                       render={({ field }) => (
                                         <Textarea
+                                          id={`jsonLd.${index}`}
                                           className="w-full h-40 p-2 border rounded font-mono text-sm"
                                           value={
                                             typeof field.value === "string"
@@ -2312,7 +2385,7 @@ export default function HomeForm({
         {/* Form Actions */}
         <Card className="sticky bottom-6 z-10 bg-base-white/80 backdrop-blur">
           <CardBody className="p-4">
-            <CardContent className="flex justify-end gap-3">
+            <CardContent className="flex justify-between gap-3">
               <Button
                 type="button"
                 variant="outlinePrimary"
@@ -2320,7 +2393,7 @@ export default function HomeForm({
               >
                 Reset Form
               </Button>
-              <Button type="submit">{type}</Button>
+              <Button type="submit">Submit</Button>
             </CardContent>
           </CardBody>
         </Card>
