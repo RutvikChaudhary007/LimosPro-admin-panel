@@ -1240,18 +1240,20 @@ export default function PageTemplateEditor({
                                     return (
                                       <Card key={field.id}>
                                         <CardBody>
-                                          <CardHeader className="flex flex-row items-center justify-between">
+                                          <CardHeader>
                                             <CardTitle>{type}</CardTitle>
-                                            <Button
-                                              type="button"
-                                              variant="destructive"
-                                              spacing="sm"
-                                              onClick={() =>
-                                                removeJsonLd(index)
-                                              }
-                                            >
-                                              Remove
-                                            </Button>
+                                            <CardAction>
+                                              <Button
+                                                type="button"
+                                                variant="destructive"
+                                                spacing="sm"
+                                                onClick={() =>
+                                                  removeJsonLd(index)
+                                                }
+                                              >
+                                                Remove
+                                              </Button>
+                                            </CardAction>
                                           </CardHeader>
                                           <CardContent className="space-y-4">
                                             {/* Type Specific Fields */}
@@ -2009,15 +2011,17 @@ export default function PageTemplateEditor({
           {mediaOpen && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <Card className="w-11/12 md:w-2/3 max-h-3/4 overflow-auto">
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader>
                   <CardTitle>Media Library</CardTitle>
-                  <Button
-                    onClick={() => setMediaOpen(false)}
-                    variant="outline"
-                    spacing="sm"
-                  >
-                    Close
-                  </Button>
+                  <CardAction>
+                    <Button
+                      onClick={() => setMediaOpen(false)}
+                      variant="outline"
+                      spacing="sm"
+                    >
+                      Close
+                    </Button>
+                  </CardAction>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-3">
@@ -2062,7 +2066,7 @@ export default function PageTemplateEditor({
                 onClick={(e) => e.stopPropagation()}
               >
                 <CardBody className="p-2">
-                  <CardHeader className="flex flex-row items-center justify-between">
+                  <CardHeader>
                     <CardTitle>API Output</CardTitle>
                     <CardAction className="flex gap-2">
                       <Button

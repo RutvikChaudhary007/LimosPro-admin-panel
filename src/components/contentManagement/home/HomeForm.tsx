@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
 import { Link2, Plus, RefreshCw, Save, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form";
 import {
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import UploadWithUrl from "@/components/ui/upload-with-url";
 import { getDefaultJsonLdItem, uid } from "@/utils/pagebuilder.utils";
@@ -365,7 +367,7 @@ export default function HomeForm({
                     form.watch("status") === "published" ? "default" : "black"
                   }
                 >
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save />
                   {type === "Create" ? "Create & Publish" : "Update Home Page"}
                 </Button>
               </CardAction>
@@ -434,7 +436,7 @@ export default function HomeForm({
                             </FieldDescription>
                             {form.formState.errors.pageName && (
                               <FormMessage>
-                                {form.formState.errors.pageName.message}
+                                {form.formState.errors.pageName?.message}
                               </FormMessage>
                             )}
                           </Field>
@@ -477,7 +479,7 @@ export default function HomeForm({
                             </FieldDescription>
                             {form.formState.errors.slug && (
                               <FormMessage>
-                                {form.formState.errors.slug.message}
+                                {form.formState.errors.slug?.message}
                               </FormMessage>
                             )}
                           </Field>
@@ -505,7 +507,7 @@ export default function HomeForm({
                             />
                             {form.formState.errors.status && (
                               <FormMessage>
-                                {form.formState.errors.status.message}
+                                {form.formState.errors.status?.message}
                               </FormMessage>
                             )}
                           </Field>
@@ -1531,21 +1533,28 @@ export default function HomeForm({
                               />
                             </InputGroup>
                           </Field>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              id="imageLeft_corporate"
-                              {...register(
-                                "corporateGroundTransportation.imageLeft",
+                          <div className="flex items-center space-x-2 border p-3 rounded bg-base-primary/10">
+                            <Controller
+                              control={control}
+                              name="corporateGroundTransportation.imageLeft"
+                              render={({ field }) => (
+                                <>
+                                  <Checkbox
+                                    id="imageLeft_corporate"
+                                    checked={!!field.value}
+                                    onCheckedChange={(checked) =>
+                                      field.onChange(checked === true)
+                                    }
+                                  />
+                                  <label
+                                    htmlFor="imageLeft_corporate"
+                                    className="text-sm font-medium leading-none cursor-pointer"
+                                  >
+                                    Show Image on Left?
+                                  </label>
+                                </>
                               )}
-                              className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                             />
-                            <label
-                              htmlFor="imageLeft_corporate"
-                              className="text-sm font-medium text-gray-700"
-                            >
-                              Show Image on Left?
-                            </label>
                           </div>
                         </CardContent>
                       </CardBody>
@@ -1622,21 +1631,28 @@ export default function HomeForm({
                               />
                             </InputGroup>
                           </Field>
-                          <div className="flex items-center gap-2">
-                            <input
-                              type="checkbox"
-                              id="imageLeft_meetings"
-                              {...register(
-                                "meetingsAndSpecialEvents.imageLeft",
+                          <div className="flex items-center space-x-2 border p-3 rounded bg-base-primary/10">
+                            <Controller
+                              control={control}
+                              name="meetingsAndSpecialEvents.imageLeft"
+                              render={({ field }) => (
+                                <>
+                                  <Checkbox
+                                    id="imageLeft_meetings"
+                                    checked={!!field.value}
+                                    onCheckedChange={(checked) =>
+                                      field.onChange(checked === true)
+                                    }
+                                  />
+                                  <label
+                                    htmlFor="imageLeft_meetings"
+                                    className="text-sm font-medium leading-none cursor-pointer"
+                                  >
+                                    Show Image on Left?
+                                  </label>
+                                </>
                               )}
-                              className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                             />
-                            <label
-                              htmlFor="imageLeft_meetings"
-                              className="text-sm font-medium text-gray-700"
-                            >
-                              Show Image on Left?
-                            </label>
                           </div>
                           {/* </div> */}
                         </CardContent>
@@ -2215,7 +2231,7 @@ export default function HomeForm({
                                 appendJsonLd(getDefaultJsonLdItem("FAQPage"))
                               }
                             >
-                              <Plus className="w-4 h-4 mr-2" />
+                              <Plus />
                               Add Item
                             </Button>
                           </CardAction>
@@ -2251,7 +2267,7 @@ export default function HomeForm({
                                       control={control}
                                       name={`jsonLd.${index}`}
                                       render={({ field }) => (
-                                        <textarea
+                                        <Textarea
                                           className="w-full h-40 p-2 border rounded font-mono text-sm"
                                           value={
                                             typeof field.value === "string"
@@ -2294,16 +2310,20 @@ export default function HomeForm({
         </Card>
 
         {/* Form Actions */}
-        <div className="sticky bottom-6 z-10 bg-white/80 backdrop-blur p-4 border rounded-xl shadow-lg flex justify-end gap-3">
-          <Button
-            type="button"
-            variant="outlinePrimary"
-            onClick={() => form.reset()}
-          >
-            Reset Form
-          </Button>
-          <Button type="submit">{type}</Button>
-        </div>
+        <Card className="sticky bottom-6 z-10 bg-base-white/80 backdrop-blur">
+          <CardBody className="p-4">
+            <CardContent className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outlinePrimary"
+                onClick={() => form.reset()}
+              >
+                Reset Form
+              </Button>
+              <Button type="submit">{type}</Button>
+            </CardContent>
+          </CardBody>
+        </Card>
       </form>
     </FormProvider>
   );
