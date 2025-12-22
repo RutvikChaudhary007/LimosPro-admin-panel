@@ -222,10 +222,10 @@ export function AppSidebar({
               asChild
               className="h-auto data-[slot=sidebar-menu-button]:bg-transparent data-[slot=sidebar-menu-button]:p-[5px]! data-[slot=sidebar-menu-button]:pr-4! group-data-[collapsible=icon]:data-[slot=sidebar-menu-button]:p-0!"
             >
-              <Link to="/" className="flex max-w-fit items-center gap-2">
+              <Link to="/" className="flex max-w-fit items-center !gap-2">
                 <img
-                  src="/logo/limospro-icon.png"
-                  alt="LimosProIcon"
+                  src="/logo/limospro-logo.png"
+                  alt="LimosProLogo"
                   className="size-10 transition-all duration-300 ease-in-out group-data-[collapsible=icon]:size-12"
                 />
                 <img
