@@ -60,6 +60,7 @@ import {
   editStaffMember,
   editTestimonial,
   login,
+  refundPayment,
   syncStaffPermissions,
   updateUser,
 } from "@/api";
@@ -984,6 +985,23 @@ const useDeleteContentBlockMutation = () =>
     },
   });
 
+/**
+ * #####################################
+ * Payment refunds
+ * #####################################
+ * @returns
+ */
+const useRefundPaymentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: refundPayment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Payments"] });
+      queryClient.invalidateQueries({ queryKey: ["Refunds"] });
+    },
+  });
+};
+
 export default {
   // Auth
   useLoginMutation,
@@ -1056,4 +1074,6 @@ export default {
   useCreateContentBlockMutation,
   useEditContentBlockMutation,
   useDeleteContentBlockMutation,
+  // Payment Refund
+  useRefundPaymentMutation,
 };

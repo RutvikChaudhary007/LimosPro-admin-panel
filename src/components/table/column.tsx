@@ -34,6 +34,7 @@ import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
 import AccessCell from "../manageAccess/ManageAccess";
+import ManageRefund from "../manageRefund/ManageRefund";
 import { Badge } from "../ui/badge";
 import {
   HoverCard,
@@ -1368,6 +1369,7 @@ export type TPayments = {
 export function getPayments(
   onView: (id: string) => void,
   onMap: (id: string) => void,
+  onAccess: (id: string) => void,
 ): ColumnDef<TPayments>[] {
   return [
     {
@@ -1437,15 +1439,7 @@ export function getPayments(
           >
             <Eye />
           </Button>
-          <Button
-            onClick={() => onMap(row.original.id)}
-            variant="outlineNavBtnPrimary"
-            size="xl"
-            spacing="lg"
-            tooltip="Card"
-          >
-            <CreditCardIcon />
-          </Button>
+          <ManageRefund<TPayments> row={row} refundId={row.original.id} />
         </div>
       ),
       enableSorting: false,

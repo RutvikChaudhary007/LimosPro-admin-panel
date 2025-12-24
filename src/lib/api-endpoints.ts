@@ -68,6 +68,7 @@ export const API_ENDPOINTS: Record<string, any> = {
 
   // Refund
   GET_ALL_REFUND: `${ADMIN_SERVICE_URL}/payments`,
+  REFUND_PAYMENT: `${ADMIN_SERVICE_URL}/payments/refund`,
   // VIEW_REFUND: `${ADMIN_SERVICE_URL}/payments`,
 
   // Crew member

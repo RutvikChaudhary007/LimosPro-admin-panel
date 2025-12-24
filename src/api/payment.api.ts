@@ -17,6 +17,13 @@ type PaymentArg = {
 
 type RefundArg = { page?: number; limit: number };
 
+export type RefundPayload = {
+  paymentId: string;
+  amount: number | string;
+  bookingId: string;
+  customerId: string;
+};
+
 // ============================================
 // PAYMENT OPERATIONS
 // ============================================
@@ -105,3 +112,14 @@ export const useFetchAllRefund = ({ page, limit }: RefundArg) =>
     refetchOnWindowFocus: false,
     retry: false,
   });
+
+/**
+ * Process a refund
+ */
+export const refundPayment = async (payload: RefundPayload) => {
+  const response = await axiosInstance.post(
+    `${API_ENDPOINTS.REFUND_PAYMENT}`,
+    payload,
+  );
+  return response.data;
+};
