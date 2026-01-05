@@ -59,7 +59,8 @@ adminAxiosInstance.interceptors.response.use(
     if (
       originalRequest &&
       !originalRequest._retry &&
-      (status === 401 || expired)
+      status === 401 &&
+      expired
     ) {
       originalRequest._retry = true;
 
