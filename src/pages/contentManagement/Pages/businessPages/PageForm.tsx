@@ -1,6 +1,8 @@
-import PageTemplateEditor from "@/components/pagebuilder/PageBuilderBusinessForm";
+import PageTemplateEditor, {
+  type MultiLangPageTemplateFormData,
+} from "@/components/pagebuilder/PageBuilderBusinessForm";
 import type {
-  PageTemplateFormData,
+  // PageTemplateFormData,
   PageTemplateWithTimestamps,
 } from "@/types/pagebuilder.types";
 
@@ -9,7 +11,7 @@ function PageForm({
   onSubmit,
 }: {
   initialData?: PageTemplateWithTimestamps;
-  onSubmit: (data: PageTemplateFormData) => void;
+  onSubmit: (data: MultiLangPageTemplateFormData) => void;
 }) {
   return <PageTemplateEditor onSubmit={onSubmit} initialData={initialData} />;
 }

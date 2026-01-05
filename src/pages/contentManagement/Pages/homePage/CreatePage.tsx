@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useCreateBusinessPageLayout } from "@/api";
+import { useCreateHomePage } from "@/api/pages/homePage.api";
 import HomeForm from "@/components/contentManagement/home/HomeForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { toastPromise } from "@/hooks/use-toast";
@@ -9,7 +9,7 @@ import { constant } from "@/lib/constant";
 
 export default function CreatePage() {
   const navigate = useNavigate();
-  const createHomeMutation = useCreateBusinessPageLayout();
+  const createHomeMutation = useCreateHomePage();
 
   const handleCreateHome = (data: any) => {
     try {

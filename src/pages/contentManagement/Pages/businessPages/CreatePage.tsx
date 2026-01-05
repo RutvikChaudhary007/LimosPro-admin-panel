@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { useCreateBusinessPageLayout } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import type { MultiLangPageTemplateFormData } from "@/components/pagebuilder/PageBuilderBusinessForm";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
-import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import { generatePageTitle } from "@/utils/seo";
 import PageForm from "./PageForm";
 
@@ -14,7 +14,7 @@ function CreatePage() {
   const navigate = useNavigate();
   const createPageMutation = useCreateBusinessPageLayout();
 
-  const handleSubmit = (data: PageTemplateFormData) => {
+  const handleSubmit = (data: MultiLangPageTemplateFormData) => {
     // styledLog(data, "data:", "info");
     data.category = "business";
     toastPromise(createPageMutation.mutateAsync(data as any), {

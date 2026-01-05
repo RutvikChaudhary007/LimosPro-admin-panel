@@ -8,7 +8,7 @@ import {
 import type { ColumnDef, Table } from "@tanstack/react-table";
 import { format } from "date-fns";
 import {
-  CreditCardIcon,
+  // CreditCardIcon,
   Edit,
   Eye,
   Mail,
@@ -1368,8 +1368,8 @@ export type TPayments = {
 };
 export function getPayments(
   onView: (id: string) => void,
-  onMap: (id: string) => void,
-  onAccess: (id: string) => void,
+  // onMap: (id: string) => void,
+  // onAccess: (id: string) => void,
 ): ColumnDef<TPayments>[] {
   return [
     {

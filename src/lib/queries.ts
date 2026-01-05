@@ -64,6 +64,16 @@ import {
   syncStaffPermissions,
   updateUser,
 } from "@/api";
+import {
+  createDestinationPageContent,
+  deleteDestinationPageContent,
+  updateDestinationPageContent,
+} from "@/api/pages/destinationPage.api";
+import {
+  createServicePageContent,
+  deleteServicePageContent,
+  updateServicePageContent,
+} from "@/api/pages/servicePages.api";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
@@ -1002,6 +1012,94 @@ const useRefundPaymentMutation = () => {
   });
 };
 
+/**
+ * #####################################
+ * Service Page Content
+ * #####################################
+ * @returns
+ */
+
+const useCreateServicePageContentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createServicePageContent,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["servicePageContent"] });
+      return data;
+    },
+    onError: (err: unknown) => {
+      console.error("Mutation error:", err);
+    },
+  });
+};
+
+const useEditServicePageContentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateServicePageContent,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["servicePageContent"] });
+      queryClient.invalidateQueries({
+        queryKey: ["servicePageContent", variables.id],
+      });
+    },
+  });
+};
+
+const useDeleteServicePageContentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteServicePageContent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["servicePageContent"] });
+    },
+  });
+};
+
+/**
+ * #####################################
+ * Destination Page Content
+ * #####################################
+ * @returns
+ */
+
+const useCreateDestinationPageContentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createDestinationPageContent,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["destinationPageContent"] });
+      return data;
+    },
+    onError: (err: unknown) => {
+      console.error("Mutation error:", err);
+    },
+  });
+};
+
+const useEditDestinationPageContentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateDestinationPageContent,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["destinationPageContent"] });
+      queryClient.invalidateQueries({
+        queryKey: ["destinationPageContent", variables.id],
+      });
+    },
+  });
+};
+
+const useDeleteDestinationPageContentMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteDestinationPageContent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["destinationPageContent"] });
+    },
+  });
+};
+
 export default {
   // Auth
   useLoginMutation,
@@ -1076,4 +1174,12 @@ export default {
   useDeleteContentBlockMutation,
   // Payment Refund
   useRefundPaymentMutation,
+  // Service Page Content
+  useCreateServicePageContentMutation,
+  useEditServicePageContentMutation,
+  useDeleteServicePageContentMutation,
+  // Destination Page Content
+  useCreateDestinationPageContentMutation,
+  useEditDestinationPageContentMutation,
+  useDeleteDestinationPageContentMutation,
 };

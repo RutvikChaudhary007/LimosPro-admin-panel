@@ -1,15 +1,11 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  useFetchBusinessPageLayoutById,
-  useUpdateBusinessPageLayout,
-} from "@/api";
-import { ErrorCard } from "@/components/common/ErrorCard";
+// import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import ChauffeurForm from "@/components/contentManagement/chauffeur/ChauffeurForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
-import { Spinner } from "@/components/Spinner";
+// import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
@@ -17,13 +13,11 @@ import { generatePageTitle } from "@/utils/seo";
 export default function EditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
+  console.log(id);
   const handleSubmit = (data: any) => {
     try {
       toastPromise(
-        () => {
-          return Promise.resolve();
-        },
+        Promise.resolve(data),
         {
           loading: "Updating chauffeur page...",
           success: () => {

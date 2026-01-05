@@ -1,29 +1,32 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
 import {
-  useFetchBusinessPageLayoutById,
-  useUpdateBusinessPageLayout,
-} from "@/api";
-import { ErrorCard } from "@/components/common/ErrorCard";
+  useNavigate,
+  // useParams
+} from "react-router-dom";
+// import {
+//   useFetchBusinessPageLayoutById,
+//   useUpdateBusinessPageLayout,
+// } from "@/api";
+// import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import HomeForm from "@/components/contentManagement/home/HomeForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
-import { Spinner } from "@/components/Spinner";
+// import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 
 export default function EditPage() {
-  const { id } = useParams<{ id: string }>();
+  // const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const handleSubmit = (data: any) => {
     try {
       toastPromise(
-        () => {
-          return Promise.resolve();
-        },
+        new Promise<unknown>((resolve) => {
+          resolve(data);
+        }),
         {
           loading: "Updating home page...",
           success: () => {

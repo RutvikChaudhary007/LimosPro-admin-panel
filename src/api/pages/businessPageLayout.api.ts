@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { MultiLangPageTemplateFormData } from "@/components/pagebuilder/PageBuilderBusinessForm";
 import type { PageTemplateQueryParams } from "@/types/content";
-import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import axiosInstance from "@/utils/axiosInstance";
 import { API_ENDPOINTS } from "../../lib/api-endpoints";
 
@@ -42,7 +42,9 @@ export const useFetchBusinessPageLayoutById = (id: string) =>
     retry: false,
   });
 
-export const createBusinessPageLayout = async (data: PageTemplateFormData) => {
+export const createBusinessPageLayout = async (
+  data: MultiLangPageTemplateFormData,
+) => {
   const response = await axiosInstance.post(
     API_ENDPOINTS.BUSINESS_PAGE_LAYOUT.CREATE,
     data,
@@ -65,7 +67,7 @@ export const updateBusinessPageLayout = async ({
   data,
 }: {
   id: string;
-  data: Partial<PageTemplateFormData>;
+  data: Partial<MultiLangPageTemplateFormData>;
 }) => {
   const response = await axiosInstance.put(
     API_ENDPOINTS.BUSINESS_PAGE_LAYOUT.UPDATE(id),

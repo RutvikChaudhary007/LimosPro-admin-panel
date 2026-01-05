@@ -67,13 +67,13 @@ export default function LoginPage() {
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[376px] flex-col justify-center">
           <div className="mb-6 size-20">
             <img
-              src="/logo/limospro-logo.png"
+              src="/logo/limospro-logo.svg"
               alt="LogoImage"
               className="size-full object-cover"
             />
           </div>
           <div className="text-base-white font-montserrat space-y-4 leading-[100%] font-bold tracking-normal">
-            <h4 className="text-3xl">Introducing Limospro™ Fleet System</h4>
+            <h4 className="text-3xl">Introducing LIMOSPRO™ Fleet System</h4>
             <p className="text-lg">
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry&apos;s standard dummy

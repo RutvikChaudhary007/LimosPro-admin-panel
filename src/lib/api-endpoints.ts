@@ -128,6 +128,9 @@ export const API_ENDPOINTS: Record<string, any> = {
   DELETE_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelist/:id`,
   BULK_DELETE_IP_WHITE_LIST: `${ADMIN_SERVICE_URL}/ip-whitelists/bulk-delete`,
 
+  // Reports
+  GET_ALL_REPORTS: `${ADMIN_SERVICE_URL}/reports`,
+
   // Content Management APIs (Admin Service)
   BLOG: {
     GET_ALL: `${ADMIN_SERVICE_URL}/blog/posts`,
@@ -215,5 +218,23 @@ export const API_ENDPOINTS: Record<string, any> = {
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/tags/${id}`,
     BULK_DELETE: `${ADMIN_SERVICE_URL}/tags/bulk-delete`,
+  },
+  SERVICE_PAGE_CONTENT: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/service-content`,
+    GET_BY_ID: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/service-content/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/service-content`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/service-content/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/service-content/${id}`,
+  },
+  DESTINATION_PAGE_CONTENT: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/destination-content`,
+    GET_BY_ID: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/destination-content/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/destination-content`,
+    UPDATE: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/destination-content/${id}`,
+    DELETE: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/destination-content/${id}`,
   },
 };

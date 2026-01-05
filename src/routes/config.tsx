@@ -170,7 +170,7 @@ const CreateFaqPage = lazy(
 const EditFaqPage = lazy(() => import("../pages/faqs/formpage/EditFaqPage"));
 
 // Reports
-const ReportPage = lazy(() => import("../pages/report/ReportPage"));
+const ReportPage = lazy(() => import("../pages/reports/ReportsLayout"));
 
 // Content Management
 // const ContentManagement = lazy(() => import("../pages/contentManagement/Pages/PageListPage"));

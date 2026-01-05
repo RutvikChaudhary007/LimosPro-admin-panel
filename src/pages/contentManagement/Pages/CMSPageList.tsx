@@ -1,8 +1,10 @@
 "use client";
 
 import { Edit2, FileText, Plus, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFetchAllBusinessPageLayouts } from "@/api";
+import { useFetchAllServicePageContent } from "@/api/pages/servicePages.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,12 +28,13 @@ import { cn } from "@/lib/utils";
 
 // Dummy Data
 const categoriesData = [
-  { name: "All", count: 6 },
-  { name: "Services", count: 3 },
-  { name: "Destinations", count: 2 },
-  { name: "Business", count: 1 },
-  { name: "Home", count: 0 },
-  { name: "Chauffeur", count: 0 },
+  { name: "All", label: "All", count: 6 },
+  { name: "Services", label: "Services", count: 3 },
+  { name: "Destinations", label: "Global Cities & Airports", count: 2 },
+  { name: "Business", label: "Business & Diplomats", count: 1 },
+  { name: "Home", label: "Home", count: 1 },
+  { name: "About", label: "About", count: 1 },
+  { name: "Chauffeur", label: "Chauffeur", count: 0 },
 ];
 
 const pagesData = [
@@ -84,6 +87,11 @@ export default function CMSPageList() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
+  const { data: servicePageContent } = useFetchAllServicePageContent();
+  const { data: businessPageLayouts } = useFetchAllBusinessPageLayouts();
+  useEffect(() => {
+    console.log("data=>", servicePageContent, businessPageLayouts);
+  }, [servicePageContent, businessPageLayouts]);
   // Filter Pages based on selected category and search query
   const filteredPages = pagesData.filter((page) => {
     const matchesCategory =
@@ -149,7 +157,7 @@ export default function CMSPageList() {
               <CardContent className="space-y-2">
                 {categoriesData.map((category) => (
                   <div
-                    key={category.name}
+                    key={category.label}
                     className={cn(
                       "flex items-center justify-between px-3 py-2 rounded hover:bg-base-light-gray cursor-pointer transition-colors group",
                       selectedCategory === category.name &&
@@ -157,7 +165,7 @@ export default function CMSPageList() {
                     )}
                     onClick={() => setSelectedCategory(category.name)}
                   >
-                    <span className="font-medium">{category.name}</span>
+                    <span className="font-medium">{category.label}</span>
                     <Badge
                       className="transition-colors"
                       variant={

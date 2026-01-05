@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useCreateBusinessPageLayout } from "@/api";
+import { useCreateChauffeurPage } from "@/api/pages/chauffeurPage.api";
 import ChauffeurForm from "@/components/contentManagement/chauffeur/ChauffeurForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { toastPromise } from "@/hooks/use-toast";
@@ -9,7 +9,7 @@ import { constant } from "@/lib/constant";
 
 export default function CreatePage() {
   const navigate = useNavigate();
-  const createChauffeurMutation = useCreateBusinessPageLayout();
+  const createChauffeurMutation = useCreateChauffeurPage();
 
   const handleCreateChauffeur = (data: any) => {
     try {

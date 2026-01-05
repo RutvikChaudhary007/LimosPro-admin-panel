@@ -356,6 +356,7 @@ export const seoSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   keywords: z.union([z.array(z.string()), z.string()]).optional(),
+  canonicalUrl: z.string().optional(),
   openGraph: openGraphSchema.optional(),
   twitter: twitterSchema.optional(),
 });

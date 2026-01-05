@@ -9,6 +9,7 @@ import { useFetchAllRegions, useFetchAllStaffRoles } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import MultiSelectComp from "../multiSelect/MultiSelect";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -45,6 +46,7 @@ const formSchema = z.object({
   //   .refine((pw) => /[!@#$%^&*]/.test(pw), { message: "Needs a special character" }),
   role: z.string(),
   region: z.string(),
+  permissions: z.string(),
 });
 
 const StaffMemberForm = ({
@@ -66,6 +68,7 @@ const StaffMemberForm = ({
         password: "",
         role: "",
         region: "",
+        permissions: "",
       };
     }
 
@@ -86,6 +89,7 @@ const StaffMemberForm = ({
       password: initialData?.password?.replace(/./g, "*") ?? "***********",
       role: roleValue,
       region: initialData?.region?.id ?? "",
+      permissions: initialData?.permissions?.id ?? "",
     };
   }, [initialData, rolesData]);
 
@@ -304,6 +308,36 @@ const StaffMemberForm = ({
                 {form.formState.errors.region && (
                   <FormMessage>
                     {form.formState.errors.region.message}
+                  </FormMessage>
+                )}
+              </Field>
+
+              <Field className="col-span-full">
+                <FieldLabel
+                  htmlFor="permissions"
+                  className="text-base-black gap-0"
+                >
+                  Select Permissions
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="permissions"
+                  render={({ field }) => (
+                    <MultiSelectComp
+                      selected={field.value}
+                      setSelected={field.onChange}
+                    />
+                  )}
+                />
+
+                <FieldDescription>
+                  Select the permissions for the user.
+                </FieldDescription>
+
+                {form.formState.errors.permissions && (
+                  <FormMessage>
+                    {form.formState.errors.permissions.message}
                   </FormMessage>
                 )}
               </Field>

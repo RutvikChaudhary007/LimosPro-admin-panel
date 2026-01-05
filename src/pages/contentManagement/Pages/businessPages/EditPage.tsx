@@ -8,10 +8,10 @@ import {
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import type { MultiLangPageTemplateFormData } from "@/components/pagebuilder/PageBuilderBusinessForm";
 import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
-import type { PageTemplateFormData } from "@/types/pagebuilder.types";
 import { generatePageTitle } from "@/utils/seo";
 import { styledLog } from "@/utils/styledLog";
 import PageForm from "./PageForm";
@@ -27,7 +27,7 @@ function EditPage() {
   } = useFetchBusinessPageLayoutById(id || "");
   const updatePageMutation = useUpdateBusinessPageLayout();
   styledLog(page, "page;", "info");
-  const handleSubmit = (data: Partial<PageTemplateFormData>) => {
+  const handleSubmit = (data: Partial<MultiLangPageTemplateFormData>) => {
     try {
       toastPromise(updatePageMutation.mutateAsync({ id: id!, data }), {
         loading: "Updating page...",
