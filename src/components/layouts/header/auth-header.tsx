@@ -7,11 +7,6 @@ export function AuthHeader() {
   let text = "";
   let href = "";
 
-  // if (location.pathname === "/auth/login") {
-  //   message = "Don’t have an account?"
-  //   text = "Sign Up"
-  //   href = "/auth/register"
-  // } else
   if (location.pathname === "/auth/register") {
     message = "Already have an account?";
     text = "Login";
@@ -23,10 +18,10 @@ export function AuthHeader() {
   }
 
   return (
-    <header className="bg-base-white shadow-base-md sticky top-0 z-40 h-[66px] border-0">
+    <header className="bg-base-white shadow-base-md sticky top-0 z-40 h-[var(--auth-header-height)] border-0">
       <div className="flex h-full w-full items-center justify-between px-4 py-2">
         {/* Logo */}
-        <Link to="/" className="h-[50px] w-[50px] cursor-pointer">
+        <Link to="/" className="size-16 cursor-pointer">
           <img
             src="/logo/limospro-logo.svg"
             alt="LimosProLogo"

@@ -1,4 +1,3 @@
-// utils/axiosInstance.js
 import axios from "axios";
 import { USER_SERVICE_URL } from "@/lib/api-endpoints";
 
@@ -54,7 +53,7 @@ adminAxiosInstance.interceptors.response.use(
       | { _retry?: boolean; headers?: Record<string, string> }
       | undefined;
     const status = error?.response?.status;
-    const expired = error?.response?.data?.message === "jwt expired";
+    // const expired = error?.response?.data?.message === "jwt expired"; // Relaxed check
     if (error?.response?.data?.message === "Invalid JWT token") {
       localStorage.clear();
       window.location.href = "/auth/login";
@@ -64,8 +63,8 @@ adminAxiosInstance.interceptors.response.use(
     if (
       originalRequest &&
       !originalRequest._retry &&
-      status === 401 &&
-      expired
+      status === 401
+      // && expired // Removed strict expired check
     ) {
       originalRequest._retry = true;
 

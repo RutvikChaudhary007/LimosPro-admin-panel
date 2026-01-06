@@ -52,7 +52,7 @@ export default function LoginPage() {
     }
   };
   return (
-    <div className="grid min-h-[calc(100svh-66px)] lg:grid-cols-2">
+    <div className="grid min-h-[calc(100svh-var(--auth-header-height))] lg:grid-cols-2">
       <div className="bg-base-background-light flex flex-1 items-center justify-center">
         <div className="bg-base-white shadow-base-md w-full max-w-[480px] rounded-[12px] p-8 py-8">
           <LoginForm onSubmit={onSubmit} loading={loading} />
@@ -65,7 +65,7 @@ export default function LoginPage() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[376px] flex-col justify-center">
-          <div className="mb-6 size-20">
+          <div className="mb-6 size-30">
             <img
               src="/logo/limospro-logo.svg"
               alt="LogoImage"

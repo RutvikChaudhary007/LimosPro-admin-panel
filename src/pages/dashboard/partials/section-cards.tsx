@@ -8,7 +8,7 @@ type TData = {
   totalRevenue: number;
 };
 type TProps = {
-  data: TData;
+  data?: TData;
 };
 export function SectionCards({ data }: TProps) {
   console.log("SectionCards Render:", data);
@@ -16,7 +16,7 @@ export function SectionCards({ data }: TProps) {
     <div className="grid grid-cols-1 gap-6 px-4 lg:px-8 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <MetricCard
         title="Total Revenue"
-        value={`$${data?.totalRevenue}`}
+        value={`$${data?.totalRevenue ?? 0}`}
         percentage="5.2%"
         bodyClass="pr-[5px]"
         wrapperClass="border-0"
@@ -24,7 +24,7 @@ export function SectionCards({ data }: TProps) {
       />
       <MetricCard
         title="Total Bookings"
-        value={`${data?.totalBookings}`}
+        value={`${data?.totalBookings ?? 0}`}
         percentage="5.2%"
         bodyClass="pr-[5px]"
         wrapperClass="border-0"
@@ -32,7 +32,7 @@ export function SectionCards({ data }: TProps) {
       />
       <MetricCard
         title="Total Affiliates"
-        value={`${data?.totalAffiliates}`}
+        value={`${data?.totalAffiliates ?? 0}`}
         percentage="5.2%"
         bodyClass="pr-[5px]"
         wrapperClass="border-0"
@@ -40,7 +40,7 @@ export function SectionCards({ data }: TProps) {
       />
       <MetricCard
         title="Total Chauffeurs"
-        value={`${data?.totalChauffeurs}`}
+        value={`${data?.totalChauffeurs ?? 0}`}
         percentage="5.2%"
         bodyClass="pr-[5px]"
         wrapperClass="border-0"

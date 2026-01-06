@@ -20,7 +20,7 @@ import {
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data?: TData[];
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (updater: Record<string, boolean>) => void;
   globalFilter?: string;
@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  data = [],
   rowSelection,
   onRowSelectionChange,
   globalFilter,

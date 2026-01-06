@@ -9,10 +9,10 @@ type TData = {
 };
 
 type TProps = {
-  data: TData[];
+  data?: TData[];
 };
 
-export function ChartAreaInteractive({ data }: TProps) {
+export function ChartAreaInteractive({ data = [] }: TProps) {
   const chartData = {
     labels: data.map((item) => item.month),
     datasets: [
