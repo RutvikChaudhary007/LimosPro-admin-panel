@@ -83,6 +83,13 @@ type TRefetch = (
   options?: RefetchOptions | undefined,
 ) => Promise<QueryObserverResult<unknown, Error>>;
 
+const allowedRoles = [
+  "Super Admin",
+  "Regional Admin",
+  "Affiliate",
+  "Dispatcher",
+  "SEO Agent",
+];
 // Auth
 const useLoginMutation = () => {
   const { setUser } = useUserStore();
@@ -95,14 +102,8 @@ const useLoginMutation = () => {
 
       // reject unauthorized role
       if (
-        !userRole ||
-        ![
-          "Super Admin",
-          "Regional Admin",
-          "Affiliate",
-          "Dispatcher",
-          "SEO Agent",
-        ].includes(userRole)
+        !Array.isArray(userRole) ||
+        !userRole.some((role) => allowedRoles.includes(role))
       ) {
         //  return Promise.reject(new Error("Unauthorized user"));
         throw new Error("Unauthorized user");
