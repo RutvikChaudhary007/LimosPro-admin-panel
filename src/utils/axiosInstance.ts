@@ -55,6 +55,11 @@ adminAxiosInstance.interceptors.response.use(
       | undefined;
     const status = error?.response?.status;
     const expired = error?.response?.data?.message === "jwt expired";
+    if (error?.response?.data?.message === "Invalid JWT token") {
+      localStorage.clear();
+      window.location.href = "/auth/login";
+      return Promise.reject(error);
+    }
 
     if (
       originalRequest &&
