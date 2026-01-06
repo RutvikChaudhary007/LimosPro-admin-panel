@@ -83,50 +83,48 @@ type TRefetch = (
   options?: RefetchOptions | undefined,
 ) => Promise<QueryObserverResult<unknown, Error>>;
 
-const allowedRoles = [
+const allowedRoles = new Set([
   "Super Admin",
   "Regional Admin",
   "Affiliate",
   "Dispatcher",
   "SEO Agent",
-];
+]);
 // Auth
 const useLoginMutation = () => {
   const { setUser } = useUserStore();
+
   return useMutation({
     mutationFn: login,
-    onSuccess: (response) => {
-      // You can still do things like storing localStorage, navigating, etc.
-      const userData = response?.data;
-      const userRole = userData?.roles;
 
-      // reject unauthorized role
-      if (
-        !Array.isArray(userRole) ||
-        !userRole.some((role) => allowedRoles.includes(role))
-      ) {
-        //  return Promise.reject(new Error("Unauthorized user"));
+    onSuccess: (response) => {
+      const data = response?.data;
+      const roles = [data?.roles].flat();
+
+      if (!roles.some((r) => allowedRoles.has(r))) {
         throw new Error("Unauthorized user");
       }
 
       setUser({
-        ...response?.data,
-        name: `${response?.data?.firstName} ${response?.data?.lastName}`,
+        ...data,
+        name: `${data?.firstName} ${data?.lastName}`,
       });
-      return response; // let caller decide success toast message
+
+      return response;
     },
+
     onError: (err: unknown) => {
-      if (err && typeof err === "object" && "isAxiosError" in err) {
-        const axiosError = err as AxiosError<ApiErrorResponse>;
+      if ((err as any)?.isAxiosError) {
+        const e = err as AxiosError<ApiErrorResponse>;
         throw new Error(
-          axiosError.response?.data?.message ||
-            axiosError.response?.data?.error ||
+          e.response?.data?.message ||
+            e.response?.data?.error ||
             "An unexpected error occurred",
         );
-      } else if (err instanceof Error) {
-        throw err;
       }
-      throw new Error("An unexpected error occurred");
+      throw err instanceof Error
+        ? err
+        : new Error("An unexpected error occurred");
     },
   });
 };
