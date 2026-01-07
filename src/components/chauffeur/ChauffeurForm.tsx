@@ -8,14 +8,19 @@ import {
   IconId,
   IconLock,
   IconMail,
+  IconPlus,
+  IconShieldLock,
   IconUser,
 } from "@tabler/icons-react";
 import { DollarSign } from "lucide-react";
 import { type FC, useCallback, useState } from "react";
+import { Label } from "react-aria-components";
 import { Controller, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { z } from "zod";
-import { useFetchAllAffiliate, useFetchAllFleets } from "@/api";
+import { useFetchAffiliateById, useFetchAllFleets } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
+import { constant } from "@/lib/constant";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import AddressInput from "../AddressInput";
@@ -201,7 +206,25 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   disabledFields,
   type,
 }) => {
-  const { data, isFetching } = useFetchAllAffiliate({ DateRange: {} });
+  const role = localStorage.getItem("role");
+  let roleArray: string[] = [];
+  try {
+    roleArray = role ? role.split(",") : [];
+  } catch (e) {
+    console.error("Error splitting role:", e);
+  }
+
+  const isAffiliate = roleArray.includes("Affiliate");
+
+  let parsedUserStore = null;
+  try {
+    parsedUserStore = JSON.parse(localStorage.getItem("user-store"));
+  } catch (e) {
+    console.error("Error parsing user-store:", e);
+  }
+
+  const userAffiliateId = parsedUserStore?.state?.user?.affiliateId;
+
   const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
     DateRange: {},
   });
@@ -222,11 +245,14 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     },
     documents: [],
     status: "",
+    affiliateId: userAffiliateId ?? "",
   };
+
   const form = useForm<TChauffeurForm>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
     values: defaultValues,
+    mode: "onBlur" | "onSubmit",
   });
 
   const handleAddressChange = useCallback(
@@ -291,6 +317,32 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     status: "",
     affiliate: "",
   });
+
+  if (!isAffiliate) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] p-8 text-center bg-base-background-light">
+        <Card className="max-w-md w-full border-red-200 shadow-lg">
+          <CardBody className="p-8 flex flex-col items-center gap-4">
+            <div className="bg-red-50 p-4 rounded-full text-red-600">
+              <IconShieldLock size={48} stroke={1.5} />
+            </div>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Access Denied
+            </CardTitle>
+            <p className="text-gray-600">
+              You do not have the required role to create or manage chauffeurs.
+              Only users with the{" "}
+              <strong className="text-base-black">Affiliate</strong> role are
+              authorized to access this page.
+            </p>
+            <Button asChild variant="outlinePrimary" className="mt-4 w-full">
+              <Link to="/">Return to Dashboard</Link>
+            </Button>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
@@ -377,9 +429,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 )}
               </Field>
 
-              {isFetching ? (
+              {/* {isFetching ? (
                 <Spinner />
-              ) : data?.affiliates.length > 0 ? (
+              ) : affiliates?.length > 0 ? (
                 <Field>
                   <FieldLabel
                     htmlFor="affiliateId"
@@ -395,7 +447,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                       <SelectDropDown
                         placeholder="Select Affiliate"
                         items={
-                          data?.affiliates?.map((a) => ({
+                          affiliates?.map((a) => ({
                             label: a.companyName,
                             value: a.id,
                           })) || []
@@ -416,9 +468,12 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 </Field>
               ) : (
                 <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
-                  <Label>Add Affiliate</Label>
+                  <Field>
+                    <FieldLabel>Add Affiliate</FieldLabel>
+                    <Button><IconPlus /></Button>
+                  </Field>
                 </Link>
-              )}
+              )} */}
 
               <Field>
                 <FieldLabel htmlFor="status" className="text-base-black gap-0">
