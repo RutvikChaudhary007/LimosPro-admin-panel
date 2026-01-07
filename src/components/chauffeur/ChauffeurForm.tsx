@@ -8,19 +8,16 @@ import {
   IconId,
   IconLock,
   IconMail,
-  IconPlus,
   IconShieldLock,
   IconUser,
 } from "@tabler/icons-react";
 import { DollarSign } from "lucide-react";
 import { type FC, useCallback, useState } from "react";
-import { Label } from "react-aria-components";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { useFetchAffiliateById, useFetchAllFleets } from "@/api";
+import { useFetchAllFleets } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
-import { constant } from "@/lib/constant";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import AddressInput from "../AddressInput";
@@ -449,6 +446,8 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                         items={
                           affiliates?.map((a) => ({
                             label: a.companyName,
+                          data?.affiliates?.map((a) => ({
+                            label: a.user.firstName + " " + a.user.lastName,
                             value: a.id,
                           })) || []
                         }

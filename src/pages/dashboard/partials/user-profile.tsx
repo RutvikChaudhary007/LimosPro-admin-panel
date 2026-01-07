@@ -48,7 +48,7 @@ function UserProfile({
       <div className="grid flex-1 gap-1 text-left leading-tight">
         <h1 className="truncate">Hello, Mr. {user?.name}</h1>
         <p className="text-base-gray truncate font-medium">
-          Welcome to Limospro Dashboard
+          Welcome to LimosPro Dashboard
         </p>
       </div>
 

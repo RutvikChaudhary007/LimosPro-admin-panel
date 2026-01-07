@@ -10,7 +10,7 @@ const HeaderPrimary = () => (
         <a href="/">
           <img
             src="https://beta.limospro.com/_next/image?url=%2FLogos%2Flogo-limospro-1.png&w=256&q=75"
-            alt="Limospro Logo"
+            alt="LimosPro Logo"
             width={200}
             height={60}
             className="object-contain hover:cursor-pointer"
@@ -70,7 +70,7 @@ const FooterPrimary = () => (
         <div className="flex flex-col gap-6">
           <img
             src="https://beta.limospro.com/_next/image?url=%2FLogos%2Flogo-limospro-1.png&w=256&q=75"
-            alt="Limospro Logo"
+            alt="LimosPro Logo"
             width={300}
             height={100}
             className="hover:cursor-pointer"

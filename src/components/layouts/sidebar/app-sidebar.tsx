@@ -253,7 +253,7 @@ export function AppSidebar({
       {/* Footer */}
       <SidebarFooter className="overflow-hidden bg-transparent group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:p-0 border-t mx-2 pt-2">
         <div className="font-quicksand text-center text-base leading-[100%] tracking-[0]">
-          <div className="font-bold text-black">Limospro™</div>
+          <div className="font-bold text-black">LimosPro™</div>
           <div className="text-[11px] text-base-black font-medium">
             Version: 1.0.0
           </div>

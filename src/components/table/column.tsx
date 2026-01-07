@@ -30,7 +30,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { IAffiliate } from "@/types/affiliate/affiliate.type";
+import type {
+  IAffiliate,
+  IEditAffiliateRes,
+} from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
 import AccessCell from "../manageAccess/ManageAccess";
@@ -360,7 +363,7 @@ export function getAffiliate(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
-): ColumnDef<IAffiliate>[] {
+): ColumnDef<IAffiliate | IEditAffiliateRes>[] {
   return [
     {
       id: "select",
@@ -376,10 +379,14 @@ export function getAffiliate(
       enableHiding: false,
     },
     {
-      accessorKey: "companyName",
+      accessorKey: "user",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Affiliate Name" />
       ),
+      cell: ({ row }) => {
+        const user = (row.original as IEditAffiliateRes).user;
+        return `${user?.firstName ?? ""} ${user?.lastName ?? ""}`;
+      },
       enableSorting: false,
     },
     {

@@ -28,14 +28,12 @@ export const getAllChauffeur = async (
 ) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
-    params.DateRange = {
-      startDate: DateRange.startDate
-        ? new Date(DateRange.startDate).toISOString()
-        : undefined,
-      endDate: DateRange.endDate
-        ? new Date(DateRange.endDate).toISOString()
-        : undefined,
-    };
+    if (DateRange.startDate) {
+      params.startDate = new Date(DateRange.startDate).toISOString();
+    }
+    if (DateRange.endDate) {
+      params.endDate = new Date(DateRange.endDate).toISOString();
+    }
   }
 
   if (page) {
