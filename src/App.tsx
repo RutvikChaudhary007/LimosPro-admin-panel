@@ -3,6 +3,8 @@ import { BrowserRouter } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./App.css";
+import { toast } from "sonner";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { renderRoutes } from "./routes/renderRoutes";
 import { envValidationError } from "./utils/env";
 
@@ -11,6 +13,16 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnWindowFocus: false,
+      retry: 1,
+    },
+    mutations: {
+      onError: (error: any) => {
+        const message =
+          error?.response?.data?.message ||
+          error.message ||
+          "An unexpected error occurred";
+        toast.error(message);
+      },
     },
   },
 });
@@ -38,14 +50,16 @@ function App() {
   //   }
   // }, []);
   return (
-    <TooltipProvider>
-      <Sonner position="top-right" richColors />
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          {renderRoutes()}
-        </QueryClientProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ErrorBoundary>
+      <TooltipProvider>
+        <Sonner position="top-right" richColors />
+        <BrowserRouter>
+          <QueryClientProvider client={queryClient}>
+            {renderRoutes()}
+          </QueryClientProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ErrorBoundary>
   );
 }
 

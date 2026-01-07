@@ -1,8 +1,14 @@
 // @ts-nocheck
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconLock, IconMail, IconUser } from "@tabler/icons-react";
-import { useMemo } from "react";
+import {
+  IconEye,
+  IconEyeOff,
+  IconLock,
+  IconMail,
+  IconUser,
+} from "@tabler/icons-react";
+import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { useFetchAllRegions, useFetchAllStaffRoles } from "@/api";
@@ -46,7 +52,7 @@ const formSchema = z.object({
   //   .refine((pw) => /[!@#$%^&*]/.test(pw), { message: "Needs a special character" }),
   role: z.string(),
   region: z.string(),
-  permissions: z.string(),
+  // permissions: z.array(z.string()),
 });
 
 const StaffMemberForm = ({
@@ -59,6 +65,8 @@ const StaffMemberForm = ({
     useFetchAllRegions({ DateRange: {} });
   const { data: rolesData, isFetching: isFetchingRoles } =
     useFetchAllStaffRoles();
+  const [showPassword, setShowPassword] = useState(false);
+
   const defaultValues = useMemo(() => {
     if (!initialData) {
       return {
@@ -68,7 +76,7 @@ const StaffMemberForm = ({
         password: "",
         role: "",
         region: "",
-        permissions: "",
+        // permissions: [],
       };
     }
 
@@ -89,7 +97,7 @@ const StaffMemberForm = ({
       password: initialData?.password?.replace(/./g, "*") ?? "***********",
       role: roleValue,
       region: initialData?.region?.id ?? "",
-      permissions: initialData?.permissions?.id ?? "",
+      // permissions: initialData?.permissions?.id ?? "",
     };
   }, [initialData, rolesData]);
 
@@ -226,13 +234,20 @@ const StaffMemberForm = ({
                     <InputGroup>
                       <InputGroupInput
                         id="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         {...field}
                       />
 
                       <InputGroupAddon>
                         <IconLock />
+                      </InputGroupAddon>
+                      <InputGroupAddon
+                        align="inline-end"
+                        className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <IconEyeOff /> : <IconEye />}
                       </InputGroupAddon>
                     </InputGroup>
                   )}
@@ -312,7 +327,7 @@ const StaffMemberForm = ({
                 )}
               </Field>
 
-              <Field className="col-span-full">
+              {/* <Field className="col-span-full">
                 <FieldLabel
                   htmlFor="permissions"
                   className="text-base-black gap-0"
@@ -340,7 +355,7 @@ const StaffMemberForm = ({
                     {form.formState.errors.permissions.message}
                   </FormMessage>
                 )}
-              </Field>
+              </Field> */}
             </CardContent>
             <CardFooter>
               <Button disabled={form.formState.isSubmitting} type="submit">

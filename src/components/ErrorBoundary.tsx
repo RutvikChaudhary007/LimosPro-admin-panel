@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"; // Assuming react-router-dom for naviga
 import { Button } from "@/components/ui/button"; // Import Button component
 import {
   Card,
+  CardBody,
   CardContent,
   CardDescription,
   CardHeader,
@@ -12,6 +13,7 @@ import {
 
 interface ErrorBoundaryProps {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface ErrorBoundaryState {
@@ -34,29 +36,55 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     // logErrorToMyService(error, errorInfo);
   }
 
+  public handleReset = () => {
+    this.setState({ hasError: false });
+  };
+
   public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
       // Custom fallback UI matching project theme
       return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-          <Card className="w-full max-w-md p-6">
-            <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-bold text-red-600 dark:text-red-400">
-                Oops! Something went wrong.
-              </CardTitle>
-              <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
-                We're sorry for the inconvenience. Please try refreshing the
-                page or navigating back.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="mb-4 text-gray-700 dark:text-gray-200">
-                An unexpected error has occurred. Our team has been notified.
-              </p>
-              <Button asChild>
-                <Link to="/">Go to Homepage</Link>
-              </Button>
-            </CardContent>
+        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+          <Card className="w-full max-w-md">
+            <CardBody className="p-6">
+              <CardHeader className="text-center p-0 mb-4">
+                <CardTitle className="text-2xl font-bold text-red-600 dark:text-red-400">
+                  Oops! Something went wrong.
+                </CardTitle>
+                <CardDescription className="mt-2 text-gray-600 dark:text-gray-300">
+                  We're sorry for the inconvenience. An unexpected error has
+                  occurred.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center p-0">
+                <p className="mb-6 text-gray-700 dark:text-gray-200 text-sm">
+                  An unexpected error has occurred. You can try refreshing the
+                  page or click the button below to try again.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    onClick={this.handleReset}
+                    className="w-full"
+                    variant="default"
+                  >
+                    Try Again
+                  </Button>
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to="/">Go to Homepage</Link>
+                  </Button>
+                  <Button
+                    onClick={() => window.location.reload()}
+                    variant="ghost"
+                    className="w-full text-xs text-gray-500"
+                  >
+                    Reload Page
+                  </Button>
+                </div>
+              </CardContent>
+            </CardBody>
           </Card>
         </div>
       );

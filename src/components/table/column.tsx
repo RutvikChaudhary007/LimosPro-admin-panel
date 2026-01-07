@@ -1819,6 +1819,7 @@ export function getStaffMember(
             onAccess={onAccess}
             initialSelected={row.original.permissions?.map((p) => p.id) || []}
             entityType="staff"
+            staffId={row.original.id}
           />
           <Button
             onClick={() => onEdit(row.original.id)}

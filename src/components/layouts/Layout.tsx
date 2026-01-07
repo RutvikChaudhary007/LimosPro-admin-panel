@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { SiteFooter } from "@/components/layouts/footer/site-footer";
 import { NotificationsProvider } from "@/components/layouts/header/notifications-context";
 import { SiteHeader } from "@/components/layouts/header/site-header";
@@ -21,7 +22,9 @@ export default function Layout() {
         <SidebarInset>
           <SiteHeader />
           <div className="overflow-auto">
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </div>
           <SiteFooter />
         </SidebarInset>

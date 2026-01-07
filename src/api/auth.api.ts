@@ -65,12 +65,13 @@ export const getAllPermissions = async (data?: TPara) => {
 /**
  * Hook to fetch all permissions
  */
-export const useFetchAllPermissions = (Data: TPara) =>
+export const useFetchAllPermissions = (Data: TPara, options?: any) =>
   useQuery({
     queryKey: ["Permissions", Data],
     queryFn: () => getAllPermissions(Data),
     refetchOnWindowFocus: false,
     retry: false,
+    ...options,
   });
 
 // ============================================

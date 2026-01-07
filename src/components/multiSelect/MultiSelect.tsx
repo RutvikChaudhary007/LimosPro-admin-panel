@@ -30,11 +30,15 @@ const MultiSelectComp = ({
   placeholder = "Select permissions...",
 }: MultiSelectCompProps) => {
   // Only fetch if items are not provided
-  const { data } = useFetchAllPermissions({
-    enabled: !items,
-  });
+  const { data } = useFetchAllPermissions(
+    { limit: 1000 },
+    {
+      enabled: !items,
+    },
+  );
 
-  const permissions = items ?? data?.permissions ?? [];
+  const permissions =
+    items ?? (Array.isArray(data) ? data : data?.permissions) ?? [];
 
   return (
     <MultiSelect

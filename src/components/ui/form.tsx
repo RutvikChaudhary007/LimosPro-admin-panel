@@ -1,5 +1,6 @@
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import * as React from "react";
 import {
   Controller,
@@ -10,10 +11,47 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Button } from "./button";
 
-const Form = FormProvider;
+const FormFallback = () => (
+  <div className="p-6 border border-red-200 bg-red-50 rounded-lg flex flex-col items-center gap-4 text-center">
+    <AlertCircle className="size-8 text-red-500" />
+    <div className="space-y-1">
+      <h3 className="font-semibold text-red-900">Form Error</h3>
+      <p className="text-sm text-red-700">
+        Something went wrong while rendering this form.
+      </p>
+    </div>
+    <Button
+      variant="outlineDestructive"
+      size="sm"
+      onClick={() => window.location.reload()}
+      className="gap-2"
+    >
+      <RefreshCw className="size-4" />
+      Reload Application
+    </Button>
+  </div>
+);
+
+const Form = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TTransformedValues extends FieldValues | undefined = undefined,
+>(
+  props: React.ComponentProps<
+    typeof FormProvider<TFieldValues, TName, TTransformedValues>
+  >,
+) => {
+  return (
+    <ErrorBoundary fallback={<FormFallback />}>
+      <FormProvider {...props} />
+    </ErrorBoundary>
+  );
+};
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,

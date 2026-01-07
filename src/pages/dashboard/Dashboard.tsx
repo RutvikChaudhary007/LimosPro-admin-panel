@@ -5,6 +5,7 @@ import { useFetchDashboard } from "@/api";
 import TableAndPieChart, {
   type FleetStat,
 } from "@/components/dashboard/TableAndPieChart";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { ChartAreaInteractive } from "@/components/layouts/shared/chart-area-interactive";
 import { Spinner } from "@/components/Spinner";
 import { getDashboardColumns } from "@/components/table/column";
@@ -147,64 +148,103 @@ export default function Dashboard() {
     <div className="bg-base-background-light @container/main h-full">
       <div className="flex flex-1 flex-col gap-4 py-4 md:gap-8 md:py-8">
         {/* User Profile */}
-        <UserProfile
-          setSelectedTime={setSelectedTime}
-          selectedTime={selectedTime}
-          setSelectedYear={setSelectedYear}
-          selectedYear={selectedYear}
-        />
-
+        <ErrorBoundary
+          fallback={
+            <div className="p-4 border border-dashed rounded text-center text-sm text-gray-500">
+              User Profile failed to load
+            </div>
+          }
+        >
+          <UserProfile
+            setSelectedTime={setSelectedTime}
+            selectedTime={selectedTime}
+            setSelectedYear={setSelectedYear}
+            selectedYear={selectedYear}
+          />
+        </ErrorBoundary>
         {/* Cards */}
-        <SectionCards data={data?.totals} />
+        <ErrorBoundary
+          fallback={
+            <div className="p-4 border border-dashed rounded text-center text-sm text-gray-500">
+              Cards failed to load
+            </div>
+          }
+        >
+          <SectionCards data={data?.totals} />
+        </ErrorBoundary>
 
         <div className="px-4 lg:px-8 flex flex-col gap-6 md:flex-row overflow-hidden">
           {/* Charts */}
-          <div className="w-full">
-            <ChartAreaInteractive data={data?.revenueByMonth} />
-          </div>
+          <ErrorBoundary
+            fallback={
+              <div className="p-4 border border-dashed rounded text-center text-sm text-gray-500">
+                Revenue Chart failed to load
+              </div>
+            }
+          >
+            <div className="w-full">
+              <ChartAreaInteractive data={data?.revenueByMonth} />
+            </div>
+          </ErrorBoundary>
 
           <div className="w-full">
             {/* Charts */}
-            <Card className="shadow-none border border-base-gray">
-              <CardBody>
-                <CardHeader>
-                  <CardTitle>Total Bookings</CardTitle>
-                  <CardAction>
-                    <Link to={constant.ROUTING_URLS.BOOKING}>
-                      <Button
-                        variant="outlineBlack"
-                        size="xl"
-                        spacing="lg"
-                        tooltip="View All"
-                        className="hover:bg-base-black hover:text-base-white transition-all"
-                      >
-                        <Eye />
-                      </Button>
-                    </Link>
-                  </CardAction>
-                </CardHeader>
-                <CardContent className="max-h-[180px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
-                  <DataTable
-                    columns={columns}
-                    rowSelection={rowSelection}
-                    onRowSelectionChange={setRowSelection}
-                    data={data?.recentBookings}
-                  />
-                </CardContent>
-              </CardBody>
-            </Card>
+            <ErrorBoundary
+              fallback={
+                <div className="p-4 border border-dashed rounded text-center text-sm text-gray-500">
+                  Recent Bookings failed to load
+                </div>
+              }
+            >
+              <Card className="shadow-none border border-base-gray">
+                <CardBody>
+                  <CardHeader>
+                    <CardTitle>Total Bookings</CardTitle>
+                    <CardAction>
+                      <Link to={constant.ROUTING_URLS.BOOKING}>
+                        <Button
+                          variant="outlineBlack"
+                          size="xl"
+                          spacing="lg"
+                          tooltip="View All"
+                          className="hover:bg-base-black hover:text-base-white transition-all"
+                        >
+                          <Eye />
+                        </Button>
+                      </Link>
+                    </CardAction>
+                  </CardHeader>
+                  <CardContent className="max-h-[180px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+                    <DataTable
+                      columns={columns}
+                      rowSelection={rowSelection}
+                      onRowSelectionChange={setRowSelection}
+                      data={data?.recentBookings || []}
+                    />
+                  </CardContent>
+                </CardBody>
+              </Card>
+            </ErrorBoundary>
           </div>
         </div>
 
         <div className="px-4 lg:px-8">
           {/* Table and Pie Chart */}
-          <TableAndPieChart
-            key={`${selectedTime}-${selectedYear}`}
-            chauffeurAvailability={data?.availability}
-            fleetDistribution={fleetDistributionData as unknown as FleetStat}
-            selectedTime={selectedTime}
-            selectedYear={selectedYear}
-          />
+          <ErrorBoundary
+            fallback={
+              <div className="p-4 border border-dashed rounded text-center text-sm text-gray-500">
+                Fleet Info failed to load
+              </div>
+            }
+          >
+            <TableAndPieChart
+              key={`${selectedTime}-${selectedYear}`}
+              chauffeurAvailability={data?.availability || []}
+              fleetDistribution={fleetDistributionData as unknown as FleetStat}
+              selectedTime={selectedTime}
+              selectedYear={selectedYear}
+            />
+          </ErrorBoundary>
         </div>
 
         {/* Table */}

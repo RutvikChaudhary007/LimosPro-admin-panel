@@ -38,29 +38,25 @@ const AccessCell = <T extends { id: string }>({
   const { data: staffPermissions, isFetching } = useFetchStaffPermissions(
     staffId || "",
   );
-
+  // console.log("staffPermissions:",staffPermissions);
   useEffect(() => {
-    if (entityType === "staff" && isOpen && staffPermissions) {
-      // Assuming staffPermissions.permissions is the array of permission objects
-      // We need to verify the exact structure of staffPermissions response
-      // Based on staff.api.ts: returns response.data.data
-      const perms = (staffPermissions as any)?.permissions || [];
-      const ids = perms.map((p: any) => p.id);
-      setSelected(ids);
-    } else if (entityType === "region" && !initialSelected) {
-      // fallback for region if needed, though usually initialSelected is passed
-      setSelected((row.original as any).permissionAccess || []);
-    } else if (initialSelected && entityType !== "staff") {
-      setSelected(initialSelected);
-    }
-  }, [isOpen, staffPermissions, entityType, initialSelected]);
+    if (!isOpen) return;
 
-  // Sync initialSelected when dialog opens if provided (and not staff fetching)
-  useEffect(() => {
-    if (isOpen && initialSelected && entityType !== "staff") {
-      setSelected(initialSelected);
+    if (entityType === "staff") {
+      if (staffPermissions) {
+        const perms = (staffPermissions as any)?.permissions || [];
+        const ids = perms.map((p: any) => p.id);
+        setSelected(ids);
+      } else if (initialSelected && initialSelected.length > 0) {
+        // Use initialSelected if staffPermissions hasn't loaded yet
+        setSelected(initialSelected);
+      }
+    } else if (entityType === "region") {
+      const regionSelected =
+        initialSelected || (row.original as any).permissionAccess || [];
+      setSelected(regionSelected);
     }
-  }, [isOpen, initialSelected, entityType]);
+  }, [isOpen, staffPermissions, entityType, initialSelected, row.original]);
 
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>
