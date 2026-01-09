@@ -996,6 +996,11 @@ export default function DestinationForm({
     if (!availableLanguages.includes(lang)) {
       setValue("availableLanguages", [...availableLanguages, lang]);
     }
+
+    // Switch to general if switching to non-en and currently on restricted tabs
+    if (lang !== "en" && (activeTab === "seo" || activeTab === "jsonld")) {
+      setActiveTab("general");
+    }
   };
 
   const onHandleSubmit = (data: DestinationFormData) => {
@@ -1133,11 +1138,12 @@ export default function DestinationForm({
                   onClick={() => setActiveTab("seo")}
                   variant="ghost"
                   spacing="sm"
+                  disabled={selectedLanguage !== "en"}
                   className={`capitalize border-b-2 rounded-none transition ${
                     activeTab === "seo"
                       ? "border-base-black font-semibold text-primary"
                       : "border-transparent text-gray-500"
-                  }`}
+                  } ${selectedLanguage !== "en" ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   SEO (Shared)
                 </Button>
@@ -1146,11 +1152,12 @@ export default function DestinationForm({
                   onClick={() => setActiveTab("jsonld")}
                   variant="ghost"
                   spacing="sm"
+                  disabled={selectedLanguage !== "en"}
                   className={`capitalize border-b-2 rounded-none transition ${
                     activeTab === "jsonld"
                       ? "border-base-black font-semibold text-primary"
                       : "border-transparent text-gray-500"
-                  }`}
+                  } ${selectedLanguage !== "en" ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   JSON-LD (Shared)
                 </Button>
