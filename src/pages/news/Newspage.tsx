@@ -11,6 +11,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getNews, type TNews } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -97,23 +98,27 @@ const Newspage = () => {
             label: "Add News",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_NEWS,
+            permission: "manageNews",
+            actionName: "create",
           }}
         />
 
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-          >
-            <BulkDeleteBtn
-              rowSelection={rowSelection}
-              tableRef={tableRef}
-              bulkDeleteMutation={bulkDeleteNews}
-              refetch={refetch}
-              setRowSelection={setRowSelection}
-              title="News"
-              descTitle="news"
-            />
-          </span>
+          <PermissionGate permission="manageNews" action="bulkDelete">
+            <span
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+            >
+              <BulkDeleteBtn
+                rowSelection={rowSelection}
+                tableRef={tableRef}
+                bulkDeleteMutation={bulkDeleteNews}
+                refetch={refetch}
+                setRowSelection={setRowSelection}
+                title="News"
+                descTitle="news"
+              />
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

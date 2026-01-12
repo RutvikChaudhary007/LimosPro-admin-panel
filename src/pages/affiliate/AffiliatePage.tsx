@@ -12,6 +12,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import PaginationControls from "@/components/pagination/PaginationControls";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getAffiliate } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -251,6 +252,8 @@ function AffiliatePage() {
             label: "Add Affiliate",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_AFFILIATE,
+            permission: "manageAffiliates",
+            actionName: "create",
           }}
         />
 
@@ -281,19 +284,21 @@ function AffiliatePage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn<IAffiliate, TBlkDelRes>
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteAffiliateMutation}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Affiliates"
-                descTitle="affiliates"
-              />
-            </span>
+            <PermissionGate permission="manageAffiliates" action="bulkDelete">
+              <span
+                className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+              >
+                <BulkDeleteBtn<IAffiliate, TBlkDelRes>
+                  rowSelection={rowSelection}
+                  tableRef={tableRef}
+                  bulkDeleteMutation={bulkDeleteAffiliateMutation}
+                  refetch={refetch}
+                  setRowSelection={setRowSelection}
+                  title="manageAffiliates"
+                  descTitle="affiliates"
+                />
+              </span>
+            </PermissionGate>
             <div className="">
               <InputGroup>
                 <InputGroupInput

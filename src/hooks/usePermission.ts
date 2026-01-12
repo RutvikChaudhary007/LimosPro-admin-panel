@@ -49,7 +49,17 @@ export const usePermission = () => {
     if (!action) return true;
 
     // Check if specific action is allowed
-    return (permission as any).actions?.[action] === true;
+    // Actions can be in permission.actions (object) or permission.actions (JSON string if not parsed)
+    let actions = (permission as any).actions || {};
+    if (typeof actions === "string") {
+      try {
+        actions = JSON.parse(actions);
+      } catch {
+        actions = {};
+      }
+    }
+
+    return actions[action] === true;
   };
 
   // Convenience methods for common actions

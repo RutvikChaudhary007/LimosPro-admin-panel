@@ -10,6 +10,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getIpWhiteList, type TIpWhiteList } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -104,23 +105,27 @@ const IpWhiteListPage = () => {
             label: "Add New IP",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_IP_WHITE_LIST,
+            permission: "manageIpAccess",
+            actionName: "create",
           }}
         />
 
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-          >
-            <BulkDeleteBtn
-              rowSelection={rowSelection}
-              tableRef={tableRef}
-              bulkDeleteMutation={bulkDeleteIPWhiteListMutation}
-              refetch={refetch}
-              setRowSelection={setRowSelection}
-              title="Ip WhiteLists"
-              descTitle="ip whiteLists"
-            />
-          </span>
+          <PermissionGate permission="manageIpAccess" action="bulkDelete">
+            <span
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+            >
+              <BulkDeleteBtn
+                rowSelection={rowSelection}
+                tableRef={tableRef}
+                bulkDeleteMutation={bulkDeleteIPWhiteListMutation}
+                refetch={refetch}
+                setRowSelection={setRowSelection}
+                title="Ip WhiteLists"
+                descTitle="ip whiteLists"
+              />
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

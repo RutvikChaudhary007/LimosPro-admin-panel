@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useFetchAllRegions } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getRegionColumns, type TRegion } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -103,38 +104,42 @@ function RegionDashboardPage() {
             label: "Add Regions",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_REGION,
+            permission: "manageRegions",
+            actionName: "create",
           }}
         />
 
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${
-              Object.keys(rowSelection).filter(
-                (k) =>
-                  // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                  rowSelection[k],
-              ).length === 0
-                ? "cursor-no-drop"
-                : "cursor-pointer"
-            }`}
-          >
-            <Button
-              variant={"outlineBlack"}
-              disabled={
-                Object.keys(rowSelection).filter((k) => rowSelection[k])
-                  .length === 0
-              }
-              onClick={() => {
-                setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
-                console.log("data:", data);
-                console.log("rowSelection:", rowSelection);
-                setRowSelection({});
-              }}
+          <PermissionGate permission="manageRegions" action="bulkDelete">
+            <span
+              className={`${
+                Object.keys(rowSelection).filter(
+                  (k) =>
+                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+                    rowSelection[k],
+                ).length === 0
+                  ? "cursor-no-drop"
+                  : "cursor-pointer"
+              }`}
             >
-              <span>Delete</span>
-              <Trash2 />
-            </Button>
-          </span>
+              <Button
+                variant={"outlineBlack"}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
+                onClick={() => {
+                  setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
+                  console.log("data:", data);
+                  console.log("rowSelection:", rowSelection);
+                  setRowSelection({});
+                }}
+              >
+                <span>Delete</span>
+                <Trash2 />
+              </Button>
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

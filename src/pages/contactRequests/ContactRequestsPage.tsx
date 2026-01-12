@@ -6,6 +6,7 @@ import ViewModal from "@/components/ContactRequests/ViewModal";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import {
   getContactRequest,
@@ -97,16 +98,21 @@ const ContactRequestsPage = () => {
           ]}
         />
         <div className="w-full flex items-center justify-end gap-4">
-          <Button
-            variant="outlineBlack"
-            disabled={selectedRowsCount === 0}
-            onClick={() => {
-              setRowSelection({});
-            }}
+          <PermissionGate
+            permission="manageContactRequests"
+            action="bulkDelete"
           >
-            <span>Delete</span>
-            <Trash2 />
-          </Button>
+            <Button
+              variant="outlineBlack"
+              disabled={selectedRowsCount === 0}
+              onClick={() => {
+                setRowSelection({});
+              }}
+            >
+              <span>Delete</span>
+              <Trash2 />
+            </Button>
+          </PermissionGate>
           <div>
             <InputGroup>
               <InputGroupInput

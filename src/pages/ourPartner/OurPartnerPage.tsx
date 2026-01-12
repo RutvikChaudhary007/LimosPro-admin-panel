@@ -11,6 +11,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getOurPartner, type TOurPartner } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -99,26 +100,38 @@ const OurPartnerPage = () => {
             { label: "Our Partners" },
           ]}
           action={{
-            label: "Add New Partner",
+            label: "Add Partner",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_OUR_PARTNERS,
+            permission: "manageOurPartners",
+            actionName: "create",
           }}
         />
 
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-          >
-            <BulkDeleteBtn
-              rowSelection={rowSelection}
-              tableRef={tableRef}
-              bulkDeleteMutation={bulkDeletePartnerMutation}
-              refetch={refetch}
-              setRowSelection={setRowSelection}
-              title="Our Partners"
-              descTitle="our partners"
-            />
-          </span>
+          <PermissionGate permission="manageOurPartners" action="bulkDelete">
+            <span
+              className={`${
+                Object.keys(rowSelection).filter(
+                  (k) =>
+                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+                    rowSelection[k],
+                ).length === 0
+                  ? "cursor-no-drop"
+                  : "cursor-pointer"
+              }`}
+            >
+              <BulkDeleteBtn
+                rowSelection={rowSelection}
+                tableRef={tableRef}
+                bulkDeleteMutation={bulkDeletePartnerMutation}
+                refetch={refetch}
+                setRowSelection={setRowSelection}
+                title="Partners"
+                descTitle="partners"
+              />
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

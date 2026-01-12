@@ -1,7 +1,7 @@
 import { IconFilterX } from "@tabler/icons-react";
 import type { Table } from "@tanstack/react-table";
 import { AxiosError } from "axios";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFetchAllUsers } from "@/api";
@@ -10,6 +10,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import PaginationControls from "@/components/pagination/PaginationControls";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getUsers, type TUsers } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -167,6 +168,13 @@ function UsersPage() {
         <PageHeader
           title="Users"
           breadcrumbs={[{ label: "Home", path: "/" }, { label: "Users" }]}
+          action={{
+            label: "Add User",
+            icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_USERS,
+            permission: "manageUsers",
+            actionName: "create",
+          }}
         />
 
         <div className="flex items-end justify-between gap-4">
@@ -196,24 +204,26 @@ function UsersPage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <span
-              className={`${
-                Object.keys(rowSelection).filter((k) => rowSelection[k])
-                  .length === 0
-                  ? "cursor-no-drop"
-                  : "cursor-pointer"
-              }`}
-            >
-              <BulkDeleteBtn
-                refetch={refetch}
-                bulkDeleteMutation={bulkDeleteUserMutation}
-                title="Users"
-                descTitle="users"
-                rowSelection={rowSelection}
-                setRowSelection={setRowSelection}
-                tableRef={tableRef}
-              />
-            </span>
+            <PermissionGate permission="manageUsers" action="bulkDelete">
+              <span
+                className={`${
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                    ? "cursor-no-drop"
+                    : "cursor-pointer"
+                }`}
+              >
+                <BulkDeleteBtn
+                  refetch={refetch}
+                  bulkDeleteMutation={bulkDeleteUserMutation}
+                  title="manageUsers"
+                  descTitle="users"
+                  rowSelection={rowSelection}
+                  setRowSelection={setRowSelection}
+                  tableRef={tableRef}
+                />
+              </span>
+            </PermissionGate>
             <div className="">
               <InputGroup>
                 <InputGroupInput

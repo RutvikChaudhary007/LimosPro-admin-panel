@@ -11,6 +11,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getChauffeur } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -193,6 +194,8 @@ function ChauffeurPage() {
             label: "Add Chauffeur",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
+            permission: "manageChauffeurs",
+            actionName: "create",
           }}
         />
 
@@ -223,19 +226,21 @@ function ChauffeurPage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn<TChauffeur, TBlkDelRes>
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteChauffeurMutation}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Chauffeurs"
-                descTitle="chauffeur"
-              />
-            </span>
+            <PermissionGate permission="manageChauffeurs" action="bulkDelete">
+              <span
+                className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+              >
+                <BulkDeleteBtn<TChauffeur, TBlkDelRes>
+                  rowSelection={rowSelection}
+                  tableRef={tableRef}
+                  bulkDeleteMutation={bulkDeleteChauffeurMutation}
+                  refetch={refetch}
+                  setRowSelection={setRowSelection}
+                  title="manageChauffeurs"
+                  descTitle="chauffeur"
+                />
+              </span>
+            </PermissionGate>
             <div>
               <InputGroup>
                 <InputGroupInput

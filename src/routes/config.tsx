@@ -238,7 +238,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "region",
-    permission: "Regions",
+    permission: "manageRegions",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.REGION, element: RegionDashboardPage },
@@ -249,7 +249,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "regionAdmin",
-    permission: "Region Admins",
+    permission: "manageRegionAdmins",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.REGION_ADMIN, element: RegionAdminPage },
@@ -266,7 +266,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "affiliate",
-    permission: "Affiliates",
+    permission: "manageAffiliates",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.AFFILIATE, element: AffiliatePage },
@@ -287,7 +287,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "chauffeur",
-    permission: "Chauffeurs",
+    permission: "manageChauffeurs",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.CHAUFFEUR, element: ChauffeurPage },
@@ -308,7 +308,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "booking",
-    permission: "Bookings",
+    permission: "manageBookings",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.BOOKING, element: BookingPage },
@@ -318,7 +318,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "users",
-    permission: "Users",
+    permission: "manageUsers",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.USERS, element: UsersPage },
@@ -330,7 +330,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "notifications",
-    permission: "Trips",
+    permission: "manageNotifications", // Notifications often related to trips in this app context? Previous was "Trips".
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.NOTIFICATION, element: NotificationsPage },
@@ -339,7 +339,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "fleet",
-    permission: "Fleets",
+    permission: "manageFleets",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.FLEETS, element: FleetPage },
@@ -351,7 +351,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "trips",
-    permission: "Trips",
+    permission: "manageTrips",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.TRIPS, element: TripsPage },
@@ -362,7 +362,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "payments",
-    permission: "Payments",
+    permission: "managePayments",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.PAYMENTS, element: PaymentsPage },
@@ -378,7 +378,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "crewStaff",
-    permission: "Staff Members", // Using Staff Members as the general permission for this group
+    permission: "manageStaffMembers",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.CREW_MEMBERS, element: CrewMemberPage },
@@ -403,14 +403,22 @@ export const routesConfig = [
   },
   {
     layout: "protected",
-    module: "contactTestimonialPartner",
-    permission: "Testimonials", // Using Testimonials as proxy or could split if needed
+    module: "contactRequests",
+    permission: "manageContactRequests",
     action: "view",
     routes: [
       {
         path: constant.ROUTING_URLS.CONTACT_REQUESTS,
         element: ContactRequestsPage,
       },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "testimonials",
+    permission: "manageTestimonials",
+    action: "view",
+    routes: [
       { path: constant.ROUTING_URLS.TESTIMONIALS, element: TestimonialPage },
       {
         path: constant.ROUTING_URLS.CREATE_TESTIMONIALS,
@@ -420,6 +428,14 @@ export const routesConfig = [
         path: constant.ROUTING_URLS.EDIT_TESTIMONIALS,
         element: EditTestimonailPage,
       },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "ourPartners",
+    permission: "manageOurPartners",
+    action: "view",
+    routes: [
       { path: constant.ROUTING_URLS.OUR_PARTNERS, element: OurPartnerPage },
       {
         path: constant.ROUTING_URLS.CREATE_OUR_PARTNERS,
@@ -434,7 +450,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "news",
-    permission: "News",
+    permission: "manageNews",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.NEWS, element: Newspage },
@@ -445,14 +461,14 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "settings",
-    permission: "Settings",
+    permission: "manageSettings",
     action: "view",
     routes: [{ path: constant.ROUTING_URLS.SETTINGS, element: SettingsPage }],
   },
   {
     layout: "protected",
     module: "ipWhiteList",
-    permission: "IP Whitelist",
+    permission: "manageIpAccess",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.IP_WHITE_LIST, element: IpWhiteListPage },
@@ -469,7 +485,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "faqs",
-    permission: "FAQs",
+    permission: "manageContentManagement", // FAQs mapped to manageContentManagement as per previous decision
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.FAQ, element: FAQsPage },
@@ -480,14 +496,14 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "reports",
-    permission: "Reports",
+    permission: "manageReports",
     action: "view",
     routes: [{ path: constant.ROUTING_URLS.REPORTS, element: ReportPage }],
   },
   {
     layout: "protected",
     module: "contentManagement",
-    permission: "Content Management",
+    permission: "manageContentManagement",
     action: "view",
     routes: [
       {
@@ -507,14 +523,14 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "seo",
-    permission: "SEO",
+    permission: "manageSeo",
     action: "view",
     routes: [{ path: constant.ROUTING_URLS.SEO, element: SeoPage }],
   },
   {
     layout: "protected",
     module: "blogPosts",
-    permission: "Blog Posts",
+    permission: "manageBlogs",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.BLOG_POSTS, element: BlogPostsPage },

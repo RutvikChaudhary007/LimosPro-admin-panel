@@ -9,6 +9,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getFaqs, type TFaqs } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -104,23 +105,30 @@ const FaqsPage = () => {
             label: "Add Faq",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_FAQ,
+            permission: "manageContentManagement",
+            actionName: "create",
           }}
         />
 
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+          <PermissionGate
+            permission="manageContentManagement"
+            action="bulkDelete"
           >
-            <BulkDeleteBtn
-              rowSelection={rowSelection}
-              tableRef={tableRef}
-              bulkDeleteMutation={bulkDeleteFaq}
-              refetch={refetch}
-              setRowSelection={setRowSelection}
-              title="Faqs"
-              descTitle="faqs"
-            />
-          </span>
+            <span
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+            >
+              <BulkDeleteBtn
+                rowSelection={rowSelection}
+                tableRef={tableRef}
+                bulkDeleteMutation={bulkDeleteFaq}
+                refetch={refetch}
+                setRowSelection={setRowSelection}
+                title="Faqs"
+                descTitle="faqs"
+              />
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

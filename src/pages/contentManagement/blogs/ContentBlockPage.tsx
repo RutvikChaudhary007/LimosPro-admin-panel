@@ -9,6 +9,7 @@ import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getContent } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -181,24 +182,29 @@ function ContentBlockPage() {
           action={{
             label: "Add Content Block",
             icon: <Plus />,
+            link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT,
+            permission: "Pages",
+            actionName: "create",
           }}
         />
 
         <div className="flex justify-between gap-4">
           <div className="w-full max-w-fit flex items-center justify-between gap-4">
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={() => {}}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Chauffeurs"
-                descTitle="chauffeur"
-              />
-            </span>
+            <PermissionGate permission="Pages" action="bulkDelete">
+              <span
+                className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+              >
+                <BulkDeleteBtn
+                  rowSelection={rowSelection}
+                  tableRef={tableRef}
+                  bulkDeleteMutation={() => {}}
+                  refetch={refetch}
+                  setRowSelection={setRowSelection}
+                  title="Content Blocks"
+                  descTitle="content block"
+                />
+              </span>
+            </PermissionGate>
             <div className="">
               <InputGroup>
                 <InputGroupInput

@@ -10,6 +10,7 @@ import PageTitle from "@/components/common/PageTitle";
 import BlogPostCard from "@/components/contentManagement/BlogPostCard";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { getBlogColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
@@ -240,6 +241,8 @@ const BlogPostsPage: React.FC = () => {
             label: "Create Post",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_BLOG_POST,
+            permission: "manageBlogs",
+            actionName: "create",
           }}
         />
 
@@ -480,14 +483,16 @@ const BlogPostsPage: React.FC = () => {
                     <p className="text-gray-600 mb-4">
                       Get started by creating your first blog post.
                     </p>
-                    <Button
-                      onClick={() =>
-                        navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)
-                      }
-                    >
-                      <Plus />
-                      Create Post
-                    </Button>
+                    <PermissionGate permission="Blog Posts" action="create">
+                      <Button
+                        onClick={() =>
+                          navigate(constant.ROUTING_URLS.CREATE_BLOG_POST)
+                        }
+                      >
+                        <Plus />
+                        Create Post
+                      </Button>
+                    </PermissionGate>
                   </div>
                 </CardContent>
               </CardBody>

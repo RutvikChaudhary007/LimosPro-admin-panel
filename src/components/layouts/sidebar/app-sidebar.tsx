@@ -81,7 +81,7 @@ const data: {
       url: constant.ROUTING_URLS.DASHBOARD,
       icon: IconHome,
       isActive: true,
-      permission: "Reports",
+      permission: "manageDashboard",
       action: "view",
     },
     {
@@ -92,13 +92,13 @@ const data: {
         {
           title: "Regions",
           url: constant.ROUTING_URLS.REGION,
-          permission: "Regions",
+          permission: "manageRegions",
           action: "view",
         },
         {
           title: "Region Admins",
           url: constant.ROUTING_URLS.REGION_ADMIN,
-          permission: "Region Admins",
+          permission: "manageRegionAdmins",
           action: "view",
         },
       ],
@@ -107,56 +107,56 @@ const data: {
       title: "Affiliate",
       url: constant.ROUTING_URLS.AFFILIATE,
       icon: IconAffiliate,
-      permission: "Affiliates",
+      permission: "manageAffiliates",
       action: "view",
     },
     {
       title: "Chauffeur",
       url: constant.ROUTING_URLS.CHAUFFEUR,
       icon: IconCar,
-      permission: "Chauffeurs",
+      permission: "manageChauffeurs",
       action: "view",
     },
     {
       title: "Bookings",
       url: constant.ROUTING_URLS.BOOKING,
       icon: IconBooking,
-      permission: "Bookings",
+      permission: "manageBookings",
       action: "view",
     },
     {
       title: "Users",
       url: constant.ROUTING_URLS.USERS,
       icon: IconUsers,
-      permission: "Users",
+      permission: "manageUsers",
       action: "view",
     },
     {
       title: "Fleets",
       url: constant.ROUTING_URLS.FLEETS,
       icon: IconTruck,
-      permission: "Fleets",
+      permission: "manageFleets",
       action: "view",
     },
     {
       title: "Trips",
       url: constant.ROUTING_URLS.TRIPS,
       icon: IconRoute,
-      permission: "Trips",
+      permission: "manageTrips",
       action: "view",
     },
     {
       title: "Payments",
       url: constant.ROUTING_URLS.PAYMENTS,
       icon: IconPayments,
-      permission: "Payments",
+      permission: "managePayments",
       action: "view",
     },
     {
       title: "Reports",
       url: constant.ROUTING_URLS.REPORTS,
       icon: IconReport,
-      permission: "Reports",
+      permission: "manageReports",
       action: "view",
     },
     {
@@ -167,13 +167,13 @@ const data: {
         {
           title: "Blogs",
           url: constant.ROUTING_URLS.BLOG_POSTS,
-          permission: "Blog Posts",
+          permission: "manageBlogs",
           action: "view",
         },
         {
           title: "Pages",
           url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
-          permission: "Content Management",
+          permission: "manageContentManagement",
           action: "view",
         },
       ],
@@ -182,56 +182,56 @@ const data: {
       title: "Staff Members",
       url: constant.ROUTING_URLS.STAFF_MEMBERS,
       icon: IconUser,
-      permission: "Staff Members",
+      permission: "manageStaffMembers",
       action: "view",
     },
     {
       title: "Contact Requests",
       url: constant.ROUTING_URLS.CONTACT_REQUESTS,
       icon: IconMail,
-      permission: "Trips",
+      permission: "manageContactRequests",
       action: "view",
     },
     {
       title: "Testimonials",
       url: constant.ROUTING_URLS.TESTIMONIALS,
       icon: IconStar,
-      permission: "Testimonials",
+      permission: "manageTestimonials",
       action: "view",
     },
     {
       title: "News",
       url: constant.ROUTING_URLS.NEWS,
       icon: IconNews,
-      permission: "News",
+      permission: "manageNews",
       action: "view",
     },
     {
       title: "FAQs",
       url: constant.ROUTING_URLS.FAQ,
       icon: IconHelp,
-      permission: "FAQs",
+      permission: "manageContentManagement",
       action: "view",
     },
     {
       title: "IP Access",
       url: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: IconShield,
-      permission: "IP Whitelist",
+      permission: "manageIpAccess",
       action: "view",
     },
     {
       title: "Our Partners",
       url: constant.ROUTING_URLS.OUR_PARTNERS,
       icon: IconHeartHandshake,
-      permission: "Our Partners",
+      permission: "manageOurPartners",
       action: "view",
     },
     {
       title: "Settings",
       url: constant.ROUTING_URLS.SETTINGS,
       icon: IconSettings,
-      permission: "Settings",
+      permission: "manageSettings",
       action: "view",
     },
   ],
@@ -268,12 +268,7 @@ export function AppSidebar({
               hasPermission(child.permission, child.action || "view"),
           );
 
-          // Only keep parent if parent itself is allowed OR it has allowed children
-          const parentAllowed =
-            !item.permission ||
-            hasPermission(item.permission, item.action || "view");
-
-          if (parentAllowed || allowedChildren.length > 0) {
+          if (allowedChildren.length > 0) {
             return { ...item, items: allowedChildren };
           }
           return null;

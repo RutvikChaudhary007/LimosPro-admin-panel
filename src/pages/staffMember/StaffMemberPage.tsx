@@ -9,6 +9,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getStaffMember, type TStaffMember } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -116,6 +117,8 @@ const StaffMemberPage = () => {
             label: "Add Staff Member",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_STAFF_MEMBERS,
+            permission: "manageStaffMembers",
+            actionName: "create",
           }}
         />
 
@@ -135,19 +138,21 @@ const StaffMemberPage = () => {
           </div>
 
           <div className="">
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteStaffMember}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Staff Members"
-                descTitle="staff members"
-              />
-            </span>
+            <PermissionGate permission="manageStaffMembers" action="bulkDelete">
+              <span
+                className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+              >
+                <BulkDeleteBtn
+                  rowSelection={rowSelection}
+                  tableRef={tableRef}
+                  bulkDeleteMutation={bulkDeleteStaffMember}
+                  refetch={refetch}
+                  setRowSelection={setRowSelection}
+                  title="Staff Members"
+                  descTitle="staff members"
+                />
+              </span>
+            </PermissionGate>
           </div>
         </div>
         {isFetching ? (

@@ -10,6 +10,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import PaginationControls from "@/components/pagination/PaginationControls";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getFleets, type TFleet } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -151,6 +152,8 @@ function FleetPage() {
             label: "Add Fleet",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_FLEET,
+            permission: "manageFleets",
+            actionName: "create",
           }}
         />
 
@@ -174,19 +177,21 @@ function FleetPage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                tableRef={tableRef}
-                bulkDeleteMutation={bulkDeleteFleetsMutation}
-                refetch={refetch}
-                setRowSelection={setRowSelection}
-                title="Fleets"
-                descTitle="fleets"
-              />
-            </span>
+            <PermissionGate permission="manageFleets" action="bulkDelete">
+              <span
+                className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+              >
+                <BulkDeleteBtn
+                  rowSelection={rowSelection}
+                  tableRef={tableRef}
+                  bulkDeleteMutation={bulkDeleteFleetsMutation}
+                  refetch={refetch}
+                  setRowSelection={setRowSelection}
+                  title="Fleets"
+                  descTitle="fleets"
+                />
+              </span>
+            </PermissionGate>
             <div className="">
               <InputGroup>
                 <InputGroupInput

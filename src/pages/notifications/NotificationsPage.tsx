@@ -15,6 +15,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import PaginationControls from "@/components/pagination/PaginationControls";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getNotification } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -179,27 +180,31 @@ function NotificationsPage() {
           >
             <IconFilterX /> <span>Clear Filter</span>
           </Button>
-          <Button
-            onClick={handleMarkAllAsRead}
-            type="button"
-            variant={"outlineNavBtnPrimary"}
-            className="border border-base-primary"
-          >
-            <IconFileCheck /> <span>Mark All as Read</span>
-          </Button>
-          <span
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"} ml-auto`}
-          >
-            <BulkDeleteBtn<INotification, TBlkDelRes>
-              rowSelection={rowSelection}
-              tableRef={tableRef}
-              bulkDeleteMutation={bulkDeleteNotificationMutation}
-              refetch={refetch as any}
-              setRowSelection={setRowSelection}
-              title="Notifications"
-              descTitle="notifications"
-            />
-          </span>
+          <PermissionGate permission="manageNotifications" action="update">
+            <Button
+              onClick={handleMarkAllAsRead}
+              type="button"
+              variant={"outlineNavBtnPrimary"}
+              className="border border-base-primary"
+            >
+              <IconFileCheck /> <span>Mark All as Read</span>
+            </Button>
+          </PermissionGate>
+          <PermissionGate permission="manageNotifications" action="bulkDelete">
+            <span
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"} ml-auto`}
+            >
+              <BulkDeleteBtn<INotification, TBlkDelRes>
+                rowSelection={rowSelection}
+                tableRef={tableRef}
+                bulkDeleteMutation={bulkDeleteNotificationMutation}
+                refetch={refetch as any}
+                setRowSelection={setRowSelection}
+                title="Notifications"
+                descTitle="notifications"
+              />
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

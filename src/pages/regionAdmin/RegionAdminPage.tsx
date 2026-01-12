@@ -5,6 +5,7 @@ import { useFetchAllRegionAdmins } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import {
   getRegionAdminColumns,
@@ -90,34 +91,38 @@ function RegionAdminPage() {
             label: "Add Regional Admin",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_REGION_ADMIN,
+            permission: "manageRegionAdmins",
+            actionName: "create",
           }}
         />
 
         <div className="w-full flex items-center justify-end gap-4">
-          <span
-            className={`${
-              Object.keys(rowSelection).filter((k) => rowSelection[k])
-                .length === 0
-                ? "cursor-no-drop"
-                : "cursor-pointer"
-            }`}
-          >
-            <Button
-              variant={"outlineBlack"}
-              disabled={
+          <PermissionGate permission="manageRegionAdmins" action="bulkDelete">
+            <span
+              className={`${
                 Object.keys(rowSelection).filter((k) => rowSelection[k])
                   .length === 0
-              }
-              onClick={() => {
-                // console.log("data:", data);
-                // console.log("rowSelection:", rowSelection);
-                setRowSelection({});
-              }}
+                  ? "cursor-no-drop"
+                  : "cursor-pointer"
+              }`}
             >
-              <span>Delete</span>
-              <Trash2 />
-            </Button>
-          </span>
+              <Button
+                variant={"outlineBlack"}
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
+                onClick={() => {
+                  // console.log("data:", data);
+                  // console.log("rowSelection:", rowSelection);
+                  setRowSelection({});
+                }}
+              >
+                <span>Delete</span>
+                <Trash2 />
+              </Button>
+            </span>
+          </PermissionGate>
           <div className="">
             <InputGroup>
               <InputGroupInput

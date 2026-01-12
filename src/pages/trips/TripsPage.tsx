@@ -9,6 +9,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getTrips, type TTrips } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -110,17 +111,19 @@ function TripsPage(): JSX.Element {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <span
-              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-            >
-              <BulkDeleteBtn
-                rowSelection={rowSelection}
-                setRowSelection={setRowSelection}
-                bulkDeleteMutation={bulkDeleteTripsMutation}
-                refetch={refetch}
-                tableRef={tableRef}
-              />
-            </span>
+            <PermissionGate permission="manageTrips" action="bulkDelete">
+              <span
+                className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
+              >
+                <BulkDeleteBtn
+                  rowSelection={rowSelection}
+                  setRowSelection={setRowSelection}
+                  bulkDeleteMutation={bulkDeleteTripsMutation}
+                  refetch={refetch}
+                  tableRef={tableRef}
+                />
+              </span>
+            </PermissionGate>
             <div className="">
               <InputGroup>
                 <InputGroupInput

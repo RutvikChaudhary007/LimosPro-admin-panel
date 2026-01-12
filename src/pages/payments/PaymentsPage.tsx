@@ -9,6 +9,7 @@ import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getPayments, type TPayments } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -25,7 +26,7 @@ const showStatus = [
   { label: "Refunded", value: "refunded" },
 ];
 
-const PaymentsPage = () => {
+const managePaymentsPage = () => {
   const navigate = useNavigate();
   const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
@@ -109,26 +110,28 @@ const PaymentsPage = () => {
             value={selectedStatus}
             setSelectedItem={setSelectedStatus}
           />
-          <span
-            // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-            className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
-          >
-            <Button
-              variant="outlineBlack"
-              type="button"
-              disabled={
-                Object.keys(rowSelection).filter((k) => rowSelection[k])
-                  .length === 0
-              }
-              onClick={() => {
-                // setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
-                setRowSelection({});
-              }}
+          <PermissionGate permission="managePayments" action="export">
+            <span
+              // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
+              className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
             >
-              Export
-              <Download />
-            </Button>
-          </span>
+              <Button
+                variant="outlineBlack"
+                type="button"
+                disabled={
+                  Object.keys(rowSelection).filter((k) => rowSelection[k])
+                    .length === 0
+                }
+                onClick={() => {
+                  // setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
+                  setRowSelection({});
+                }}
+              >
+                Export
+                <Download />
+              </Button>
+            </span>
+          </PermissionGate>
         </div>
         {isFetching ? (
           <Spinner />
@@ -159,4 +162,4 @@ const PaymentsPage = () => {
   );
 };
 
-export default PaymentsPage;
+export default managePaymentsPage;

@@ -166,6 +166,8 @@ const SeoPage = () => {
           label: "Add New SEO",
           icon: <Plus />,
           link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT,
+          permission: "SEO",
+          actionName: "create",
         }}
       />
 
