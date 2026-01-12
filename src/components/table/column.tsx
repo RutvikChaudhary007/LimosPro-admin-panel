@@ -8,7 +8,6 @@ import {
 import type { ColumnDef, Table } from "@tanstack/react-table";
 import { format } from "date-fns";
 import {
-  // CreditCardIcon,
   Edit,
   Eye,
   Mail,
@@ -23,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -36,8 +36,12 @@ import type {
 } from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
-import AccessCell from "../manageAccess/ManageAccess";
 import ManageRefund from "../manageRefund/ManageRefund";
+import {
+  PermissionGate,
+  PermissionIndicator,
+  RegionPermissionIndicator,
+} from "../permissions";
 import { Badge } from "../ui/badge";
 import {
   HoverCard,
@@ -161,7 +165,6 @@ export type TRegion = {
 export function getRegionColumns(
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
-  onAccess: (regionId: string, permissionIds: string[]) => void,
 ): ColumnDef<TRegion>[] {
   return [
     {
@@ -185,12 +188,6 @@ export function getRegionColumns(
       enableSorting: false,
     },
     // { accessorKey: "admin", header: ({ column }) => <DataTableColumnHeader column={column} title="Admin" />,enableSorting: false, },
-    // {
-    //   id: "access",
-    //   header: ({ column }) => <DataTableColumnHeader column={column} title="Access" />,
-    //   cell: ({ row }) => <AccessCell<TRegion> row={row} onAccess={onAccess} />,
-    //   enableSorting: false,
-    // },
     {
       id: "action",
       header: ({ column }) => (
@@ -200,8 +197,10 @@ export function getRegionColumns(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <AccessCell<TRegion> row={row} onAccess={onAccess} />
-
+          <RegionPermissionIndicator
+            regionId={row.original.id}
+            regionName={row.original.regionName}
+          />
           <Button
             variant="outlineNavBtnPrimary"
             size="xl"
@@ -239,7 +238,6 @@ export type TRegionAdmin = {
     regionName: string;
     createdAt: string;
     deletedAt: string;
-    permissionAccess: string[];
     updatedAt: string;
   };
   updatedAt: string;
@@ -305,53 +303,58 @@ export function getRegionAdminColumns(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnPrimary"
-            size="xl"
-            spacing="lg"
-            tooltip="Edit"
-          >
-            <Edit />
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outlineNavBtnDestructive"
-                size="xl"
-                spacing="lg"
-                tooltip="Delete"
-              >
-                <Trash2 />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              className="w-full sm:max-w-sm"
-              onOpenAutoFocus={(e) => e.preventDefault()}
+          <PermissionIndicator
+            userId={row.original.user.id}
+            userRole="Regional Admin"
+            userName={`${row.original.user.firstName} ${row.original.user.lastName}`}
+            regionName={row.original.region.regionName}
+          />
+          <PermissionGate permission="Region Admins" action="update">
+            <Button
+              className="ml-4"
+              onClick={() => onEdit(row.original.id)}
+              variant="outlineNavBtnPrimary"
+              size="xl"
+              spacing="lg"
+              tooltip="Edit"
             >
-              <DialogHeader>
-                <DialogTitle>Delete Regional Admin</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this regional admin? This
-                  action cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot
-                  be undone.
-                </p>
-              </div>
-              <DialogFooter>
+              <Edit />
+            </Button>
+          </PermissionGate>
+          <PermissionGate permission="Region Admins" action="delete">
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
-                  onClick={() => onDelete(row.original.id)}
-                  variant="destructive"
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete"
                 >
-                  Confirm Delete
+                  <Trash2 />
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="w-full sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Delete Regional Admin</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this regional admin? This
+                    action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outlinePrimary">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive"
+                  >
+                    Delete admin
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </PermissionGate>
         </div>
       ),
       enableSorting: false,
@@ -495,7 +498,13 @@ export function getAffiliate(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
+          <PermissionIndicator
+            userId={(row.original as any).user?.id}
+            userRole="Affiliate"
+            userName={`${(row.original as any).user?.firstName || ""} ${(row.original as any).user?.lastName || ""}`}
+          />
           <Button
+            className="ml-4"
             onClick={() => onView(row?.original?.id ?? "")}
             variant="outlineNavBtnBlack"
             size="xl"
@@ -504,53 +513,51 @@ export function getAffiliate(
           >
             <Eye />
           </Button>
-          <Button
-            onClick={() => onEdit(row.original.id ?? "")}
-            variant="outlineNavBtnPrimary"
-            size="xl"
-            spacing="lg"
-            tooltip="Edit"
-          >
-            <Edit />
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outlineNavBtnDestructive"
-                size="xl"
-                spacing="lg"
-                tooltip="Delete"
-              >
-                <Trash2 />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              className="w-full sm:max-w-sm"
-              onOpenAutoFocus={(e) => e.preventDefault()}
+          <PermissionGate permission="Affiliates" action="update">
+            <Button
+              onClick={() => onEdit(row.original.id ?? "")}
+              variant="outlineNavBtnPrimary"
+              size="xl"
+              spacing="lg"
+              tooltip="Edit"
             >
-              <DialogHeader>
-                <DialogTitle>Delete Affiliate</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this affiliate? This action
-                  cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot
-                  be undone.
-                </p>
-              </div>
-              <DialogFooter>
+              <Edit />
+            </Button>
+          </PermissionGate>
+          <PermissionGate permission="Affiliates" action="delete">
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
-                  onClick={() => onDelete(row.original.id ?? "")}
-                  variant="destructive"
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete"
                 >
-                  Confirm Delete
+                  <Trash2 />
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="w-full sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Delete Affiliate</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this affiliate? This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outlinePrimary">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    onClick={() => onDelete(row.original.id ?? "")}
+                    variant="destructive"
+                  >
+                    Delete affiliate
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </PermissionGate>
         </div>
       ),
       enableSorting: false,
@@ -637,7 +644,13 @@ export function getChauffeur(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
+          <PermissionIndicator
+            userId={row.original.userId ?? ""}
+            userRole="Chauffeur"
+            userName={`${row.original.user?.firstName || ""} ${row.original.user?.lastName || ""}`}
+          />
           <Button
+            className="ml-4"
             onClick={() => onView(row.original.id)}
             variant="outlineNavBtnBlack"
             size="xl"
@@ -646,53 +659,51 @@ export function getChauffeur(
           >
             <Eye />
           </Button>
-          <Button
-            onClick={() => onEdit(row.original.id)}
-            variant="outlineNavBtnPrimary"
-            size="xl"
-            spacing="lg"
-            tooltip="Edit"
-          >
-            <Edit />
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outlineNavBtnDestructive"
-                size="xl"
-                spacing="lg"
-                tooltip="Delete"
-              >
-                <Trash2 />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              className="w-full sm:max-w-sm"
-              onOpenAutoFocus={(e) => e.preventDefault()}
+          <PermissionGate permission="Chauffeurs" action="update">
+            <Button
+              onClick={() => onEdit(row.original.id)}
+              variant="outlineNavBtnPrimary"
+              size="xl"
+              spacing="lg"
+              tooltip="Edit"
             >
-              <DialogHeader>
-                <DialogTitle>Delete Chauffeur</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this chauffeur? This action
-                  cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot
-                  be undone.
-                </p>
-              </div>
-              <DialogFooter>
+              <Edit />
+            </Button>
+          </PermissionGate>
+          <PermissionGate permission="Chauffeurs" action="delete">
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
-                  onClick={() => onDelete(row.original.id)}
-                  variant="destructive"
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete"
                 >
-                  Confirm Delete
+                  <Trash2 />
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="w-full sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Delete Chauffeur</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this chauffeur? This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outlinePrimary">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive"
+                  >
+                    Delete chauffeur
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </PermissionGate>
         </div>
       ),
       enableSorting: false,
@@ -1769,6 +1780,7 @@ export type TStaffMember = {
   role: string;
   permissions?: Array<{ id: string; permissionName: string }>;
   user?: {
+    id: string;
     firstName: string;
     lastName: string;
   };
@@ -1776,7 +1788,6 @@ export type TStaffMember = {
 
 export function getStaffMember(
   onEdit: (id: string) => void,
-  onAccess: (id: string, permissionIds: string[]) => void,
   onDelete: (id: string) => void,
 ): ColumnDef<TStaffMember>[] {
   return [
@@ -1821,12 +1832,10 @@ export function getStaffMember(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <AccessCell
-            row={row}
-            onAccess={onAccess}
-            initialSelected={row.original.permissions?.map((p) => p.id) || []}
-            entityType="staff"
-            staffId={row.original.id}
+          <PermissionIndicator
+            userId={row.original.user?.id ?? ""}
+            userRole="Staff member"
+            userName={`${row.original.user?.firstName ?? ""} ${row.original.user?.lastName ?? ""}`}
           />
           <Button
             onClick={() => onEdit(row.original.id)}
@@ -1838,44 +1847,40 @@ export function getStaffMember(
           >
             <Edit />
           </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outlineNavBtnDestructive"
-                size="xl"
-                spacing="lg"
-                tooltip="Delete"
-              >
-                <Trash2 />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              className="w-full sm:max-w-sm"
-              onOpenAutoFocus={(e) => e.preventDefault()}
-            >
-              <DialogHeader>
-                <DialogTitle>Delete Staff Member</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this staff member? This action
-                  cannot be undone.
-                </DialogDescription>
-              </DialogHeader>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  <strong>Are you absolutely sure?</strong> This action cannot
-                  be undone.
-                </p>
-              </div>
-              <DialogFooter>
+          <PermissionGate permission="Staff Members" action="delete">
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
-                  onClick={() => onDelete(row.original.id)}
-                  variant="destructive"
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete"
                 >
-                  Confirm Delete
+                  <Trash2 />
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent className="w-full sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Delete Staff Member</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this staff member? This
+                    action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outlinePrimary">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive"
+                  >
+                    Delete staff member
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </PermissionGate>
         </div>
       ),
       enableSorting: false,

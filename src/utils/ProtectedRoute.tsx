@@ -1,35 +1,47 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { usePermission } from "@/hooks/usePermission";
 import { constant } from "@/lib/constant";
-// import { Navigate, Outlet, useLocation, matchPath } from "react-router-dom";
-// import { ROUTE_PERMISSIONS } from "./roles";
 import { hasDynamicAccess } from "./Helper";
 
-const ProtectedRoute: React.FC = () => {
+interface ProtectedRouteProps {
+  permission?: string;
+  action?: string;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  permission,
+  action = "view",
+}) => {
   const location = useLocation();
+  const { hasPermission, user, isLoggedIn } = usePermission();
 
-  let userRole: string | null = null;
-  let userPermissions: string[] = [];
+  const userRole = user?.role;
+  const userPermissions = user?.permissions || [];
 
-  try {
-    userRole = localStorage.getItem("role");
-    const storedPermissions = localStorage.getItem("permissions");
-    userPermissions = storedPermissions ? JSON.parse(storedPermissions) : [];
-  } catch {
-    userRole = null;
-    userPermissions = [];
+  if (!isLoggedIn) {
+    return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
   }
 
-  // ✅ Find first matching route pattern in ROUTE_PERMISSIONS
-  // const matchedKey = Object.keys(ROUTE_PERMISSIONS).find((pattern) =>
-  //   matchPath(pattern, location.pathname)
-  // );
+  // Always allow access to unauthorized page if logged in
+  if (location.pathname === "/unauthorized") {
+    return <Outlet />;
+  }
 
-  // const allowedRoles = matchedKey ? ROUTE_PERMISSIONS[matchedKey] : [];
+  // If explicit permission is provided, use it
+  if (permission) {
+    if (!hasPermission(permission, action)) {
+      console.log(`Access denied for ${permission}:${action}`);
+      return <Navigate to="/unauthorized" replace />;
+    }
+    return <Outlet />;
+  }
 
-  if (!userRole) {
-    return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
-  } else if (!hasDynamicAccess(location.pathname, userRole, userPermissions)) {
-    console.log(location.pathname, userRole, userPermissions);
+  // Fallback to legacy path-based check
+  if (!hasDynamicAccess(location.pathname, userRole, userPermissions)) {
+    console.log(`Path access denied for ${location.pathname}`);
+    if (location.pathname === constant.ROUTING_URLS.DASHBOARD) {
+      return <Navigate to="/unauthorized" replace />;
+    }
     return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />;
   }
 
@@ -37,61 +49,3 @@ const ProtectedRoute: React.FC = () => {
 };
 
 export default ProtectedRoute;
-
-// // ProtectedRoute.tsx
-// import React from "react";
-// import { Navigate, useLocation } from "react-router-dom";
-// import { ROUTE_PERMISSIONS } from "./constant";
-// import { constant } from "@/lib/constant";
-
-// interface ProtectedRouteProps {
-//   children: React.ReactNode;
-// }
-
-// const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-//   const location = useLocation();
-//   const userRole = localStorage.getItem("user");
-
-//   const allowedRoles = ROUTE_PERMISSIONS[location.pathname] || [];
-
-//   if (!userRole || !allowedRoles.includes(userRole)) {
-//     return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />;
-//   }
-
-//   return <>{children}</>;
-// };
-
-// export default ProtectedRoute;
-
-// import React from "react";
-// import { Navigate, Outlet, useLocation } from "react-router-dom";
-// import { ROUTE_PERMISSIONS } from "./roles";
-// import { constant } from "@/lib/constant";
-
-// const ProtectedRoute: React.FC = () => {
-//   const location = useLocation();
-
-//   // Get user role from localStorage
-//   let userRole: string | null = null;
-//   try {
-//     const stored = localStorage.getItem("user");
-//     if (stored) {
-//       userRole = stored;
-//     }
-//   } catch {
-//     userRole = null;
-//   }
-
-//   // Get allowed roles for this path
-//   const allowedRoles = ROUTE_PERMISSIONS[location.pathname] || [];
-
-//   if (!userRole ) {
-//     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
-//   }else if(userRole && !allowedRoles.includes(userRole)){
-//    return <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace  />;
-//   }
-
-//   return <Outlet />; // ✅ renders the child route if allowed
-// };
-
-// export default ProtectedRoute;

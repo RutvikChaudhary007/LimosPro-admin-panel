@@ -24,7 +24,12 @@ export const renderRoutes = () => {
         if (module.layout === "protected") {
           return (
             <Route
-              element={<ProtectedRoute />}
+              element={
+                <ProtectedRoute
+                  permission={(module as any).permission}
+                  action={(module as any).action}
+                />
+              }
               key={module.layout + module.module}
             >
               <Route element={<Layout />}>

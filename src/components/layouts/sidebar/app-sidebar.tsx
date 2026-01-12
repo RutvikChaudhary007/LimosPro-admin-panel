@@ -52,76 +52,129 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { usePermission } from "@/hooks/usePermission";
 import { constant } from "@/lib/constant";
-import { useUserStore } from "@/stores/useAuthStore";
-import { hasDynamicAccess } from "@/utils/Helper";
 
-const data = {
+type NavItem = {
+  title: string;
+  url: string;
+  icon?: any;
+  isActive?: boolean;
+  permission?: string;
+  action?: string;
+  items?: {
+    title: string;
+    url: string;
+    permission?: string;
+    action?: string;
+  }[];
+};
+
+const data: {
+  navMain: NavItem[];
+  documents: any[];
+  navSecondary: any[];
+} = {
   navMain: [
     {
       title: "Dashboard",
       url: constant.ROUTING_URLS.DASHBOARD,
       icon: IconHome,
       isActive: true,
+      permission: "Reports",
+      action: "view",
     },
     {
       title: "Region Management",
       url: "#",
       icon: IconRegion,
       items: [
-        { title: "Regions", url: constant.ROUTING_URLS.REGION },
-        { title: "Region Admins", url: constant.ROUTING_URLS.REGION_ADMIN },
+        {
+          title: "Regions",
+          url: constant.ROUTING_URLS.REGION,
+          permission: "Regions",
+          action: "view",
+        },
+        {
+          title: "Region Admins",
+          url: constant.ROUTING_URLS.REGION_ADMIN,
+          permission: "Region Admins",
+          action: "view",
+        },
       ],
     },
     {
       title: "Affiliate",
       url: constant.ROUTING_URLS.AFFILIATE,
       icon: IconAffiliate,
+      permission: "Affiliates",
+      action: "view",
     },
     {
       title: "Chauffeur",
       url: constant.ROUTING_URLS.CHAUFFEUR,
       icon: IconCar,
+      permission: "Chauffeurs",
+      action: "view",
     },
     {
       title: "Bookings",
       url: constant.ROUTING_URLS.BOOKING,
       icon: IconBooking,
+      permission: "Bookings",
+      action: "view",
     },
     {
       title: "Users",
       url: constant.ROUTING_URLS.USERS,
       icon: IconUsers,
+      permission: "Users",
+      action: "view",
     },
     {
       title: "Fleets",
       url: constant.ROUTING_URLS.FLEETS,
       icon: IconTruck,
+      permission: "Fleets",
+      action: "view",
     },
     {
       title: "Trips",
       url: constant.ROUTING_URLS.TRIPS,
       icon: IconRoute,
+      permission: "Trips",
+      action: "view",
     },
     {
       title: "Payments",
       url: constant.ROUTING_URLS.PAYMENTS,
       icon: IconPayments,
+      permission: "Payments",
+      action: "view",
     },
     {
       title: "Reports",
       url: constant.ROUTING_URLS.REPORTS,
       icon: IconReport,
+      permission: "Reports",
+      action: "view",
     },
     {
       title: "Content Management",
       url: "#",
       icon: IconChartBar,
       items: [
-        { title: "Blogs", url: constant.ROUTING_URLS.BLOG_POSTS },
+        {
+          title: "Blogs",
+          url: constant.ROUTING_URLS.BLOG_POSTS,
+          permission: "Blog Posts",
+          action: "view",
+        },
         {
           title: "Pages",
           url: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
+          permission: "Content Management",
+          action: "view",
         },
       ],
     },
@@ -129,41 +182,57 @@ const data = {
       title: "Staff Members",
       url: constant.ROUTING_URLS.STAFF_MEMBERS,
       icon: IconUser,
+      permission: "Staff Members",
+      action: "view",
     },
     {
       title: "Contact Requests",
       url: constant.ROUTING_URLS.CONTACT_REQUESTS,
       icon: IconMail,
+      permission: "Trips",
+      action: "view",
     },
     {
       title: "Testimonials",
       url: constant.ROUTING_URLS.TESTIMONIALS,
       icon: IconStar,
+      permission: "Testimonials",
+      action: "view",
     },
     {
       title: "News",
       url: constant.ROUTING_URLS.NEWS,
       icon: IconNews,
+      permission: "News",
+      action: "view",
     },
     {
       title: "FAQs",
       url: constant.ROUTING_URLS.FAQ,
       icon: IconHelp,
+      permission: "FAQs",
+      action: "view",
     },
     {
       title: "IP Access",
       url: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: IconShield,
+      permission: "IP Whitelist",
+      action: "view",
     },
     {
       title: "Our Partners",
       url: constant.ROUTING_URLS.OUR_PARTNERS,
       icon: IconHeartHandshake,
+      permission: "Our Partners",
+      action: "view",
     },
     {
       title: "Settings",
       url: constant.ROUTING_URLS.SETTINGS,
       icon: IconSettings,
+      permission: "Settings",
+      action: "view",
     },
   ],
   documents: [
@@ -186,32 +255,38 @@ export function AppSidebar({
   showDocuments?: boolean;
   showSecondary?: boolean;
 }) {
-  const { user } = useUserStore();
+  const { hasPermission } = usePermission();
+
   const filteredNavigation = useMemo(() => {
     return data.navMain
       .map((item) => {
         // if item has children → filter children
         if (item.items) {
-          const allowedChildren = item.items.filter((child) =>
-            hasDynamicAccess(child.url, user?.role, user?.permissions),
+          const allowedChildren = item.items.filter(
+            (child) =>
+              !child.permission ||
+              hasPermission(child.permission, child.action || "view"),
           );
-          // Only keep parent if parent has a route OR children are allowed
-          if (
-            hasDynamicAccess(item.url, user?.role, user?.permissions) ||
-            allowedChildren.length > 0
-          ) {
+
+          // Only keep parent if parent itself is allowed OR it has allowed children
+          const parentAllowed =
+            !item.permission ||
+            hasPermission(item.permission, item.action || "view");
+
+          if (parentAllowed || allowedChildren.length > 0) {
             return { ...item, items: allowedChildren };
           }
-          return null; // Changed from [] to null
+          return null;
         }
 
         // if no children → just check the parent
-        return hasDynamicAccess(item.url, user?.role, user?.permissions)
+        return !item.permission ||
+          hasPermission(item.permission, item.action || "view")
           ? item
-          : null; // Changed from [] to null
+          : null;
       })
-      .filter(Boolean) as typeof data.navMain;
-  }, [user?.permissions, user?.role]);
+      .filter(Boolean) as NavItem[];
+  }, [hasPermission]);
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header */}

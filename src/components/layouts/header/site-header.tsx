@@ -2,6 +2,7 @@ import IconMail from "@/assets/Icons/ic-mail.svg?react";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { GlobalSearch } from "./global-search";
+import { LanguageSelector } from "./language-selector";
 import { NavUser } from "./nav-user";
 import { NotificationsDrawer } from "./notifications-drawer";
 
@@ -12,9 +13,9 @@ export function SiteHeader() {
         <SidebarTrigger />
         <GlobalSearch />
         <div className="ml-auto flex items-center gap-6 sm:gap-2 md:gap-2 lg:gap-4">
-          {/* <div className="hidden sm:block"> */}
-          {/* <LanguageSelector /> */}
-          {/* </div> */}
+          <div className="hidden">
+            <LanguageSelector />
+          </div>
           <div className="hidden gap-2 md:flex">
             <Button
               variant="outlineNavBtnBlack"

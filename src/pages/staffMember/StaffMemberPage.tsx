@@ -48,29 +48,6 @@ const StaffMemberPage = () => {
     },
     [navigate],
   );
-  const syncStaffPermissions = queries.useSyncStaffPermissionsMutation();
-  const handleAccess = useCallback(
-    async (id: string, permissionIds: string[]) => {
-      console.log("Access:", id, permissionIds);
-      try {
-        toastPromise(
-          syncStaffPermissions.mutateAsync({ staffId: id, permissionIds }),
-          {
-            loading: "Updating permissions...",
-            success: (res) => {
-              if (res) refetch();
-              return "Permissions updated successfully";
-            },
-            error: (e) =>
-              e instanceof Error ? e.message : "Failed to update permissions",
-          },
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [syncStaffPermissions, refetch],
-  );
   const deleteStaffMember = queries.useDeleteStaffMemberMutation();
   const bulkDeleteStaffMember = queries.useBulkDeleteStaffMemberMutation();
   const handleDelete = useCallback(
@@ -101,7 +78,7 @@ const StaffMemberPage = () => {
   );
 
   // Remove useMemo to match UsersPage
-  const columns = getStaffMember(handleEdit, handleAccess, handleDelete);
+  const columns = getStaffMember(handleEdit, handleDelete);
 
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(

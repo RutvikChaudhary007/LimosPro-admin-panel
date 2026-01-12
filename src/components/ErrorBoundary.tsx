@@ -1,4 +1,5 @@
 // ... existing code ...
+
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Link } from "react-router-dom"; // Assuming react-router-dom for navigation
 import { Button } from "@/components/ui/button"; // Import Button component
@@ -47,7 +48,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       }
       // Custom fallback UI matching project theme
       return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
+        <div className="flex-1 grid place-content-center min-h-[calc(100vh-var(--header-height)-var(--footer-height))] bg-gray-100 dark:bg-gray-900 p-4">
           <Card className="w-full max-w-md">
             <CardBody className="p-6">
               <CardHeader className="text-center p-0 mb-4">

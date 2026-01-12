@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
+import { PermissionGate } from "../permissions";
 import { Button, type buttonVariants } from "../ui/button";
 import {
   Card,
@@ -30,6 +31,8 @@ type ActionButton = {
   variant?: VariantProps<typeof buttonVariants>["variant"];
   className?: string;
   onClick?: () => void;
+  permission?: string;
+  actionName?: string;
 };
 
 interface PageHeaderProps {
@@ -80,13 +83,27 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       </Button>
     );
 
-    return btn.link ? (
+    const content = btn.link ? (
       <Link to={btn.link} key={key}>
         {button}
       </Link>
     ) : (
       button
     );
+
+    if (btn.permission) {
+      return (
+        <PermissionGate
+          key={key}
+          permission={btn.permission}
+          action={btn.actionName || "view"}
+        >
+          {content}
+        </PermissionGate>
+      );
+    }
+
+    return content;
   };
 
   return (

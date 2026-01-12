@@ -112,7 +112,7 @@ function AccordionTrigger({
 }: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
   const variant = React.useContext(AccordionVariantContext);
   return (
-    <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Header className="flex w-full">
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(accordionTrigger({ variant }), className)}

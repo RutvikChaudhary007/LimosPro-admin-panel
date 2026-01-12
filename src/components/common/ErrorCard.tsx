@@ -10,7 +10,7 @@ import {
 
 export const ErrorCard = ({ refetch }: { refetch: () => void }) => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex-1 grid place-content-center min-h-[calc(100vh-var(--header-height)-var(--footer-height))] bg-gray-100 dark:bg-gray-900">
       <Card className="w-full max-w-md p-6">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-red-600 dark:text-red-400">

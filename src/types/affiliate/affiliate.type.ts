@@ -33,6 +33,7 @@ export interface IAffiliate extends Partial<TAffiliate> {
 
 export interface IEditAffiliateRes extends IAffiliate {
   user: {
+    id: string;
     createdAt: string;
     dateOfBirth: string;
     email: string;

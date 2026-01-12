@@ -1,7 +1,8 @@
 import type { Row } from "@tanstack/react-table";
 import { FolderKey } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useFetchStaffPermissions } from "@/api";
+import { useFetchUserPermissions } from "@/api";
+import { useFetchRegionPermissions } from "@/api/regionPermission.api";
 import MultiSelectComp from "../multiSelect/MultiSelect";
 import { Button } from "../ui/button";
 import {
@@ -21,6 +22,7 @@ interface AccessCellProps<T extends { id: string }> {
   initialSelected?: string[];
   entityType?: "region" | "staff";
   staffId?: string;
+  regionId?: string;
 }
 const AccessCell = <T extends { id: string }>({
   row,
@@ -29,34 +31,37 @@ const AccessCell = <T extends { id: string }>({
   heading = "Edit Permissions",
   entityType = "region",
   staffId,
+  regionId,
 }: AccessCellProps<T> & { heading?: string }) => {
-  const [selected, setSelected] = useState<string[]>(
-    initialSelected || (row.original as any).permissionAccess || [],
-  );
+  const [selected, setSelected] = useState<string[]>(initialSelected || []);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: staffPermissions, isFetching } = useFetchStaffPermissions(
-    staffId || "",
-  );
-  // console.log("staffPermissions:",staffPermissions);
+  const { data: staffPermissions, isFetching: isFetchingStaff } =
+    useFetchUserPermissions(staffId || "");
+
+  const { data: regionPermissions, isFetching: isFetchingRegion } =
+    useFetchRegionPermissions(regionId || "");
+
   useEffect(() => {
     if (!isOpen) return;
 
     if (entityType === "staff") {
       if (staffPermissions) {
         const perms = (staffPermissions as any)?.permissions || [];
-        const ids = perms.map((p: any) => p.id);
+        const ids = perms.map((p: any) => p.id || p.permissionId);
         setSelected(ids);
-      } else if (initialSelected && initialSelected.length > 0) {
-        // Use initialSelected if staffPermissions hasn't loaded yet
-        setSelected(initialSelected);
       }
     } else if (entityType === "region") {
-      const regionSelected =
-        initialSelected || (row.original as any).permissionAccess || [];
-      setSelected(regionSelected);
+      if (regionPermissions) {
+        const perms = (regionPermissions as any) || [];
+        const ids = perms.map((p: any) => p.permissionId);
+        setSelected(ids);
+      }
     }
-  }, [isOpen, staffPermissions, entityType, initialSelected, row.original]);
+  }, [isOpen, staffPermissions, regionPermissions, entityType]);
+
+  const isFetching =
+    entityType === "staff" ? isFetchingStaff : isFetchingRegion;
 
   return (
     <Dialog modal={false} open={isOpen} onOpenChange={setIsOpen}>

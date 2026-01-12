@@ -83,10 +83,13 @@ export const API_ENDPOINTS: Record<string, any> = {
   GET_SINGLE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id`,
   CREATE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:regionId`,
   EDIT_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id/:regionId`,
-  DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-member/:id`,
-  BULK_DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff-members/bulk-delete`,
-  GET_STAFF_PERMISSIONS: `${ADMIN_SERVICE_URL}/staff-member/:id/permissions`,
-  SYNC_STAFF_PERMISSIONS: `${ADMIN_SERVICE_URL}/staff-member/:id/permissions`,
+  DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff/:id`,
+  BULK_DELETE_STAFF_MEMBER: `${ADMIN_SERVICE_URL}/staff/bulk-delete`,
+
+  // @deprecated Use USER_PERMISSIONS endpoints instead
+  GET_STAFF_PERMISSIONS: `${ADMIN_SERVICE_URL}/staff/:id/permissions`,
+  // @deprecated Use USER_PERMISSIONS.SYNC_USER_PERMISSIONS instead
+  SYNC_STAFF_PERMISSIONS: `${ADMIN_SERVICE_URL}/staff/:id/permissions`,
 
   // Testimonials
   GET_ALL_TESTIMONIALS: `${ADMIN_SERVICE_URL}/testimonials`,
@@ -236,5 +239,20 @@ export const API_ENDPOINTS: Record<string, any> = {
       `${ADMIN_SERVICE_URL}/pages/destination-content/${id}`,
     DELETE: (id: string) =>
       `${ADMIN_SERVICE_URL}/pages/destination-content/${id}`,
+  },
+  USER_PERMISSIONS: {
+    GET_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId`,
+    SYNC_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId/sync`,
+    ASSIGN_PERMISSION: `${ADMIN_SERVICE_URL}/user-permissions/:userId/assign`,
+    REMOVE_PERMISSION: `${ADMIN_SERVICE_URL}/user-permissions/:userId/remove`,
+    UPDATE_PERMISSION_ACTIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId/permissions/:permissionId/actions`,
+    CHECK_PERMISSION: `${ADMIN_SERVICE_URL}/user-permissions/:userId/check/:permissionId`,
+  },
+  REGION_PERMISSIONS: {
+    GET_REGION_PERMISSIONS: `${ADMIN_SERVICE_URL}/region-permissions/:regionId`,
+    ASSIGN_PERMISSION: `${ADMIN_SERVICE_URL}/region-permissions/:regionId/assign`,
+    UPDATE_PERMISSION_ACTIONS: `${ADMIN_SERVICE_URL}/region-permissions/:regionId/permissions/:permissionId/actions`,
+    REMOVE_PERMISSION: `${ADMIN_SERVICE_URL}/region-permissions/:regionId/permissions/:permissionId`,
+    SYNC_TO_USERS: `${ADMIN_SERVICE_URL}/region-permissions/:regionId/sync-to-users`,
   },
 };

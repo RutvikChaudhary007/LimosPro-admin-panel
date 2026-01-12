@@ -64,28 +64,9 @@ function RegionDashboardPage() {
       }
     }
   };
-  const editRegionMutation = queries.useEditRegionMutation();
-  const handleAccess = async (id: string, permissionIds: string[]) => {
-    console.log("manage access:", permissionIds, "id:", id);
-    toastPromise(
-      await editRegionMutation.mutateAsync({
-        id,
-        data: { permissionAccess: permissionIds },
-      }),
-      {
-        loading: "Updating access...",
-        success: (res) => {
-          if (res.status === true) refetch();
-          return "Yeah! Region updated.";
-        },
-        error: (e) =>
-          e instanceof Error
-            ? e.message
-            : "Opps! Failed to update access permission.",
-      },
-    );
-  };
-  const columns = getRegionColumns(handleEdit, handleDelete, handleAccess);
+  // Region permissions are now managed via backend-user-service gRPC
+  // Use PermissionIndicator component for viewing/managing permissions
+  const columns = getRegionColumns(handleEdit, handleDelete);
 
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});

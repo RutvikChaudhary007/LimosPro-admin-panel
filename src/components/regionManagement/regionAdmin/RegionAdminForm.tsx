@@ -65,7 +65,7 @@ const transformInitialData = (
     email: data?.user?.email ?? "",
     firstName: data?.user?.firstName ?? "",
     lastName: data?.user?.lastName ?? "",
-    password: "**********", // Placeholder for edit mode
+    password: data?.user?.password ?? "", // Placeholder for edit mode
   };
 };
 

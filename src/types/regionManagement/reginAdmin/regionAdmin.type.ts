@@ -9,7 +9,6 @@ export type TRegionAdminRes = {
     regionName: string;
     createdAt: string;
     deletedAt: string;
-    permissionAccess: string[];
     updatedAt: string;
   };
   updatedAt: string;

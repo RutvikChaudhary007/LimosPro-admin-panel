@@ -260,80 +260,87 @@ export const bulkDeleteStaffMember = async (ids: string[]) => {
   return response.data;
 };
 
-// ============================================
-// STAFF PERMISSION OPERATIONS
-// ============================================
+// // ============================================
+// // STAFF PERMISSION OPERATIONS (Deprecated - Use userPermission.api.ts)
+// // ============================================
 
-/**
- * Get all available permissions
- */
-export const getStaffAllPermissions = async () => {
-  try {
-    const response = await axiosInstance.get(
-      API_ENDPOINTS.PERSMISSIONS.GET_ALL,
-    );
-    return response.data.data;
-  } catch (error) {
-    if (error instanceof AxiosError && error?.status === 400) {
-      return [];
-    }
-    throw error;
-  }
-};
+// /**
+//  * @deprecated Use useFetchUserPermissions from userPermission.api.ts instead
+//  * Get all available permissions
+//  */
+// export const getStaffAllPermissions = async () => {
+//   try {
+//     const response = await axiosInstance.get(
+//       API_ENDPOINTS.PERSMISSIONS.GET_ALL,
+//     );
+//     return response.data.data;
+//   } catch (error) {
+//     if (error instanceof AxiosError && error?.status === 400) {
+//       return [];
+//     }
+//     throw error;
+//   }
+// };
 
-/**
- * Hook to fetch all permissions
- */
-export const useFetchStaffAllPermissions = () =>
-  useQuery({
-    queryKey: ["permissions"],
-    queryFn: () => getStaffAllPermissions(),
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+// /**
+//  * @deprecated Use useFetchUserPermissions from userPermission.api.ts instead
+//  * Hook to fetch all permissions
+//  */
+// export const useFetchStaffAllPermissions = () =>
+//   useQuery({
+//     queryKey: ["permissions"],
+//     queryFn: () => getStaffAllPermissions(),
+//     refetchOnWindowFocus: false,
+//     retry: false,
+//   });
 
-/**
- * Get permissions for a staff member
- */
-export const getStaffPermissions = async (staffId: string) => {
-  try {
-    const response = await axiosInstance.get(
-      API_ENDPOINTS.GET_STAFF_PERMISSIONS.replace(":id", staffId),
-    );
-    return response.data.data;
-  } catch (error) {
-    if (error instanceof AxiosError && error?.status === 400) {
-      return { permissions: [] };
-    }
-    throw error;
-  }
-};
+// /**
+//  * @deprecated Use getUserPermissions from userPermission.api.ts instead
+//  * Get permissions for a staff member
+//  */
+// export const getStaffPermissions = async (staffId: string) => {
+//   try {
+//     // Use new unified user permission endpoint
+//     const response = await axiosInstance.get(
+//       API_ENDPOINTS.USER_PERMISSIONS.GET_USER_PERMISSIONS.replace(":userId", staffId),
+//     );
+//     return response.data.data;
+//   } catch (error) {
+//     if (error instanceof AxiosError && error?.status === 400) {
+//       return { permissions: [] };
+//     }
+//     throw error;
+//   }
+// };
 
-/**
- * Hook to fetch staff member permissions
- */
-export const useFetchStaffPermissions = (staffId: string) =>
-  useQuery({
-    queryKey: ["staffPermissions", staffId],
-    queryFn: () => getStaffPermissions(staffId),
-    refetchOnWindowFocus: false,
-    retry: false,
-    enabled: !!staffId,
-  });
+// /**
+//  * @deprecated Use useFetchUserPermissions from userPermission.api.ts instead
+//  * Hook to fetch staff member permissions
+//  */
+// export const useFetchStaffPermissions = (staffId: string) =>
+//   useQuery({
+//     queryKey: ["staffPermissions", staffId],
+//     queryFn: () => getStaffPermissions(staffId),
+//     refetchOnWindowFocus: false,
+//     retry: false,
+//     enabled: !!staffId,
+//   });
 
-/**
- * Sync permissions for a staff member
- */
-export const syncStaffPermissions = async ({
-  staffId,
-  permissionIds,
-}: {
-  staffId: string;
-  permissionIds: string[];
-}) => {
-  const response = await axiosInstance.put(
-    API_ENDPOINTS.SYNC_STAFF_PERMISSIONS.replace(":id", staffId),
-    { permissionIds },
-  );
-  return response.data;
-};
+// /**
+//  * @deprecated Use syncUserPermissions from userPermission.api.ts instead
+//  * Sync permissions for a staff member
+//  */
+// export const syncStaffPermissions = async ({
+//   staffId,
+//   permissionIds,
+// }: {
+//   staffId: string;
+//   permissionIds: string[];
+// }) => {
+//   // Use new unified user permission endpoint
+//   const response = await axiosInstance.put(
+//     API_ENDPOINTS.USER_PERMISSIONS.SYNC_USER_PERMISSIONS.replace(":userId", staffId),
+//     { permissionIds },
+//   );
+//   return response.data;
+// };

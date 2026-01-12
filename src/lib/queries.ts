@@ -61,7 +61,7 @@ import {
   editTestimonial,
   login,
   refundPayment,
-  syncStaffPermissions,
+  syncUserPermissions,
   updateUser,
 } from "@/api";
 import {
@@ -545,7 +545,7 @@ const useBulkDeleteStaffMemberMutation = () =>
 const useSyncStaffPermissionsMutation = () => {
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: syncStaffPermissions,
+    mutationFn: syncUserPermissions,
     onSuccess: (response, variables) => {
       console.log(variables, response);
       // userPermissions are automatically stored in localStorage by the login API

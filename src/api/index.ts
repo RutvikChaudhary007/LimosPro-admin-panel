@@ -33,6 +33,8 @@ export * from "./pages/businessPageLayout.api";
 export * from "./payment.api";
 // Region Module
 export * from "./region.api";
+// Region Permission Module
+export * from "./regionPermission.api";
 // Report Module
 export * from "./report.api";
 // Staff & Crew Member Module
@@ -41,3 +43,5 @@ export * from "./staff.api";
 export * from "./trip.api";
 // User Module
 export * from "./user.api";
+// Permission Module
+export * from "./userPermission.api";

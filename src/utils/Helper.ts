@@ -9,16 +9,32 @@ export function hasAccess(path: string, role: string): boolean {
 // New function to check access using permissions from login response
 export function hasPermissionAccess(
   path: string,
-  userPermissions: string[],
+  userPermissions: (string | any)[],
 ): boolean {
   // If user has 'accessAllFeatures' permission, grant access to everything
-  if (userPermissions.includes("accessAllFeatures")) {
+  const hasGlobalAccess = userPermissions.some(
+    (p) =>
+      (typeof p === "string" && p === "accessAllFeatures") ||
+      (typeof p === "object" &&
+        (p.permissionName === "accessAllFeatures" ||
+          p.permission?.name === "accessAllFeatures")),
+  );
+
+  if (hasGlobalAccess) {
     return true;
   }
 
   // Check if any of the user's permissions grant access to this route
-  for (const permission of userPermissions) {
-    const allowedRoutes = PERMISSION_TO_ROUTE_MAPPING[permission] || [];
+  for (const p of userPermissions) {
+    const permName =
+      typeof p === "string" ? p : p.permissionName || p.permission?.name;
+
+    // For object permissions, we must have at least 'view' access to access the route
+    if (typeof p === "object" && p.actions && p.actions.view === false) {
+      continue;
+    }
+
+    const allowedRoutes = PERMISSION_TO_ROUTE_MAPPING[permName] || [];
     if (allowedRoutes.some((pattern) => pathMatches(pattern, path))) {
       return true;
     }

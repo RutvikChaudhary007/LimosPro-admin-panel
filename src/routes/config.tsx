@@ -213,6 +213,7 @@ const SelectOptionPage = lazy(
 );
 const SwitchPage = lazy(() => import("../pages/components/SwitchPage"));
 const AccordionPage = lazy(() => import("../pages/components/AccordionPage"));
+const UnauthorizedPage = lazy(() => import("../pages/UnauthorizedPage"));
 
 export const routesConfig = [
   {
@@ -237,6 +238,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "region",
+    permission: "Regions",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.REGION, element: RegionDashboardPage },
       { path: constant.ROUTING_URLS.CREATE_REGION, element: AddRegionPage },
@@ -246,6 +249,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "regionAdmin",
+    permission: "Region Admins",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.REGION_ADMIN, element: RegionAdminPage },
       {
@@ -261,6 +266,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "affiliate",
+    permission: "Affiliates",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.AFFILIATE, element: AffiliatePage },
       {
@@ -280,6 +287,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "chauffeur",
+    permission: "Chauffeurs",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.CHAUFFEUR, element: ChauffeurPage },
       {
@@ -299,6 +308,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "booking",
+    permission: "Bookings",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.BOOKING, element: BookingPage },
       { path: constant.ROUTING_URLS.VIEW_BOOKING, element: ViewBookingPage },
@@ -307,6 +318,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "users",
+    permission: "Users",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.USERS, element: UsersPage },
       { path: constant.ROUTING_URLS.CREATE_USERS, element: CreateUserPage },
@@ -317,6 +330,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "notifications",
+    permission: "Trips",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.NOTIFICATION, element: NotificationsPage },
     ],
@@ -324,6 +339,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "fleet",
+    permission: "Fleets",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.FLEETS, element: FleetPage },
       { path: constant.ROUTING_URLS.CREATE_FLEET, element: CreateFleetPage },
@@ -334,6 +351,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "trips",
+    permission: "Trips",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.TRIPS, element: TripsPage },
       { path: constant.ROUTING_URLS.VIEW_TRIPS, element: ViewTripsPage },
@@ -343,6 +362,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "payments",
+    permission: "Payments",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.PAYMENTS, element: PaymentsPage },
       { path: constant.ROUTING_URLS.VIEW_PAYMENTS, element: ViewPaymentPage },
@@ -357,6 +378,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "crewStaff",
+    permission: "Staff Members", // Using Staff Members as the general permission for this group
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.CREW_MEMBERS, element: CrewMemberPage },
       {
@@ -381,6 +404,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "contactTestimonialPartner",
+    permission: "Testimonials", // Using Testimonials as proxy or could split if needed
+    action: "view",
     routes: [
       {
         path: constant.ROUTING_URLS.CONTACT_REQUESTS,
@@ -409,6 +434,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "news",
+    permission: "News",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.NEWS, element: Newspage },
       { path: constant.ROUTING_URLS.CREATE_NEWS, element: CreateNewsPage },
@@ -418,11 +445,15 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "settings",
+    permission: "Settings",
+    action: "view",
     routes: [{ path: constant.ROUTING_URLS.SETTINGS, element: SettingsPage }],
   },
   {
     layout: "protected",
     module: "ipWhiteList",
+    permission: "IP Whitelist",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.IP_WHITE_LIST, element: IpWhiteListPage },
       {
@@ -438,6 +469,8 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "faqs",
+    permission: "FAQs",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.FAQ, element: FAQsPage },
       { path: constant.ROUTING_URLS.CREATE_FAQ, element: CreateFaqPage },
@@ -447,11 +480,15 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "reports",
+    permission: "Reports",
+    action: "view",
     routes: [{ path: constant.ROUTING_URLS.REPORTS, element: ReportPage }],
   },
   {
     layout: "protected",
     module: "contentManagement",
+    permission: "Content Management",
+    action: "view",
     routes: [
       {
         path: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
@@ -465,20 +502,20 @@ export const routesConfig = [
         path: constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT,
         element: EditContent,
       },
-      // {
-      //   path: constant.ROUTING_URLS.PAGE_PREVIEW,
-      //   element: PagePreview,
-      // },
     ],
   },
   {
     layout: "protected",
     module: "seo",
+    permission: "SEO",
+    action: "view",
     routes: [{ path: constant.ROUTING_URLS.SEO, element: SeoPage }],
   },
   {
     layout: "protected",
     module: "blogPosts",
+    permission: "Blog Posts",
+    action: "view",
     routes: [
       { path: constant.ROUTING_URLS.BLOG_POSTS, element: BlogPostsPage },
       {
@@ -503,5 +540,10 @@ export const routesConfig = [
       { path: "components/switch", element: SwitchPage },
       { path: "components/accordion", element: AccordionPage },
     ],
+  },
+  {
+    layout: "protected",
+    module: "unauthorized",
+    routes: [{ path: "/unauthorized", element: UnauthorizedPage }],
   },
 ];
