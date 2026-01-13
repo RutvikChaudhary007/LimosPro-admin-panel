@@ -21,7 +21,7 @@ export type TRegionAdmin = {
   lastName: string;
   email: string;
   region: string;
-  password: string | undefined;
+  password: string;
 };
 
 const isStrongPassword = (val: string): boolean => {
