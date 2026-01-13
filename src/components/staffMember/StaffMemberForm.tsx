@@ -15,7 +15,6 @@ import { useFetchAllRegions, useFetchAllStaffRoles } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
-import MultiSelectComp from "../multiSelect/MultiSelect";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -94,7 +93,7 @@ const StaffMemberForm = ({
       firstName: initialData?.user?.firstName || "",
       lastName: initialData?.user?.lastName || "",
       email: initialData?.user?.email || "",
-      password: initialData?.password?.replace(/./g, "*") ?? "***********",
+      password: "",
       role: roleValue,
       region: initialData?.region?.id ?? "",
       // permissions: initialData?.permissions?.id ?? "",

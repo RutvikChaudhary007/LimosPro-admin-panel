@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useMemo } from "react";
+import { Eye, EyeOff, Lock } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useFetchAllRegions } from "@/api";
@@ -7,46 +8,68 @@ import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardFooter, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
-import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import type { TRegionAdminRes } from "@/types/regionManagement/reginAdmin/regionAdmin.type";
 
-// Single unified schema that handles both create and edit modes
-const formSchema = z.object({
-  firstName: z.string().min(2, {
-    message: "First name must be at least 2 characters.",
-  }),
-  lastName: z.string().min(2, {
-    message: "Last name must be at least 2 characters.",
-  }),
-  email: z.email({ message: "Please enter a valid email address" }),
-  region: z.string().min(1, "Region is required"),
-  password: z.string().refine(
-    (val) => {
-      // If it's the placeholder, it's valid (edit mode, unchanged)
-      if (val === "**********") return true;
+export type TRegionAdmin = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  region: string;
+  password: string | undefined;
+};
 
-      // If empty, it's invalid (required for create mode)
-      if (!val || val.trim() === "") return false;
+const isStrongPassword = (val: string): boolean => {
+  return (
+    val.length >= 7 &&
+    val.length <= 25 &&
+    /[a-z]/.test(val) &&
+    /[A-Z]/.test(val) &&
+    /[0-9]/.test(val) &&
+    /[!@#$%^&*(),.?":{}|<>_\-+=[\]\\;/]/.test(val)
+  );
+};
 
-      // If provided, must meet all requirements
-      return (
-        val.length >= 7 &&
-        val.length <= 25 &&
-        /[a-z]/.test(val) &&
-        /[A-Z]/.test(val) &&
-        /[0-9]/.test(val) &&
-        /[!@#$%^&*(),.?":{}|<>_\-+=[\]\\;/]/.test(val)
-      );
-    },
-    {
-      message:
-        "Password must be 7-25 characters with uppercase, lowercase, number, and special character.",
-    },
-  ),
-});
-
-export type TRegionAdmin = z.infer<typeof formSchema>;
+const getFormSchema = (isEditMode: boolean) =>
+  z.object({
+    firstName: z.string().min(2, {
+      message: "First name must be at least 2 characters.",
+    }),
+    lastName: z.string().min(2, {
+      message: "Last name must be at least 2 characters.",
+    }),
+    email: z.email({ message: "Please enter a valid email address" }),
+    region: z.string().min(1, "Region is required"),
+    password: isEditMode
+      ? z
+          .string()
+          .optional()
+          .refine(
+            (val) => {
+              if (!val || val.trim() === "") return true;
+              return isStrongPassword(val);
+            },
+            {
+              message:
+                "Password must be 7-25 characters with uppercase, lowercase, number, and special character.",
+            },
+          )
+      : z.string().refine(
+          (val) => {
+            if (!val || val.trim() === "") return false;
+            return isStrongPassword(val);
+          },
+          {
+            message:
+              "Password must be 7-25 characters with uppercase, lowercase, number, and special character.",
+          },
+        ),
+  });
 
 type TRegionAdminFormProps = {
   initialData?: TRegionAdminRes;
@@ -65,7 +88,7 @@ const transformInitialData = (
     email: data?.user?.email ?? "",
     firstName: data?.user?.firstName ?? "",
     lastName: data?.user?.lastName ?? "",
-    password: data?.user?.password ?? "", // Placeholder for edit mode
+    password: "",
   };
 };
 
@@ -81,8 +104,14 @@ function RegionAdminForm({
   // Determine if this is edit mode
   const isEditMode = !!initialData;
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const resolver = useMemo(() => {
+    return zodResolver(getFormSchema(isEditMode));
+  }, [isEditMode]);
+
   const form = useForm<TRegionAdmin>({
-    resolver: zodResolver(formSchema),
+    resolver: resolver as any,
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -103,13 +132,13 @@ function RegionAdminForm({
   }, [initialData, regionData, form]);
 
   const handleFormSubmit = async (data: TRegionAdmin) => {
-    // If in edit mode and password is the placeholder, don't send it
-    if (isEditMode && data.password === "**********") {
+    if (isEditMode && (!data.password || data.password.trim() === "")) {
       const { password, ...dataWithoutPassword } = data;
       await onSubmit(dataWithoutPassword as TRegionAdmin);
-    } else {
-      await onSubmit(data);
+      return;
     }
+
+    await onSubmit(data);
   };
 
   const passwordPlaceholder = useMemo(() => {
@@ -217,9 +246,19 @@ function RegionAdminForm({
                     <InputGroupInput
                       {...field}
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder={passwordPlaceholder}
                     />
+                    <InputGroupAddon>
+                      <Lock />
+                    </InputGroupAddon>
+                    <InputGroupAddon
+                      align="inline-end"
+                      className="cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff /> : <Eye />}
+                    </InputGroupAddon>
                   </InputGroup>
                 )}
               />
@@ -279,7 +318,7 @@ function RegionAdminForm({
           <CardFooter>
             <Button
               type="button"
-              onClick={() => form.handleSubmit(handleFormSubmit)()}
+              onClick={() => form.handleSubmit(handleFormSubmit as any)()}
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? "Saving..." : "Save Details"}

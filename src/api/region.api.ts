@@ -218,14 +218,23 @@ export const editRegionAdmin = async ({
   data: TRegion;
 }) => {
   try {
-    const response = await axiosInstance.put(
-      `${API_ENDPOINTS.EDIT_REGION.replace(":regionId", id)}`,
-      data,
+    const regionId = (data as any)?.region;
+    if (!regionId) throw new Error("Region id is missing.");
+    const payload = { ...(data as any) };
+    delete (payload as any).region;
+
+    const response = await axiosInstance.patch(
+      `${API_ENDPOINTS.REGIONAL_ADMIN.EDIT.replace(":id", id).replace(
+        ":regionId",
+        regionId,
+      )}`,
+      payload,
     );
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };
 
@@ -235,11 +244,29 @@ export const editRegionAdmin = async ({
 export const deleteRegionAdmin = async (id: string) => {
   try {
     const response = await axiosInstance.delete(
-      `${API_ENDPOINTS.DELETE_REGION.replace(":regionId", id)}`,
+      `${API_ENDPOINTS.REGIONAL_ADMIN.DELETE.replace(":id", id)}`,
     );
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
+  }
+};
+
+/**
+ * Bulk delete region admins
+ */
+export const bulkDeleteRegionAdmins = async (regionalAdminIds: string[]) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_ENDPOINTS.REGIONAL_ADMIN.BULK_DELETE}`,
+      { regionalAdminIds },
+    );
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };

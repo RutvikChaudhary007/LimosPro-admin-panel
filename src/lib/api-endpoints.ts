@@ -173,10 +173,11 @@ export const API_ENDPOINTS: Record<string, any> = {
   },
   REGIONAL_ADMIN: {
     GET_ALL: `${ADMIN_SERVICE_URL}/regional-admins`,
-    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admins`,
+    GET_ONE: `${ADMIN_SERVICE_URL}/regional-admin/:id`,
     CREATE: `${ADMIN_SERVICE_URL}/regional-admin/:regionId`,
-    EDIT: `${ADMIN_SERVICE_URL}/regional-admins`,
-    DELETE: `${ADMIN_SERVICE_URL}/regional-admins`,
+    EDIT: `${ADMIN_SERVICE_URL}/regional-admin/:id/:regionId`,
+    DELETE: `${ADMIN_SERVICE_URL}/regional-admin/:id`,
+    BULK_DELETE: `${ADMIN_SERVICE_URL}/regional-admins/bulk-delete`,
   },
   DASHBOARD: {
     GET: `${ADMIN_SERVICE_URL}/report/dashboard`,

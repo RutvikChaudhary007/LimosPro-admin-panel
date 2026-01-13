@@ -15,6 +15,7 @@ import {
   bulkDeleteIPWhiteListById,
   bulkDeleteNewsById,
   bulkDeletePartnerById,
+  bulkDeleteRegionAdmins,
   bulkDeleteStaffMember,
   bulkDeleteTestimonial,
   bulkDeleteTrips,
@@ -934,27 +935,56 @@ const useCreateRegionAdminMutation = () =>
     },
   });
 
-const useEditRegionAdminMutation = () =>
-  useMutation({
+const useEditRegionAdminMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: editRegionAdmin,
     onSuccess: (data) => {
+      ["RegionAdmins"].forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useDeleteRegionAdminMutation = () =>
-  useMutation({
+const useDeleteRegionAdminMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: deleteRegionAdmin,
     onSuccess: (data) => {
+      ["RegionAdmins"].forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
+
+const useBulkDeleteRegionAdminsMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: bulkDeleteRegionAdmins,
+    onSuccess: (data) => {
+      ["RegionAdmins"].forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: [key] });
+      });
+      return data;
+    },
+    onError: (err: unknown) => {
+      console.error("Mutation error:", err);
+    },
+  });
+};
 
 /**
  * #####################################
@@ -1167,6 +1197,7 @@ export default {
   useCreateRegionAdminMutation,
   useEditRegionAdminMutation,
   useDeleteRegionAdminMutation,
+  useBulkDeleteRegionAdminsMutation,
   // Content Block
   useCreateContentBlockMutation,
   useEditContentBlockMutation,

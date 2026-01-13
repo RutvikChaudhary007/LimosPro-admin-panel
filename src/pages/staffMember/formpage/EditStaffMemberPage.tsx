@@ -29,8 +29,6 @@ const EditStaffMemberPage = () => {
     try {
       const staffData = { ...values };
 
-      if (staffData?.password?.includes("*")) delete staffData.password;
-
       await toastPromise(
         editStaffMember.mutateAsync({
           id: id as string,

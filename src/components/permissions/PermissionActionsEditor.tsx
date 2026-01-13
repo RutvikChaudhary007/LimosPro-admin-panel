@@ -43,30 +43,30 @@ const PermissionActionsEditor = ({
   const actionGroups = {
     "Basic Access": ["view", "read"],
     "CRUD Operations": ["create", "update", "delete", "bulkDelete", "restore"],
-    "Data Operations": ["export", "import"],
-    "Workflow Status": [
-      "approve",
-      "reject",
-      "assign",
-      "reassign",
-      "cancel",
-      "reschedule",
-    ],
-    "Visibility Scope": ["viewAll", "viewOwn", "viewRegion", "viewTeam"],
-    Financial: [
-      "viewPricing",
-      "editPricing",
-      "applyDiscount",
-      "viewRevenue",
-      "issueRefund",
-    ],
-    "System & Advanced": [
-      "manageSettings",
-      "managePermissions",
-      "impersonate",
-      "auditLogs",
-      "forceAction",
-    ],
+    // "Data Operations": ["export", "import"],
+    // "Workflow Status": [
+    //   "approve",
+    //   "reject",
+    //   "assign",
+    //   "reassign",
+    //   "cancel",
+    //   "reschedule",
+    // ],
+    // "Visibility Scope": ["viewAll", "viewOwn", "viewRegion", "viewTeam"],
+    // Financial: [
+    //   "viewPricing",
+    //   "editPricing",
+    //   "applyDiscount",
+    //   "viewRevenue",
+    //   "issueRefund",
+    // ],
+    // "System & Advanced": [
+    //   "manageSettings",
+    //   "managePermissions",
+    //   "impersonate",
+    //   "auditLogs",
+    //   "forceAction",
+    // ],
   };
 
   return (

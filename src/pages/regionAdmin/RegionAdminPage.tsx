@@ -1,7 +1,9 @@
-import { Plus, Search, Trash2 } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useFetchAllRegionAdmins } from "@/api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
@@ -12,7 +14,6 @@ import {
   type TRegionAdmin,
 } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -20,12 +21,14 @@ import {
 } from "@/components/ui/input-group";
 import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
 
 function RegionAdminPage() {
   const navigate = useNavigate();
   const [newPage, setNewPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [tableRef, setTableRef] = useState<any>(null);
   const { data, isFetching } = useFetchAllRegionAdmins({
     limit: perPage,
     page: newPage,
@@ -44,11 +47,24 @@ function RegionAdminPage() {
     },
     [navigate],
   );
-  const handleDelete = useCallback((id: string) => {
-    console.log(id);
-    // setData((prev) =>
-    //   prev.filter((row) => row.id != id))
-  }, []);
+  const deleteRegionAdmin = queries.useDeleteRegionAdminMutation();
+  const bulkDeleteRegionAdmins = queries.useBulkDeleteRegionAdminsMutation();
+
+  const handleDelete = useCallback(
+    async (id: string) => {
+      try {
+        await deleteRegionAdmin.mutateAsync(id);
+        toast.success("Regional admin deleted successfully");
+      } catch (e: any) {
+        toast.error(
+          e?.response?.data?.message ||
+            e?.message ||
+            "Failed to delete regional admin",
+        );
+      }
+    },
+    [deleteRegionAdmin],
+  );
   const handleAccess = useCallback((id: string) => {
     console.log("manage access:", id);
   }, []);
@@ -98,30 +114,17 @@ function RegionAdminPage() {
 
         <div className="w-full flex items-center justify-end gap-4">
           <PermissionGate permission="manageRegionAdmins" action="bulkDelete">
-            <span
-              className={`${
-                Object.keys(rowSelection).filter((k) => rowSelection[k])
-                  .length === 0
-                  ? "cursor-no-drop"
-                  : "cursor-pointer"
-              }`}
-            >
-              <Button
-                variant={"outlineBlack"}
-                disabled={
-                  Object.keys(rowSelection).filter((k) => rowSelection[k])
-                    .length === 0
-                }
-                onClick={() => {
-                  // console.log("data:", data);
-                  // console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span>Delete</span>
-                <Trash2 />
-              </Button>
-            </span>
+            <BulkDeleteBtn
+              rowSelection={rowSelection}
+              tableRef={tableRef}
+              bulkDeleteMutation={bulkDeleteRegionAdmins as any}
+              refetch={async () => {
+                return (await Promise.resolve({} as any)) as any;
+              }}
+              setRowSelection={setRowSelection}
+              title="Regional Admins"
+              descTitle="regional admins"
+            />
           </PermissionGate>
           <div className="">
             <InputGroup>
@@ -147,6 +150,7 @@ function RegionAdminPage() {
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue}
+            onTableReady={setTableRef}
           />
         )}
 

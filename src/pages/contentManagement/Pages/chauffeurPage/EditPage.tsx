@@ -16,20 +16,17 @@ export default function EditPage() {
   console.log(id);
   const handleSubmit = (data: any) => {
     try {
-      toastPromise(
-        Promise.resolve(data),
-        {
-          loading: "Updating chauffeur page...",
-          success: () => {
-            navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-            return "Chauffeur page updated successfully";
-          },
-          error: (e) =>
-            e instanceof AxiosError
-              ? e.response?.data?.message
-              : "Failed to update chauffeur page",
+      toastPromise(Promise.resolve(data), {
+        loading: "Updating chauffeur page...",
+        success: () => {
+          navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+          return "Chauffeur page updated successfully";
         },
-      );
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.message
+            : "Failed to update chauffeur page",
+      });
     } catch (error) {
       console.error(error);
     }

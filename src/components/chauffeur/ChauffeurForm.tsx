@@ -94,11 +94,16 @@ const formSchema = z.object({
   }),
   password: z
     .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Password cannot be empty or just whitespace.",
-    })
-    .min(8)
-    .max(32),
+    .optional()
+    .refine(
+      (value) => {
+        if (!value || value.trim() === "") return true;
+        return value.length >= 8 && value.length <= 32;
+      },
+      {
+        message: "Password must be 8-32 characters.",
+      },
+    ),
   gratuity: z.string().refine((value) => value.trim() !== "", {
     message: "Gratuity cannot be empty or just whitespace.",
   }),
@@ -178,7 +183,7 @@ const transformInitialData = (
     firstName: data?.userFirstName || "",
     lastName: data?.userLastName || "",
     email: data?.userEmail || "",
-    password: data?.password?.replaceAll(/./g, "*") || "*************",
+    password: "",
     businessAddress: data?.businessAddress,
     documents:
       data.documents?.map((file) => {
@@ -280,7 +285,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       formData.append("licenseNumber", values.licenseNumber);
       formData.append("vehicleId", values.vehicleId);
       formData.append("gratuity", values.gratuity);
-      if (values.password && values.password !== "*************") {
+      if (values.password && values.password.trim() !== "") {
         formData.append("password", values.password);
       }
       // console.log("filetypes...:", Array.isArray(values.documents));
