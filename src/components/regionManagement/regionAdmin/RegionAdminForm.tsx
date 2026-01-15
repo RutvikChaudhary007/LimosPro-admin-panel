@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { IconEye, IconEyeOff, IconLock } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import type { TRegionAdminRes } from "@/types/regionManagement/reginAdmin/regionAdmin.type";
+import { passwordValidation } from "@/utils/password-validation";
 
 export type TRegionAdmin = {
   firstName: string;
@@ -22,17 +23,6 @@ export type TRegionAdmin = {
   email: string;
   region: string;
   password: string;
-};
-
-const isStrongPassword = (val: string): boolean => {
-  return (
-    val.length >= 7 &&
-    val.length <= 25 &&
-    /[a-z]/.test(val) &&
-    /[A-Z]/.test(val) &&
-    /[0-9]/.test(val) &&
-    /[!@#$%^&*(),.?":{}|<>_\-+=[\]\\;/]/.test(val)
-  );
 };
 
 const getFormSchema = (isEditMode: boolean) =>
@@ -46,29 +36,8 @@ const getFormSchema = (isEditMode: boolean) =>
     email: z.email({ message: "Please enter a valid email address" }),
     region: z.string().min(1, "Region is required"),
     password: isEditMode
-      ? z
-          .string()
-          .optional()
-          .refine(
-            (val) => {
-              if (!val || val.trim() === "") return true;
-              return isStrongPassword(val);
-            },
-            {
-              message:
-                "Password must be 7-25 characters with uppercase, lowercase, number, and special character.",
-            },
-          )
-      : z.string().refine(
-          (val) => {
-            if (!val || val.trim() === "") return false;
-            return isStrongPassword(val);
-          },
-          {
-            message:
-              "Password must be 7-25 characters with uppercase, lowercase, number, and special character.",
-          },
-        ),
+      ? z.union([z.string().length(0), passwordValidation]).optional()
+      : passwordValidation,
   });
 
 type TRegionAdminFormProps = {
@@ -150,7 +119,7 @@ function RegionAdminForm({
   const passwordDescription = useMemo(() => {
     return isEditMode
       ? "Leave as is to keep current password, or enter a new one to change it"
-      : "Provide login password (min 7 chars, with uppercase, lowercase, number, special char)";
+      : "Choose a strong password with at least 8 characters.";
   }, [isEditMode]);
 
   return (
@@ -250,14 +219,14 @@ function RegionAdminForm({
                       placeholder={passwordPlaceholder}
                     />
                     <InputGroupAddon>
-                      <Lock />
+                      <IconLock />
                     </InputGroupAddon>
                     <InputGroupAddon
                       align="inline-end"
                       className="cursor-pointer"
                       onClick={() => setShowPassword(!showPassword)}
                     >
-                      {showPassword ? <EyeOff /> : <Eye />}
+                      {showPassword ? <IconEyeOff /> : <IconEye />}
                     </InputGroupAddon>
                   </InputGroup>
                 )}

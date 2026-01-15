@@ -1091,9 +1091,20 @@ export type TFleet = {
   capacity: number;
   documents: [];
   vehicleImages: [];
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null | undefined;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    gender: string;
+    password: string;
+    status: string;
+    roleName: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null | undefined;
+  };
 };
 
 export function getFleets(
@@ -1116,10 +1127,17 @@ export function getFleets(
       enableHiding: false,
     },
     {
-      accessorKey: "affiliateId",
+      accessorKey: "affiliate.user",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Partner Id" />
+        <DataTableColumnHeader column={column} title="Partner Name" />
       ),
+      cell: ({ row }) => {
+        return (
+          <div className="">
+            {row.original?.user?.firstName} {row.original?.user?.lastName}
+          </div>
+        );
+      },
       enableSorting: false,
     },
     {

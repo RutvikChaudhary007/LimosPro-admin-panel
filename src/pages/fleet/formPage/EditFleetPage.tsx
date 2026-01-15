@@ -1,8 +1,6 @@
-// @ts-nocheck
-
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import {
   useFetchAllPartner,
   useFetchAllRegions,
@@ -16,7 +14,6 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import type { TFleetData } from "@/types/fleet.type";
 
-const _dummnyData = {};
 const EditFleetPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,28 +22,20 @@ const EditFleetPage = () => {
   const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
     {},
   );
-  const { data, isFetching } = useFetchFleetById({ id });
+  const { data, isFetching } = useFetchFleetById({ id: id! });
   const editFleetMutation = queries.useEditfleetMutation();
   const handleEditFleet = async (data: TFleetData) => {
-    try {
-      await toastPromise(editFleetMutation.mutateAsync({ id, data }), {
-        loading: "Updating fleet...",
-        success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.FLEETS);
-          return "Fleet updated successfully";
-        },
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Failed to update fleet",
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unknown error occurred");
-      }
-    }
+    toastPromise(editFleetMutation.mutateAsync({ id: id!, data }), {
+      loading: "Updating fleet...",
+      success: (res) => {
+        if (res) navigate(constant.ROUTING_URLS.FLEETS);
+        return "Fleet updated successfully";
+      },
+      error: (e) =>
+        e instanceof AxiosError
+          ? e.response?.data?.data?.error || e.response?.data?.message
+          : "Failed to update fleet",
+    });
   };
 
   return (

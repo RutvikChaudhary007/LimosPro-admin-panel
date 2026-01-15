@@ -26,6 +26,7 @@ interface DataTableProps<TData, TValue> {
   globalFilter?: string;
   onGlobalFilterChange?: (value: string) => void;
   onTableReady?: (table: TanstackTable<TData>) => void;
+  emptyMessage?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -36,6 +37,7 @@ export function DataTable<TData, TValue>({
   globalFilter,
   onGlobalFilterChange,
   onTableReady,
+  emptyMessage = "No results.",
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -115,7 +117,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="text-center">
-                No results.
+                {emptyMessage}
               </TableCell>
             </TableRow>
           )}

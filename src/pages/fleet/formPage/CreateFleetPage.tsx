@@ -19,21 +19,17 @@ const CreateFleetPage = () => {
   const createFleetMutation = queries.useCreatefleetMutation();
   const handleCreateFleet = async (data: TFleetData) => {
     console.log("called handle create fleet!", data);
-    try {
-      toastPromise(await createFleetMutation.mutateAsync(data), {
-        loading: "Creating fleet...",
-        success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.FLEETS);
-          return "Yeah! fleet created successfully.";
-        },
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Opps! failed to create fleet.",
-      });
-    } catch (error) {
-      console.error("Error while creating fleet", error);
-    }
+    toastPromise(createFleetMutation.mutateAsync(data), {
+      loading: "Creating fleet...",
+      success: (res) => {
+        if (res) navigate(constant.ROUTING_URLS.FLEETS);
+        return "Yeah! fleet created successfully.";
+      },
+      error: (e) =>
+        e instanceof AxiosError
+          ? e.response?.data?.data?.error || e.response?.data?.message
+          : "Opps! failed to create fleet.",
+    });
   };
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">

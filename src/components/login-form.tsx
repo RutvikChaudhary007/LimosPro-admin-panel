@@ -9,19 +9,19 @@ import {
 } from "@tabler/icons-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-// import { BadgeCheck } from "lucide-react"
 import { Link } from "react-router-dom";
 import { z } from "zod";
+// import { BadgeCheck } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  // FieldSeparator,
 } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 // import { Alert, AlertTitle } from "./ui/alert"
+import { FormMessage } from "./ui/form";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
 const loginSchema = z.object({
@@ -81,13 +81,15 @@ export function LoginForm({
               id="email"
               type="email"
               placeholder="Email Address"
-              required
               {...form.register("email")}
             />
             <InputGroupAddon>
               <IconMail />
             </InputGroupAddon>
           </InputGroup>
+          {form.formState.errors.email && (
+            <FormMessage>{form.formState.errors.email.message}</FormMessage>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="password" className="text-base-primary gap-0">
@@ -99,7 +101,6 @@ export function LoginForm({
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              required
               {...form.register("password")}
             />
             <InputGroupAddon>
@@ -110,9 +111,12 @@ export function LoginForm({
               className="cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <IconEye /> : <IconEyeOff />}
+              {showPassword ? <IconEyeOff /> : <IconEye />}
             </InputGroupAddon>
           </InputGroup>
+          {form.formState.errors.password && (
+            <FormMessage>{form.formState.errors.password.message}</FormMessage>
+          )}
         </Field>
         <Field>
           <Button type="submit">{loading ? "Submitting..." : "Log In"}</Button>

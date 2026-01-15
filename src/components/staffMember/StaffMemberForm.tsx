@@ -15,6 +15,7 @@ import { useFetchAllRegions, useFetchAllStaffRoles } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { passwordValidation } from "@/utils/password-validation";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -32,27 +33,24 @@ import {
 } from "../ui/input-group";
 import { SelectDropDown } from "../ui/select";
 
-const formSchema = z.object({
-  firstName: z.string().min(2, {
-    message: "Frist Name must be at least 2 characters.",
-  }),
-  lastName: z.string().min(2, {
-    message: "Last Name must be at least 2 characters.",
-  }),
-  email: z.email({
-    message: "Email is required",
-  }),
-  password: z.string(),
-  //     password: z.string()
-  //   .min(8, { message: "Minimum length of 8" })
-  //   .refine((pw) => /[A-Z]/.test(pw), { message: "Needs uppercase" })
-  //   .refine((pw) => /[a-z]/.test(pw), { message: "Needs lowercase" })
-  //   .refine((pw) => /\d/.test(pw), { message: "Needs a number" })
-  //   .refine((pw) => /[!@#$%^&*]/.test(pw), { message: "Needs a special character" }),
-  role: z.string(),
-  region: z.string(),
-  // permissions: z.array(z.string()),
-});
+const getFormSchema = (isEdit: boolean) =>
+  z.object({
+    firstName: z.string().min(2, {
+      message: "Frist Name must be at least 2 characters.",
+    }),
+    lastName: z.string().min(2, {
+      message: "Last Name must be at least 2 characters.",
+    }),
+    email: z.email({
+      message: "Email is required",
+    }),
+    password: isEdit
+      ? z.union([z.string().length(0), passwordValidation]).optional()
+      : passwordValidation,
+    role: z.string(),
+    region: z.string(),
+    // permissions: z.array(z.string()),
+  });
 
 const StaffMemberForm = ({
   initialData,
@@ -60,11 +58,22 @@ const StaffMemberForm = ({
   disabledFields,
   type,
 }: TStaffMemberForm) => {
+  const isEdit = type?.includes("Edit");
   const { data: regionsData, isFetching: isFetchingRegions } =
     useFetchAllRegions({ DateRange: {} });
   const { data: rolesData, isFetching: isFetchingRoles } =
     useFetchAllStaffRoles();
   const [showPassword, setShowPassword] = useState(false);
+
+  const passwordPlaceholder = useMemo(() => {
+    return isEdit ? "Leave blank to keep current password" : "Password";
+  }, [isEdit]);
+
+  const passwordDescription = useMemo(() => {
+    return isEdit
+      ? "Leave as is to keep current password, or enter a new one to change it"
+      : "Choose a strong password with at least 8 characters.";
+  }, [isEdit]);
 
   const defaultValues = useMemo(() => {
     if (!initialData) {
@@ -100,14 +109,24 @@ const StaffMemberForm = ({
     };
   }, [initialData, rolesData]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: defaultValues,
     values: defaultValues,
   });
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        onSubmit={form.handleSubmit(async (data) => {
+          if (isEdit && (!data.password || data.password.trim() === "")) {
+            const { password: _, ...dataWithoutPassword } = data;
+            await onSubmit(dataWithoutPassword);
+          } else {
+            await onSubmit(data);
+          }
+        })}
+      >
         <Card>
           <CardBody>
             <CardHeader>
@@ -234,7 +253,7 @@ const StaffMemberForm = ({
                       <InputGroupInput
                         id="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
+                        placeholder={passwordPlaceholder}
                         {...field}
                       />
 
@@ -252,7 +271,7 @@ const StaffMemberForm = ({
                   )}
                 />
 
-                <FieldDescription>Enter your password.</FieldDescription>
+                <FieldDescription>{passwordDescription}</FieldDescription>
 
                 {form.formState.errors.password && (
                   <FormMessage>

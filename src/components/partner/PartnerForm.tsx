@@ -2,19 +2,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBuilding,
   IconEye,
-  IconEyeClosed,
+  IconEyeOff,
   IconId,
   IconLock,
   IconMail,
   IconPhone,
   IconUser,
 } from "@tabler/icons-react";
-import { type FC, useCallback, useState } from "react";
+import { type FC, useCallback, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
-import type { IEditPartnerRes, IPartner } from "@/types/partner/partner.type";
+import type { IEditPartnerRes } from "@/types/partner/partner.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { passwordValidation } from "@/utils/password-validation";
 import AddressInput from "../AddressInput";
 import { Button } from "../ui/button";
 import {
@@ -38,119 +39,118 @@ import FilesUpload from "../ui/upload-files";
 const maxSize = 10;
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/*"];
 
-const formSchema = z.object({
-  firstName: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "First name cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "First name must be at least 3 characters" }),
-  lastName: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Last name cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Last name must be at least 3 characters" }),
-  businessLocation: z.object({
-    latitude: z.number().nullable(),
-    longitude: z.number().nullable(),
-  }),
-  businessAddress: z
-    .string()
-    .trim()
-    .min(3, { message: "Business Address must be at least 3 characters" }),
-  companyName: z
-    .string()
-    .min(3, { message: "Company name must be at least 3 characters" }),
-  email: z.email(),
-  businessContactNumber: z
-    .string()
-    .min(1, { message: "Phone is required" })
-    .regex(/^[+]?[(]?\d+[)]?[-\s.]?[(]?\d+[)]?[-\s.]?\d+[-\s.]?\d+$/, {
-      message: "Invalid phone number format",
-    })
-    .refine(
-      (phone) => {
-        // Remove all non-digit characters and check length
-        const digitsOnly = phone.replaceAll(/\D/g, "");
-        return digitsOnly.length >= 10 && digitsOnly.length <= 15;
-      },
-      { message: "Phone number must have 10-15 digits" },
-    ),
-  entityType: z.string().min(1, { message: "Entity Type is required" }),
-  isChauffer: z.boolean(),
-  taxId: z.string().min(2, { message: "Tax id is required." }),
-  businessEmail: z.email(),
-  commissionRate: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Commission rate cannot be empty or just whitespace.",
-    })
-    .refine((value) => !Number.isNaN(Number(value)), {
-      message: "Commission rate must be a valid number.",
-    })
-    .refine((n) => Number(n) >= 0, { message: "Must be non‑negative" }),
-  password: z.string().refine((value) => value.trim() !== "", {
-    message: "Password cannot be empty or just whitespace.",
-  }),
-  documents: z
-    .array(z.any())
-    .refine(
-      (files) => {
-        // If we have existing documents (with url property), they're already validated
-        if (files.length > 0 && files.some((file) => file.url)) {
-          return true;
-        }
+const getFormSchema = (isEdit: boolean) =>
+  z.object({
+    firstName: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "First name cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "First name must be at least 3 characters" }),
+    lastName: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Last name cannot be empty or just whitespace.",
+      })
+      .min(3, { message: "Last name must be at least 3 characters" }),
+    businessLocation: z.object({
+      latitude: z.number().nullable(),
+      longitude: z.number().nullable(),
+    }),
+    businessAddress: z
+      .string()
+      .trim()
+      .min(3, { message: "Business Address must be at least 3 characters" }),
+    companyName: z
+      .string()
+      .min(3, { message: "Company name must be at least 3 characters" }),
+    email: z.email(),
+    businessContactNumber: z
+      .string()
+      .min(1, { message: "Phone is required" })
+      .regex(/^[+]?[(]?\d+[)]?[-\s.]?[(]?\d+[)]?[-\s.]?\d+[-\s.]?\d+$/, {
+        message: "Invalid phone number format",
+      })
+      .refine(
+        (phone) => {
+          // Remove all non-digit characters and check length
+          const digitsOnly = phone.replaceAll(/\D/g, "");
+          return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+        },
+        { message: "Phone number must have 10-15 digits" },
+      ),
+    entityType: z.string().min(1, { message: "Entity Type is required" }),
+    isChauffer: z.boolean(),
+    taxId: z.string().min(2, { message: "Tax id is required." }),
+    businessEmail: z.email(),
+    commissionRate: z
+      .string()
+      .refine((value) => value.trim() !== "", {
+        message: "Commission rate cannot be empty or just whitespace.",
+      })
+      .refine((value) => !Number.isNaN(Number(value)), {
+        message: "Commission rate must be a valid number.",
+      })
+      .refine((n) => Number(n) >= 0, { message: "Must be non‑negative" }),
+    password: isEdit
+      ? z.union([z.string().length(0), passwordValidation]).optional()
+      : passwordValidation,
+    documents: z
+      .array(z.any())
+      .refine(
+        (files) => {
+          // If we have existing documents (with url property), they're already validated
+          if (files.length > 0 && files.some((file) => file.url)) {
+            return true;
+          }
 
-        // For new file uploads, validate length
-        return files.length >= 1;
-      },
-      {
-        message: "Select at least 1 file",
-      },
-    )
-    .refine((files) => files.length <= 4, {
-      message: "You can upload up to 4 files",
-    })
-    .refine(
-      (files) => {
-        // Only check size for actual File objects, not for existing document objects
-        const fileObjects = files.filter((f) => f instanceof File);
-        return (
-          fileObjects.length === 0 ||
-          fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
-        );
-      },
-      {
-        message: `Max size ${maxSize / (1024 * 1024)}MB`,
-      },
-    )
-    .refine(
-      (files) => {
-        // Only check mime types for actual File objects, not for existing document objects
-        const fileObjects = files.filter((f) => f instanceof File);
-        return (
-          fileObjects.length === 0 ||
-          fileObjects.every((f) =>
-            ALLOWED_MIME_TYPES.some((allowed) => {
-              if (allowed.endsWith("/*")) {
-                return f.type.startsWith(allowed.replace("/*", ""));
-              }
-              return f.type === allowed;
-            }),
-          )
-        );
-      },
-      {
-        message: "Invalid file types detected",
-      },
-    ),
-  // password: z.string().min(10, { message: "Password must be at least 10 characters" }),
-  status: z.string().optional(),
-  // status: z.union([z.string(), z.literal("")]).optional(),
-});
+          // For new file uploads, validate length
+          return files.length >= 1;
+        },
+        {
+          message: "Select at least 1 file",
+        },
+      )
+      .refine((files) => files.length <= 4, {
+        message: "You can upload up to 4 files",
+      })
+      .refine(
+        (files) => {
+          // Only check size for actual File objects, not for existing document objects
+          const fileObjects = files.filter((f) => f instanceof File);
+          return (
+            fileObjects.length === 0 ||
+            fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
+          );
+        },
+        {
+          message: `Max size ${maxSize / (1024 * 1024)}MB`,
+        },
+      )
+      .refine(
+        (files) => {
+          // Only check mime types for actual File objects, not for existing document objects
+          const fileObjects = files.filter((f) => f instanceof File);
+          return (
+            fileObjects.length === 0 ||
+            fileObjects.every((f) =>
+              ALLOWED_MIME_TYPES.some((allowed) => {
+                if (allowed.endsWith("/*")) {
+                  return f.type.startsWith(allowed.replace("/*", ""));
+                }
+                return f.type === allowed;
+              }),
+            )
+          );
+        },
+        {
+          message: "Invalid file types detected",
+        },
+      ),
+    status: z.string().optional(),
+  });
 
-type TPartnerForm = z.infer<typeof formSchema>;
+type TPartnerForm = z.infer<ReturnType<typeof getFormSchema>>;
 interface PartnerFormProps {
   initialData?: IEditPartnerRes;
   onSubmit: (data: FormData) => void;
@@ -232,7 +232,7 @@ const transformInitialData = (
     documents: data.documents || [],
     // Make sure status is properly normalized and matches the select options
     status: data?.status ? data.status.toLowerCase().trim() : "",
-  };
+  } as TPartnerForm;
 };
 
 const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
@@ -319,8 +319,21 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
   const [addressObj, setAddressObj] = useState<IAddressObj>();
   const [showPassword, setShowPassword] = useState(false);
 
+  const passwordPlaceholder = useMemo(() => {
+    return isEdit
+      ? "Leave blank to keep current password"
+      : "e.g., mysecretpasswd123";
+  }, [isEdit]);
+
+  const passwordDescription = useMemo(() => {
+    return isEdit
+      ? "Leave as is to keep current password, or enter a new one to change it"
+      : "Choose a strong password with at least 8 characters.";
+  }, [isEdit]);
+
+  const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
   const form = useForm<TPartnerForm>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(schema),
     defaultValues: transformInitialData(initialData) ?? {
       firstName: "",
       lastName: "",
@@ -357,7 +370,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
     [form],
   );
 
-  const handleFormSubmit = async (values: IPartner) => {
+  const handleFormSubmit = async (values: TPartnerForm) => {
     try {
       const formData = new FormData();
       if (addressObj) {
@@ -371,8 +384,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
       formData.append("firstName", values.firstName);
       formData.append("lastName", values.lastName);
       formData.append("email", values.email);
-      // Only append password on create, not on edit
-      if (!isEdit) {
+      // Append password if provided (handles both Create and optional Edit)
+      if (values.password && values.password.trim() !== "") {
         formData.append("password", values.password);
       }
       formData.append("companyName", values.companyName);
@@ -534,52 +547,48 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                 )}
               </Field>
 
-              {!isEdit && (
-                <Field>
-                  <FieldLabel
-                    htmlFor="password"
-                    className="text-base-black gap-0"
-                  >
-                    Password
-                  </FieldLabel>
+              <Field>
+                <FieldLabel
+                  htmlFor="password"
+                  className="text-base-black gap-0"
+                >
+                  Password
+                </FieldLabel>
 
-                  <Controller
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <InputGroup>
-                        <InputGroupInput
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="e.g., mysecretpasswd123"
-                          disabled={isFieldDisabled(disabledFields, "password")}
-                          {...field}
-                        />
-                        <InputGroupAddon>
-                          <IconLock />
-                        </InputGroupAddon>
-                        <InputGroupAddon
-                          align="inline-end"
-                          className="cursor-pointer"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <IconEye /> : <IconEyeClosed />}
-                        </InputGroupAddon>
-                      </InputGroup>
-                    )}
-                  />
-
-                  <FieldDescription>
-                    Choose a strong password with at least 8 characters.
-                  </FieldDescription>
-
-                  {form.formState.errors.password && (
-                    <FormMessage>
-                      {form.formState.errors.password.message}
-                    </FormMessage>
+                <Controller
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={passwordPlaceholder}
+                        disabled={isFieldDisabled(disabledFields, "password")}
+                        {...field}
+                      />
+                      <InputGroupAddon>
+                        <IconLock />
+                      </InputGroupAddon>
+                      <InputGroupAddon
+                        align="inline-end"
+                        className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <IconEyeOff /> : <IconEye />}
+                      </InputGroupAddon>
+                    </InputGroup>
                   )}
-                </Field>
-              )}
+                />
+
+                <FieldDescription>{passwordDescription}</FieldDescription>
+
+                {form.formState.errors.password && (
+                  <FormMessage>
+                    {form.formState.errors.password.message}
+                  </FormMessage>
+                )}
+              </Field>
 
               <Field>
                 <FieldLabel htmlFor="email" className="text-base-black gap-0">
@@ -982,7 +991,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                   setAddressObj(undefined);
                 }}
               >
-                Clear Alls
+                Clear All
               </Button>
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Saving..." : "Save Details"}

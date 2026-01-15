@@ -135,10 +135,14 @@ const useLoginMutation = () => {
  * @returns
  */
 
-const useCreatefleetMutation = () =>
-  useMutation({
+const useCreatefleetMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createFleet,
-    onSuccess: (res) => res,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      return res;
+    },
     onError: (err: unknown) => {
       let errorMessage = "An unexpected error occurred";
 
@@ -159,11 +163,16 @@ const useCreatefleetMutation = () =>
       // });
     },
   });
+};
 
-const useEditfleetMutation = () =>
-  useMutation({
+const useEditfleetMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editFleetById,
-    onSuccess: (res) => res,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      return res;
+    },
     onError: (err: unknown) => {
       let errorMessage = "An unexpected error occurred";
 
@@ -184,11 +193,14 @@ const useEditfleetMutation = () =>
       // });
     },
   });
+};
 
-const useDeletefleetMutation = (refetch: TRefetch) =>
-  useMutation({
+const useDeletefleetMutation = (refetch: TRefetch) => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteFleet,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
       refetch();
     },
     onError: (err: unknown) => {
@@ -211,11 +223,16 @@ const useDeletefleetMutation = (refetch: TRefetch) =>
       // });
     },
   });
+};
 
-const useBulkDeletefleetMutation = () =>
-  useMutation({
+const useBulkDeletefleetMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteFleet,
-    onSuccess: (res) => res,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      return res;
+    },
     onError: (err: unknown) => {
       let errorMessage = "An unexpected error occurred";
 
@@ -236,6 +253,7 @@ const useBulkDeletefleetMutation = () =>
       // });
     },
   });
+};
 
 /**
  * #########################
@@ -773,16 +791,19 @@ const useBulkDeleteIPWhiteListMutation = () =>
  * @returns
  */
 
-const useBulkDeleteTripsMutation = () =>
-  useMutation({
+const useBulkDeleteTripsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteTrips,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["Trips"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * #####################################

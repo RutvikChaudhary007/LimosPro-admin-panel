@@ -18,6 +18,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Form, FormMessage } from "@/components/ui/form";
+import { useUserStore } from "@/stores/useAuthStore";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { styledLog } from "@/utils/styledLog";
@@ -451,6 +452,31 @@ const FleetForm = ({
     }
   }, [initialData, form]);
 
+  const { user } = useUserStore();
+  const userRoles = Array.isArray(user?.roles)
+    ? user?.roles
+    : user?.role
+      ? [user.role]
+      : [];
+  const isAffiliate = userRoles.some(
+    (role) =>
+      role === "Affiliate" ||
+      (typeof role === "object" && role.roleName === "Affiliate"),
+  );
+
+  useEffect(() => {
+    if (isAffiliate && affiliateData?.affiliates && !initialData) {
+      const currentAffiliate = affiliateData.affiliates.find(
+        (a) => a.userId === user?.id,
+      );
+      if (currentAffiliate) {
+        form.setValue("affiliateId", currentAffiliate.id, {
+          shouldValidate: true,
+        });
+      }
+    }
+  }, [isAffiliate, affiliateData, user, form, initialData]);
+
   const handleFilesChange = (
     files: FileList | null,
     onChange: (files: File[]) => void,
@@ -486,56 +512,52 @@ const FleetForm = ({
   // const fileCount = documents?.length || 0;
 
   const handleFormSubmit = async (data: TFleetForm) => {
-    try {
-      // console.log("description:", typeof data?.year);
-      // console.log("description:",)
-      const formData = new FormData();
+    // console.log("description:", typeof data?.year);
+    // console.log("description:",)
+    const formData = new FormData();
 
-      if (data?.zonePricingEnabled) {
-        if (data?.zonePricings && data?.zonePricings?.length > 0) {
-          formData.append("zonePricings", JSON.stringify(data?.zonePricings));
-        } else {
-          formData.append("zonePricings", null);
-        }
+    if (data?.zonePricingEnabled) {
+      if (data?.zonePricings && data?.zonePricings?.length > 0) {
+        formData.append("zonePricings", JSON.stringify(data?.zonePricings));
+      } else {
+        formData.append("zonePricings", null);
       }
-
-      formData.append("zonePricingEnabled", data?.zonePricingEnabled);
-      formData.append("affiliateId", data?.affiliateId);
-      formData.append("regionId", data?.regionId);
-      formData.append("bagsCapacity", data?.bagsCapacity);
-      formData.append("brand", data?.brand);
-      formData.append("model", data?.model);
-      formData.append("capacity", data?.capacity);
-      formData.append("color", data?.color);
-      formData.append("description", data?.description);
-      formData.append("vehicleType", data?.vehicleType);
-      formData.append("plateNumber", data?.plateNumber);
-      formData.append("year", String(data?.year));
-      formData.append("pricePerMinute", data?.pricePerMinute);
-      formData.append("pricePerMile", data?.pricePerMile);
-      formData.append("cityToCityHourlyRate", data?.cityToCityHourlyRate);
-      formData.append("minimumFare", data?.minFair);
-      formData.append("extraTime", data?.extraTime ?? 15);
-      formData.append("ratePerHour", data?.pricePerHour);
-      formData.append("minHours", data?.minHour);
-      formData.append("basePrice", data?.baseFair);
-
-      data?.documents?.forEach((file) => {
-        if (file instanceof File) {
-          console.log("file:", file instanceof File);
-          formData.append(`documents`, file);
-        }
-      });
-      data?.vehicleImages?.forEach((file) => {
-        if (file instanceof File) {
-          formData.append(`vehicleImages`, file);
-        }
-      });
-      console.log("formData:", formData);
-      await onSubmit(formData);
-    } catch (error) {
-      console.error("Error:", error);
     }
+
+    formData.append("zonePricingEnabled", data?.zonePricingEnabled);
+    formData.append("affiliateId", data?.affiliateId);
+    formData.append("regionId", data?.regionId);
+    formData.append("bagsCapacity", data?.bagsCapacity);
+    formData.append("brand", data?.brand);
+    formData.append("model", data?.model);
+    formData.append("capacity", data?.capacity);
+    formData.append("color", data?.color);
+    formData.append("description", data?.description);
+    formData.append("vehicleType", data?.vehicleType);
+    formData.append("plateNumber", data?.plateNumber);
+    formData.append("year", String(data?.year));
+    formData.append("pricePerMinute", data?.pricePerMinute);
+    formData.append("pricePerMile", data?.pricePerMile);
+    formData.append("cityToCityHourlyRate", data?.cityToCityHourlyRate);
+    formData.append("minimumFare", data?.minFair);
+    formData.append("extraTime", data?.extraTime ?? 15);
+    formData.append("ratePerHour", data?.pricePerHour);
+    formData.append("minHours", data?.minHour);
+    formData.append("basePrice", data?.baseFair);
+
+    data?.documents?.forEach((file) => {
+      if (file instanceof File) {
+        console.log("file:", file instanceof File);
+        formData.append(`documents`, file);
+      }
+    });
+    data?.vehicleImages?.forEach((file) => {
+      if (file instanceof File) {
+        formData.append(`vehicleImages`, file);
+      }
+    });
+    console.log("formData:", formData);
+    await onSubmit(formData);
   };
   // const [statusValue, setStatusValue] = useState<{ status: string, Partner: string }>({
   //     status: "",
@@ -607,9 +629,13 @@ const FleetForm = ({
                     ) : (
                       <SelectDropDown
                         placeholder="Select Partner"
+                        disabled={
+                          isAffiliate ||
+                          isFieldDisabled(disabledFields, "affiliateId")
+                        }
                         items={
                           affiliateData?.affiliates?.map((a) => ({
-                            label: a.companyName,
+                            label: `${a.user.firstName} ${a.user.lastName}`,
                             value: a.id,
                           })) || []
                         }

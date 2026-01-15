@@ -151,6 +151,7 @@ function TripsPage(): JSX.Element {
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue}
+            emptyMessage="No trips found"
           />
         )}
 
