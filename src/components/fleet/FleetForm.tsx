@@ -91,22 +91,22 @@ const formSchema = z
       .refine((value) => value.trim() !== "", {
         message: "extra time cannot be empty or just whitespace.",
       })
-      .min(3, { message: "Affiliate id must be at least 3 characters" }),
+      .min(3, { message: "Partner id must be at least 3 characters" }),
     regionId: z
       .string()
       .refine((value) => value.trim() !== "", {
-        message: "Affiliate id cannot be empty or just whitespace.",
+        message: "Partner id cannot be empty or just whitespace.",
       })
-      .min(3, { message: "Affiliate id must be at least 3 characters" }),
+      .min(3, { message: "Partner id must be at least 3 characters" }),
     affiliateId: z
       .string()
       .refine((value) => value.trim() !== "", {
-        message: "Affiliate id cannot be empty or just whitespace.",
+        message: "Partner id cannot be empty or just whitespace.",
       })
-      .min(3, { message: "Affiliate id must be at least 3 characters" }),
+      .min(3, { message: "Partner id must be at least 3 characters" }),
     // zonePricings: z.string().refine(value => value.trim() !== "", {
     //     message: "zonePricings id cannot be empty or just whitespace.",
-    // }).min(3, { message: "Affiliate id must be at least 3 characters" }),
+    // }).min(3, { message: "Partner id must be at least 3 characters" }),
     model: z
       .string()
       .refine((value) => value.trim() !== "", {
@@ -355,9 +355,9 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
 
 const FleetForm = ({
   initialData,
-  isAffiliateFetching,
+  isPartnerFetching,
   isRegionFetching,
-  affiliateData,
+  partnerData,
   RegionData,
   onSubmit,
   disabledFields,
@@ -537,9 +537,9 @@ const FleetForm = ({
       console.error("Error:", error);
     }
   };
-  // const [statusValue, setStatusValue] = useState<{ status: string, affiliate: string }>({
+  // const [statusValue, setStatusValue] = useState<{ status: string, Partner: string }>({
   //     status: "",
-  //     affiliate: ""
+  //     Partner: ""
   // });
   return (
     <Form {...form}>
@@ -595,7 +595,7 @@ const FleetForm = ({
                   htmlFor="affiliateId"
                   className="text-base-black gap-0"
                 >
-                  Affiliate
+                  Partner
                 </FieldLabel>
 
                 <Controller
@@ -606,7 +606,7 @@ const FleetForm = ({
                       <Spinner />
                     ) : (
                       <SelectDropDown
-                        placeholder="Select Affiliate"
+                        placeholder="Select Partner"
                         items={
                           affiliateData?.affiliates?.map((a) => ({
                             label: a.companyName,
@@ -620,7 +620,7 @@ const FleetForm = ({
                   }
                 />
 
-                <FieldDescription>Select Affiliate</FieldDescription>
+                <FieldDescription>Select Partner</FieldDescription>
 
                 {form.formState.errors.affiliateId && (
                   <FormMessage>

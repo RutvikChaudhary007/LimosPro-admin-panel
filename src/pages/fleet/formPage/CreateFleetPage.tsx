@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useFetchAllAffiliate, useFetchAllRegions } from "@/api";
+import { useFetchAllPartner, useFetchAllRegions } from "@/api";
 import FleetForm from "@/components/fleet/FleetForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { toastPromise } from "@/hooks/use-toast";
@@ -11,8 +11,8 @@ import type { TFleetData } from "@/types/fleet.type";
 
 const CreateFleetPage = () => {
   const navigate = useNavigate();
-  const { data: AffiliateData, isFetching: isAffiliateFetching } =
-    useFetchAllAffiliate({ DateRange: undefined });
+  const { data: PartnerData, isFetching: isPartnerFetching } =
+    useFetchAllPartner({ DateRange: undefined });
   const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
     {},
   );
@@ -53,8 +53,8 @@ const CreateFleetPage = () => {
       />
       <FleetForm
         onSubmit={handleCreateFleet}
-        isAffiliateFetching={isAffiliateFetching}
-        affiliateData={AffiliateData}
+        isPartnerFetching={isPartnerFetching}
+        partnerData={PartnerData}
         RegionData={RegionData}
         isRegionFetching={isRegionFetching}
         type={"Create Fleet"}

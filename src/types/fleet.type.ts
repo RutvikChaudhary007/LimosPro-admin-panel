@@ -1,13 +1,13 @@
-import type { TAffiliate } from "./partner/partner.type";
+import type { TPartner } from "./partner/partner.type";
 
 export type TFleetData = {
   id: string;
 };
 export interface IFleetFormProps {
   initialData?: TFleetData[];
-  isAffiliateFetching?: boolean;
+  isPartnerFetching?: boolean;
   isRegionFetching?: boolean;
-  affiliateData?: TAffiliate;
+  partnerData?: TPartner;
   RegionData?: unknown;
   onSubmit: (data: TFleetData) => Promise<void>;
   disabledFields?: string[];

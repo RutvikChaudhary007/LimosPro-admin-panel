@@ -289,7 +289,7 @@ const UserForm = ({
                       value={field.value}
                       onValueChange={(v) => {
                         field.onChange(v);
-                        // setStatusValue({ ...statusValue, affiliate: v })
+                        // setStatusValue({ ...statusValue, Partner: v })
                       }}
                       defaultValue={field.value}
                     >
@@ -297,7 +297,7 @@ const UserForm = ({
                         <SelectTrigger className="cursor-pointer w-full placeholder-[#E6E6E6] font-medium">
                           <SelectValue
                             className="before:placeholder:text-[#E6E6E6] font-medium"
-                            placeholder="select affiliate"
+                            placeholder="select Partner"
                           />
                         </SelectTrigger>
                       </FormControl>
@@ -368,7 +368,7 @@ const UserForm = ({
                     status: "",
                   });
                   // setGender("");
-                  // setStatusValue({ status: "", affiliate: "" });
+                  // setStatusValue({ status: "", Partner: "" });
                 }}
               >
                 Clear Alls

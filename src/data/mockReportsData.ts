@@ -69,7 +69,7 @@ export const mockTickets: SupportTicket[] = [
     category: "APP_ISSUE",
     status: "IN_PROGRESS",
     region: "India",
-    raisedBy: "Sarah Smith (Affiliate)",
+    raisedBy: "Sarah Smith (Partner)",
     createdAt: "2024-12-29",
   },
   {
@@ -79,7 +79,7 @@ export const mockTickets: SupportTicket[] = [
     category: "SERVICE",
     status: "RESOLVED",
     region: "Dubai",
-    raisedBy: "Luxury Transport (Affiliate)",
+    raisedBy: "Luxury Transport (Partner)",
     createdAt: "2024-12-20",
   },
   {
@@ -114,7 +114,7 @@ export const mockTickets: SupportTicket[] = [
   },
 ];
 
-// Mock Affiliate Stats
+// Mock Partner Stats
 export const mockAffiliateStats: AffiliateStat[] = [
   { month: "Jan", newSignups: 5, totalActive: 45 },
   { month: "Feb", newSignups: 8, totalActive: 52 },

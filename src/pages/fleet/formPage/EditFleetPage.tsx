@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
-  useFetchAllAffiliate,
+  useFetchAllPartner,
   useFetchAllRegions,
   useFetchFleetById,
 } from "@/api";
@@ -20,8 +20,8 @@ const _dummnyData = {};
 const EditFleetPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: AffiliateData, isFetching: isAffiliateFetching } =
-    useFetchAllAffiliate({ DateRange: undefined });
+  const { data: PartnerData, isFetching: isPartnerFetching } =
+    useFetchAllPartner({ DateRange: undefined });
   const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
     {},
   );
@@ -71,8 +71,8 @@ const EditFleetPage = () => {
         <FleetForm
           initialData={data}
           onSubmit={handleEditFleet}
-          isAffiliateFetching={isAffiliateFetching}
-          affiliateData={AffiliateData}
+          isPartnerFetching={isPartnerFetching}
+          partnerData={PartnerData}
           RegionData={RegionData}
           isRegionFetching={isRegionFetching}
           type={"Edit Fleet"}

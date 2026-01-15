@@ -27,7 +27,7 @@ const data = {
     dateOfBirth: "20-08-2000",
   },
   phone: "+1-424-231-6798",
-  affiliate: "NoahAnderson",
+  Partner: "NoahAnderson",
   description:
     "Sedan Car 4 Doors. Clean In and out. 2 Rows of Seats. Fit for up to 3 Adults with 2 Check-In Bags, and 1 Carry-On Bag.",
   status: "Active",
@@ -179,7 +179,7 @@ const ViewRefundPage = () => {
                 Chauffeur:
               </Label>
               <Link
-                to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", data.affiliate)}`}
+                to={`${constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", data.Partner)}`}
                 className="underline"
               >
                 <span className="text-[#3A3A3A] font-medium">

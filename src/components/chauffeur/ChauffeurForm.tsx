@@ -81,7 +81,7 @@ const formSchema = z.object({
   ]),
   email: z.email(),
   affiliateId: z.string().refine((value) => value.trim() !== "", {
-    message: "Affiliate Id cannot be empty or just whitespace.",
+    message: "Partner Id cannot be empty or just whitespace.",
   }),
   taxIdNumber: z.string().refine((value) => value.trim() !== "", {
     message: "Tax Id Number cannot be empty or just whitespace.",
@@ -334,7 +334,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
             <p className="text-gray-600">
               You do not have the required role to create or manage chauffeurs.
               Only users with the{" "}
-              <strong className="text-base-black">Affiliate</strong> role are
+              <strong className="text-base-black">Partner</strong> role are
               authorized to access this page.
             </p>
             <Button asChild variant="outlinePrimary" className="mt-4 w-full">

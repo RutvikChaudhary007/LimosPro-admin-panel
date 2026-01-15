@@ -162,12 +162,12 @@ export default function AdminReports({ reports }: { reports: any }) {
         </CardBody>
       </Card>
 
-      {/* Affiliate Stats or Other Metrics */}
+      {/* Partner Stats or Other Metrics */}
       <Card className="col-span-3">
         <CardBody>
           <CardHeader>
-            <CardTitle>Affiliate Growth</CardTitle>
-            <CardDescription>New affiliate signups per month.</CardDescription>
+            <CardTitle>Partner Growth</CardTitle>
+            <CardDescription>New Partner signups per month.</CardDescription>
           </CardHeader>
           <CardContent>
             <Line

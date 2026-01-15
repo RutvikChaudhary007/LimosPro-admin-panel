@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useFetchAllReports } from "@/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminReports from "./AdminReports";
-import AffiliateReports from "./AffiliateReports";
+import PartnerReports from "./PartnerReports";
 
 export default function ReportsLayout() {
   const [activeTab, setActiveTab] = useState("admin");
@@ -17,6 +17,13 @@ export default function ReportsLayout() {
           <p className="text-gray-500 mt-1">
             View insights on disputes, revenue, and compliance.
           </p>
+          <p className="text-gray-500 mt-1">
+            <strong>
+              {" "}
+              <span className="text-red-500">*</span>This is just for demo
+              purpose.
+            </strong>
+          </p>
         </div>
       </div>
 
@@ -27,15 +34,15 @@ export default function ReportsLayout() {
       >
         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
           <TabsTrigger value="admin">Admin Reports</TabsTrigger>
-          <TabsTrigger value="affiliate">Affiliate Reports</TabsTrigger>
+          <TabsTrigger value="Partner">Partner Reports</TabsTrigger>
         </TabsList>
 
         <TabsContent value="admin" className="space-y-4">
           <AdminReports reports={reports} />
         </TabsContent>
 
-        <TabsContent value="affiliate" className="space-y-4">
-          <AffiliateReports reports={reports} />
+        <TabsContent value="Partner" className="space-y-4">
+          <PartnerReports reports={reports} />
         </TabsContent>
       </Tabs>
     </div>

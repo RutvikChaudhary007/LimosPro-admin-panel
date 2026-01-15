@@ -8,7 +8,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import IntlTelInput from "intl-tel-input/react";
-import { useFetchAllAffiliate } from "@/api";
+import { useFetchAllPartner } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
 import "intl-tel-input/styles";
@@ -61,7 +61,7 @@ const formSchema = z.object({
   email: z.email(),
   affiliateId: z
     .string()
-    .min(3, { message: "Affiliate ID must be at least 3 characters" }),
+    .min(3, { message: "Partner ID must be at least 3 characters" }),
   phone: z
     .string()
     .refine((value) => value.trim() !== "", {
@@ -83,8 +83,8 @@ const CrewMemberForm = ({
   disabledFields?: [];
   type: string;
 }) => {
-  const { data: affiliateData, isFetching: isFetchingAffiliate } =
-    useFetchAllAffiliate({ DateRange: {} });
+  const { data: partnerData, isFetching: isFetchingPartner } =
+    useFetchAllPartner({ DateRange: {} });
   const transformInitialData = (data?: z.infer<typeof formSchema>) => {
     if (!data) return undefined;
     // console.log("edit chauffeur formdata:>",data)
@@ -334,15 +334,15 @@ const CrewMemberForm = ({
                 )}
               </Field>
 
-              {isFetchingAffiliate ? (
+              {isFetchingPartner ? (
                 <Spinner />
-              ) : affiliateData?.affiliates.length > 0 ? (
+              ) : partnerData?.affiliates.length > 0 ? (
                 <Field>
                   <FieldLabel
                     htmlFor="affiliateId"
                     className="text-base-black gap-0"
                   >
-                    Select Affiliate
+                    Select Partner
                   </FieldLabel>
 
                   <Controller
@@ -350,9 +350,9 @@ const CrewMemberForm = ({
                     name="affiliateId"
                     render={({ field }) => (
                       <SelectDropDown
-                        placeholder="Select Affiliate"
+                        placeholder="Select Partner"
                         items={
-                          affiliateData?.affiliates?.map((a) => ({
+                          partnerData?.affiliates?.map((a) => ({
                             label: a.companyName,
                             value: a.id,
                           })) || []
@@ -363,7 +363,7 @@ const CrewMemberForm = ({
                     )}
                   />
 
-                  <FieldDescription>Select an affiliate.</FieldDescription>
+                  <FieldDescription>Select an Partner.</FieldDescription>
 
                   {form.formState.errors.affiliateId && (
                     <FormMessage>
@@ -373,7 +373,7 @@ const CrewMemberForm = ({
                 </Field>
               ) : (
                 <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
-                  <Label>Add Affiliate</Label>
+                  <Label>Add Partner</Label>
                 </Link>
               )}
             </CardContent>
