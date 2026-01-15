@@ -16,11 +16,11 @@ export const constant = {
     CREATE_REGION_ADMIN: "/region-management/regional-admins/create",
     EDIT_REGION_ADMIN: "/region-management/regional-admins/:id/edit",
 
-    // Affiliate URLS
-    AFFILIATE: "/affiliate",
-    CREATE_AFFILIATE: "/affiliate/create",
-    EDIT_AFFILIATE: "/affiliate/:id/edit",
-    VIEW_AFFILIATE: "/affiliate/:id",
+    // Partner URLS
+    PARTNER: "/partner",
+    CREATE_PARTNER: "/partner/create",
+    EDIT_PARTNER: "/partner/:id/edit",
+    VIEW_PARTNER: "/partner/:id",
 
     // Chauffeur URLS
     CHAUFFEUR: "/chauffeur",
@@ -112,11 +112,6 @@ export const constant = {
     IP_WHITE_LIST: "/ip-access",
     CREATE_IP_WHITE_LIST: "/ip-access/create",
     EDIT_IP_WHITE_LIST: "/ip-access/:id/edit",
-
-    // PARTNERS URLS
-    OUR_PARTNERS: "/our-partners",
-    CREATE_OUR_PARTNERS: "/our-partners/create",
-    EDIT_OUR_PARTNERS: "/our-partners/:id/edit",
 
     // SETTINGS URLS
     SETTINGS: "/settings",

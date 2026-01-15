@@ -120,7 +120,7 @@ function BookingPage() {
   const handleExportCsv = () => {
     const headers = [
       "ID",
-      "Affiliate Id",
+      "Partner Id",
       "bookingType",
       "scheduledTime",
       "price",
