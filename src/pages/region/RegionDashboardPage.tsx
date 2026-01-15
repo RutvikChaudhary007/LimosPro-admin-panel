@@ -1,10 +1,12 @@
 //@ts-nocheck
 
+import { AxiosError } from "axios";
 import { Plus, Search, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchAllRegions } from "@/api";
+import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PermissionGate } from "@/components/permissions";
@@ -39,37 +41,48 @@ function RegionDashboardPage() {
     setCPage(currentPage);
   }, [currentPage]);
 
-  const handleEdit = (id: string) => {
-    console.log("Edit:", id);
-    navigate(constant.ROUTING_URLS.EDIT_REGION.replace(":id", id));
-  };
+  const handleEdit = useCallback(
+    (id: string) => {
+      console.log("Edit:", id);
+      navigate(constant.ROUTING_URLS.EDIT_REGION.replace(":id", id));
+    },
+    [navigate],
+  );
   const deleteRegion = queries.useDeleteRegionMutation();
-  const handleDelete = (id: string) => {
-    try {
-      toastPromise(deleteRegion.mutateAsync(id), {
-        loading: "Deleting Region...",
-        success: (res) => {
-          if (res?.status === true) refetch();
-          return "Yeah! Region deleted successfully";
-        },
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Opps! Error deleting region",
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Opps! An unexpected error occured");
+  const bulkDeleteRegions = queries.useBulkDeleteRegionsMutation();
+  const handleDelete = useCallback(
+    (id: string) => {
+      try {
+        toastPromise(deleteRegion.mutateAsync(id), {
+          loading: "Deleting Region...",
+          success: (res) => {
+            if (res?.status === true) refetch();
+            return "Yeah! Region deleted successfully";
+          },
+          error: (e) =>
+            e instanceof AxiosError
+              ? e.response?.data?.data?.error || e.response?.data?.message
+              : "Opps! Error deleting region",
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error("Opps! An unexpected error occured");
+        }
       }
-    }
-  };
+    },
+    [deleteRegion, refetch],
+  );
   // Region permissions are now managed via backend-user-service gRPC
   // Use PermissionIndicator component for viewing/managing permissions
-  const columns = getRegionColumns(handleEdit, handleDelete);
+  const columns = useMemo(
+    () => getRegionColumns(handleEdit, handleDelete, deleteRegion.isPending),
+    [handleEdit, handleDelete, deleteRegion.isPending],
+  );
 
   const [searchValue, setSearchValue] = useState("");
+  const [tableRef, setTableRef] = useState<any>(null);
   const [rowSelection, setRowSelection] = useState({});
   // Number of pages based on filtered data
   const calculatedTotalPages = Math.max(1, totalPages);
@@ -111,34 +124,15 @@ function RegionDashboardPage() {
 
         <div className="w-full flex items-center justify-end gap-4">
           <PermissionGate permission="manageRegions" action="bulkDelete">
-            <span
-              className={`${
-                Object.keys(rowSelection).filter(
-                  (k) =>
-                    // @ts-expect-error: We are intentionally assigning a number to a string type for testing.
-                    rowSelection[k],
-                ).length === 0
-                  ? "cursor-no-drop"
-                  : "cursor-pointer"
-              }`}
-            >
-              <Button
-                variant={"outlineBlack"}
-                disabled={
-                  Object.keys(rowSelection).filter((k) => rowSelection[k])
-                    .length === 0
-                }
-                onClick={() => {
-                  setData((prev) => prev.filter((_row, i) => !rowSelection[i]));
-                  console.log("data:", data);
-                  console.log("rowSelection:", rowSelection);
-                  setRowSelection({});
-                }}
-              >
-                <span>Delete</span>
-                <Trash2 />
-              </Button>
-            </span>
+            <BulkDeleteBtn
+              rowSelection={rowSelection}
+              tableRef={tableRef}
+              bulkDeleteMutation={bulkDeleteRegions as any}
+              refetch={refetch as any}
+              setRowSelection={setRowSelection}
+              title="Regions"
+              descTitle="regions"
+            />
           </PermissionGate>
           <div className="">
             <InputGroup>
@@ -164,6 +158,7 @@ function RegionDashboardPage() {
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue}
+            onTableReady={setTableRef}
           />
         )}
 

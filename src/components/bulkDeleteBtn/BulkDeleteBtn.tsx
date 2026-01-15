@@ -10,6 +10,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -53,20 +54,29 @@ const BulkDeleteBtn = <TData, TResponse>({
     const selectedIds = tableRef
       .getSelectedRowModel()
       .rows.map((row) => (row.original as { id: string }).id);
+    console.log("bulk delete=>", selectedIds);
 
     try {
-      setIsDialogOpen(false);
       toastPromise(bulkDeleteMutation.mutateAsync(selectedIds), {
         loading: `Deleting ${title}...`,
-        success: async (res) => {
-          if (res) await refetch();
-          setRowSelection({});
+        success: (res) => {
+          if (res) {
+            refetch().then(() => {
+              setRowSelection({});
+              setIsDialogOpen(false);
+            });
+          } else {
+            setRowSelection({});
+            setIsDialogOpen(false);
+          }
           return `Yeah! ${title} deleted successfully`;
         },
-        error: (e) =>
-          e instanceof AxiosError
+        error: (e) => {
+          setIsDialogOpen(false);
+          return e instanceof AxiosError
             ? e.message
-            : `Oops! Failed to delete ${title}`,
+            : `Oops! Failed to delete ${title}`;
+        },
       });
     } catch (error) {
       if (error instanceof Error) toast.error(error.message);
@@ -115,15 +125,24 @@ const BulkDeleteBtn = <TData, TResponse>({
         </div>
 
         <DialogFooter className="mt-6">
+          <DialogClose asChild>
+            <Button
+              variant="outlinePrimary"
+              disabled={bulkDeleteMutation.isPending}
+            >
+              Cancel
+            </Button>
+          </DialogClose>
           <Button
             variant="destructive"
             disabled={
+              bulkDeleteMutation.isPending ||
               Object.keys(rowSelection).filter((k) => rowSelection[k])
                 .length === 0
             }
             onClick={handleBulkDelete}
           >
-            Confirm Delete
+            {bulkDeleteMutation.isPending ? "Deleting..." : "Confirm Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

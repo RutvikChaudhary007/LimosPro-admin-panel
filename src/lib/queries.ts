@@ -16,6 +16,7 @@ import {
   bulkDeleteNewsById,
   bulkDeletePartnerById,
   bulkDeleteRegionAdmins,
+  bulkDeleteRegions,
   bulkDeleteStaffMember,
   bulkDeleteTestimonial,
   bulkDeleteTrips,
@@ -919,6 +920,31 @@ const useDeleteRegionMutation = () => {
   });
 };
 
+const useBulkDeleteRegionsMutation = () => {
+  const clientQuery = useQueryClient();
+
+  return useMutation({
+    mutationFn: bulkDeleteRegions,
+
+    onSuccess: (data) => {
+      ["Regions", "notifications"].forEach((key) =>
+        clientQuery.invalidateQueries({ queryKey: [key] }),
+      );
+      return data;
+    },
+
+    onError: (err: unknown) => {
+      const axiosErr = err as AxiosError<ApiErrorResponse>;
+      const message =
+        axiosErr?.response?.data?.message ||
+        axiosErr?.response?.data?.error ||
+        "An unexpected error occurred";
+
+      throw new Error(message);
+    },
+  });
+};
+
 /**
  * #####################################
  * Region Admin
@@ -926,14 +952,20 @@ const useDeleteRegionMutation = () => {
  * @returns
  */
 
-const useCreateRegionAdminMutation = () =>
-  useMutation({
+const useCreateRegionAdminMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
     mutationFn: createRegionAdmin,
-    onSuccess: (data) => data,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["RegionAdmins"] });
+      return data;
+    },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 const useEditRegionAdminMutation = () => {
   const queryClient = useQueryClient();
@@ -1193,6 +1225,7 @@ export default {
   useCreateRegionMutation,
   useEditRegionMutation,
   useDeleteRegionMutation,
+  useBulkDeleteRegionsMutation,
   // region admin
   useCreateRegionAdminMutation,
   useEditRegionAdminMutation,

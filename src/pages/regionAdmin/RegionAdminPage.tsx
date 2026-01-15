@@ -29,7 +29,7 @@ function RegionAdminPage() {
   const [newPage, setNewPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [tableRef, setTableRef] = useState<any>(null);
-  const { data, isFetching } = useFetchAllRegionAdmins({
+  const { data, isFetching, refetch } = useFetchAllRegionAdmins({
     limit: perPage,
     page: newPage,
   });
@@ -69,8 +69,14 @@ function RegionAdminPage() {
     console.log("manage access:", id);
   }, []);
   const columns = useMemo(
-    () => getRegionAdminColumns(handleEdit, handleDelete, handleAccess),
-    [handleEdit, handleDelete, handleAccess],
+    () =>
+      getRegionAdminColumns(
+        handleEdit,
+        handleDelete,
+        deleteRegionAdmin.isPending,
+        handleAccess,
+      ),
+    [handleEdit, handleDelete, deleteRegionAdmin.isPending, handleAccess],
   );
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -118,9 +124,7 @@ function RegionAdminPage() {
               rowSelection={rowSelection}
               tableRef={tableRef}
               bulkDeleteMutation={bulkDeleteRegionAdmins as any}
-              refetch={async () => {
-                return (await Promise.resolve({} as any)) as any;
-              }}
+              refetch={refetch as any}
               setRowSelection={setRowSelection}
               title="Regional Admins"
               descTitle="regional admins"

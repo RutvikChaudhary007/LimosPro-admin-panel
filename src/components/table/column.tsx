@@ -165,6 +165,7 @@ export type TRegion = {
 export function getRegionColumns(
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
+  isPending: boolean,
 ): ColumnDef<TRegion>[] {
   return [
     {
@@ -214,15 +215,41 @@ export function getRegionColumns(
             </Button>
           </PermissionGate>
           <PermissionGate permission="manageRegions" action="delete">
-            <Button
-              variant="outlineNavBtnDestructive"
-              size="xl"
-              spacing="lg"
-              onClick={() => onDelete(row.original.id)}
-              tooltip="Delete"
-            >
-              <Trash2 />
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete"
+                >
+                  <Trash2 />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-full sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Delete Region</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this region? This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outlinePrimary" disabled={isPending}>
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive"
+                    disabled={isPending}
+                  >
+                    {isPending ? "Deleting..." : "Delete region"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </PermissionGate>
         </div>
       ),
@@ -268,6 +295,7 @@ export type TRegionAdmin = {
 export function getRegionAdminColumns(
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
+  isPending: boolean,
   _onAccess: (id: string) => void,
 ): ColumnDef<TRegionAdmin>[] {
   return [
@@ -347,13 +375,16 @@ export function getRegionAdminColumns(
                 </DialogHeader>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outlinePrimary">Cancel</Button>
+                    <Button variant="outlinePrimary" disabled={isPending}>
+                      Cancel
+                    </Button>
                   </DialogClose>
                   <Button
                     onClick={() => onDelete(row.original.id)}
                     variant="destructive"
+                    disabled={isPending}
                   >
-                    Delete admin
+                    {isPending ? "Deleting..." : "Delete admin"}
                   </Button>
                 </DialogFooter>
               </DialogContent>

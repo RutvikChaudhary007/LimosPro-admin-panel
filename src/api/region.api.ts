@@ -21,18 +21,28 @@ type TPara = { limit?: number; page?: number };
  * Fetch all regions
  */
 export const getAllRegions = async (data?: TPara) => {
-  const params: Record<string, unknown> = {};
-  if (data?.page) {
-    params.page = data.page;
-  }
-  if (data?.limit) {
-    params.limit = data.limit;
-  }
-  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_ALL_REGIONS}`, {
-    params,
-  });
+  try {
+    const params: Record<string, unknown> = {};
+    if (data?.page) {
+      params.page = data.page;
+    }
+    if (data?.limit) {
+      params.limit = data.limit;
+    }
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.GET_ALL_REGIONS}`,
+      {
+        params,
+      },
+    );
 
-  return response.data.data;
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.status === 400) {
+      return { regions: [], pagination: { totalItems: 0, totalPages: 0 } };
+    }
+    throw error;
+  }
 };
 
 /**
@@ -121,6 +131,23 @@ export const deleteRegion = async (id: string) => {
   }
 };
 
+/**
+ * Bulk delete regions
+ */
+export const bulkDeleteRegions = async (regionIds: string[]) => {
+  try {
+    const response = await axiosInstance.post(
+      `${API_ENDPOINTS.BULK_DELETE_REGION}`,
+      { regionIds },
+    );
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      console.error(error.message || "Opps! An unkown error occured");
+    throw error;
+  }
+};
+
 // ============================================
 // REGION ADMIN OPERATIONS
 // ============================================
@@ -129,19 +156,29 @@ export const deleteRegion = async (id: string) => {
  * Fetch all region admins
  */
 export const getAllRegionAdmins = async (data?: TPara) => {
-  const params: Record<string, unknown> = {};
-  if (data?.limit) {
-    params.limit = data.limit;
-  }
-  if (data?.page) {
-    params.page = data.page;
-  }
-  const response = await axiosInstance.get(
-    `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ALL}`,
-    { params },
-  );
+  try {
+    const params: Record<string, unknown> = {};
+    if (data?.limit) {
+      params.limit = data.limit;
+    }
+    if (data?.page) {
+      params.page = data.page;
+    }
+    const response = await axiosInstance.get(
+      `${API_ENDPOINTS.REGIONAL_ADMIN.GET_ALL}`,
+      { params },
+    );
 
-  return response.data.data;
+    return response.data.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.status === 400) {
+      return {
+        regionalAdmins: [],
+        pagination: { totalItems: 0, totalPages: 0 },
+      };
+    }
+    throw error;
+  }
 };
 
 /**

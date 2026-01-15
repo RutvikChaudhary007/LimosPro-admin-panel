@@ -61,6 +61,7 @@ export const API_ENDPOINTS: Record<string, any> = {
   GET_REGION_BY_ID: `${ADMIN_SERVICE_URL}/region/:region_id`,
   EDIT_REGION: `${ADMIN_SERVICE_URL}/region/:regionId`,
   DELETE_REGION: `${ADMIN_SERVICE_URL}/region/:regionId`,
+  BULK_DELETE_REGION: `${ADMIN_SERVICE_URL}/regions/bulk-delete`,
 
   // Payments
   GET_ALL_PAYMENTS: `${ADMIN_SERVICE_URL}/payments`,
