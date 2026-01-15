@@ -5,9 +5,9 @@ import axiosInstance from "@/utils/axiosInstance";
 
 /**
  * ============================================
- * Affiliate API Module
+ * Partner API Module
  * ============================================
- * All affiliate-related API calls consolidated
+ * All partner-related API calls consolidated
  */
 
 type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
@@ -17,9 +17,9 @@ type DateRange = { startDate?: Date | undefined; endDate?: Date | undefined };
 // ============================================
 
 /**
- * Fetch all affiliates with optional filters
+ * Fetch all partners with optional filters
  */
-export const getAllAffiliate = async (
+export const getAllPartner = async (
   DateRange?: DateRange,
   page?: number,
   limit?: number,
@@ -50,7 +50,7 @@ export const getAllAffiliate = async (
   }
   try {
     const response = await axiosInstance.get(
-      `${API_ENDPOINTS.GET_ALL_AFFILIATE}`,
+      `${API_ENDPOINTS.GET_ALL_PARTNER}`,
       { params },
     );
     return response?.data?.data;
@@ -63,9 +63,9 @@ export const getAllAffiliate = async (
 };
 
 /**
- * Hook to fetch all affiliates
+ * Hook to fetch all partners
  */
-export const useFetchAllAffiliate = ({
+export const useFetchAllPartner = ({
   DateRange,
   page,
   limit,
@@ -77,8 +77,8 @@ export const useFetchAllAffiliate = ({
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["affiliates", DateRange, page, limit, status],
-    queryFn: () => getAllAffiliate(DateRange, page, limit, status),
+    queryKey: ["partners", DateRange, page, limit, status],
+    queryFn: () => getAllPartner(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 1000 * 60 * 5,
@@ -86,24 +86,24 @@ export const useFetchAllAffiliate = ({
   });
 
 /**
- * Fetch affiliate by ID
+ * Fetch partner by ID
  */
-export const getAffiliateById = async (id: string) => {
+export const getPartnerById = async (id: string) => {
   const response = await axiosInstance.get(
-    `${API_ENDPOINTS.GET_AFFILIATE_BY_ID.replace(":id", id)}`,
+    `${API_ENDPOINTS.GET_PARTNER_BY_ID.replace(":id", id)}`,
   );
   return response?.data?.data;
 };
 
 /**
- * Hook to fetch affiliate by ID
+ * Hook to fetch partner by ID
  */
-export const useFetchAffiliateById = ({ id }: { id: string | undefined }) =>
+export const useFetchPartnerById = ({ id }: { id: string | undefined }) =>
   useQuery({
-    queryKey: ["affiliateById", id],
+    queryKey: ["partnerById", id],
     queryFn: () =>
       id
-        ? getAffiliateById(id)
+        ? getPartnerById(id)
         : () => {
             console.log("id missing");
           },
@@ -116,11 +116,11 @@ export const useFetchAffiliateById = ({ id }: { id: string | undefined }) =>
 // ============================================
 
 /**
- * Create a new affiliate
+ * Create a new partner
  */
-export const createAffiliate = async (data: object) => {
+export const createPartner = async (data: object) => {
   const response = await axiosInstance.post(
-    API_ENDPOINTS.CREATE_AFFILIATE,
+    API_ENDPOINTS.CREATE_PARTNER,
     data,
     {
       headers: {
@@ -137,9 +137,9 @@ export const createAffiliate = async (data: object) => {
 // ============================================
 
 /**
- * Edit affiliate by ID
+ * Edit partner by ID
  */
-export const editAffiliate = async ({
+export const editPartner = async ({
   data,
   id,
 }: {
@@ -147,7 +147,7 @@ export const editAffiliate = async ({
   id: string | undefined;
 }) => {
   const response = await axiosInstance.put(
-    API_ENDPOINTS.UPDATE_AFFILIATE.replace(":id", id as string),
+    API_ENDPOINTS.UPDATE_PARTNER.replace(":id", id as string),
     data,
     {
       headers: {
@@ -160,11 +160,11 @@ export const editAffiliate = async ({
 };
 
 /**
- * Update affiliate (alternative endpoint)
+ * Update partner (alternative endpoint)
  */
-export const updateAffiliate = async (data: object) => {
+export const updatePartner = async (data: object) => {
   const response = await axiosInstance.post(
-    API_ENDPOINTS.UPDATE_AFFILIATE,
+    API_ENDPOINTS.UPDATE_PARTNER,
     data,
     {
       headers: {
@@ -181,25 +181,25 @@ export const updateAffiliate = async (data: object) => {
 // ============================================
 
 /**
- * Delete a single affiliate
+ * Delete a single partner
  */
-export const deleteAffiliate = async (id: string) => {
+export const deletePartner = async (id: string) => {
   const response = await axiosInstance.delete(
-    API_ENDPOINTS.DELETE_AFFILIATE.replace(":id", id),
+    API_ENDPOINTS.DELETE_PARTNER.replace(":id", id),
   );
 
   return response.data;
 };
 
 /**
- * Bulk delete affiliates
+ * Bulk delete partners
  */
-export const bulkDeleteAffiliate = async (ids: string[]) => {
+export const bulkDeletePartner = async (ids: string[]) => {
   const data = {
     affiliateIds: ids,
   };
   const response = await axiosInstance.post(
-    API_ENDPOINTS.BULK_DELETE_AFFILIATE,
+    API_ENDPOINTS.BULK_DELETE_PARTNER,
     data,
   );
 

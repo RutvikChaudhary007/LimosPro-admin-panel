@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/table";
 import {
   // mockComplianceData,
-  // mockAffiliateRevenueBreakdown,
+  // mockPartnerRevenueBreakdown,
   mockTickets,
 } from "@/data/mockReportsData";
 
@@ -42,8 +42,8 @@ ChartJS.register(
   Title,
 );
 
-export default function AffiliateReports({ reports }: { reports: any }) {
-  // Filter tickets for this "Affiliate" (dummy filter)
+export default function PartnerReports({ reports }: { reports: any }) {
+  // Filter tickets for this "Partner" (dummy filter)
   const myDisputes = mockTickets.filter(
     (t) => t.type === "DISPUTE" || t.category === "PAYMENT",
   );

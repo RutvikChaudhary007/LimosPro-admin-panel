@@ -1,4 +1,4 @@
-import type { TAffiliate } from "./affiliate/affiliate.type";
+import type { TAffiliate } from "./partner/partner.type";
 
 export type TFleetData = {
   id: string;

@@ -30,11 +30,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type {
-  IAffiliate,
-  IEditAffiliateRes,
-} from "@/types/affiliate/affiliate.type";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
+import type { IEditPartnerRes, IPartner } from "@/types/partner/partner.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
 import ManageRefund from "../manageRefund/ManageRefund";
 import {
@@ -397,11 +394,11 @@ export function getRegionAdminColumns(
   ];
 }
 
-export function getAffiliate(
+export function getPartner(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
-): ColumnDef<IAffiliate | IEditAffiliateRes>[] {
+): ColumnDef<IPartner | IEditPartnerRes>[] {
   return [
     {
       id: "select",
@@ -419,10 +416,10 @@ export function getAffiliate(
     {
       accessorKey: "user",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Affiliate Name" />
+        <DataTableColumnHeader column={column} title="Partner Name" />
       ),
       cell: ({ row }) => {
-        const user = (row.original as IEditAffiliateRes).user;
+        const user = (row.original as IEditPartnerRes).user;
         return `${user?.firstName ?? ""} ${user?.lastName ?? ""}`;
       },
       enableSorting: false,
@@ -535,7 +532,7 @@ export function getAffiliate(
         <div className="text-right flex gap-2 items-center justify-end">
           <PermissionIndicator
             userId={(row.original as any).user?.id}
-            userRole="Affiliate"
+            userRole="Partner"
             userName={`${(row.original as any).user?.firstName || ""} ${(row.original as any).user?.lastName || ""}`}
           />
           <PermissionGate permission="manageAffiliates" action="view">
@@ -575,9 +572,9 @@ export function getAffiliate(
               </DialogTrigger>
               <DialogContent className="w-full sm:max-w-sm">
                 <DialogHeader>
-                  <DialogTitle>Delete Affiliate</DialogTitle>
+                  <DialogTitle>Delete Partner</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to delete this affiliate? This action
+                    Are you sure you want to delete this partner? This action
                     cannot be undone.
                   </DialogDescription>
                 </DialogHeader>
@@ -589,7 +586,7 @@ export function getAffiliate(
                     onClick={() => onDelete(row.original.id ?? "")}
                     variant="destructive"
                   >
-                    Delete affiliate
+                    Delete partner
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -955,7 +952,7 @@ export function getBooking(
       id: "affiliateId",
       accessorKey: "affiliateId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Affiliate Id" />
+        <DataTableColumnHeader column={column} title="Partner Id" />
       ),
       enableSorting: false,
     },
@@ -1121,7 +1118,7 @@ export function getFleets(
     {
       accessorKey: "affiliateId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Affiliate Id" />
+        <DataTableColumnHeader column={column} title="Partner Id" />
       ),
       enableSorting: false,
     },

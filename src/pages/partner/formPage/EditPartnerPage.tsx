@@ -4,10 +4,10 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchAffiliateById } from "@/api";
-import AffiliateForm from "@/components/affiliate/AffiliateForm";
+import { useFetchPartnerById } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import PartnerForm from "@/components/partner/PartnerForm";
 import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -18,7 +18,7 @@ import { generatePageTitle } from "@/utils/seo";
 
 const libraries = ["places", "geocoding"];
 
-function EditAffiliatePage() {
+function EditPartnerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   // console.log("id:",id)
@@ -34,7 +34,7 @@ function EditAffiliatePage() {
     libraries: libraries as Libraries,
   });
 
-  const { data, isFetching } = useFetchAffiliateById({ id });
+  const { data, isFetching } = useFetchPartnerById({ id });
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
@@ -64,20 +64,20 @@ function EditAffiliatePage() {
       isMounted = false;
     };
   }, [isLoaded, loadError, data]);
-  const editAffiliateMutation = queries.useEditAffiliateMutation();
-  const handleEditAffiliate = async (data: FormData) => {
-    // console.log("called handleCreateAffiliate")
+  const editPartnerMutation = queries.useEditPartnerMutation();
+  const handleEditPartner = async (data: FormData) => {
+    // console.log("called handleCreatePartner")
     try {
-      toastPromise(editAffiliateMutation.mutateAsync({ data, id }), {
-        loading: "Updating affiliate...",
+      toastPromise(editPartnerMutation.mutateAsync({ data, id }), {
+        loading: "Updating Partner...",
         success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.AFFILIATE);
-          return "Yeah! Affiliate updated successfully";
+          if (res) navigate(constant.ROUTING_URLS.PARTNER);
+          return "Yeah! Partner updated successfully";
         },
         error: (e) =>
           e instanceof AxiosError
             ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Opps! failed to update affiliate.",
+            : "Opps! failed to update Partner.",
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -94,31 +94,31 @@ function EditAffiliatePage() {
   if (isFetching) return <Spinner />;
   return (
     <>
-      <PageTitle title={generatePageTitle("Affiliate")} />
+      <PageTitle title={generatePageTitle("Partner")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <PageHeader
-          title="Affiliate"
+          title="Partner"
           breadcrumbs={[
             { label: "Home", path: "/" },
-            { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
-            { label: "Edit Affiliate" },
+            { label: "Partner", path: constant.ROUTING_URLS.PARTNER },
+            { label: "Edit Partner" },
           ]}
           backAction={{
             variant: "outlinePrimary",
             label: "Back",
             icon: <ArrowLeft />,
-            link: constant.ROUTING_URLS.AFFILIATE,
+            link: constant.ROUTING_URLS.PARTNER,
           }}
         />
-        <AffiliateForm
-          onSubmit={handleEditAffiliate}
+        <PartnerForm
+          onSubmit={handleEditPartner}
           initialData={data}
           businessAddress={businessAddress}
-          type={"Edit Affiliate"}
+          type={"Edit Partner"}
         />
       </div>
     </>
   );
 }
 
-export default EditAffiliatePage;
+export default EditPartnerPage;

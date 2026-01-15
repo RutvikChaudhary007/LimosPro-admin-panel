@@ -1,4 +1,4 @@
-// import IconAffiliate from "@/assets/Icons/affiliate.svg?react"
+// import IconAffiliate from "@/assets/Icons/partner.svg?react"
 // import IconCMS from "@/assets/Icons/cms.svg?react"
 // import IconChauffeur from "@/assets/Icons/chauffeur.svg?react"
 // import IconContactRequests from "@/assets/Icons/contact-requests.svg?react"
@@ -13,7 +13,6 @@
 // import IconTrips from "@/assets/Icons/trips.svg?react"
 
 import {
-  IconAffiliate,
   IconCar,
   IconChartBar,
   IconDatabase,
@@ -104,10 +103,10 @@ const data: {
       ],
     },
     {
-      title: "Affiliate",
-      url: constant.ROUTING_URLS.AFFILIATE,
-      icon: IconAffiliate,
-      permission: "manageAffiliates",
+      title: "Partners",
+      url: constant.ROUTING_URLS.PARTNER,
+      icon: IconHeartHandshake,
+      permission: "managePartners",
       action: "view",
     },
     {
@@ -218,13 +217,6 @@ const data: {
       url: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: IconShield,
       permission: "manageIpAccess",
-      action: "view",
-    },
-    {
-      title: "Our Partners",
-      url: constant.ROUTING_URLS.OUR_PARTNERS,
-      icon: IconHeartHandshake,
-      permission: "manageOurPartners",
       action: "view",
     },
     {

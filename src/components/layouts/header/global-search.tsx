@@ -57,7 +57,7 @@ export function GlobalSearch() {
       icon: <Phone className="size-5" />,
     },
     {
-      type: "Affiliate",
+      type: "Partner",
       label: "John Samuel – 8877445522",
       icon: <Phone className="size-5" />,
     },

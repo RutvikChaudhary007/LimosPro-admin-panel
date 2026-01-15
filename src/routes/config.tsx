@@ -33,17 +33,15 @@ const EditRegionAdmin = lazy(
   () => import("../pages/regionAdmin/formpage/EditRegionAdmin"),
 );
 
-// Affiliate
-const AffiliatePage = lazy(() => import("../pages/affiliate/AffiliatePage"));
-const CreateAffiliatePage = lazy(
-  () => import("../pages/affiliate/formPage/CreateAffiliatePage"),
+// Partner
+const PartnerPage = lazy(() => import("../pages/partner/PartnerPage"));
+const CreatePartnerPage = lazy(
+  () => import("../pages/partner/formPage/CreatePartnerPage"),
 );
-const EditAffiliatePage = lazy(
-  () => import("../pages/affiliate/formPage/EditAffiliatePage"),
+const EditPartnerPage = lazy(
+  () => import("../pages/partner/formPage/EditPartnerPage"),
 );
-const ViewAffiliatePage = lazy(
-  () => import("../pages/affiliate/ViewAffiliatePage"),
-);
+const ViewPartnerPage = lazy(() => import("../pages/partner/ViewPartnerPage"));
 
 // Chauffeur
 const ChauffeurPage = lazy(() => import("../pages/chauffeur/ChauffeurPage"));
@@ -131,15 +129,6 @@ const CreateTestimonailPage = lazy(
 );
 const EditTestimonailPage = lazy(
   () => import("../pages/testimonial/formpage/EditTestimonailPage"),
-);
-
-// Our Partners
-const OurPartnerPage = lazy(() => import("../pages/ourPartner/OurPartnerPage"));
-const CreateOurPartnerPage = lazy(
-  () => import("../pages/ourPartner/formpage/CreateOurPartnerPage"),
-);
-const EditOurPartnerPage = lazy(
-  () => import("../pages/ourPartner/formpage/EditOurPartnerPage"),
 );
 
 // News
@@ -265,22 +254,22 @@ export const routesConfig = [
   },
   {
     layout: "protected",
-    module: "affiliate",
+    module: "partner",
     permission: "manageAffiliates",
     action: "view",
     routes: [
-      { path: constant.ROUTING_URLS.AFFILIATE, element: AffiliatePage },
+      { path: constant.ROUTING_URLS.PARTNER, element: PartnerPage },
       {
-        path: constant.ROUTING_URLS.CREATE_AFFILIATE,
-        element: CreateAffiliatePage,
+        path: constant.ROUTING_URLS.CREATE_PARTNER,
+        element: CreatePartnerPage,
       },
       {
-        path: constant.ROUTING_URLS.EDIT_AFFILIATE,
-        element: EditAffiliatePage,
+        path: constant.ROUTING_URLS.EDIT_PARTNER,
+        element: EditPartnerPage,
       },
       {
-        path: constant.ROUTING_URLS.VIEW_AFFILIATE,
-        element: ViewAffiliatePage,
+        path: constant.ROUTING_URLS.VIEW_PARTNER,
+        element: ViewPartnerPage,
       },
     ],
   },
@@ -427,23 +416,6 @@ export const routesConfig = [
       {
         path: constant.ROUTING_URLS.EDIT_TESTIMONIALS,
         element: EditTestimonailPage,
-      },
-    ],
-  },
-  {
-    layout: "protected",
-    module: "ourPartners",
-    permission: "manageOurPartners",
-    action: "view",
-    routes: [
-      { path: constant.ROUTING_URLS.OUR_PARTNERS, element: OurPartnerPage },
-      {
-        path: constant.ROUTING_URLS.CREATE_OUR_PARTNERS,
-        element: CreateOurPartnerPage,
-      },
-      {
-        path: constant.ROUTING_URLS.EDIT_OUR_PARTNERS,
-        element: EditOurPartnerPage,
       },
     ],
   },

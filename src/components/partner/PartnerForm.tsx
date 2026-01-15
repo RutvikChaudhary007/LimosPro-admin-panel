@@ -13,10 +13,7 @@ import { type FC, useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
-import type {
-  IAffiliate,
-  IEditAffiliateRes,
-} from "@/types/affiliate/affiliate.type";
+import type { IEditPartnerRes, IPartner } from "@/types/partner/partner.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import AddressInput from "../AddressInput";
 import { Button } from "../ui/button";
@@ -153,9 +150,9 @@ const formSchema = z.object({
   // status: z.union([z.string(), z.literal("")]).optional(),
 });
 
-type TAffiliateForm = z.infer<typeof formSchema>;
-interface AffiliateFormProps {
-  initialData?: IEditAffiliateRes;
+type TPartnerForm = z.infer<typeof formSchema>;
+interface PartnerFormProps {
+  initialData?: IEditPartnerRes;
   onSubmit: (data: FormData) => void;
   disabledFields?: string[];
   type: string;
@@ -206,8 +203,8 @@ interface IAddressObj {
 }
 
 const transformInitialData = (
-  data?: IEditAffiliateRes,
-): TAffiliateForm | undefined => {
+  data?: IEditPartnerRes,
+): TPartnerForm | undefined => {
   if (!data) return undefined;
   console.log("initial data:", data?.businessAddress);
   console.log("business Location:", data?.businessLocation);
@@ -238,13 +235,13 @@ const transformInitialData = (
   };
 };
 
-const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
+const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
   initialData,
   onSubmit,
   disabledFields,
   type,
 }) => {
-  const isEdit = type === "Edit Affiliate";
+  const isEdit = type === "Edit Partner";
   // console.log("businessAddress:", businessAddress);
   const formatPhoneNumber = (value: string): string => {
     if (!value) return "";
@@ -322,7 +319,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   const [addressObj, setAddressObj] = useState<IAddressObj>();
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<TAffiliateForm>({
+  const form = useForm<TPartnerForm>({
     resolver: zodResolver(formSchema),
     defaultValues: transformInitialData(initialData) ?? {
       firstName: "",
@@ -360,7 +357,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
     [form],
   );
 
-  const handleFormSubmit = async (values: IAffiliate) => {
+  const handleFormSubmit = async (values: IPartner) => {
     try {
       const formData = new FormData();
       if (addressObj) {
@@ -413,7 +410,7 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
-        {/* Affiliate Details */}
+        {/* Partner Details */}
         <Card>
           <CardBody>
             <CardHeader>
@@ -999,4 +996,4 @@ const AffiliateForm: FC<AffiliateFormProps & { businessAddress?: string }> = ({
   );
 };
 
-export default AffiliateForm;
+export default PartnerForm;

@@ -6,7 +6,7 @@ import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { getAllAffiliate, useFetchAllAffiliate } from "@/api";
+import { getAllPartner, useFetchAllPartner } from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -14,7 +14,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import PaginationControls from "@/components/pagination/PaginationControls";
 import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
-import { getAffiliate } from "@/components/table/column";
+import { getPartner } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +27,8 @@ import { toastPromise } from "@/hooks/use-toast";
 import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
-import type { IAffiliate } from "@/types/affiliate/affiliate.type";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
+import type { IPartner } from "@/types/partner/partner.type";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
@@ -45,7 +45,7 @@ const showTime = [
   { label: "Yearly", value: "yearly" },
 ];
 
-function AffiliatePage() {
+function PartnerPage() {
   const navigate = useNavigate();
   const [perPage, setperPage] = useState<number>(10);
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -132,20 +132,20 @@ function AffiliatePage() {
     refetch,
     isFetching,
     isError,
-  } = useFetchAllAffiliate({
+  } = useFetchAllPartner({
     DateRange: { startDate, endDate },
     page: newPage,
     limit: perPage,
     status: selectedStatus,
   });
-  const [tableRef, setTableRef] = useState<Table<IAffiliate> | null>(null);
+  const [tableRef, setTableRef] = useState<Table<IPartner> | null>(null);
   const queryClient = useQueryClient();
   useEffect(() => {
     if (FetchData?.pagination?.hasNextPage === true) {
       queryClient.prefetchQuery({
-        queryKey: ["affiliate", { startDate, endDate }, newPage + 1, perPage],
+        queryKey: ["Partner", { startDate, endDate }, newPage + 1, perPage],
         queryFn: () =>
-          getAllAffiliate(
+          getAllPartner(
             { startDate, endDate },
             newPage + 1,
             perPage,
@@ -164,7 +164,7 @@ function AffiliatePage() {
   ]);
 
   const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<IAffiliate>(
+    usePagination<IPartner>(
       FetchData?.affiliates,
       newPage,
       perPage,
@@ -183,29 +183,29 @@ function AffiliatePage() {
   }, [perPage, setPage]);
 
   const handleView = (id: string) => {
-    navigate(constant.ROUTING_URLS.VIEW_AFFILIATE.replace(":id", id));
+    navigate(constant.ROUTING_URLS.VIEW_PARTNER.replace(":id", id));
   };
 
-  const deleteAffiliateMutation = queries.useDeleteAffiliateMutation(refetch);
-  const bulkDeleteAffiliateMutation = queries.useBulkDeleteAffiliateMutation();
+  const deletePartnerMutation = queries.useDeletePartnerMutation(refetch);
+  const bulkDeletePartnerMutation = queries.useBulkDeletePartnerMutation();
   const handleEdit = (id: string) => {
-    navigate(constant.ROUTING_URLS.EDIT_AFFILIATE.replace(":id", id));
+    navigate(constant.ROUTING_URLS.EDIT_PARTNER.replace(":id", id));
   };
   const handleDelete = async (id: string) => {
     try {
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
-      toastPromise(deleteAffiliateMutation.mutateAsync(id), {
-        loading: "Deleting Affiliate...",
-        success: "Yeah! Affiliate deleted successfully!",
+      toastPromise(deletePartnerMutation.mutateAsync(id), {
+        loading: "Deleting Partner...",
+        success: "Yeah! Partner deleted successfully!",
         error: (e) =>
           e instanceof AxiosError
             ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Opps! Failed to delete affiliate",
+            : "Opps! Failed to delete Partner",
       });
     } catch (error) {
       // Error handling is done in onError callback
-      console.error("Affiliate delete error:", error);
+      console.error("Partner delete error:", error);
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
@@ -213,7 +213,7 @@ function AffiliatePage() {
       }
     }
   };
-  const columns = getAffiliate(handleView, handleEdit, handleDelete);
+  const columns = getPartner(handleView, handleEdit, handleDelete);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   useEffect(() => {
@@ -243,16 +243,16 @@ function AffiliatePage() {
   if (isError) return <ErrorCard refetch={refetch} />;
   return (
     <>
-      <PageTitle title={generatePageTitle("Affiliate")} />
+      <PageTitle title={generatePageTitle("Partner")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <PageHeader
-          title="Affiliate"
-          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Affiliate" }]}
+          title="Partner"
+          breadcrumbs={[{ label: "Home", path: "/" }, { label: "Partner" }]}
           action={{
-            label: "Add Affiliate",
+            label: "Add Partner",
             icon: <Plus />,
-            link: constant.ROUTING_URLS.CREATE_AFFILIATE,
-            permission: "manageAffiliates",
+            link: constant.ROUTING_URLS.CREATE_PARTNER,
+            permission: "managePartners",
             actionName: "create",
           }}
         />
@@ -284,18 +284,18 @@ function AffiliatePage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <PermissionGate permission="manageAffiliates" action="bulkDelete">
+            <PermissionGate permission="managePartners" action="bulkDelete">
               <span
                 className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
               >
-                <BulkDeleteBtn<IAffiliate, TBlkDelRes>
+                <BulkDeleteBtn<IPartner, TBlkDelRes>
                   rowSelection={rowSelection}
                   tableRef={tableRef}
-                  bulkDeleteMutation={bulkDeleteAffiliateMutation}
+                  bulkDeleteMutation={bulkDeletePartnerMutation}
                   refetch={refetch}
                   setRowSelection={setRowSelection}
-                  title="manageAffiliates"
-                  descTitle="affiliates"
+                  title="managePartners"
+                  descTitle="Partners"
                 />
               </span>
             </PermissionGate>
@@ -344,4 +344,4 @@ function AffiliatePage() {
   );
 }
 
-export default AffiliatePage;
+export default PartnerPage;

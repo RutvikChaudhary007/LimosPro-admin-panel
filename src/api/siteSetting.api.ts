@@ -85,7 +85,7 @@ export const useFetchAllAffiliate = ({
   });
 
 /**
- * Fetch affiliate by ID
+ * Fetch Partner by ID
  */
 export const getAffiliateById = async (id: string) => {
   const response = await axiosInstance.get(
@@ -95,7 +95,7 @@ export const getAffiliateById = async (id: string) => {
 };
 
 /**
- * Hook to fetch affiliate by ID
+ * Hook to fetch Partner by ID
  */
 export const useFetchAffiliateById = ({ id }: { id: string | undefined }) =>
   useQuery({
@@ -115,7 +115,7 @@ export const useFetchAffiliateById = ({ id }: { id: string | undefined }) =>
 // ============================================
 
 /**
- * Create a new affiliate
+ * Create a new Partner
  */
 export const createAffiliate = async (data: object) => {
   const response = await axiosInstance.post(
@@ -136,7 +136,7 @@ export const createAffiliate = async (data: object) => {
 // ============================================
 
 /**
- * Edit affiliate by ID
+ * Edit Partner by ID
  */
 export const editAffiliate = async ({
   data,
@@ -159,7 +159,7 @@ export const editAffiliate = async ({
 };
 
 /**
- * Update affiliate (alternative endpoint)
+ * Update Partner (alternative endpoint)
  */
 export const updateAffiliate = async (data: object) => {
   const response = await axiosInstance.post(

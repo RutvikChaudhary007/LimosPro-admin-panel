@@ -11,13 +11,13 @@ export const API_ENDPOINTS: Record<string, any> = {
 
   // Dashboard
   GET_DASHBOARD_DETAILS: `${ADMIN_SERVICE_URL}/report/dashboard`,
-  // Affiliate
-  GET_ALL_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliates`,
-  GET_AFFILIATE_BY_ID: `${ADMIN_SERVICE_URL}/affiliate/:id`,
-  CREATE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliate`,
-  UPDATE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliate/:id`,
-  DELETE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliate/:id`,
-  BULK_DELETE_AFFILIATE: `${ADMIN_SERVICE_URL}/affiliates/bulk-delete`,
+  // Partner
+  GET_ALL_PARTNER: `${ADMIN_SERVICE_URL}/affiliates`,
+  GET_PARTNER_BY_ID: `${ADMIN_SERVICE_URL}/affiliate/:id`,
+  CREATE_PARTNER: `${ADMIN_SERVICE_URL}/affiliate`,
+  UPDATE_PARTNER: `${ADMIN_SERVICE_URL}/affiliate/:id`,
+  DELETE_PARTNER: `${ADMIN_SERVICE_URL}/affiliate/:id`,
+  BULK_DELETE_PARTNER: `${ADMIN_SERVICE_URL}/affiliates/bulk-delete`,
 
   // Fleets
   GET_ALL_FLEETS: `${ADMIN_SERVICE_URL}/vehicles`,
@@ -107,14 +107,6 @@ export const API_ENDPOINTS: Record<string, any> = {
   EDIT_FAQ: `${ADMIN_SERVICE_URL}/faqs/:id`,
   DELETE_FAQ: `${ADMIN_SERVICE_URL}/faqs/:id`,
   BULK_DELETE_FAQ: `${ADMIN_SERVICE_URL}/faqs/bulk-delete`,
-
-  // Our Partners
-  GET_ALL_PARTNERS: `${ADMIN_SERVICE_URL}/partners`,
-  GET_PARTNER_BY_ID: `${ADMIN_SERVICE_URL}/partners/:id`,
-  CREATE_PARTNER: `${ADMIN_SERVICE_URL}/partners`,
-  EDIT_PARTNER: `${ADMIN_SERVICE_URL}/partners/:id`,
-  DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partners/:id`,
-  BULK_DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partners/bulk-delete`,
 
   // News
   GET_ALL_NEWS: `${ADMIN_SERVICE_URL}/news`,

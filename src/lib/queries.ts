@@ -7,21 +7,19 @@ import {
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 import {
-  bulkDeleteAffiliate,
   bulkDeleteChauffeur,
   bulkDeleteCrewMember,
   bulkDeleteFAQById,
   bulkDeleteFleet,
   bulkDeleteIPWhiteListById,
   bulkDeleteNewsById,
-  bulkDeletePartnerById,
+  bulkDeletePartner,
   bulkDeleteRegionAdmins,
   bulkDeleteRegions,
   bulkDeleteStaffMember,
   bulkDeleteTestimonial,
   bulkDeleteTrips,
   bulkDeleteUser,
-  createAffiliate,
   createChauffeur,
   createContentBlock,
   createCrewMember,
@@ -34,7 +32,6 @@ import {
   createRegionAdmin,
   createStaffMember,
   createTestimonial,
-  deleteAffiliate,
   deleteChauffeur,
   deleteContentBlock,
   deleteCrewMember,
@@ -42,13 +39,12 @@ import {
   deleteFleet,
   deleteIPWhiteListById,
   deleteNewsById,
-  deletePartnerById,
+  deletePartner,
   deleteRegion,
   deleteRegionAdmin,
   deleteStaffMember,
   deleteTestimonial,
   deleteUser,
-  editAffiliate,
   editChauffeur,
   editContentBlock,
   editCrewMember,
@@ -56,7 +52,7 @@ import {
   editFleetById,
   editIPWhiteListById,
   editNewsById,
-  editPartnerById,
+  editPartner,
   editRegion,
   editRegionAdmin,
   editStaffMember,
@@ -243,21 +239,21 @@ const useBulkDeletefleetMutation = () =>
 
 /**
  * #########################
- * Affiliate
+ * Partner
  * #########################
  * */
 
-const useCreateAffiliateMutation = () => {
+const useCreatePartnerMutation = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: createAffiliate,
+    mutationFn: createPartner,
     onSuccess: (response, variables) => {
       console.log(variables, response);
 
       // userPermissions are automatically stored in localStorage by the login API
 
-      navigate(constant.ROUTING_URLS.AFFILIATE);
+      navigate(constant.ROUTING_URLS.PARTNER);
       return response;
     },
     onError: (err: unknown) => {
@@ -266,17 +262,17 @@ const useCreateAffiliateMutation = () => {
   });
 };
 
-const useEditAffiliateMutation = () => {
+const useEditPartnerMutation = () => {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: editAffiliate,
+    mutationFn: editPartner,
     onSuccess: (response, variables) => {
       console.log(variables, response);
 
       // userPermissions are automatically stored in localStorage by the login API
 
-      navigate(constant.ROUTING_URLS.AFFILIATE);
+      navigate(constant.ROUTING_URLS.PARTNER);
       // Navigate to dashboard
     },
     onError: (err: unknown) => {
@@ -285,9 +281,9 @@ const useEditAffiliateMutation = () => {
   });
 };
 
-const useDeleteAffiliateMutation = (refetch: TRefetch) =>
+const useDeletePartnerMutation = (refetch: TRefetch) =>
   useMutation({
-    mutationFn: deleteAffiliate,
+    mutationFn: deletePartner,
     onSuccess: () => {
       refetch();
       // setData((prev) =>
@@ -307,9 +303,9 @@ const useDeleteAffiliateMutation = (refetch: TRefetch) =>
     },
   });
 
-const useBulkDeleteAffiliateMutation = () =>
+const useBulkDeletePartnerMutation = () =>
   useMutation({
-    mutationFn: bulkDeleteAffiliate,
+    mutationFn: bulkDeletePartner,
     onSuccess: (res) => res,
     onError: (err: unknown) => {
       // normalize Axios error
@@ -662,56 +658,6 @@ const useDeleteNewsMutation = () =>
 const useBulkDeleteNewsMutation = () =>
   useMutation({
     mutationFn: bulkDeleteNewsById,
-    onSuccess: (data) => {
-      return data;
-    },
-    onError: (err: unknown) => {
-      console.error("Mutation error:", err);
-    },
-  });
-
-/**
- * ###################################################
- * Our Partner
- * ###################################################
- */
-
-const useCreateOurPartnerMutation = () =>
-  useMutation({
-    mutationFn: createPartner,
-    onSuccess: (data) => {
-      return data;
-    },
-    onError: (err: unknown) => {
-      console.error("Mutation error:", err);
-    },
-  });
-
-const useEditOurPartnerMutation = () =>
-  useMutation({
-    mutationFn: editPartnerById,
-    onSuccess: (data) => {
-      return data;
-    },
-    onError: (err: unknown) => {
-      console.error("Mutation error:", err);
-    },
-  });
-
-const useDeleteOurPartnerMutation = () =>
-  useMutation({
-    mutationFn: deletePartnerById,
-    onSuccess: (data) => {
-      return data;
-    },
-    onError: (err: unknown) => {
-      console.error("Mutation error:", err);
-    },
-  });
-
-const useBulkDeleteOurPartnerMutation = () =>
-  useMutation({
-    mutationFn: bulkDeletePartnerById,
     onSuccess: (data) => {
       return data;
     },
@@ -1173,11 +1119,10 @@ export default {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useBulkDeleteUserMutation,
-  // Affiliate
-  useCreateAffiliateMutation,
-  useEditAffiliateMutation,
-  useDeleteAffiliateMutation,
-  useBulkDeleteAffiliateMutation,
+  useCreatePartnerMutation,
+  useEditPartnerMutation,
+  useDeletePartnerMutation,
+  useBulkDeletePartnerMutation,
   // Chauffeur
   useCreateChauffeurMutation,
   useEditChauffeurMutation,
@@ -1204,11 +1149,6 @@ export default {
   useEditNewsMutation,
   useDeleteNewsMutation,
   useBulkDeleteNewsMutation,
-  // Our Partner
-  useCreateOurPartnerMutation,
-  useEditOurPartnerMutation,
-  useDeleteOurPartnerMutation,
-  useBulkDeleteOurPartnerMutation,
   // FAQ
   useCreateFaqMutation,
   useEditFaqMutation,

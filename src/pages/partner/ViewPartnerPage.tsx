@@ -3,7 +3,7 @@ import { IconFileDownload, IconFileInfo } from "@tabler/icons-react";
 import { ArrowLeft } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useFetchAffiliateById } from "@/api";
+import { useFetchPartnerById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -29,7 +29,7 @@ import { generatePageTitle } from "@/utils/seo";
 
 const libraries = ["places", "geocoding"];
 
-const ViewAffiliatePage = () => {
+const ViewPartnerPage = () => {
   const { id } = useParams();
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
@@ -44,7 +44,7 @@ const ViewAffiliatePage = () => {
   });
 
   // console.log("id:",id)
-  const { data, isFetching, isError, refetch } = useFetchAffiliateById({ id });
+  const { data, isFetching, isError, refetch } = useFetchPartnerById({ id });
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
@@ -126,20 +126,20 @@ const ViewAffiliatePage = () => {
 
   return (
     <>
-      <PageTitle title={generatePageTitle("Affiliate")} />
+      <PageTitle title={generatePageTitle("Partner")} />
       <div className="p-6 space-y-6 md:p-8 md:space-y-8">
         <PageHeader
-          title="Affiliate Details"
+          title="Partner Details"
           breadcrumbs={[
             { label: "Home", path: "/" },
-            { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
-            { label: "View Affiliate" },
+            { label: "Partner", path: constant.ROUTING_URLS.PARTNER },
+            { label: "View Partner" },
           ]}
           backAction={{
             variant: "outlinePrimary",
             label: "Back",
             icon: <ArrowLeft />,
-            link: constant.ROUTING_URLS.AFFILIATE,
+            link: constant.ROUTING_URLS.PARTNER,
           }}
         />
 
@@ -209,4 +209,4 @@ const ViewAffiliatePage = () => {
   );
 };
 
-export default ViewAffiliatePage;
+export default ViewPartnerPage;

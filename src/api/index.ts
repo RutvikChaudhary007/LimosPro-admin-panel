@@ -9,8 +9,6 @@
  * import * as chauffeurAPI from '@/api/chauffeur.api'
  */
 
-// Affiliate Module
-export * from "./affiliate.api";
 // Auth Module (Login, Permissions, Roles, Dashboard)
 export * from "./auth.api";
 // Booking Module
@@ -29,6 +27,8 @@ export * from "./fleet.api";
 export * from "./notification.api";
 // Pages & Page Layout Module
 export * from "./pages/businessPageLayout.api";
+// Partner Module
+export * from "./partner.api";
 // Payment & Refund Module
 export * from "./payment.api";
 // Region Module

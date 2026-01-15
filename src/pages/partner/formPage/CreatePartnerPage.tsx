@@ -1,35 +1,35 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
-import AffiliateForm from "@/components/affiliate/AffiliateForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import PartnerForm from "@/components/partner/PartnerForm";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 
-function CreateAffiliatePage() {
+function CreatePartnerPage() {
   // const {toast} = useToast();
   // const navigate = useNavigate();
-  const createAffiliateMutation = queries.useCreateAffiliateMutation();
+  const createPartnerMutation = queries.useCreatePartnerMutation();
   const queryClient = useQueryClient();
-  const handleCreateAffiliate = (data: FormData) => {
-    console.log("called handleCreateAffiliate", data);
+  const handleCreatePartner = (data: FormData) => {
+    console.log("called handleCreatePartner", data);
     try {
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
-      // await createAffiliateMutation.mutateAsync(data)
-      toastPromise(createAffiliateMutation.mutateAsync(data), {
+      // await createPartnerMutation.mutateAsync(data)
+      toastPromise(createPartnerMutation.mutateAsync(data), {
         loading: "Submitting...",
         success: (res) => {
           if (res) {
-            queryClient.invalidateQueries({ queryKey: ["affiliates"] });
+            queryClient.invalidateQueries({ queryKey: ["Partners"] });
           }
-          return "Affiliate created successfully!";
+          return "Partner created successfully!";
         },
         error: (e) =>
           e instanceof AxiosError
             ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Failed to create affiliate",
+            : "Failed to create Partner",
       });
     } catch (error) {
       // Error handling is done in onError callback
@@ -39,25 +39,22 @@ function CreateAffiliatePage() {
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
-        title="Affiliate"
+        title="Partner"
         breadcrumbs={[
           { label: "Home", path: "/" },
-          { label: "Affiliate", path: constant.ROUTING_URLS.AFFILIATE },
-          { label: "Create Affiliate" },
+          { label: "Partner", path: constant.ROUTING_URLS.PARTNER },
+          { label: "Create Partner" },
         ]}
         backAction={{
           variant: "outlinePrimary",
           label: "Back",
           icon: <ArrowLeft />,
-          link: constant.ROUTING_URLS.AFFILIATE,
+          link: constant.ROUTING_URLS.PARTNER,
         }}
       />
-      <AffiliateForm
-        onSubmit={handleCreateAffiliate}
-        type={"Create Affiliate"}
-      />
+      <PartnerForm onSubmit={handleCreatePartner} type={"Create Partner"} />
     </div>
   );
 }
 
-export default CreateAffiliatePage;
+export default CreatePartnerPage;

@@ -31,7 +31,7 @@ export function SectionCards({ data }: TProps) {
         valueClass="text-3xl"
       />
       <MetricCard
-        title="Total Affiliates"
+        title="Total Partners"
         value={`${data?.totalAffiliates ?? 0}`}
         percentage="5.2%"
         bodyClass="pr-[5px]"
