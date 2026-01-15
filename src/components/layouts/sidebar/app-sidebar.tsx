@@ -106,7 +106,7 @@ const data: {
       title: "Partners",
       url: constant.ROUTING_URLS.PARTNER,
       icon: IconHeartHandshake,
-      permission: "managePartners",
+      permission: "manageAffiliates",
       action: "view",
     },
     {
