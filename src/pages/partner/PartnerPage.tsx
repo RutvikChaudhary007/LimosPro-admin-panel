@@ -252,7 +252,7 @@ function PartnerPage() {
             label: "Add Partner",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_PARTNER,
-            permission: "managePartners",
+            permission: "manageAffiliates",
             actionName: "create",
           }}
         />
