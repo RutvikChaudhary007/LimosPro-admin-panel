@@ -624,7 +624,7 @@ const FleetForm = ({
                   control={form.control}
                   name="affiliateId"
                   render={({ field }) =>
-                    isAffiliateFetching ? (
+                    isPartnerFetching ? (
                       <Spinner />
                     ) : (
                       <SelectDropDown
