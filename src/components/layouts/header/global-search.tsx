@@ -1,6 +1,7 @@
 import { IconX } from "@tabler/icons-react";
 import { Car, FileText, Phone, User, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useFetchGlobalSearch } from "@/api";
 import IconSearch from "@/assets/Icons/ic-search.svg?react";
 import {
@@ -15,6 +16,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { useDebounce } from "@/hooks/useDebounce";
+import { constant } from "@/lib/constant";
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   Booking: <FileText className="size-5" />,
@@ -22,13 +24,17 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   Fleet: <Car className="size-5" />,
   Customer: <Users className="size-5" />,
   Partner: <Phone className="size-5" />,
+  Staff: <User className="size-5" />,
+  "Regional Admin": <User className="size-5" />,
   News: <FileText className="size-5" />,
   Blog: <FileText className="size-5" />,
   FAQ: <FileText className="size-5" />,
   Testimonial: <FileText className="size-5" />,
+  Payment: <FileText className="size-5" />,
 };
 
 export function GlobalSearch() {
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [show, setShow] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -136,10 +142,78 @@ export function GlobalSearch() {
                           key={item.id || idx}
                           value={item.id || `${type}-${idx}`}
                           onSelect={() => {
-                            // Handle selection - navigate or perform action
-                            setQuery(item.name || item.title || item.label);
-                            console.log("Selected:", item);
-                            setShow(false);
+                            // Navigation logic based on entity type
+                            const id = item.id;
+                            let path = "";
+
+                            switch (type) {
+                              case "Booking":
+                                path =
+                                  constant.ROUTING_URLS.VIEW_BOOKING.replace(
+                                    ":id",
+                                    id,
+                                  );
+                                break;
+                              case "Chauffeur":
+                                path =
+                                  constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(
+                                    ":id",
+                                    id,
+                                  );
+                                break;
+                              case "Fleet":
+                                path = constant.ROUTING_URLS.VIEW_FLEET.replace(
+                                  ":id",
+                                  id,
+                                );
+                                break;
+                              case "Customer":
+                                path = constant.ROUTING_URLS.VIEW_USERS.replace(
+                                  ":id",
+                                  id,
+                                );
+                                break;
+                              case "Partner":
+                                path =
+                                  constant.ROUTING_URLS.VIEW_PARTNER.replace(
+                                    ":id",
+                                    id,
+                                  );
+                                break;
+                              case "Staff":
+                                // No view page, navigate to list
+                                path = constant.ROUTING_URLS.STAFF_MEMBERS;
+                                break;
+                              case "Regional Admin":
+                                // No view page, navigate to list
+                                path = constant.ROUTING_URLS.REGION_ADMIN;
+                                break;
+                              case "Payment":
+                                path =
+                                  constant.ROUTING_URLS.VIEW_PAYMENTS.replace(
+                                    ":id",
+                                    id,
+                                  );
+                                break;
+                              default: {
+                                // For other types, navigate to their list pages
+                                const listRoutes: Record<string, string> = {
+                                  News: constant.ROUTING_URLS.NEWS,
+                                  Blog: constant.ROUTING_URLS.BLOG_POSTS,
+                                  FAQ: constant.ROUTING_URLS.FAQ,
+                                  Testimonial:
+                                    constant.ROUTING_URLS.TESTIMONIALS,
+                                };
+                                path = listRoutes[type] || "";
+                                break;
+                              }
+                            }
+
+                            if (path) {
+                              navigate(path);
+                              setShow(false);
+                              setQuery("");
+                            }
                           }}
                           className="flex items-center gap-4 cursor-pointer transition-all duration-200 font-medium text-base text-base-black [&_svg]:text-base-gray aria-selected:[&_svg]:text-base-primary aria-selected:bg-base-light-gray px-3 py-2"
                         >
