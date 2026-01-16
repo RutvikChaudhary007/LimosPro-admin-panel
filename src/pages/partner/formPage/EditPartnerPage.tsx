@@ -2,7 +2,7 @@ import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchPartnerById } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
@@ -20,7 +20,6 @@ const libraries = ["places", "geocoding"];
 
 function EditPartnerPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
   // console.log("id:",id)
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
@@ -70,10 +69,7 @@ function EditPartnerPage() {
     try {
       await toastPromise(editPartnerMutation.mutateAsync({ data, id }), {
         loading: "Updating Partner...",
-        success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.PARTNER);
-          return "Yeah! Partner updated successfully";
-        },
+        success: "Yeah! Partner updated successfully",
         error: (e) =>
           e instanceof AxiosError
             ? e.response?.data?.data?.error || e.response?.data?.message

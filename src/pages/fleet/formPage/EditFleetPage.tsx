@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   useFetchAllPartner,
   useFetchAllRegions,
@@ -16,7 +16,6 @@ import type { TFleetData } from "@/types/fleet.type";
 
 const EditFleetPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { data: PartnerData, isFetching: isPartnerFetching } =
     useFetchAllPartner({ DateRange: undefined });
   const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
@@ -27,10 +26,7 @@ const EditFleetPage = () => {
   const handleEditFleet = async (data: TFleetData) => {
     await toastPromise(editFleetMutation.mutateAsync({ id: id!, data }), {
       loading: "Updating fleet...",
-      success: (res) => {
-        if (res) navigate(constant.ROUTING_URLS.FLEETS);
-        return "Fleet updated successfully";
-      },
+      success: "Fleet updated successfully",
       error: (e) =>
         e instanceof AxiosError
           ? e.response?.data?.data?.error || e.response?.data?.message

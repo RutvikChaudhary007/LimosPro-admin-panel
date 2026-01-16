@@ -1,5 +1,4 @@
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import NewsForm, { type TNewsForm } from "@/components/news/NewsForm";
@@ -8,16 +7,12 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 
 const CreateNewsPage = () => {
-  const navigate = useNavigate();
   const createNewsMutation = queries.useCreateNewsMutation();
   const handleSubmit = async (data: TNewsForm): Promise<void> => {
     try {
-      toastPromise(createNewsMutation.mutateAsync({ body: data.news }), {
+      await toastPromise(createNewsMutation.mutateAsync({ body: data.news }), {
         loading: "Creating news...",
-        success: (res) => {
-          if (res) navigate(constant.ROUTING_URLS.NEWS);
-          return "Yeah! News created successfully";
-        },
+        success: "Yeah! News created successfully",
         error: "Failed to create news",
       });
     } catch (err) {

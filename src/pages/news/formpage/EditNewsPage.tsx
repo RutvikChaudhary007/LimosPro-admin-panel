@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useFetchNewsById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -15,19 +15,15 @@ import queries from "@/lib/queries";
 // }
 const EditNewsPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { data, isFetching } = useFetchNewsById(id!);
   const editNews = queries.useEditNewsMutation();
   const handleSubmit = async (data: TNewsForm): Promise<void> => {
     try {
-      toastPromise(
+      await toastPromise(
         editNews.mutateAsync({ id: id!, data: { body: data.news } }),
         {
           loading: "Updating news...",
-          success: (res) => {
-            if (res) navigate(constant.ROUTING_URLS.NEWS);
-            return "Yeah! News updated successfully";
-          },
+          success: "Yeah! News updated successfully",
           error: "Failed to update news",
         },
       );

@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -9,9 +8,7 @@ import queries from "@/lib/queries";
 
 function CreatePartnerPage() {
   // const {toast} = useToast();
-  // const navigate = useNavigate();
   const createPartnerMutation = queries.useCreatePartnerMutation();
-  const queryClient = useQueryClient();
   const handleCreatePartner = async (data: FormData) => {
     // console.log("called handleCreatePartner", data);
     try {
@@ -20,12 +17,7 @@ function CreatePartnerPage() {
       // await createPartnerMutation.mutateAsync(data)
       await toastPromise(createPartnerMutation.mutateAsync(data), {
         loading: "Submitting...",
-        success: (res) => {
-          if (res) {
-            queryClient.invalidateQueries({ queryKey: ["partners"] });
-          }
-          return "Partner created successfully!";
-        },
+        success: "Partner created successfully!",
         error: (e) =>
           e instanceof AxiosError
             ? e.response?.data?.data?.error || e.response?.data?.message

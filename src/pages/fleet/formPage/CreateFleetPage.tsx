@@ -1,6 +1,5 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useFetchAllPartner, useFetchAllRegions } from "@/api";
 import FleetForm from "@/components/fleet/FleetForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -10,7 +9,6 @@ import queries from "@/lib/queries";
 import type { TFleetData } from "@/types/fleet.type";
 
 const CreateFleetPage = () => {
-  const navigate = useNavigate();
   const { data: PartnerData, isFetching: isPartnerFetching } =
     useFetchAllPartner({ DateRange: undefined });
   const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
@@ -21,10 +19,7 @@ const CreateFleetPage = () => {
     // console.log("called handle create fleet!", data);
     await toastPromise(createFleetMutation.mutateAsync(data), {
       loading: "Creating fleet...",
-      success: (res) => {
-        if (res) navigate(constant.ROUTING_URLS.FLEETS);
-        return "Yeah! fleet created successfully.";
-      },
+      success: "Yeah! fleet created successfully.",
       error: (e) =>
         e instanceof AxiosError
           ? e.response?.data?.data?.error || e.response?.data?.message

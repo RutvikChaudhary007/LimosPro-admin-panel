@@ -5,8 +5,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
+  blogService,
   bulkDeleteChauffeur,
   bulkDeleteCrewMember,
   bulkDeleteFAQById,
@@ -263,12 +264,13 @@ const useBulkDeletefleetMutation = () => {
 
 const useCreatePartnerMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createPartner,
     onSuccess: (response, variables) => {
       console.log(variables, response);
-
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
       // userPermissions are automatically stored in localStorage by the login API
 
       navigate(constant.ROUTING_URLS.PARTNER);
@@ -282,12 +284,13 @@ const useCreatePartnerMutation = () => {
 
 const useEditPartnerMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: editPartner,
     onSuccess: (response, variables) => {
       console.log(variables, response);
-
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
       // userPermissions are automatically stored in localStorage by the login API
 
       navigate(constant.ROUTING_URLS.PARTNER);
@@ -299,10 +302,12 @@ const useEditPartnerMutation = () => {
   });
 };
 
-const useDeletePartnerMutation = (refetch: TRefetch) =>
-  useMutation({
+const useDeletePartnerMutation = (refetch: TRefetch) => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deletePartner,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
       refetch();
       // setData((prev) =>
       //   prev.filter((row) => row.id !== response.id))
@@ -320,11 +325,16 @@ const useDeletePartnerMutation = (refetch: TRefetch) =>
       throw new Error("An unexpected error occurred"); // 🔹 throw
     },
   });
+};
 
-const useBulkDeletePartnerMutation = () =>
-  useMutation({
+const useBulkDeletePartnerMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeletePartner,
-    onSuccess: (res) => res,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["partners"] });
+      return res;
+    },
     onError: (err: unknown) => {
       // normalize Axios error
       if (err && typeof err === "object" && "isAxiosError" in err) {
@@ -338,6 +348,7 @@ const useBulkDeletePartnerMutation = () =>
       throw new Error("An unexpected error occurred"); // 🔹 throw
     },
   });
+};
 
 /**
  * ##########################
@@ -347,10 +358,12 @@ const useBulkDeletePartnerMutation = () =>
 
 const useUpdateUserMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: IUserFormData }) =>
       updateUser(id, data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       navigate(constant.ROUTING_URLS.USERS);
     },
     onError: (err: unknown) => {
@@ -359,27 +372,33 @@ const useUpdateUserMutation = () => {
   });
 };
 
-const useDeleteUserMutation = () =>
-  useMutation({
+const useDeleteUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteUser,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteUserMutation = () =>
-  useMutation({
+const useBulkDeleteUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteUser,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ################################
@@ -389,10 +408,12 @@ const useBulkDeleteUserMutation = () =>
 
 const useCreateChauffeurMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createChauffeur,
     onSuccess: (response, variables) => {
       console.log(variables, response);
+      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
       // userPermissions are automatically stored in localStorage by the login API
       navigate(constant.ROUTING_URLS.CHAUFFEUR);
       // Navigate to dashboard
@@ -405,10 +426,12 @@ const useCreateChauffeurMutation = () => {
 
 const useEditChauffeurMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editChauffeur,
     onSuccess: (response, variables) => {
       console.log(variables, response);
+      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
       // userPermissions are automatically stored in localStorage by the login API
       navigate(constant.ROUTING_URLS.CHAUFFEUR);
       // Navigate to dashboard
@@ -419,29 +442,35 @@ const useEditChauffeurMutation = () => {
   });
 };
 
-const useDeleteChauffeurMutation = () =>
-  useMutation({
+const useDeleteChauffeurMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteChauffeur,
     onSuccess: (response, variables) => {
       console.log("variables:", variables);
+      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
       return response;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteChauffeurMutation = () =>
-  useMutation({
+const useBulkDeleteChauffeurMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteChauffeur,
     onSuccess: (response, variables) => {
       console.log("variables:", variables);
+      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
       return response;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * #################################################
@@ -451,10 +480,12 @@ const useBulkDeleteChauffeurMutation = () =>
 
 const useCreateCrewMemberMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCrewMember,
     onSuccess: (response, variables) => {
       console.log(variables, response);
+      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
       // userPermissions are automatically stored in localStorage by the login API
       navigate(constant.ROUTING_URLS.CREW_MEMBERS);
       // Navigate to dashboard
@@ -465,38 +496,49 @@ const useCreateCrewMemberMutation = () => {
   });
 };
 
-const useUpdateCrewMemberMutation = () =>
-  useMutation({
+const useUpdateCrewMemberMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editCrewMember,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
+      navigate(constant.ROUTING_URLS.CREW_MEMBERS);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useDeleteCrewMemberMutation = () =>
-  useMutation({
+const useDeleteCrewMemberMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteCrewMember,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteCrewMemberMutation = () =>
-  useMutation({
+const useBulkDeleteCrewMemberMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteCrewMember,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ###################################################
@@ -506,10 +548,12 @@ const useBulkDeleteCrewMemberMutation = () =>
 
 const useCreateStaffMemberMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createStaffMember,
     onSuccess: (response, variables) => {
       console.log(variables, response);
+      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
       // userPermissions are automatically stored in localStorage by the login API
       navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
       // Navigate to dashboard
@@ -522,10 +566,12 @@ const useCreateStaffMemberMutation = () => {
 
 const useUpdateStaffMemberMutation = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editStaffMember,
     onSuccess: (response, variables) => {
       console.log(variables, response);
+      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
       // userPermissions are automatically stored in localStorage by the login API
       navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
       // Navigate to dashboard
@@ -536,27 +582,33 @@ const useUpdateStaffMemberMutation = () => {
   });
 };
 
-const useDeleteStaffMemberMutation = () =>
-  useMutation({
+const useDeleteStaffMemberMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteStaffMember,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteStaffMemberMutation = () =>
-  useMutation({
+const useBulkDeleteStaffMemberMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteStaffMember,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 const useSyncStaffPermissionsMutation = () => {
   const navigate = useNavigate();
@@ -580,59 +632,75 @@ const useSyncStaffPermissionsMutation = () => {
  * ###################################################
  */
 
-const useCreateTestimonialMutation = () =>
-  useMutation({
+const useCreateTestimonialMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createTestimonial,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+      navigate(constant.ROUTING_URLS.TESTIMONIALS);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useEditTestimonialMutation = () =>
-  useMutation({
+const useEditTestimonialMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editTestimonial,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+      navigate(constant.ROUTING_URLS.TESTIMONIALS);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ###################################################
  * Delete Testimonial
  * ###################################################
  */
-const useDeleteTestimonialMutation = () =>
-  useMutation({
+const useDeleteTestimonialMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteTestimonial,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ###################################################
  * Bulk Delete Testimonial
  * ###################################################
  */
-const useBulkDeleteTestimonialMutation = () =>
-  useMutation({
+const useBulkDeleteTestimonialMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteTestimonial,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ###################################################
@@ -640,49 +708,65 @@ const useBulkDeleteTestimonialMutation = () =>
  * ###################################################
  */
 
-const useCreateNewsMutation = () =>
-  useMutation({
+const useCreateNewsMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createNews,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["news"] });
+      navigate(constant.ROUTING_URLS.NEWS);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useEditNewsMutation = () =>
-  useMutation({
+const useEditNewsMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editNewsById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["news"] });
+      navigate(constant.ROUTING_URLS.NEWS);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useDeleteNewsMutation = () =>
-  useMutation({
+const useDeleteNewsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteNewsById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["news"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteNewsMutation = () =>
-  useMutation({
+const useBulkDeleteNewsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteNewsById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["news"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ###################################################
@@ -690,49 +774,63 @@ const useBulkDeleteNewsMutation = () =>
  * ###################################################
  */
 
-const useCreateFaqMutation = () =>
-  useMutation({
+const useCreateFaqMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createFAQ,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      // navigate(constant.ROUTING_URLS.FAQ); // Removed navigate usage
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useEditFaqMutation = () =>
-  useMutation({
+const useEditFaqMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editFAQById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      // navigate(constant.ROUTING_URLS.FAQ); // Removed navigate usage
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useDeleteFaqMutation = () =>
-  useMutation({
+const useDeleteFaqMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteFAQById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteFaqMutation = () =>
-  useMutation({
+const useBulkDeleteFaqMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteFAQById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["faqs"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * ###################################################
@@ -740,49 +838,65 @@ const useBulkDeleteFaqMutation = () =>
  * ###################################################
  */
 
-const useCreateIPWhiteListMutation = () =>
-  useMutation({
+const useCreateIPWhiteListMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createIPWhiteList,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
+      navigate(constant.ROUTING_URLS.IP_WHITE_LIST);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useEditIPWhiteListMutation = () =>
-  useMutation({
+const useEditIPWhiteListMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editIPWhiteListById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
+      navigate(constant.ROUTING_URLS.IP_WHITE_LIST);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useDeleteIPWhiteListMutation = () =>
-  useMutation({
+const useDeleteIPWhiteListMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteIPWhiteListById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useBulkDeleteIPWhiteListMutation = () =>
-  useMutation({
+const useBulkDeleteIPWhiteListMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: bulkDeleteIPWhiteListById,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
 /**
  * #####################################
@@ -813,6 +927,7 @@ const useBulkDeleteTripsMutation = () => {
  */
 
 const useCreateRegionMutation = () => {
+  const navigate = useNavigate();
   const clientQuery = useQueryClient();
 
   return useMutation({
@@ -822,6 +937,7 @@ const useCreateRegionMutation = () => {
       ["Regions", "notifications"].forEach((key) =>
         clientQuery.invalidateQueries({ queryKey: [key] }),
       );
+      navigate(constant.ROUTING_URLS.REGION);
       return data;
     },
 
@@ -838,6 +954,7 @@ const useCreateRegionMutation = () => {
 };
 
 const useEditRegionMutation = () => {
+  const navigate = useNavigate();
   const clientQuery = useQueryClient();
 
   return useMutation({
@@ -847,6 +964,7 @@ const useEditRegionMutation = () => {
       ["Regions", "notifications"].forEach((key) =>
         clientQuery.invalidateQueries({ queryKey: [key] }),
       );
+      navigate(constant.ROUTING_URLS.REGION);
       return data;
     },
 
@@ -920,12 +1038,14 @@ const useBulkDeleteRegionsMutation = () => {
  */
 
 const useCreateRegionAdminMutation = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createRegionAdmin,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["RegionAdmins"] });
+      navigate(constant.ROUTING_URLS.REGION_ADMIN);
       return data;
     },
     onError: (err: unknown) => {
@@ -935,6 +1055,7 @@ const useCreateRegionAdminMutation = () => {
 };
 
 const useEditRegionAdminMutation = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -943,6 +1064,7 @@ const useEditRegionAdminMutation = () => {
       ["RegionAdmins"].forEach((key) => {
         queryClient.invalidateQueries({ queryKey: [key] });
       });
+      navigate(constant.ROUTING_URLS.REGION_ADMIN);
       return data;
     },
     onError: (err: unknown) => {
@@ -992,36 +1114,82 @@ const useBulkDeleteRegionAdminsMutation = () => {
  * @returns
  */
 
-const useCreateContentBlockMutation = () =>
-  useMutation({
+const useCreateContentBlockMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createContentBlock,
-    onSuccess: (data) => data,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ContentBlocks"] });
+      navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+      return data;
+    },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useEditContentBlockMutation = () =>
-  useMutation({
+const useEditContentBlockMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: editContentBlock,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ContentBlocks"] });
+      navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
 
-const useDeleteContentBlockMutation = () =>
-  useMutation({
+const useDeleteContentBlockMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteContentBlock,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["ContentBlocks"] });
       return data;
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
     },
   });
+};
+
+/**
+ * #####################################
+ * Blog Post
+ * #####################################
+ * @returns
+ */
+const useCreateBlogPostMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: FormData) => blogService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogPosts"] });
+      navigate(constant.ROUTING_URLS.BLOG_POSTS);
+    },
+  });
+};
+
+const useUpdateBlogPostMutation = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
+      blogService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogPosts"] });
+      navigate(constant.ROUTING_URLS.BLOG_POSTS);
+    },
+  });
+};
 
 /**
  * #####################################
@@ -1206,4 +1374,7 @@ export default {
   useCreateDestinationPageContentMutation,
   useEditDestinationPageContentMutation,
   useDeleteDestinationPageContentMutation,
+  // Blog
+  useCreateBlogPostMutation,
+  useUpdateBlogPostMutation,
 };

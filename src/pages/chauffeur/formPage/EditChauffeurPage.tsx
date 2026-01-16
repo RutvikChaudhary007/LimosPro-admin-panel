@@ -2,7 +2,7 @@ import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useFetchChauffeurById } from "@/api";
 import ChauffeurForm, {
   type TChauffeurForm,
@@ -18,7 +18,6 @@ import { geoDecoding } from "@/utils/googleMaps";
 const libraries = ["places", "geocoding"];
 const EditChauffeurPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const googleMapsApiKey = useMemo(() => env?.VITE_GOOGLE_MAP_KEY, []);
   const { data, isFetching } = useFetchChauffeurById({ id: id ?? "" });
   const [address, setAddress] = useState<string | undefined>(undefined);
@@ -62,10 +61,7 @@ const EditChauffeurPage = () => {
         }),
         {
           loading: "Updating Chauffeur...",
-          success: (res) => {
-            if (res) navigate(constant.ROUTING_URLS.CHAUFFEUR);
-            return "Yeah! Chauffeur updated successfully.";
-          },
+          success: "Yeah! Chauffeur updated successfully.",
           error: (e) =>
             e instanceof AxiosError
               ? e.response?.data?.data?.error || e.response?.data?.message

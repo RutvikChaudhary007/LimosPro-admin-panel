@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 import type { BlogPost } from "@/types/content";
 
 const EditBlogPostPage: React.FC = () => {
@@ -40,12 +41,12 @@ const EditBlogPostPage: React.FC = () => {
     }
   }, [id]);
 
+  const updateBlogPostMutation = queries.useUpdateBlogPostMutation();
   const handleUpdateBlogPost = async (data: FormData) => {
     try {
-      setLoading(true);
-      await blogService.update(id!, data);
+      await updateBlogPostMutation.mutateAsync({ id: id!, data });
       toast.success("Blog post updated successfully");
-      navigate(constant.ROUTING_URLS.BLOG_POSTS);
+      // navigate(constant.ROUTING_URLS.BLOG_POSTS); // Handled by mutation hook
     } catch (error) {
       console.error("Error updating blog post:", error);
       toast.error("Failed to update blog post");

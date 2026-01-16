@@ -2,24 +2,23 @@ import axios from "axios";
 import { Archive, ArrowLeft } from "lucide-react";
 import type { FC } from "react";
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { blogService } from "@/api";
 import BlogForm from "@/components/contentManagement/BlogForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { constant } from "@/lib/constant";
+import queries from "@/lib/queries";
 
 const CreateBlogPostPage: FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const blogFormRef = useRef<{ archivePost: () => void }>(null);
 
+  const createBlogPostMutation = queries.useCreateBlogPostMutation();
   const handleCreateBlogPost = async (data: FormData) => {
     try {
-      setLoading(true);
-      await blogService.create(data);
+      await createBlogPostMutation.mutateAsync(data);
       toast.success("Blog post created successfully");
-      navigate(constant.ROUTING_URLS.BLOG_POSTS);
+      // navigate(constant.ROUTING_URLS.BLOG_POSTS); // Handled by mutation hook
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message);
