@@ -465,8 +465,8 @@ const FleetForm = ({
   );
 
   useEffect(() => {
-    if (isAffiliate && affiliateData?.affiliates && !initialData) {
-      const currentAffiliate = affiliateData.affiliates.find(
+    if (isAffiliate && partnerData?.affiliates && !initialData) {
+      const currentAffiliate = partnerData.affiliates.find(
         (a) => a.userId === user?.id,
       );
       if (currentAffiliate) {
@@ -475,7 +475,7 @@ const FleetForm = ({
         });
       }
     }
-  }, [isAffiliate, affiliateData, user, form, initialData]);
+  }, [isAffiliate, partnerData, user, form, initialData]);
 
   const handleFilesChange = (
     files: FileList | null,
@@ -634,7 +634,7 @@ const FleetForm = ({
                           isFieldDisabled(disabledFields, "affiliateId")
                         }
                         items={
-                          affiliateData?.affiliates?.map((a) => ({
+                          partnerData?.affiliates?.map((a) => ({
                             label: `${a.user.firstName} ${a.user.lastName}`,
                             value: a.id,
                           })) || []
