@@ -551,48 +551,50 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                 )}
               </Field>
 
-              <Field>
-                <FieldLabel
-                  htmlFor="password"
-                  className="text-base-black gap-0"
-                >
-                  Password
-                </FieldLabel>
+              {!isEdit && (
+                <Field>
+                  <FieldLabel
+                    htmlFor="password"
+                    className="text-base-black gap-0"
+                  >
+                    Password
+                  </FieldLabel>
 
-                <Controller
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder={passwordPlaceholder}
-                        disabled={isFieldDisabled(disabledFields, "password")}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconLock />
-                      </InputGroupAddon>
-                      <InputGroupAddon
-                        align="inline-end"
-                        className="cursor-pointer"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <IconEyeOff /> : <IconEye />}
-                      </InputGroupAddon>
-                    </InputGroup>
+                  <Controller
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <InputGroup>
+                        <InputGroupInput
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder={passwordPlaceholder}
+                          disabled={isFieldDisabled(disabledFields, "password")}
+                          {...field}
+                        />
+                        <InputGroupAddon>
+                          <IconLock />
+                        </InputGroupAddon>
+                        <InputGroupAddon
+                          align="inline-end"
+                          className="cursor-pointer"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? <IconEyeOff /> : <IconEye />}
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
+                  />
+
+                  <FieldDescription>{passwordDescription}</FieldDescription>
+
+                  {form.formState.errors.password && (
+                    <FormMessage>
+                      {form.formState.errors.password.message}
+                    </FormMessage>
                   )}
-                />
-
-                <FieldDescription>{passwordDescription}</FieldDescription>
-
-                {form.formState.errors.password && (
-                  <FormMessage>
-                    {form.formState.errors.password.message}
-                  </FormMessage>
-                )}
-              </Field>
+                </Field>
+              )}
 
               <Field>
                 <FieldLabel htmlFor="email" className="text-base-black gap-0">

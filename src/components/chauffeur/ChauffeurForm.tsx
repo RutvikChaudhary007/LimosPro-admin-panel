@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { z } from "zod";
 import { useFetchAllFleets } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
+import { usePermission } from "@/hooks/usePermission";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { passwordValidation } from "@/utils/password-validation";
@@ -201,15 +202,12 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   disabledFields,
   type,
 }) => {
-  const role = localStorage.getItem("role");
-  let roleArray: string[] = [];
-  try {
-    roleArray = role ? role.split(",") : [];
-  } catch (e) {
-    console.error("Error splitting role:", e);
-  }
-
-  const isAffiliate = roleArray.includes("Affiliate");
+  const { hasPermission } = usePermission();
+  const isEdit = type === "Edit Chauffeur";
+  const isAuthorized = hasPermission(
+    "manageChauffeurs",
+    isEdit ? "update" : "create",
+  );
 
   let parsedUserStore = null;
   try {
@@ -217,7 +215,6 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   } catch (e) {
     console.error("Error parsing user-store:", e);
   }
-  const isEdit = type === "Edit Chauffeur";
   const userAffiliateId = parsedUserStore?.state?.user?.affiliateId;
 
   const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
@@ -326,7 +323,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     affiliate: "",
   });
 
-  if (!isAffiliate) {
+  if (!isAuthorized) {
     return (
       <div className="flex items-center justify-center min-h-[400px] p-8 text-center bg-base-background-light">
         <Card className="max-w-md w-full border-red-200 shadow-lg">
@@ -338,10 +335,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
               Access Denied
             </CardTitle>
             <p className="text-gray-600">
-              You do not have the required role to create or manage chauffeurs.
-              Only users with the{" "}
-              <strong className="text-base-black">Partner</strong> role are
-              authorized to access this page.
+              You do not have the required permission to{" "}
+              {isEdit ? "update" : "create"} chauffeurs. Please contact your
+              administrator if you believe this is an error.
             </p>
             <Button asChild variant="outlinePrimary" className="mt-4 w-full">
               <Link to="/">Return to Dashboard</Link>

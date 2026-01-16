@@ -619,10 +619,14 @@ export function getChauffeur(
       enableHiding: false,
     },
     {
-      accessorKey: "vehicle.brand",
+      accessorKey: "vehicle",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Vehicle" />
+        <DataTableColumnHeader column={column} title="Vehicle Name" />
       ),
+      cell: ({ row }) => {
+        const vehicle = row.original.vehicle;
+        return vehicle ? `${vehicle.brand} ${vehicle.model}` : "N/A";
+      },
       enableSorting: false,
     },
     {

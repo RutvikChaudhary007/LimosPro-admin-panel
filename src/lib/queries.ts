@@ -13,11 +13,13 @@ import {
   bulkDeleteFAQById,
   bulkDeleteFleet,
   bulkDeleteIPWhiteListById,
+  bulkDeleteMetaKeywords,
   bulkDeleteNewsById,
   bulkDeletePartner,
   bulkDeleteRegionAdmins,
   bulkDeleteRegions,
   bulkDeleteStaffMember,
+  bulkDeleteTags,
   bulkDeleteTestimonial,
   bulkDeleteTrips,
   bulkDeleteUser,
@@ -27,11 +29,13 @@ import {
   createFAQ,
   createFleet,
   createIPWhiteList,
+  createMetaKeyword,
   createNews,
   createPartner,
   createRegion,
   createRegionAdmin,
   createStaffMember,
+  createTag,
   createTestimonial,
   deleteChauffeur,
   deleteContentBlock,
@@ -39,11 +43,13 @@ import {
   deleteFAQById,
   deleteFleet,
   deleteIPWhiteListById,
+  deleteMetaKeyword,
   deleteNewsById,
   deletePartner,
   deleteRegion,
   deleteRegionAdmin,
   deleteStaffMember,
+  deleteTag,
   deleteTestimonial,
   deleteUser,
   editChauffeur,
@@ -59,8 +65,11 @@ import {
   editStaffMember,
   editTestimonial,
   login,
+  mediaService,
   refundPayment,
   syncUserPermissions,
+  updateMetaKeyword,
+  updateTag,
   updateUser,
 } from "@/api";
 import {
@@ -138,10 +147,12 @@ const useLoginMutation = () => {
 
 const useCreatefleetMutation = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: createFleet,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      navigate(constant.ROUTING_URLS.FLEETS);
       return res;
     },
     onError: (err: unknown) => {
@@ -168,10 +179,12 @@ const useCreatefleetMutation = () => {
 
 const useEditfleetMutation = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: editFleetById,
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      navigate(constant.ROUTING_URLS.FLEETS);
       return res;
     },
     onError: (err: unknown) => {
@@ -407,8 +420,8 @@ const useBulkDeleteUserMutation = () => {
  */
 
 const useCreateChauffeurMutation = () => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: createChauffeur,
     onSuccess: (response, variables) => {
@@ -425,8 +438,8 @@ const useCreateChauffeurMutation = () => {
 };
 
 const useEditChauffeurMutation = () => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: editChauffeur,
     onSuccess: (response, variables) => {
@@ -1296,6 +1309,140 @@ const useDeleteDestinationPageContentMutation = () => {
   });
 };
 
+// Tags mutations
+const useCreateTagMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createTag,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+};
+
+const useEditTagMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: unknown }) =>
+      updateTag(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+};
+
+const useDeleteTagMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteTag,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+};
+
+const useBulkDeleteTagsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bulkDeleteTags,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+};
+
+// Meta Keywords mutations
+const useCreateMetaKeywordMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createMetaKeyword,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+    },
+  });
+};
+
+const useEditMetaKeywordMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: unknown }) =>
+      updateMetaKeyword(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+    },
+  });
+};
+
+const useDeleteMetaKeywordMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteMetaKeyword,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+    },
+  });
+};
+
+const useBulkDeleteMetaKeywordsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bulkDeleteMetaKeywords,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+    },
+  });
+};
+
+// Media mutations
+const useUploadMediaMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: any) => mediaService.upload(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+    },
+  });
+};
+
+const useUploadMultipleMediaMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      files,
+      category,
+      folder,
+    }: {
+      files: File[];
+      category?: string;
+      folder?: string;
+    }) => mediaService.uploadMultiple(files, category, folder),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+    },
+  });
+};
+
+const useUpdateMediaMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      mediaService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+    },
+  });
+};
+
+const useDeleteMediaMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => mediaService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["media"] });
+    },
+  });
+};
+
 export default {
   // Auth
   useLoginMutation,
@@ -1377,4 +1524,19 @@ export default {
   // Blog
   useCreateBlogPostMutation,
   useUpdateBlogPostMutation,
+  // Tags
+  useCreateTagMutation,
+  useEditTagMutation,
+  useDeleteTagMutation,
+  useBulkDeleteTagsMutation,
+  // Meta Keywords
+  useCreateMetaKeywordMutation,
+  useEditMetaKeywordMutation,
+  useDeleteMetaKeywordMutation,
+  useBulkDeleteMetaKeywordsMutation,
+  // Media
+  useUploadMediaMutation,
+  useUploadMultipleMediaMutation,
+  useUpdateMediaMutation,
+  useDeleteMediaMutation,
 };

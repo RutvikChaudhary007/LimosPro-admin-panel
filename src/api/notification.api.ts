@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import axiosInstance from "@/utils/axiosInstance";
@@ -155,9 +155,13 @@ export const createNotification = async (
  * Hook to create notification
  */
 export const useCreateNotification = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: ICreateNotificationPayload) =>
       createNotification(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };
 
@@ -188,6 +192,7 @@ export const updateNotification = async (
  * Hook to update notification
  */
 export const useUpdateNotification = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       notificationId,
@@ -196,6 +201,9 @@ export const useUpdateNotification = () => {
       notificationId: string;
       payload: IUpdateNotificationPayload;
     }) => updateNotification(notificationId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };
 
@@ -219,9 +227,13 @@ export const markNotificationAsRead = async (notificationId: string) => {
  * Hook to mark notification as read
  */
 export const useMarkNotificationAsRead = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (notificationId: string) =>
       markNotificationAsRead(notificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };
 
@@ -248,8 +260,12 @@ export const markAllNotificationsAsRead = async (userId: string) => {
  * Hook to mark all notifications as read
  */
 export const useMarkAllNotificationsAsRead = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (userId: string) => markAllNotificationsAsRead(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };
 
@@ -276,8 +292,12 @@ export const deleteNotification = async (notificationId: string) => {
  * Hook to delete notification
  */
 export const useDeleteNotification = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (notificationId: string) => deleteNotification(notificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };
 
@@ -301,8 +321,12 @@ export const bulkDeleteNotifications = async (notificationIds: string[]) => {
  * Hook to bulk delete notifications
  */
 export const useBulkDeleteNotification = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (notificationIds: string[]) =>
       bulkDeleteNotifications(notificationIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
   });
 };

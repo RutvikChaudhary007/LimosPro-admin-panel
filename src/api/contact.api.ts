@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TIpWhiteListForm } from "@/components/ipWhiteList/IpWhiteListForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
@@ -104,10 +104,15 @@ export const replyToContactRequest = async ({
 /**
  * Hook to send reply to contact request
  */
-export const useReplyContactMutation = () =>
-  useMutation({
+export const useReplyContactMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: replyToContactRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contactRequest"] });
+    },
   });
+};
 
 // ============================================
 // IP WHITELIST OPERATIONS
