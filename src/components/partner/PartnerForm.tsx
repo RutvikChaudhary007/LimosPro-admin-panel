@@ -153,7 +153,7 @@ const getFormSchema = (isEdit: boolean) =>
 type TPartnerForm = z.infer<ReturnType<typeof getFormSchema>>;
 interface PartnerFormProps {
   initialData?: IEditPartnerRes;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: FormData) => Promise<void>;
   disabledFields?: string[];
   type: string;
 }
@@ -354,7 +354,11 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
       documents: [],
       status: "",
     },
+    mode: "all",
+    // reValidateMode: ["onChange", "onSubmit", "onBlur"],
   });
+
+  const { isSubmitting } = form.formState;
 
   const handleAddressChange = useCallback(
     (value: string) => {
@@ -413,8 +417,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
         formData.append(`documents`, file);
       });
 
-      onSubmit(formData);
-      form.reset();
+      await onSubmit(formData);
+      // form.reset();
     } catch (error) {
       console.error(error);
     }
@@ -993,8 +997,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               >
                 Clear All
               </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save Details"}
               </Button>
             </CardFooter>
           </CardBody>

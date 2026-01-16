@@ -12,9 +12,9 @@ const CreateChauffeurPage = () => {
   const createChauffeurMutation = queries.useCreateChauffeurMutation();
 
   const handleCreateChauffeur = async (data: TChauffeurForm) => {
-    console.log("called handle create chauffeur!", data);
+    // console.log("called handle create chauffeur!", data);
     try {
-      toastPromise(createChauffeurMutation.mutateAsync(data), {
+      await toastPromise(createChauffeurMutation.mutateAsync(data), {
         loading: "Submitting...",
         success: "Chauffeur created successfully!",
         error: (e) =>

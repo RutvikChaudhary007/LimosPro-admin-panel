@@ -219,7 +219,7 @@ export function toastPromise<T>(
   promise: Promise<T>,
   messages: PromiseMessages<T>,
 ) {
-  return sonnerToast.promise<T>(promise, {
+  sonnerToast.promise<T>(promise, {
     loading: messages.loading,
 
     success: (data) =>
@@ -236,4 +236,5 @@ export function toastPromise<T>(
       error: "destructive", // This will now apply correctly
     },
   });
+  return promise;
 }

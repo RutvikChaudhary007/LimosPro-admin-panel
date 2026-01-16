@@ -12,17 +12,17 @@ function CreatePartnerPage() {
   // const navigate = useNavigate();
   const createPartnerMutation = queries.useCreatePartnerMutation();
   const queryClient = useQueryClient();
-  const handleCreatePartner = (data: FormData) => {
-    console.log("called handleCreatePartner", data);
+  const handleCreatePartner = async (data: FormData) => {
+    // console.log("called handleCreatePartner", data);
     try {
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
       // await createPartnerMutation.mutateAsync(data)
-      toastPromise(createPartnerMutation.mutateAsync(data), {
+      await toastPromise(createPartnerMutation.mutateAsync(data), {
         loading: "Submitting...",
         success: (res) => {
           if (res) {
-            queryClient.invalidateQueries({ queryKey: ["Partners"] });
+            queryClient.invalidateQueries({ queryKey: ["partners"] });
           }
           return "Partner created successfully!";
         },

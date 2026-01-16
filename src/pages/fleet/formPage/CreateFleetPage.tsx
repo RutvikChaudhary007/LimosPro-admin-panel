@@ -18,8 +18,8 @@ const CreateFleetPage = () => {
   );
   const createFleetMutation = queries.useCreatefleetMutation();
   const handleCreateFleet = async (data: TFleetData) => {
-    console.log("called handle create fleet!", data);
-    toastPromise(createFleetMutation.mutateAsync(data), {
+    // console.log("called handle create fleet!", data);
+    await toastPromise(createFleetMutation.mutateAsync(data), {
       loading: "Creating fleet...",
       success: (res) => {
         if (res) navigate(constant.ROUTING_URLS.FLEETS);

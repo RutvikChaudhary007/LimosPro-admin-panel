@@ -25,7 +25,7 @@ const EditFleetPage = () => {
   const { data, isFetching } = useFetchFleetById({ id: id! });
   const editFleetMutation = queries.useEditfleetMutation();
   const handleEditFleet = async (data: TFleetData) => {
-    toastPromise(editFleetMutation.mutateAsync({ id: id!, data }), {
+    await toastPromise(editFleetMutation.mutateAsync({ id: id!, data }), {
       loading: "Updating fleet...",
       success: (res) => {
         if (res) navigate(constant.ROUTING_URLS.FLEETS);

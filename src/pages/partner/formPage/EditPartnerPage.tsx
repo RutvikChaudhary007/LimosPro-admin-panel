@@ -68,7 +68,7 @@ function EditPartnerPage() {
   const handleEditPartner = async (data: FormData) => {
     // console.log("called handleCreatePartner")
     try {
-      toastPromise(editPartnerMutation.mutateAsync({ data, id }), {
+      await toastPromise(editPartnerMutation.mutateAsync({ data, id }), {
         loading: "Updating Partner...",
         success: (res) => {
           if (res) navigate(constant.ROUTING_URLS.PARTNER);

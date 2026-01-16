@@ -55,7 +55,7 @@ const EditChauffeurPage = () => {
   const editChauffeurMutation = queries.useEditChauffeurMutation();
   const handleEditChauffeur = async (data: TChauffeurForm) => {
     try {
-      toastPromise(
+      await toastPromise(
         editChauffeurMutation.mutateAsync({
           data,
           id: id ?? "",

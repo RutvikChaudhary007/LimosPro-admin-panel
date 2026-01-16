@@ -388,6 +388,8 @@ const FleetForm = ({
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   const {
     fields: zonePricingsFields,
     replace: replaceZonePricings,
@@ -1550,8 +1552,8 @@ const FleetForm = ({
               >
                 Clear Alls
               </Button>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save Details"}
               </Button>
             </CardFooter>
           </CardBody>
