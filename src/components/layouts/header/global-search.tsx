@@ -1,6 +1,7 @@
 import { IconX } from "@tabler/icons-react";
-import { Car, FileText, Phone, User } from "lucide-react";
+import { Car, FileText, Phone, User, Users } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useFetchGlobalSearch } from "@/api";
 import IconSearch from "@/assets/Icons/ic-search.svg?react";
 import {
   Command,
@@ -13,62 +14,43 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { useDebounce } from "@/hooks/useDebounce";
+
+const TYPE_ICONS: Record<string, React.ReactNode> = {
+  Booking: <FileText className="size-5" />,
+  Chauffeur: <User className="size-5" />,
+  Fleet: <Car className="size-5" />,
+  Customer: <Users className="size-5" />,
+  Partner: <Phone className="size-5" />,
+  News: <FileText className="size-5" />,
+  Blog: <FileText className="size-5" />,
+  FAQ: <FileText className="size-5" />,
+  Testimonial: <FileText className="size-5" />,
+};
 
 export function GlobalSearch() {
   const [query, setQuery] = useState("");
   const [show, setShow] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Mock data (replace with API later)
-  const data = [
-    {
-      type: "Booking",
-      label: "#BK1023 – Airport Pickup – John Doe",
-      icon: <FileText className="size-5" />,
-    },
-    {
-      type: "Booking",
-      label: "#BK1024 – City Transfer – Amaan Shaikh",
-      icon: <FileText className="size-5" />,
-    },
-    {
-      type: "Chauffeur",
-      label: "Imran Shaikh – Available",
-      icon: <User className="size-5" />,
-    },
-    {
-      type: "Chauffeur",
-      label: "Zaid Patel – On Trip",
-      icon: <User className="size-5" />,
-    },
-    {
-      type: "Fleet",
-      label: "Mercedes S-Class – MH04 1122",
-      icon: <Car className="size-5" />,
-    },
-    {
-      type: "Fleet",
-      label: "BMW 7 Series – MH01 AX 2200",
-      icon: <Car className="size-5" />,
-    },
-    {
-      type: "Customer",
-      label: "Sarah Ali – 9988223344",
-      icon: <Phone className="size-5" />,
-    },
-    {
-      type: "Partner",
-      label: "John Samuel – 8877445522",
-      icon: <Phone className="size-5" />,
-    },
-  ];
+  const debouncedQuery = useDebounce(query, 300); // Reduced from 500ms to 300ms
+  const isTyping = query !== debouncedQuery && query.length > 0;
 
-  // GROUP + FILTER MATCHING RESULTS
-  const groups = data.reduce((acc: any, item) => {
-    if (item.label.toLowerCase().includes(query.toLowerCase())) {
-      if (!acc[item.type]) acc[item.type] = [];
-      acc[item.type].push(item);
-    }
+  const {
+    data: searchResults,
+    isFetching,
+    error,
+  } = useFetchGlobalSearch({
+    search: debouncedQuery,
+    enabled: isFocused && query.length > 0,
+  });
+
+  // GROUP RESULTS BY TYPE
+  const groups = (searchResults || []).reduce((acc: any, item: any) => {
+    const type = item.type || "Other";
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(item);
     return acc;
   }, {});
 
@@ -94,6 +76,14 @@ export function GlobalSearch() {
         <InputGroupInput
           placeholder="Search for Bookings, Fleets, Chauffeurs..."
           value={query}
+          onFocus={() => {
+            setIsFocused(true);
+            if (query.length > 0) setShow(true);
+          }}
+          onBlur={() => {
+            // Delay blur slightly to allow clicking results
+            setTimeout(() => setIsFocused(false), 200);
+          }}
           onChange={(e) => {
             setQuery(e.target.value);
             setShow(true);
@@ -103,53 +93,70 @@ export function GlobalSearch() {
         <InputGroupAddon>
           <IconSearch />
         </InputGroupAddon>
-        {query.length > 0 && (
+        {(query.length > 0 || isFetching || isTyping) && (
           <InputGroupAddon align="inline-end">
-            <IconX
-              className="hover:text-base-danger cursor-pointer transition-colors"
-              onClick={() => {
-                setQuery("");
-                setShow(false);
-              }}
-            />
+            {isFetching || isTyping ? (
+              <div className="size-4 animate-spin rounded-full border-2 border-base-gray border-t-transparent" />
+            ) : (
+              <IconX
+                className="hover:text-base-danger cursor-pointer transition-colors"
+                onClick={() => {
+                  setQuery("");
+                  setShow(false);
+                }}
+              />
+            )}
           </InputGroupAddon>
         )}
       </InputGroup>
 
       {/* Dropdown with Keyboard Navigation */}
-      {show && query.length > 0 && (
-        <div className="font-quicksand absolute mt-2 w-full bg-base-white shadow-sm rounded border border-base-gray z-20 max-h-80 scroll-area">
-          <Command className="bg-transparent">
+      {show && debouncedQuery.length > 0 && (
+        <div className="font-quicksand absolute mt-2 w-full bg-base-white shadow-sm rounded border border-base-gray z-20 max-h-80 scroll-area overflow-hidden">
+          <Command className="bg-transparent" shouldFilter={false}>
             <CommandList className="max-h-80 scroll-area">
-              {!hasResults ? (
+              {error ? (
+                <div className="px-4 py-6 font-medium text-base text-center text-red-600">
+                  Search unavailable. Please try again.
+                </div>
+              ) : !hasResults && !isFetching ? (
                 <div className="px-4 py-6 font-medium text-base text-center text-base-black">
                   No results found
                 </div>
               ) : (
-                Object.keys(groups).map((type) => (
-                  <CommandGroup
-                    key={type}
-                    heading={type}
-                    className="overflow-hidden [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-base-gray [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest"
-                  >
-                    {groups[type].map((item: any, idx: number) => (
-                      <CommandItem
-                        key={idx}
-                        value={`${type}-${idx}`}
-                        onSelect={() => {
-                          // Handle selection - navigate or perform action
-                          setQuery(item.label);
-                          console.log("Selected:", item.label);
-                          setShow(false);
-                        }}
-                        className="flex items-center gap-4 cursor-pointer transition-all duration-200 font-medium text-base text-base-black [&_svg]:text-base-gray aria-selected:[&_svg]:text-base-primary aria-selected:bg-base-light-gray"
-                      >
-                        {item.icon}
-                        <span className="flex-1 truncate">{item.label}</span>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                ))
+                <>
+                  {Object.keys(groups).map((type) => (
+                    <CommandGroup
+                      key={type}
+                      heading={type}
+                      className="overflow-hidden [&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-base-gray [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:bg-base-light-gray/30"
+                    >
+                      {groups[type].map((item: any, idx: number) => (
+                        <CommandItem
+                          key={item.id || idx}
+                          value={item.id || `${type}-${idx}`}
+                          onSelect={() => {
+                            // Handle selection - navigate or perform action
+                            setQuery(item.name || item.title || item.label);
+                            console.log("Selected:", item);
+                            setShow(false);
+                          }}
+                          className="flex items-center gap-4 cursor-pointer transition-all duration-200 font-medium text-base text-base-black [&_svg]:text-base-gray aria-selected:[&_svg]:text-base-primary aria-selected:bg-base-light-gray px-3 py-2"
+                        >
+                          {TYPE_ICONS[type] || <FileText className="size-5" />}
+                          <span className="flex-1 truncate">
+                            {item.name || item.title || item.label}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  ))}
+                  {(isFetching || isTyping) && (
+                    <div className="px-4 py-3 text-sm text-center text-base-gray border-t border-base-gray/10">
+                      Searching...
+                    </div>
+                  )}
+                </>
               )}
             </CommandList>
           </Command>

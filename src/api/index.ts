@@ -23,6 +23,8 @@ export * from "./contact.api";
 export * from "./content.api";
 // Fleet Module
 export * from "./fleet.api";
+// Global Search Module
+export * from "./globalSearch.api";
 // Notification Module
 export * from "./notification.api";
 // Pages & Page Layout Module
