@@ -3,7 +3,8 @@
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useFetchUserById } from "@/api";
-import { PageHeader } from "@/components/layouts/PageHeader";
+import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,15 @@ const ViewUserPage = () => {
 
   const { data, isError, refetch, isFetching } = useFetchUserById({ id });
   if (isError) return <ErrorCard refetch={refetch} />;
+  if (!isFetching && (!data || !data.id)) {
+    return (
+      <EmptyDataState
+        entityName="User"
+        listRoute={constant.ROUTING_URLS.USERS}
+      />
+    );
+  }
+
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader

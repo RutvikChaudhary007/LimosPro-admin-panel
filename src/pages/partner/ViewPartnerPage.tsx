@@ -6,6 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import { useFetchPartnerById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
@@ -123,6 +124,14 @@ const ViewPartnerPage = () => {
     </div>
   ));
   if (isError) return <ErrorCard refetch={refetch} />;
+  if (!isFetching && (!data || !data.id)) {
+    return (
+      <EmptyDataState
+        entityName="Partner"
+        listRoute={constant.ROUTING_URLS.PARTNER}
+      />
+    );
+  }
 
   return (
     <>

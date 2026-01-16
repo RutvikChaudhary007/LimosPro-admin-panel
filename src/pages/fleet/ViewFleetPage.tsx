@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useFetchFleetById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import {
@@ -20,6 +21,15 @@ const ViewFleetPage = () => {
   const { id } = useParams();
   const { data, isFetching, isError, refetch } = useFetchFleetById({ id: id! });
   if (isError) return <ErrorCard refetch={refetch} />;
+  if (!isFetching && (!data || !data.id)) {
+    return (
+      <EmptyDataState
+        entityName="Fleet"
+        listRoute={constant.ROUTING_URLS.FLEETS}
+      />
+    );
+  }
+
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader

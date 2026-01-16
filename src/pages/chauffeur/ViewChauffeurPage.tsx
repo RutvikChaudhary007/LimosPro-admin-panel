@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFetchChauffeurById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
@@ -126,6 +127,15 @@ const ViewChauffeurPage = () => {
   ));
 
   if (isError) return <ErrorCard refetch={refetch} />;
+  if (!isFetching && (!data || !data.id)) {
+    return (
+      <EmptyDataState
+        entityName="Chauffeur"
+        listRoute={constant.ROUTING_URLS.CHAUFFEUR}
+      />
+    );
+  }
+
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader

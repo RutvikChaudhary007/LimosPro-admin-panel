@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetchBookingById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
 import { env } from "@/utils/env";
+import { formatFieldValue } from "@/utils/formatters";
 import { geoDecoding } from "@/utils/googleMaps";
 
 const libraries = ["places", "geocoding"];
@@ -82,6 +84,15 @@ const ViewBookingPage = () => {
     };
   }, [isLoaded, loadError, data]);
   if (isError) return <ErrorCard refetch={refetch} />;
+  if (!isFetching && (!data || !data.id)) {
+    return (
+      <EmptyDataState
+        entityName="Booking"
+        listRoute={constant.ROUTING_URLS.BOOKING}
+      />
+    );
+  }
+
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
@@ -126,15 +137,15 @@ const ViewBookingPage = () => {
                 <Label className="font-montserrat font-semibold capitalize">
                   Name:
                 </Label>
-                <Label>{data?.thirdPartyUser?.name}</Label>
+                <Label>{formatFieldValue(data?.thirdPartyUser?.name)}</Label>
                 <Label className="font-montserrat font-semibold capitalize">
                   Email:
                 </Label>
-                <Label>{data?.thirdPartyUser?.email}</Label>
+                <Label>{formatFieldValue(data?.thirdPartyUser?.email)}</Label>
                 <Label className="font-montserrat font-semibold capitalize">
                   Phone:
                 </Label>
-                <Label>{data?.thirdPartyUser?.phone}</Label>
+                <Label>{formatFieldValue(data?.thirdPartyUser?.phone)}</Label>
 
                 <div className="col-span-2">
                   <FieldSeparator />
@@ -148,14 +159,20 @@ const ViewBookingPage = () => {
                   Car Name:
                 </Label>
                 <Label>
-                  {data?.vehicle?.make} {data?.vehicle?.model}
+                  {formatFieldValue(
+                    `${data?.vehicle?.make || ""} ${data?.vehicle?.model || ""}`.trim() ||
+                      null,
+                  )}
                 </Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   Chauffeur:
                 </Label>
                 <Label>
-                  {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
+                  {formatFieldValue(
+                    `${data?.chauffeur?.firstName || ""} ${data?.chauffeur?.lastName || ""}`.trim() ||
+                      null,
+                  )}
                 </Label>
 
                 <div className="col-span-2">
@@ -174,22 +191,22 @@ const ViewBookingPage = () => {
                 <Label className="font-montserrat font-semibold capitalize">
                   Type:
                 </Label>
-                <Label>{data?.bookingType}</Label>
+                <Label>{formatFieldValue(data?.bookingType)}</Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   From:
                 </Label>
-                <Label>{Locations?.pickUpAddress}</Label>
+                <Label>{formatFieldValue(Locations?.pickUpAddress)}</Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   to:
                 </Label>
-                <Label>{Locations?.dropOffAddress}</Label>
+                <Label>{formatFieldValue(Locations?.dropOffAddress)}</Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   price:
                 </Label>
-                <Label>{"N/A"}</Label>
+                <Label>{formatFieldValue(data?.price, "N/A")}</Label>
               </div>
             </CardContent>
           </CardBody>

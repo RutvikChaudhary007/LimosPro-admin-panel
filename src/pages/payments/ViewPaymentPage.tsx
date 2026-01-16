@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFetchPaymentById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +83,15 @@ const ViewPaymentPage = () => {
     };
   }, [isLoaded, loadError, data]);
   if (isError) return <ErrorCard refetch={refetch} />;
+  if (!isFetching && (!data || !data.payment || !data.payment.id)) {
+    return (
+      <EmptyDataState
+        entityName="Payment"
+        listRoute={constant.ROUTING_URLS.PAYMENTS}
+      />
+    );
+  }
+
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8 select-none">
       <PageHeader
