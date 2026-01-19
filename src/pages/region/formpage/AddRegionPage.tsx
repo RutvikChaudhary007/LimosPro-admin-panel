@@ -1,7 +1,6 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import type { TRegion } from "@/components/regionManagement/region/RegionForm";
 import RegionForm from "@/components/regionManagement/region/RegionForm";
@@ -15,7 +14,7 @@ function AddRegionPage() {
   const createRegion = queries.useCreateRegionMutation();
   async function onSubmit(values: TRegion) {
     try {
-      toastPromise(createRegion.mutateAsync(values), {
+      await toastPromise(createRegion.mutateAsync(values), {
         loading: "Creating region...",
         success: (res) => {
           if (res?.status === true) {
@@ -29,11 +28,8 @@ function AddRegionPage() {
             : "Opps! Failed to create region",
       });
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // toastPromise already handled the error message display
+      console.error("Save error:", error);
     }
   }
   return (

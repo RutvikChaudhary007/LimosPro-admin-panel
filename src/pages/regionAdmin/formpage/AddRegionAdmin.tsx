@@ -1,7 +1,6 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import RegionAdminForm, {
   type TRegionAdmin,
@@ -17,7 +16,7 @@ function AddRegionAdmin() {
 
   async function handleOnSubmit(values: TRegionAdmin) {
     try {
-      toastPromise(createRegionAdmin.mutateAsync(values), {
+      await toastPromise(createRegionAdmin.mutateAsync(values), {
         loading: "Creating region admin...",
         success: (res) => {
           if (res) navigate(constant.ROUTING_URLS.REGION_ADMIN);
@@ -29,11 +28,8 @@ function AddRegionAdmin() {
             : "Opps! Error creating region admin",
       });
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("Opps! An unexpected error occured");
-      }
+      // toastPromise already handled the error message display
+      console.error("Save error:", error);
     }
   }
   return (

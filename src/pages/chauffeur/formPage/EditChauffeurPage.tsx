@@ -7,9 +7,11 @@ import { useFetchChauffeurById } from "@/api";
 import ChauffeurForm, {
   type TChauffeurForm,
 } from "@/components/chauffeur/ChauffeurForm";
+import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
-import { toastPromise, useToast } from "@/hooks/use-toast";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { env } from "@/utils/env";
@@ -19,7 +21,9 @@ const libraries = ["places", "geocoding"];
 const EditChauffeurPage = () => {
   const { id } = useParams();
   const googleMapsApiKey = useMemo(() => env?.VITE_GOOGLE_MAP_KEY, []);
-  const { data, isFetching } = useFetchChauffeurById({ id: id ?? "" });
+  const { data, isFetching, isError, refetch } = useFetchChauffeurById({
+    id: id ?? "",
+  });
   const [address, setAddress] = useState<string | undefined>(undefined);
 
   // Load Google Maps script
@@ -50,7 +54,6 @@ const EditChauffeurPage = () => {
     return { ...data, businessAddress: address };
   }, [data, address]);
 
-  const { toast } = useToast();
   const editChauffeurMutation = queries.useEditChauffeurMutation();
   const handleEditChauffeur = async (data: TChauffeurForm) => {
     try {
@@ -69,19 +72,8 @@ const EditChauffeurPage = () => {
         },
       );
     } catch (error) {
-      if (error instanceof Error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred",
-          variant: "destructive",
-        });
-      }
+      // toastPromise already handled the error message display
+      console.error("Save error:", error);
     }
   };
 
@@ -103,6 +95,13 @@ const EditChauffeurPage = () => {
       />
       {isFetching ? (
         <Spinner />
+      ) : isError ? (
+        <ErrorCard refetch={refetch} />
+      ) : !data || !data.id ? (
+        <EmptyDataState
+          entityName="Chauffeur"
+          listRoute={constant.ROUTING_URLS.CHAUFFEUR}
+        />
       ) : (
         <ChauffeurForm
           onSubmit={handleEditChauffeur}

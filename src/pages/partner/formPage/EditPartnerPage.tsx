@@ -3,9 +3,10 @@ import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "sonner";
 import { useFetchPartnerById } from "@/api";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import PartnerForm from "@/components/partner/PartnerForm";
 import { Spinner } from "@/components/Spinner";
@@ -33,7 +34,7 @@ function EditPartnerPage() {
     libraries: libraries as Libraries,
   });
 
-  const { data, isFetching } = useFetchPartnerById({ id });
+  const { data, isFetching, isError, refetch } = useFetchPartnerById({ id });
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
@@ -76,18 +77,14 @@ function EditPartnerPage() {
             : "Opps! failed to update Partner.",
       });
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred");
-      }
+      // toastPromise already handled the error message display
+      console.error("Save error:", error);
     }
     // return await new Promise((res)=>{
     //   setTimeout(()=>res(console.log("promise:",data)),5000);
     // });
   };
 
-  if (isFetching) return <Spinner />;
   return (
     <>
       <PageTitle title={generatePageTitle("Partner")} />
@@ -106,13 +103,24 @@ function EditPartnerPage() {
             link: constant.ROUTING_URLS.PARTNER,
           }}
         />
-        <PartnerForm
-          onSubmit={handleEditPartner}
-          initialData={data}
-          businessAddress={businessAddress}
-          disabledFields={["password"]}
-          type={"Edit Partner"}
-        />
+        {isFetching ? (
+          <Spinner />
+        ) : isError ? (
+          <ErrorCard refetch={refetch} />
+        ) : !data || !data.id ? (
+          <EmptyDataState
+            entityName="Partner"
+            listRoute={constant.ROUTING_URLS.PARTNER}
+          />
+        ) : (
+          <PartnerForm
+            onSubmit={handleEditPartner}
+            initialData={data}
+            businessAddress={businessAddress}
+            disabledFields={["password"]}
+            type={"Edit Partner"}
+          />
+        )}
       </div>
     </>
   );

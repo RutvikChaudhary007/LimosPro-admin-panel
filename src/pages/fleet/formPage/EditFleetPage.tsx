@@ -6,6 +6,8 @@ import {
   useFetchAllRegions,
   useFetchFleetById,
 } from "@/api";
+import { ErrorCard } from "@/components/common/ErrorCard";
+import { EmptyDataState } from "@/components/EmptyDataState";
 import FleetForm from "@/components/fleet/FleetForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
@@ -21,7 +23,7 @@ const EditFleetPage = () => {
   const { data: RegionData, isFetching: isRegionFetching } = useFetchAllRegions(
     {},
   );
-  const { data, isFetching } = useFetchFleetById({ id: id! });
+  const { data, isFetching, isError, refetch } = useFetchFleetById({ id: id! });
   const editFleetMutation = queries.useEditfleetMutation();
   const handleEditFleet = async (data: TFleetData) => {
     await toastPromise(editFleetMutation.mutateAsync({ id: id!, data }), {
@@ -52,6 +54,13 @@ const EditFleetPage = () => {
       />
       {isFetching ? (
         <Spinner />
+      ) : isError ? (
+        <ErrorCard refetch={refetch} />
+      ) : !data || !data.id ? (
+        <EmptyDataState
+          entityName="Fleet"
+          listRoute={constant.ROUTING_URLS.FLEETS}
+        />
       ) : (
         <FleetForm
           initialData={data}

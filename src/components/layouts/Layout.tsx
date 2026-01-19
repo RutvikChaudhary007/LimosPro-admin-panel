@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { SiteFooter } from "@/components/layouts/footer/site-footer";
 import { NotificationsProvider } from "@/components/layouts/header/notifications-context";
@@ -7,6 +7,8 @@ import { AppSidebar } from "@/components/layouts/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Layout() {
+  const location = useLocation();
+
   return (
     <NotificationsProvider>
       <SidebarProvider
@@ -22,7 +24,7 @@ export default function Layout() {
         <SidebarInset>
           <SiteHeader />
           <div className="overflow-auto">
-            <ErrorBoundary>
+            <ErrorBoundary key={location.pathname}>
               <Outlet />
             </ErrorBoundary>
           </div>
