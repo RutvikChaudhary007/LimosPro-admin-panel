@@ -33,11 +33,11 @@ const getFormSchema = (isEditMode: boolean) =>
     lastName: z.string().min(2, {
       message: "Last name must be at least 2 characters.",
     }),
-    email: z.email({ message: "Please enter a valid email address" }),
+    email: isEditMode
+      ? z.string().optional()
+      : z.email({ message: "Please enter a valid email address" }),
     region: z.string().min(1, "Region is required"),
-    password: isEditMode
-      ? z.union([z.string().length(0), passwordValidation]).optional()
-      : passwordValidation,
+    password: isEditMode ? z.string().optional() : passwordValidation,
   });
 
 type TRegionAdminFormProps = {
@@ -101,9 +101,10 @@ function RegionAdminForm({
   }, [initialData, regionData, form]);
 
   const handleFormSubmit = async (data: TRegionAdmin) => {
-    if (isEditMode && (!data.password || data.password.trim() === "")) {
-      const { password, ...dataWithoutPassword } = data;
-      await onSubmit(dataWithoutPassword as TRegionAdmin);
+    if (isEditMode) {
+      // In edit mode, exclude email and password from payload
+      const { password, email, ...dataWithoutSensitiveFields } = data;
+      await onSubmit(dataWithoutSensitiveFields as TRegionAdmin);
       return;
     }
 
@@ -192,11 +193,16 @@ function RegionAdminForm({
                       id="email"
                       type="email"
                       placeholder="Email"
+                      disabled={isEditMode}
                     />
                   </InputGroup>
                 )}
               />
-              <FieldDescription>Provide email address</FieldDescription>
+              <FieldDescription>
+                {isEditMode
+                  ? "Email cannot be changed in edit mode"
+                  : "Provide email address"}
+              </FieldDescription>
               {form.formState.errors.email && (
                 <p className="text-base-danger text-sm">
                   {form.formState.errors.email.message}
@@ -217,6 +223,7 @@ function RegionAdminForm({
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder={passwordPlaceholder}
+                      disabled={isEditMode}
                     />
                     <InputGroupAddon>
                       <IconLock />
@@ -231,7 +238,11 @@ function RegionAdminForm({
                   </InputGroup>
                 )}
               />
-              <FieldDescription>{passwordDescription}</FieldDescription>
+              <FieldDescription>
+                {isEditMode
+                  ? "Password cannot be changed in edit mode"
+                  : passwordDescription}
+              </FieldDescription>
               {form.formState.errors.password && (
                 <p className="text-base-danger text-sm">
                   {form.formState.errors.password.message}

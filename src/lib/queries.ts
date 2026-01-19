@@ -1073,9 +1073,10 @@ const useEditRegionAdminMutation = () => {
 
   return useMutation({
     mutationFn: editRegionAdmin,
-    onSuccess: (data) => {
-      ["RegionAdmins"].forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: [key] });
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["RegionAdmins"] });
+      queryClient.invalidateQueries({
+        queryKey: ["RegionAdminById", { id: variables.id }],
       });
       navigate(constant.ROUTING_URLS.REGION_ADMIN);
       return data;
