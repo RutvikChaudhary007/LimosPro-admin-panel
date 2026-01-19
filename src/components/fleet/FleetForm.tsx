@@ -354,6 +354,32 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
   };
 };
 
+const defaultFleetFormValues: TFleetForm = {
+  regionId: "",
+  description: "",
+  affiliateId: "",
+  plateNumber: "",
+  brand: "",
+  model: "",
+  color: "",
+  year: new Date().getFullYear(),
+  vehicleType: "",
+  bagsCapacity: "",
+  capacity: 0,
+  baseFair: 0,
+  minFair: 0,
+  minHour: 0,
+  pricePerMile: 0,
+  pricePerHour: 0,
+  pricePerMinute: 0,
+  cityToCityHourlyRate: 0,
+  extraTime: 0,
+  vehicleImages: [] as unknown as FileList,
+  status: "",
+  zonePricingEnabled: false,
+  zonePricings: [],
+};
+
 const FleetForm = ({
   initialData,
   isPartnerFetching,
@@ -367,25 +393,12 @@ const FleetForm = ({
   const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
 
   const [previews, setPreviews] = useState<string[]>([]);
-  const [date, setDate] = useState(new Date());
+  const [_date, setDate] = useState(new Date());
   const years = Array.from({ length: 200 }, (_, i) => 1900 + i);
 
   const form = useForm<TFleetForm>({
     // resolver: zodResolver(formSchema),
-    defaultValues: transformInitialData(initialData) || {
-      regionId: "",
-      plateNumber: "",
-      affiliateId: "",
-      description: "",
-      vehicleImages: [],
-      bagsCapacity: "",
-      brand: "",
-      color: "",
-      model: "",
-      vehicleType: "",
-      status: "",
-      zonePricingEnabled: false,
-    },
+    defaultValues: transformInitialData(initialData) || defaultFleetFormValues,
   });
 
   const { isSubmitting } = form.formState;
@@ -1543,14 +1556,11 @@ const FleetForm = ({
                 variant="outlinePrimary"
                 type="button"
                 onClick={() => {
-                  form.reset({
-                    affiliateId: "",
-                    vehicleImages: [],
-                    status: "",
-                  });
+                  form.reset(defaultFleetFormValues);
+                  setPreviews([]);
                 }}
               >
-                Clear Alls
+                Clear All
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Saving..." : "Save Details"}
