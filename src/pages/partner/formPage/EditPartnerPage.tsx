@@ -110,6 +110,7 @@ function EditPartnerPage() {
           onSubmit={handleEditPartner}
           initialData={data}
           businessAddress={businessAddress}
+          disabledFields={["password"]}
           type={"Edit Partner"}
         />
       </div>

@@ -95,58 +95,60 @@ const getFormSchema = (isEdit: boolean) =>
     password: isEdit
       ? z.union([z.string().length(0), passwordValidation]).optional()
       : passwordValidation,
-    documents: z
-      .array(z.any())
-      .refine(
-        (files) => {
-          // If we have existing documents (with url property), they're already validated
-          if (files.length > 0 && files.some((file) => file.url)) {
-            return true;
-          }
+    documents: isEdit
+      ? z.array(z.any())
+      : z
+          .array(z.any())
+          .refine(
+            (files) => {
+              // If we have existing documents (with url property), they're already validated
+              if (files.length > 0 && files.some((file) => file.url)) {
+                return true;
+              }
 
-          // For new file uploads, validate length
-          return files.length >= 1;
-        },
-        {
-          message: "Select at least 1 file",
-        },
-      )
-      .refine((files) => files.length <= 4, {
-        message: "You can upload up to 4 files",
-      })
-      .refine(
-        (files) => {
-          // Only check size for actual File objects, not for existing document objects
-          const fileObjects = files.filter((f) => f instanceof File);
-          return (
-            fileObjects.length === 0 ||
-            fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
-          );
-        },
-        {
-          message: `Max size ${maxSize / (1024 * 1024)}MB`,
-        },
-      )
-      .refine(
-        (files) => {
-          // Only check mime types for actual File objects, not for existing document objects
-          const fileObjects = files.filter((f) => f instanceof File);
-          return (
-            fileObjects.length === 0 ||
-            fileObjects.every((f) =>
-              ALLOWED_MIME_TYPES.some((allowed) => {
-                if (allowed.endsWith("/*")) {
-                  return f.type.startsWith(allowed.replace("/*", ""));
-                }
-                return f.type === allowed;
-              }),
-            )
-          );
-        },
-        {
-          message: "Invalid file types detected",
-        },
-      ),
+              // For new file uploads, validate length
+              return files.length >= 1;
+            },
+            {
+              message: "Select at least 1 file",
+            },
+          )
+          .refine((files) => files.length <= 4, {
+            message: "You can upload up to 4 files",
+          })
+          .refine(
+            (files) => {
+              // Only check size for actual File objects, not for existing document objects
+              const fileObjects = files.filter((f) => f instanceof File);
+              return (
+                fileObjects.length === 0 ||
+                fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
+              );
+            },
+            {
+              message: `Max size ${maxSize / (1024 * 1024)}MB`,
+            },
+          )
+          .refine(
+            (files) => {
+              // Only check mime types for actual File objects, not for existing document objects
+              const fileObjects = files.filter((f) => f instanceof File);
+              return (
+                fileObjects.length === 0 ||
+                fileObjects.every((f) =>
+                  ALLOWED_MIME_TYPES.some((allowed) => {
+                    if (allowed.endsWith("/*")) {
+                      return f.type.startsWith(allowed.replace("/*", ""));
+                    }
+                    return f.type === allowed;
+                  }),
+                )
+              );
+            },
+            {
+              message: "Invalid file types detected",
+            },
+          ),
     status: z.string().optional(),
   });
 
@@ -206,15 +208,15 @@ const transformInitialData = (
   data?: IEditPartnerRes,
 ): TPartnerForm | undefined => {
   if (!data) return undefined;
-  console.log("initial data:", data?.businessAddress);
-  console.log("business Location:", data?.businessLocation);
-  console.log("initial status:", data?.status); // Add this debug log
+  // console.log("initial data:", data?.businessAddress);
+  // console.log("business Location:", data?.businessLocation);
+  // console.log("initial status:", data?.status); // Add this debug log
 
   return {
     firstName: data?.user?.firstName || "",
     lastName: data?.user?.lastName || "",
     email: data?.user?.email || "",
-    password: data?.user?.password || "",
+    password: "",
     isChauffer: data.isChauffer ?? false,
     companyName: data.companyName || "",
     businessContactNumber: data.businessContactNumber || "",
@@ -413,9 +415,11 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
       );
 
       // Append files
-      values?.documents?.forEach((file) => {
-        formData.append(`documents`, file);
-      });
+      if (!isEdit) {
+        values?.documents?.forEach((file) => {
+          formData.append(`documents`, file);
+        });
+      }
 
       await onSubmit(formData);
       // form.reset();
