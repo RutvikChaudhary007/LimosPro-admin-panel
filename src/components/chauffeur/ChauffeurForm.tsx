@@ -179,16 +179,12 @@ const transformInitialData = (
     email: data?.userEmail || "",
     password: "",
     businessAddress: data?.businessAddress,
-    documents:
-      data.documents?.map((file) => {
-        // console.log("file:", file);
-        return file;
-      }) || [],
-    status: data.status || "",
-    affiliateId: data.affiliateId || "",
-    taxIdNumber: data.taxIdNumber || "",
-    licenseNumber: data.licenseNumber || "",
-    vehicleId: data.vehicleId || "",
+    documents: data?.documents || [],
+    status: data?.status || "",
+    affiliateId: data?.affiliateId || "",
+    taxIdNumber: data?.taxIdNumber || "",
+    licenseNumber: data?.licenseNumber || "",
+    vehicleId: data?.vehicleId || "",
     gratuity: !Number.isNaN(Number(data.gratuity))
       ? Number(data.gratuity).toString()
       : "0",
@@ -293,7 +289,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       }
       // console.log("filetypes...:", Array.isArray(values.documents));
       // console.log("values.documents:", values.documents);
-      values.documents.forEach((file) => {
+      values?.documents?.forEach((file) => {
         if (file instanceof File) {
           formData.append(`documents`, file);
         }

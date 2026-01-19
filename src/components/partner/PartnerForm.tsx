@@ -231,7 +231,7 @@ const transformInitialData = (
     commissionRate: data?.commissionRate
       ? Number(data.commissionRate).toString()
       : "0",
-    documents: data.documents || [],
+    documents: data?.documents || [],
     // Make sure status is properly normalized and matches the select options
     status: data?.status ? data.status.toLowerCase().trim() : "",
   } as TPartnerForm;
