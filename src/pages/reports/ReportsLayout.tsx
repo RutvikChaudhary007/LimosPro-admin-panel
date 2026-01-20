@@ -1,12 +1,32 @@
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { useFetchAllReports } from "@/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminReports from "./AdminReports";
 import PartnerReports from "./PartnerReports";
 
 export default function ReportsLayout() {
-  const [activeTab, setActiveTab] = useState("admin");
-  const { data: reports } = useFetchAllReports({});
+  const role = localStorage.getItem("role");
+
+  const isAuthorized =
+    role === "Super Admin" || role === "Partner" || role === "Regional Admin";
+
+  const [activeTab, setActiveTab] = useState(
+    ["Super Admin", "Regional Admin"].includes(role ?? "")
+      ? "admin"
+      : "Partner",
+  );
+
+  // 👇 Hook is ALWAYS called
+  const { data: reports } = useFetchAllReports(
+    {},
+    isAuthorized, // ← prevent API call
+  );
+
+  if (!isAuthorized) {
+    return <Navigate to="/unauthorized" />;
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -32,9 +52,12 @@ export default function ReportsLayout() {
         onValueChange={setActiveTab}
         className="space-y-4"
       >
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="admin">Admin Reports</TabsTrigger>
-          <TabsTrigger value="Partner">Partner Reports</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-1 max-w-[400px]">
+          {["Super Admin", "Regional Admin"].includes(role) ? (
+            <TabsTrigger value="admin">Admin Reports</TabsTrigger>
+          ) : (
+            <TabsTrigger value="Partner">Partner Reports</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="admin" className="space-y-4">

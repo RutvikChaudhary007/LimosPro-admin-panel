@@ -44,10 +44,14 @@ export const getAllReports = async ({ limit, page }: ReportArg) => {
 /**
  * Hook to fetch all reports
  */
-export const useFetchAllReports = ({ page, limit }: ReportArg) =>
+export const useFetchAllReports = (
+  { page, limit }: ReportArg,
+  enabled: boolean,
+) =>
   useQuery({
     queryKey: ["Reports", { limit }, { page }],
     queryFn: () => getAllReports({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,
+    enabled,
   });
