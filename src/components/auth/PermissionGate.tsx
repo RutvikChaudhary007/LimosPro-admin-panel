@@ -2,7 +2,7 @@ import { usePermission } from "@/hooks/usePermission";
 
 interface PermissionGateProps {
   children: React.ReactNode;
-  permission: string;
+  permission: string | string[];
   action?: string;
   fallback?: React.ReactNode;
 }

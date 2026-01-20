@@ -12,13 +12,14 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { DollarSign } from "lucide-react";
-import { type FC, useCallback, useMemo, useState } from "react";
+import { type FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { useFetchAllFleets } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import { usePermission } from "@/hooks/usePermission";
+import { useUserStore } from "@/stores/useAuthStore";
 import type { IChauffeurFormProps } from "@/types/chauffeur.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { passwordValidation } from "@/utils/password-validation";
@@ -201,21 +202,23 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   const { hasPermission } = usePermission();
   const isEdit = type === "Edit Chauffeur";
   const isAuthorized = hasPermission(
-    "manageChauffeurs",
+    ["manageChauffeurs", "managePartnerChauffeurs"],
     isEdit ? "update" : "create",
   );
 
-  let parsedUserStore = null;
-  try {
-    parsedUserStore = JSON.parse(localStorage.getItem("user-store"));
-  } catch (e) {
-    console.error("Error parsing user-store:", e);
-  }
-  const userPartnerId = parsedUserStore?.state?.user?.partnerId;
+  const { user } = useUserStore();
+  const userPartnerId = user?.partnerId;
+
+  const isPartner = user?.role === "Partner";
 
   const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
     DateRange: {},
   });
+
+  // const { data: partnerData, isFetching: isPartnerFetching } =
+  //   useFetchAllPartner({
+  //     DateRange: {},
+  //   });
 
   const [addressObj, setAddressObj] = useState<IAddressObj>();
   const [showPassword, setShowPassword] = useState(false);
@@ -246,6 +249,10 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     documents: [],
     status: "",
     partnerId: userPartnerId ?? "",
+    taxIdNumber: "",
+    licenseNumber: "",
+    vehicleId: "",
+    gratuity: "0",
   };
 
   const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
@@ -253,8 +260,15 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     resolver: zodResolver(schema),
     defaultValues: defaultValues,
     values: defaultValues,
-    mode: "onBlur" | "onSubmit",
+    mode: "onBlur",
   });
+
+  // Log validation errors for debugging
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.log("ChauffeurForm Validation Errors:", form.formState.errors);
+    }
+  }, [form.formState.errors]);
 
   const handleAddressChange = useCallback(
     (value: string) => {
@@ -429,9 +443,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 )}
               </Field>
 
-              {/* {isFetching ? (
-                <Spinner />
-              ) : partners?.length > 0 ? (
+              {/* {!isPartner && (
                 <Field>
                   <FieldLabel
                     htmlFor="partnerId"
@@ -443,21 +455,23 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   <Controller
                     control={form.control}
                     name="partnerId"
-                    render={({ field }) => (
-                      <SelectDropDown
-                        placeholder="Select Partner"
-                        items={
-                          partners?.map((a) => ({
-                            label: a.companyName,
-                          data?.partners?.map((a) => ({
-                            label: a.user.firstName + " " + a.user.lastName,
-                            value: a.id,
-                          })) || []
-                        }
-                        value={field.value}
-                        setSelectedItem={(v) => field.onChange(v)}
-                      />
-                    )}
+                    render={({ field }) =>
+                      isPartnerFetching ? (
+                        <Spinner />
+                      ) : (
+                        <SelectDropDown
+                          placeholder="Select Partner"
+                          items={
+                            partnerData?.partners?.map((a: any) => ({
+                              label: a.user.firstName + " " + a.user.lastName,
+                              value: a.id,
+                            })) || []
+                          }
+                          value={field.value}
+                          setSelectedItem={(v) => field.onChange(v)}
+                        />
+                      )
+                    }
                   />
 
                   <FieldDescription>Select Partner</FieldDescription>
@@ -468,13 +482,6 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     </FormMessage>
                   )}
                 </Field>
-              ) : (
-                <Link to={constant.ROUTING_URLS.CREATE_PARTNER}>
-                  <Field>
-                    <FieldLabel>Add Partner</FieldLabel>
-                    <Button><IconPlus /></Button>
-                  </Field>
-                </Link>
               )} */}
 
               <Field>
@@ -841,7 +848,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   // setNewAddress("");
                 }}
               >
-                Clear Alls
+                Clear All
               </Button>
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Saving..." : "Save Details"}

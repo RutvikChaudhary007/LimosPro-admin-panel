@@ -12,74 +12,74 @@ export const ROLES = {
 // Permission to Route mapping - This maps backend permissions to frontend routes
 export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   // User Management
-  Users: [
+  manageUsers: [
     constant.ROUTING_URLS.USERS,
     constant.ROUTING_URLS.CREATE_USERS,
     constant.ROUTING_URLS.EDIT_USERS,
     constant.ROUTING_URLS.VIEW_USERS,
   ],
 
-  // Staff Management (replaces manageRoles)
-  "Staff Members": [
+  // Staff Management
+  manageStaffMembers: [
     constant.ROUTING_URLS.STAFF_MEMBERS,
     constant.ROUTING_URLS.CREATE_STAFF_MEMBERS,
     constant.ROUTING_URLS.EDIT_STAFF_MEMBERS,
   ],
 
   // Permission Management
-  "Permission Management": [constant.ROUTING_URLS.SETTINGS],
+  managePermissions: [constant.ROUTING_URLS.SETTINGS],
 
   // Regional Management
-  Partners: [
+  managePartners: [
     constant.ROUTING_URLS.PARTNER,
     constant.ROUTING_URLS.CREATE_PARTNER,
     constant.ROUTING_URLS.EDIT_PARTNER,
     constant.ROUTING_URLS.VIEW_PARTNER,
   ],
 
-  Chauffeurs: [
+  manageChauffeurs: [
     constant.ROUTING_URLS.CHAUFFEUR,
     constant.ROUTING_URLS.CREATE_CHAUFFEUR,
     constant.ROUTING_URLS.EDIT_CHAUFFEUR,
     constant.ROUTING_URLS.VIEW_CHAUFFEUR,
   ],
 
-  Regions: [
+  manageRegions: [
     constant.ROUTING_URLS.REGION,
     constant.ROUTING_URLS.CREATE_REGION,
     constant.ROUTING_URLS.EDIT_REGION,
   ],
 
-  Reports: [constant.ROUTING_URLS.REPORTS, constant.ROUTING_URLS.DASHBOARD],
+  manageReports: [
+    constant.ROUTING_URLS.REPORTS,
+    constant.ROUTING_URLS.DASHBOARD,
+  ],
 
   // Content Management
-  "Content Management": [
+  manageContentManagement: [
     constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
     constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT,
     constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT,
-  ],
-
-  SEO: [constant.ROUTING_URLS.SEO, constant.ROUTING_URLS.REPORTS],
-
-  News: [
-    constant.ROUTING_URLS.NEWS,
-    constant.ROUTING_URLS.CREATE_NEWS,
-    constant.ROUTING_URLS.EDIT_NEWS,
-  ],
-
-  FAQs: [
     constant.ROUTING_URLS.FAQ,
     constant.ROUTING_URLS.CREATE_FAQ,
     constant.ROUTING_URLS.EDIT_FAQ,
   ],
 
-  Testimonials: [
+  manageSeo: [constant.ROUTING_URLS.SEO, constant.ROUTING_URLS.REPORTS],
+
+  manageNews: [
+    constant.ROUTING_URLS.NEWS,
+    constant.ROUTING_URLS.CREATE_NEWS,
+    constant.ROUTING_URLS.EDIT_NEWS,
+  ],
+
+  manageTestimonials: [
     constant.ROUTING_URLS.TESTIMONIALS,
     constant.ROUTING_URLS.CREATE_TESTIMONIALS,
     constant.ROUTING_URLS.EDIT_TESTIMONIALS,
   ],
 
-  "Blog Posts": [
+  manageBlogs: [
     constant.ROUTING_URLS.BLOG_POSTS,
     constant.ROUTING_URLS.CREATE_BLOG_POST,
     constant.ROUTING_URLS.EDIT_BLOG_POST,
@@ -87,7 +87,7 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   ],
 
   // Trip Management
-  Trips: [
+  manageTrips: [
     constant.ROUTING_URLS.TRIPS,
     constant.ROUTING_URLS.TRIPS_MAP,
     constant.ROUTING_URLS.VIEW_TRIPS,
@@ -96,14 +96,14 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   ],
 
   // Bookings
-  Bookings: [
+  manageBookings: [
     constant.ROUTING_URLS.BOOKING,
     constant.ROUTING_URLS.CREATE_BOOKING,
     constant.ROUTING_URLS.VIEW_BOOKING,
   ],
 
   // Fleets
-  Fleets: [
+  manageFleets: [
     constant.ROUTING_URLS.FLEETS,
     constant.ROUTING_URLS.CREATE_FLEET,
     constant.ROUTING_URLS.EDIT_FLEET,
@@ -111,7 +111,7 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   ],
 
   // Payments
-  Payments: [
+  managePayments: [
     constant.ROUTING_URLS.PAYMENTS,
     constant.ROUTING_URLS.VIEW_PAYMENTS,
     constant.ROUTING_URLS.REFUND,
@@ -120,19 +120,21 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   ],
 
   // Settings
-  Settings: [constant.ROUTING_URLS.SETTINGS],
+  manageSettings: [constant.ROUTING_URLS.SETTINGS],
 
-  "IP Whitelist": [
+  manageIpAccess: [
     constant.ROUTING_URLS.IP_WHITE_LIST,
     constant.ROUTING_URLS.CREATE_IP_WHITE_LIST,
     constant.ROUTING_URLS.EDIT_IP_WHITE_LIST,
   ],
 
-  "Region Admins": [
+  manageRegionAdmins: [
     constant.ROUTING_URLS.REGION_ADMIN,
     constant.ROUTING_URLS.CREATE_REGION_ADMIN,
     constant.ROUTING_URLS.EDIT_REGION_ADMIN,
   ],
+
+  manageDashboard: [constant.ROUTING_URLS.DASHBOARD],
 
   // Access All Features
   accessAllFeatures: [

@@ -34,32 +34,34 @@ export const usePermission = () => {
       : [permissionName];
 
     return names.some((name) => {
-      const permission = permissions.find(
+      const matchingPermissions = permissions.filter(
         (p: any) =>
           (typeof p === "string" && p === name) ||
           (typeof p === "object" &&
             (p.permissionName === name || p.permission?.name === name)),
       );
 
-      if (!permission) return false;
+      if (matchingPermissions.length === 0) return false;
 
-      // If it's a string permission, we just check if it exists
-      if (typeof permission === "string") return true;
+      // If any of them are just string permissions, they grant full access
+      if (matchingPermissions.some((p: any) => typeof p === "string"))
+        return true;
 
-      // If no specific action required, just check if permission exists
+      // If no specific action required, having any match is enough
       if (!action) return true;
 
-      // Check if specific action is allowed
-      let actions = (permission as any).actions || {};
-      if (typeof actions === "string") {
-        try {
-          actions = JSON.parse(actions);
-        } catch {
-          actions = {};
+      // Check if specific action is allowed in ANY of the matching permissions
+      return matchingPermissions.some((p: any) => {
+        let actions = p.actions || {};
+        if (typeof actions === "string") {
+          try {
+            actions = JSON.parse(actions);
+          } catch {
+            actions = {};
+          }
         }
-      }
-
-      return actions[action] === true;
+        return actions[action] === true;
+      });
     });
   };
 

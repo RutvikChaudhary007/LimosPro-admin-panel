@@ -276,7 +276,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "chauffeur",
-    permission: "manageChauffeurs",
+    permission: ["manageChauffeurs", "managePartnerChauffeurs"],
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.CHAUFFEUR, element: ChauffeurPage },

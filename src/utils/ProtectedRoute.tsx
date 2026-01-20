@@ -4,7 +4,7 @@ import { constant } from "@/lib/constant";
 import { hasDynamicAccess } from "./Helper";
 
 interface ProtectedRouteProps {
-  permission?: string;
+  permission?: string | string[];
   action?: string;
 }
 

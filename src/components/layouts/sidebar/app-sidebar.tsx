@@ -59,12 +59,12 @@ type NavItem = {
   url: string;
   icon?: any;
   isActive?: boolean;
-  permission?: string;
+  permission?: string | string[];
   action?: string;
   items?: {
     title: string;
     url: string;
-    permission?: string;
+    permission?: string | string[];
     action?: string;
   }[];
 };
@@ -113,7 +113,7 @@ const data: {
       title: "Chauffeur",
       url: constant.ROUTING_URLS.CHAUFFEUR,
       icon: IconCar,
-      permission: "manageChauffeurs",
+      permission: ["manageChauffeurs", "managePartnerChauffeurs"],
       action: "view",
     },
     {

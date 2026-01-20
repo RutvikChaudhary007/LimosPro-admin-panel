@@ -702,7 +702,10 @@ export function getChauffeur(
               <Eye />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="managePartnerChauffeurs" action="update">
+          <PermissionGate
+            permission={["manageChauffeurs", "managePartnerChauffeurs"]}
+            action="update"
+          >
             <Button
               onClick={() => onEdit(row.original.id)}
               variant="outlineNavBtnPrimary"
@@ -713,7 +716,10 @@ export function getChauffeur(
               <Edit />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="managePartnerChauffeurs" action="delete">
+          <PermissionGate
+            permission={["manageChauffeurs", "managePartnerChauffeurs"]}
+            action="delete"
+          >
             <Dialog>
               <DialogTrigger asChild>
                 <Button

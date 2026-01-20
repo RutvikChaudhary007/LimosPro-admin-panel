@@ -3,7 +3,7 @@ import { usePermission } from "@/hooks/usePermission";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredPermission?: string;
+  requiredPermission?: string | string[];
   requiredAction?: string;
   fallbackPath?: string;
 }
