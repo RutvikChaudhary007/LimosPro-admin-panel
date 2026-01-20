@@ -181,4 +181,11 @@ export const constant = {
       "table", // only works if you installed quill-table
     ],
   },
+  ADMIN_ELIGIBLE_ROLES: [
+    "Super Admin",
+    "Regional Admin",
+    "Partner",
+    "Dispatcher",
+    "SEO Agent",
+  ],
 };

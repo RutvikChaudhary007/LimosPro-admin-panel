@@ -91,13 +91,7 @@ type TRefetch = (
   options?: RefetchOptions | undefined,
 ) => Promise<QueryObserverResult<unknown, Error>>;
 
-const allowedRoles = new Set([
-  "Super Admin",
-  "Regional Admin",
-  "Partner",
-  "Dispatcher",
-  "SEO Agent",
-]);
+const allowedRoles = new Set(constant.ADMIN_ELIGIBLE_ROLES);
 // Auth
 const useLoginMutation = () => {
   const { setUser } = useUserStore();
@@ -107,14 +101,22 @@ const useLoginMutation = () => {
 
     onSuccess: (response) => {
       const data = response?.data;
-      const roles = [data?.roles].flat();
+      const rawRoles = [data?.roles].flat();
 
-      if (!roles.some((r) => allowedRoles.has(r))) {
-        throw new Error("Unauthorized user");
+      // Filter roles to only include admin-eligible ones
+      const adminEligibleRoles = rawRoles.filter((r) => allowedRoles.has(r));
+
+      if (adminEligibleRoles.length === 0) {
+        throw new Error("You do not have permission to access admin panel");
       }
+
+      // If multiple roles exist, ensure the primary 'role' is an admin-eligible one
+      const primaryRole = adminEligibleRoles[0];
 
       setUser({
         ...data,
+        roles: adminEligibleRoles,
+        role: primaryRole,
         name: `${data?.firstName} ${data?.lastName}`,
       });
 

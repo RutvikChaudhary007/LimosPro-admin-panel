@@ -15,16 +15,7 @@ export default function LoginPage() {
   // Check if user is already logged in (must not navigate during render)
   useEffect(() => {
     const role = localStorage.getItem("role");
-    if (
-      role &&
-      [
-        "Super Admin",
-        "Regional Admin",
-        "Partner",
-        "Dispatcher",
-        "SEO Agent",
-      ].includes(role)
-    ) {
+    if (role && constant.ADMIN_ELIGIBLE_ROLES.includes(role)) {
       navigate(constant.ROUTING_URLS.DASHBOARD);
     }
   }, [navigate]);
