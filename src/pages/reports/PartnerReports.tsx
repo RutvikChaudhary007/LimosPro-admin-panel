@@ -117,11 +117,6 @@ export default function PartnerReports({ reports }: { reports: any }) {
                               ? "destructive"
                               : "secondary" // "warning" if available, used secondary as fallback/warning style
                           }
-                          className={
-                            item.status === "EXPIRING_SOON"
-                              ? "bg-yellow-500 text-white hover:bg-yellow-600"
-                              : ""
-                          }
                         >
                           {item.status.replace("_", " ")}
                         </Badge>
@@ -164,12 +159,12 @@ export default function PartnerReports({ reports }: { reports: any }) {
                       <TableCell>{ticket.category}</TableCell>
                       <TableCell>
                         <Badge
-                          className={
+                          variant={
                             ticket.status === "OPEN"
-                              ? "bg-red-500"
+                              ? "destructive"
                               : ticket.status === "RESOLVED"
-                                ? "bg-green-500"
-                                : "bg-blue-500"
+                                ? "success"
+                                : "default"
                           }
                         >
                           {ticket.status}

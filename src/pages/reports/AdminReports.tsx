@@ -231,12 +231,12 @@ export default function AdminReports({ reports }: { reports: any }) {
                       <TableCell>{ticket.region}</TableCell>
                       <TableCell>
                         <Badge
-                          className={
+                          variant={
                             ticket.status === "OPEN"
-                              ? "bg-red-500"
+                              ? "destructive"
                               : ticket.status === "RESOLVED"
-                                ? "bg-green-500"
-                                : "bg-blue-500"
+                                ? "success"
+                                : "default"
                           }
                         >
                           {ticket.status}
