@@ -535,7 +535,7 @@ export function getPartner(
             userRole="Partner"
             userName={`${(row.original as any).user?.firstName || ""} ${(row.original as any).user?.lastName || ""}`}
           />
-          <PermissionGate permission="manageAffiliates" action="view">
+          <PermissionGate permission="managePartners" action="view">
             <Button
               className="ml-4"
               onClick={() => onView(row?.original?.id ?? "")}
@@ -547,7 +547,7 @@ export function getPartner(
               <Eye />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="manageAffiliates" action="update">
+          <PermissionGate permission="managePartners" action="update">
             <Button
               onClick={() => onEdit(row.original.id ?? "")}
               variant="outlineNavBtnPrimary"
@@ -558,7 +558,7 @@ export function getPartner(
               <Edit />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="manageAffiliates" action="delete">
+          <PermissionGate permission="managePartners" action="delete">
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -687,7 +687,10 @@ export function getChauffeur(
             userRole="Chauffeur"
             userName={`${row.original.user?.firstName || ""} ${row.original.user?.lastName || ""}`}
           />
-          <PermissionGate permission="manageChauffeurs" action="view">
+          <PermissionGate
+            permission={["manageChauffeurs", "managePartnerChauffeurs"]}
+            action="view"
+          >
             <Button
               className="ml-4"
               onClick={() => onView(row.original.id)}
@@ -699,7 +702,7 @@ export function getChauffeur(
               <Eye />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="manageChauffeurs" action="update">
+          <PermissionGate permission="managePartnerChauffeurs" action="update">
             <Button
               onClick={() => onEdit(row.original.id)}
               variant="outlineNavBtnPrimary"
@@ -710,7 +713,7 @@ export function getChauffeur(
               <Edit />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="manageChauffeurs" action="delete">
+          <PermissionGate permission="managePartnerChauffeurs" action="delete">
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -908,7 +911,7 @@ export function getUsers(
 export type TBooking = {
   id: string;
   userId: string;
-  affiliateId: string;
+  partnerId: string;
   bookingType: string;
   pickupLocation: {
     latitude: number;
@@ -953,8 +956,8 @@ export function getBooking(
       enableHiding: false,
     },
     {
-      id: "affiliateId",
-      accessorKey: "affiliateId",
+      id: "partnerId",
+      accessorKey: "partnerId",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Partner Id" />
       ),
@@ -1085,7 +1088,7 @@ export function getBooking(
 
 export type TFleet = {
   id: string;
-  affiliateId: string;
+  partnerId: string;
   plateNumber: string;
   brand: string;
   model: string;
@@ -1131,7 +1134,7 @@ export function getFleets(
       enableHiding: false,
     },
     {
-      accessorKey: "affiliate.user",
+      accessorKey: "partner.user",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Partner Name" />
       ),

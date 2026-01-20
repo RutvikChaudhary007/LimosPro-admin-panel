@@ -5,7 +5,7 @@ export const ROLES = {
   ADMIN: "Super Admin",
   REGIONAL_ADMIN: "Regional Admin",
   SEO: "SEO Agent",
-  PARTNER: "Affiliate",
+  PARTNER: "Partner",
   DISPATCHER: "Dispatcher",
 } as const;
 

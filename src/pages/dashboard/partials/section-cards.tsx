@@ -1,7 +1,7 @@
 import { MetricCard } from "@/components/ui/card";
 
 type TData = {
-  totalAffiliates: number;
+  totalPartners: number;
   totalBookings: number;
   totalChauffeurs: number;
   totalFleets: number;
@@ -32,7 +32,7 @@ export function SectionCards({ data }: TProps) {
       />
       <MetricCard
         title="Total Partners"
-        value={`${data?.totalAffiliates ?? 0}`}
+        value={`${data?.totalPartners ?? 0}`}
         percentage="5.2%"
         bodyClass="pr-[5px]"
         wrapperClass="border-0"

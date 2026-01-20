@@ -20,7 +20,7 @@ export default function LoginPage() {
       [
         "Super Admin",
         "Regional Admin",
-        "Affiliate",
+        "Partner",
         "Dispatcher",
         "SEO Agent",
       ].includes(role)

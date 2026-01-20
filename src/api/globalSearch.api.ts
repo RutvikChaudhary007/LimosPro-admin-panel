@@ -37,7 +37,7 @@ export const globalSearch = async (search: string, signal?: AbortSignal) => {
     const typeMapping: Record<string, string> = {
       customers: "Customer",
       chauffeurs: "Chauffeur",
-      affiliates: "Partner",
+      partners: "Partner",
       staff: "Staff",
       regionalAdmins: "Regional Admin",
       fleet: "Fleet",

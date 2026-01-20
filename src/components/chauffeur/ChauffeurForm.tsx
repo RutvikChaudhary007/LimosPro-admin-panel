@@ -83,7 +83,7 @@ const getFormSchema = (isEdit: boolean) =>
       }),
     ]),
     email: z.email(),
-    affiliateId: z.string().refine((value) => value.trim() !== "", {
+    partnerId: z.string().refine((value) => value.trim() !== "", {
       message: "Partner Id cannot be empty or just whitespace.",
     }),
     taxIdNumber: z.string().refine((value) => value.trim() !== "", {
@@ -181,7 +181,7 @@ const transformInitialData = (
     businessAddress: data?.businessAddress,
     documents: data?.documents || [],
     status: data?.status || "",
-    affiliateId: data?.affiliateId || "",
+    partnerId: data?.partnerId || "",
     taxIdNumber: data?.taxIdNumber || "",
     licenseNumber: data?.licenseNumber || "",
     vehicleId: data?.vehicleId || "",
@@ -211,7 +211,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   } catch (e) {
     console.error("Error parsing user-store:", e);
   }
-  const userAffiliateId = parsedUserStore?.state?.user?.affiliateId;
+  const userPartnerId = parsedUserStore?.state?.user?.partnerId;
 
   const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
     DateRange: {},
@@ -245,7 +245,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     },
     documents: [],
     status: "",
-    affiliateId: userAffiliateId ?? "",
+    partnerId: userPartnerId ?? "",
   };
 
   const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
@@ -279,7 +279,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       formData.append("firstName", values.firstName);
       formData.append("lastName", values.lastName);
       formData.append("email", values.email);
-      formData.append("affiliateId", values.affiliateId);
+      formData.append("partnerId", values.partnerId);
       formData.append("taxIdNumber", values.taxIdNumber);
       formData.append("licenseNumber", values.licenseNumber);
       formData.append("vehicleId", values.vehicleId);
@@ -313,10 +313,10 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   };
   const [_statusValue, setStatusValue] = useState<{
     status: string;
-    affiliate: string;
+    partner: string;
   }>({
     status: "",
-    affiliate: "",
+    partner: "",
   });
 
   if (!isAuthorized) {
@@ -431,25 +431,25 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
 
               {/* {isFetching ? (
                 <Spinner />
-              ) : affiliates?.length > 0 ? (
+              ) : partners?.length > 0 ? (
                 <Field>
                   <FieldLabel
-                    htmlFor="affiliateId"
+                    htmlFor="partnerId"
                     className="text-base-black gap-0"
                   >
-                    Select Affiliate
+                    Select Partner
                   </FieldLabel>
 
                   <Controller
                     control={form.control}
-                    name="affiliateId"
+                    name="partnerId"
                     render={({ field }) => (
                       <SelectDropDown
-                        placeholder="Select Affiliate"
+                        placeholder="Select Partner"
                         items={
-                          affiliates?.map((a) => ({
+                          partners?.map((a) => ({
                             label: a.companyName,
-                          data?.affiliates?.map((a) => ({
+                          data?.partners?.map((a) => ({
                             label: a.user.firstName + " " + a.user.lastName,
                             value: a.id,
                           })) || []
@@ -460,18 +460,18 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     )}
                   />
 
-                  <FieldDescription>Select Affiliate</FieldDescription>
+                  <FieldDescription>Select Partner</FieldDescription>
 
-                  {form.formState.errors.affiliateId && (
+                  {form.formState.errors.partnerId && (
                     <FormMessage>
-                      {form.formState.errors.affiliateId.message}
+                      {form.formState.errors.partnerId.message}
                     </FormMessage>
                   )}
                 </Field>
               ) : (
-                <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
+                <Link to={constant.ROUTING_URLS.CREATE_PARTNER}>
                   <Field>
-                    <FieldLabel>Add Affiliate</FieldLabel>
+                    <FieldLabel>Add Partner</FieldLabel>
                     <Button><IconPlus /></Button>
                   </Field>
                 </Link>
@@ -820,14 +820,14 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     password: "",
                     businessAddress: "",
                     location: { latitude: 0, longitude: 0 },
-                    affiliateId: "",
+                    partnerId: "",
                     taxIdNumber: "",
                     licenseNumber: "",
                     vehicleId: "",
                     documents: [],
                     status: "",
                   });
-                  setStatusValue({ status: "", affiliate: "" });
+                  setStatusValue({ status: "", partner: "" });
                   // if (fileRef.current) fileRef.current.value = "";
                   setAddressObj(undefined);
                   // form.reset();

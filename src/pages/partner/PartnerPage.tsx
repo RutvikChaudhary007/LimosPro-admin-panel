@@ -165,7 +165,7 @@ function PartnerPage() {
 
   const { currentPage, setPage, totalPages, currentItems } =
     usePagination<IPartner>(
-      FetchData?.affiliates,
+      FetchData?.partners,
       newPage,
       perPage,
       FetchData?.pagination,
@@ -252,7 +252,7 @@ function PartnerPage() {
             label: "Add Partner",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_PARTNER,
-            permission: "manageAffiliates",
+            permission: "managePartners",
             actionName: "create",
           }}
         />

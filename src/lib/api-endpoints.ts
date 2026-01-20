@@ -13,12 +13,12 @@ export const API_ENDPOINTS: Record<string, any> = {
   // Dashboard
   GET_DASHBOARD_DETAILS: `${ADMIN_SERVICE_URL}/report/dashboard`,
   // Partner
-  GET_ALL_PARTNER: `${ADMIN_SERVICE_URL}/affiliates`,
-  GET_PARTNER_BY_ID: `${ADMIN_SERVICE_URL}/affiliate/:id`,
-  CREATE_PARTNER: `${ADMIN_SERVICE_URL}/affiliate`,
-  UPDATE_PARTNER: `${ADMIN_SERVICE_URL}/affiliate/:id`,
-  DELETE_PARTNER: `${ADMIN_SERVICE_URL}/affiliate/:id`,
-  BULK_DELETE_PARTNER: `${ADMIN_SERVICE_URL}/affiliates/bulk-delete`,
+  GET_ALL_PARTNER: `${ADMIN_SERVICE_URL}/partners`,
+  GET_PARTNER_BY_ID: `${ADMIN_SERVICE_URL}/partner/:id`,
+  CREATE_PARTNER: `${ADMIN_SERVICE_URL}/partner`,
+  UPDATE_PARTNER: `${ADMIN_SERVICE_URL}/partner/:id`,
+  DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partner/:id`,
+  BULK_DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partners/bulk-delete`,
 
   // Fleets
   GET_ALL_FLEETS: `${ADMIN_SERVICE_URL}/vehicles`,

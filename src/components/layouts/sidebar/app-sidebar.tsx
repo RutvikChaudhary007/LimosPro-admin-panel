@@ -1,4 +1,4 @@
-// import IconAffiliate from "@/assets/Icons/partner.svg?react"
+// import IconPartner from "@/assets/Icons/partner.svg?react"
 // import IconCMS from "@/assets/Icons/cms.svg?react"
 // import IconChauffeur from "@/assets/Icons/chauffeur.svg?react"
 // import IconContactRequests from "@/assets/Icons/contact-requests.svg?react"
@@ -106,7 +106,7 @@ const data: {
       title: "Partners",
       url: constant.ROUTING_URLS.PARTNER,
       icon: IconHeartHandshake,
-      permission: "manageAffiliates",
+      permission: "managePartners",
       action: "view",
     },
     {

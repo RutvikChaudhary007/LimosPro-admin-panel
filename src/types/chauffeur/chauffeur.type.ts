@@ -3,7 +3,7 @@ import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
 export type TChauffeur = {
   id: string;
   userId: string;
-  affiliateId: string;
+  partnerId: string;
   status: string;
   password: string;
   taxIdNumber: string;
@@ -42,7 +42,7 @@ export type TChauffeur = {
   updatedAt: string;
   vehicle: {
     id: string;
-    affiliateId: string;
+    partnerId: string;
     plateNumber: string;
     brand: string;
     model: string;

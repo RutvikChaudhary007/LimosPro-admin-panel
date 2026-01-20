@@ -19,7 +19,7 @@ export type SupportTicket = {
   createdAt: string;
 };
 
-export type AffiliateStat = {
+export type PartnerStat = {
   month: string;
   newSignups: number;
   totalActive: number;
@@ -115,7 +115,7 @@ export const mockTickets: SupportTicket[] = [
 ];
 
 // Mock Partner Stats
-export const mockAffiliateStats: AffiliateStat[] = [
+export const mockPartnerStats: PartnerStat[] = [
   { month: "Jan", newSignups: 5, totalActive: 45 },
   { month: "Feb", newSignups: 8, totalActive: 52 },
   { month: "Mar", newSignups: 4, totalActive: 55 },
@@ -152,7 +152,7 @@ export const mockComplianceData: ComplianceData[] = [
   },
 ];
 
-export const mockAffiliateRevenueBreakdown = {
+export const mockPartnerRevenueBreakdown = {
   labels: ["Self Revenue"],
   datasets: [
     {

@@ -21,45 +21,46 @@ export const usePermission = () => {
 
   /**
    * Check if user has a specific permission with optional action
-   * @param permissionName - Name of the permission to check
+   * @param permissionName - Name or array of names of the permission to check
    * @param action - Optional action (view, create, update, delete, etc.)
    * @returns boolean indicating if user has permission
    */
-  const hasPermission = (permissionName: string, action?: string): boolean => {
-    // Super Admin has all permissions
-    const userRoles = [user?.role, user?.roles].flat().filter(Boolean);
-    if (userRoles.includes("Super Admin")) {
-      return true;
-    }
+  const hasPermission = (
+    permissionName: string | string[],
+    action?: string,
+  ): boolean => {
+    const names = Array.isArray(permissionName)
+      ? permissionName
+      : [permissionName];
 
-    const permission = permissions.find(
-      (p: any) =>
-        (typeof p === "string" && p === permissionName) ||
-        (typeof p === "object" &&
-          (p.permissionName === permissionName ||
-            p.permission?.name === permissionName)),
-    );
+    return names.some((name) => {
+      const permission = permissions.find(
+        (p: any) =>
+          (typeof p === "string" && p === name) ||
+          (typeof p === "object" &&
+            (p.permissionName === name || p.permission?.name === name)),
+      );
 
-    if (!permission) return false;
+      if (!permission) return false;
 
-    // If it's a string permission, we just check if it exists
-    if (typeof permission === "string") return true;
+      // If it's a string permission, we just check if it exists
+      if (typeof permission === "string") return true;
 
-    // If no specific action required, just check if permission exists
-    if (!action) return true;
+      // If no specific action required, just check if permission exists
+      if (!action) return true;
 
-    // Check if specific action is allowed
-    // Actions can be in permission.actions (object) or permission.actions (JSON string if not parsed)
-    let actions = (permission as any).actions || {};
-    if (typeof actions === "string") {
-      try {
-        actions = JSON.parse(actions);
-      } catch {
-        actions = {};
+      // Check if specific action is allowed
+      let actions = (permission as any).actions || {};
+      if (typeof actions === "string") {
+        try {
+          actions = JSON.parse(actions);
+        } catch {
+          actions = {};
+        }
       }
-    }
 
-    return actions[action] === true;
+      return actions[action] === true;
+    });
   };
 
   // Convenience methods for common actions

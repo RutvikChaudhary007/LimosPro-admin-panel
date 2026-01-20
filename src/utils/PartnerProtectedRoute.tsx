@@ -12,7 +12,7 @@ function AdminProtectedRoute() {
   useEffect(() => {
     if (
       !userRole ||
-      !["Super Admin", "SEO Agent", "Affiliate"].includes(userRole)
+      !["Super Admin", "SEO Agent", "Partner"].includes(userRole)
     ) {
       console.log("login..");
       navigate("/cms/login");
@@ -20,7 +20,7 @@ function AdminProtectedRoute() {
   }, [navigate, userRole]);
   return (
     userRole &&
-    ["Super Admin", "SEO Agent", "Affiliate"].includes(userRole) && <Outlet />
+    ["Super Admin", "SEO Agent", "Partner"].includes(userRole) && <Outlet />
   );
 }
 

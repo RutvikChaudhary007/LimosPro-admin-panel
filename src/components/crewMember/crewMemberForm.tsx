@@ -59,7 +59,7 @@ const formSchema = z.object({
     })
     .min(3, { message: "Password must be at least 3 characters" }),
   email: z.email(),
-  affiliateId: z
+  partnerId: z
     .string()
     .min(3, { message: "Partner ID must be at least 3 characters" }),
   phone: z
@@ -95,7 +95,7 @@ const CrewMemberForm = ({
       email: data?.email,
       phone: data?.phone,
       password: data?.password,
-      affiliateId: data?.affiliateId ?? "",
+      partnerId: data?.partnerId ?? "",
     };
   };
   const form = useForm<z.infer<typeof formSchema>>({
@@ -107,7 +107,7 @@ const CrewMemberForm = ({
       email: "",
       phone: "",
       password: "",
-      affiliateId: "",
+      partnerId: "",
     },
   });
   return (
@@ -336,10 +336,10 @@ const CrewMemberForm = ({
 
               {isFetchingPartner ? (
                 <Spinner />
-              ) : partnerData?.affiliates.length > 0 ? (
+              ) : partnerData?.partners.length > 0 ? (
                 <Field>
                   <FieldLabel
-                    htmlFor="affiliateId"
+                    htmlFor="partnerId"
                     className="text-base-black gap-0"
                   >
                     Select Partner
@@ -347,12 +347,12 @@ const CrewMemberForm = ({
 
                   <Controller
                     control={form.control}
-                    name="affiliateId"
+                    name="partnerId"
                     render={({ field }) => (
                       <SelectDropDown
                         placeholder="Select Partner"
                         items={
-                          partnerData?.affiliates?.map((a) => ({
+                          partnerData?.partners?.map((a) => ({
                             label: a.companyName,
                             value: a.id,
                           })) || []
@@ -365,14 +365,14 @@ const CrewMemberForm = ({
 
                   <FieldDescription>Select an Partner.</FieldDescription>
 
-                  {form.formState.errors.affiliateId && (
+                  {form.formState.errors.partnerId && (
                     <FormMessage>
-                      {form.formState.errors.affiliateId.message}
+                      {form.formState.errors.partnerId.message}
                     </FormMessage>
                   )}
                 </Field>
               ) : (
-                <Link to={constant.ROUTING_URLS.CREATE_AFFILIATE}>
+                <Link to={constant.ROUTING_URLS.CREATE_PARTNER}>
                   <Label>Add Partner</Label>
                 </Link>
               )}

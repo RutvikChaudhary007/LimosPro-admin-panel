@@ -57,15 +57,7 @@ export type TPartnerRes = {
   filters: Tfilters;
 };
 
-export type TAffiliate = {
-  id: string;
-  userId: string;
-  stripeAccountId: string;
-  stripeAccountStatus: string;
-  createdAt: string;
-  updatedAt: string;
-};
-export interface IAffiliate extends Partial<TAffiliate> {
+export interface IPartner extends Partial<TPartner> {
   businessAddress: string;
   businessContactNumber: string;
   businessEmail: string;
@@ -83,7 +75,7 @@ export interface IAffiliate extends Partial<TAffiliate> {
   taxId: string;
 }
 
-export interface IEditAffiliateRes extends IAffiliate {
+export interface IEditPartnerRes extends IPartner {
   user: {
     id: string;
     createdAt: string;
@@ -102,9 +94,3 @@ export interface IEditAffiliateRes extends IAffiliate {
   };
   location: TBusinessLocation;
 }
-
-export type TAffiliateRes = {
-  affiliates: IAffiliate[];
-  pagination: TPagination;
-  filters: Tfilters;
-};

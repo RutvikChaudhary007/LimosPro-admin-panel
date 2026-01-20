@@ -54,7 +54,7 @@ const ViewFleetPage = () => {
             <CardHeader>
               <CardTitle>{data?.vehicleType}</CardTitle>
               <CardDescription className="text-sm font-bold">
-                Partner: {data?.affiliate}
+                Partner: {data?.partner}
               </CardDescription>
               {data?.vehicleImages?.length > 0 && (
                 <div className="flex flex-wrap gap-6 mt-6">

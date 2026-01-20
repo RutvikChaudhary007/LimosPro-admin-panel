@@ -31,7 +31,7 @@ type ActionButton = {
   variant?: VariantProps<typeof buttonVariants>["variant"];
   className?: string;
   onClick?: () => void;
-  permission?: string;
+  permission?: string | string[];
   actionName?: string;
 };
 

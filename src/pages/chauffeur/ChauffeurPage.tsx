@@ -194,7 +194,7 @@ function ChauffeurPage() {
             label: "Add Chauffeur",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
-            permission: "manageChauffeurs",
+            permission: "managePartnerChauffeurs",
             actionName: "create",
           }}
         />
@@ -226,7 +226,10 @@ function ChauffeurPage() {
             >
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
-            <PermissionGate permission="manageChauffeurs" action="bulkDelete">
+            <PermissionGate
+              permission="managePartnerChauffeurs"
+              action="bulkDelete"
+            >
               <span
                 className={`${Object.keys(rowSelection).filter((k) => rowSelection[k]).length === 0 ? "cursor-no-drop" : "cursor-pointer"}`}
               >

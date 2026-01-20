@@ -32,7 +32,7 @@ const showStatus = [
 ];
 
 type RowData = {
-  affiliateId: string;
+  partnerId: string;
   id: string;
   status: string;
   createdAt: string | Date;
@@ -74,7 +74,7 @@ function BookingPage() {
     if (searchValue === "") return true;
     if (
       searchValue &&
-      !row.affiliateId.toLowerCase().includes(searchValue.toLowerCase()) &&
+      !row.partnerId.toLowerCase().includes(searchValue.toLowerCase()) &&
       !row.id.toLowerCase().includes(searchValue.toLowerCase())
     ) {
       return false;
@@ -130,7 +130,7 @@ function BookingPage() {
 
     const csvData = data?.bookings?.map((v) => [
       v?.id || "",
-      v?.affiliateId || "",
+      v?.partnerId || "",
       v?.bookingType || "",
       v?.scheduledTime || "",
       v?.fare?.toString() || "",

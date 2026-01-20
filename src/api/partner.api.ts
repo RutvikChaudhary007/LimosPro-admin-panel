@@ -196,7 +196,7 @@ export const deletePartner = async (id: string) => {
  */
 export const bulkDeletePartner = async (ids: string[]) => {
   const data = {
-    affiliateIds: ids,
+    partnerIds: ids,
   };
   const response = await axiosInstance.post(
     API_ENDPOINTS.BULK_DELETE_PARTNER,

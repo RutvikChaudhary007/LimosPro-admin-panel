@@ -255,7 +255,7 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "partner",
-    permission: "manageAffiliates",
+    permission: "managePartners",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.PARTNER, element: PartnerPage },

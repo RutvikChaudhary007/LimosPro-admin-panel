@@ -99,7 +99,7 @@ const formSchema = z
         message: "Partner id cannot be empty or just whitespace.",
       })
       .min(3, { message: "Partner id must be at least 3 characters" }),
-    affiliateId: z
+    partnerId: z
       .string()
       .refine((value) => value.trim() !== "", {
         message: "Partner id cannot be empty or just whitespace.",
@@ -229,7 +229,7 @@ const FleetOptions = [
 // 	const base = {
 // 		regionId: data?.servicePricings?.[0]?.region?.id || "",
 // 		description: data?.servicePricings?.[0]?.description || "",
-// 		affiliateId: data?.affiliateId,
+// 		partnerId: data?.partnerId,
 // 		plateNumber: data?.plateNumber,
 // 		brand: data?.brand,
 // 		documents: data?.documents,
@@ -298,7 +298,7 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
   const base = {
     regionId: data?.servicePricings?.[0]?.region?.id || "",
     description: data?.servicePricings?.[0]?.description || "",
-    affiliateId: data?.affiliateId,
+    partnerId: data?.partnerId,
     plateNumber: data?.plateNumber,
     brand: data?.brand,
     documents: data?.documents,
@@ -357,7 +357,7 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
 const defaultFleetFormValues: TFleetForm = {
   regionId: "",
   description: "",
-  affiliateId: "",
+  partnerId: "",
   plateNumber: "",
   brand: "",
   model: "",
@@ -473,24 +473,24 @@ const FleetForm = ({
     : user?.role
       ? [user.role]
       : [];
-  const isAffiliate = userRoles.some(
+  const isPartner = userRoles.some(
     (role) =>
-      role === "Affiliate" ||
-      (typeof role === "object" && role.roleName === "Affiliate"),
+      role === "Partner" ||
+      (typeof role === "object" && role.roleName === "Partner"),
   );
 
   useEffect(() => {
-    if (isAffiliate && partnerData?.affiliates && !initialData) {
-      const currentAffiliate = partnerData.affiliates.find(
+    if (isPartner && partnerData?.partners && !initialData) {
+      const currentPartner = partnerData.partners.find(
         (a) => a.userId === user?.id,
       );
-      if (currentAffiliate) {
-        form.setValue("affiliateId", currentAffiliate.id, {
+      if (currentPartner) {
+        form.setValue("partnerId", currentPartner.id, {
           shouldValidate: true,
         });
       }
     }
-  }, [isAffiliate, partnerData, user, form, initialData]);
+  }, [isPartner, partnerData, user, form, initialData]);
 
   const handleFilesChange = (
     files: FileList | null,
@@ -540,7 +540,7 @@ const FleetForm = ({
     }
 
     formData.append("zonePricingEnabled", data?.zonePricingEnabled);
-    formData.append("affiliateId", data?.affiliateId);
+    formData.append("partnerId", data?.partnerId);
     formData.append("regionId", data?.regionId);
     formData.append("bagsCapacity", data?.bagsCapacity);
     formData.append("brand", data?.brand);
@@ -629,7 +629,7 @@ const FleetForm = ({
 
               <Field>
                 <FieldLabel
-                  htmlFor="affiliateId"
+                  htmlFor="partnerId"
                   className="text-base-black gap-0"
                 >
                   Partner
@@ -637,7 +637,7 @@ const FleetForm = ({
 
                 <Controller
                   control={form.control}
-                  name="affiliateId"
+                  name="partnerId"
                   render={({ field }) =>
                     isPartnerFetching ? (
                       <Spinner />
@@ -645,11 +645,11 @@ const FleetForm = ({
                       <SelectDropDown
                         placeholder="Select Partner"
                         disabled={
-                          isAffiliate ||
-                          isFieldDisabled(disabledFields, "affiliateId")
+                          isPartner ||
+                          isFieldDisabled(disabledFields, "partnerId")
                         }
                         items={
-                          partnerData?.affiliates?.map((a) => ({
+                          partnerData?.partners?.map((a) => ({
                             label: `${a.user.firstName} ${a.user.lastName}`,
                             value: a.id,
                           })) || []
@@ -663,9 +663,9 @@ const FleetForm = ({
 
                 <FieldDescription>Select Partner</FieldDescription>
 
-                {form.formState.errors.affiliateId && (
+                {form.formState.errors.partnerId && (
                   <FormMessage>
-                    {form.formState.errors.affiliateId.message}
+                    {form.formState.errors.partnerId.message}
                   </FormMessage>
                 )}
               </Field>

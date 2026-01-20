@@ -173,13 +173,13 @@ export default function AdminReports({ reports }: { reports: any }) {
             <Line
               options={revenueOptions}
               data={{
-                labels: reports?.affiliateStats?.map(
+                labels: reports?.partnerStats?.map(
                   (s: { month: string }) => s.month,
                 ),
                 datasets: [
                   {
                     label: "New Signups",
-                    data: reports?.affiliateStats?.map(
+                    data: reports?.partnerStats?.map(
                       (s: { newSignups: number }) => s.newSignups,
                     ),
                     borderColor: "rgb(255, 159, 64)",

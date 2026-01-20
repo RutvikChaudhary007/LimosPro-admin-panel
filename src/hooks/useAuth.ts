@@ -7,7 +7,7 @@ const ADMIN_PANEL_ALLOWED_ROLES = [
   "Staff",
   "Dispatcher",
   "SEO",
-  "Affiliate",
+  "Partner",
 ];
 
 export const useAuth = () => {

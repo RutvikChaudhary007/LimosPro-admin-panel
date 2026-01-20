@@ -94,7 +94,7 @@ type TRefetch = (
 const allowedRoles = new Set([
   "Super Admin",
   "Regional Admin",
-  "Affiliate",
+  "Partner",
   "Dispatcher",
   "SEO Agent",
 ]);
