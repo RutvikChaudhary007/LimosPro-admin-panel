@@ -207,7 +207,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   );
 
   const { user } = useUserStore();
-  const userPartnerId = user?.partnerId;
+  const userPartnerId = user?.id;
 
   const isPartner = user?.role === "Partner";
 
