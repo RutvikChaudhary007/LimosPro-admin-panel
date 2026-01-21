@@ -111,12 +111,25 @@ const useLoginMutation = () => {
       }
 
       // If multiple roles exist, ensure the primary 'role' is an admin-eligible one
-      const primaryRole = adminEligibleRoles[0];
+      const priority = [
+        "Super Admin",
+        "Regional Admin",
+        "Dispatcher",
+        "Partner",
+        "Chauffeur",
+        "Staff Member",
+        "SEO Agent",
+      ];
+      const primaryRole =
+        priority.find((r) => adminEligibleRoles.includes(r)) ||
+        adminEligibleRoles[0];
+
+      // Save primary role to localStorage for redirect checks
+      localStorage.setItem("role", primaryRole);
 
       setUser({
         ...data,
         roles: adminEligibleRoles,
-        role: primaryRole,
         name: `${data?.firstName} ${data?.lastName}`,
       });
 

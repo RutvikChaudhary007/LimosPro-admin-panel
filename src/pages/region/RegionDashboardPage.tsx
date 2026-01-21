@@ -1,7 +1,7 @@
 //@ts-nocheck
 
 import { AxiosError } from "axios";
-import { Plus, Search, Trash2 } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -13,7 +13,6 @@ import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getRegionColumns, type TRegion } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
-import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -62,7 +61,9 @@ function RegionDashboardPage() {
           error: (e) =>
             e instanceof AxiosError
               ? e.response?.data?.data?.error || e.response?.data?.message
-              : "Opps! Error deleting region",
+              : e instanceof Error
+                ? e.message
+                : "Opps! Error deleting region",
         });
       } catch (error) {
         if (error instanceof Error) {

@@ -52,7 +52,7 @@ const statusValues = [
 const maxSize = 10;
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/*"];
 
-const getFormSchema = (isEdit: boolean) =>
+const getFormSchema = (isEdit: boolean, isPartner: boolean) =>
   z.object({
     firstName: z
       .string()
@@ -66,17 +66,10 @@ const getFormSchema = (isEdit: boolean) =>
         message: "Last name cannot be empty or just whitespace.",
       })
       .min(3, { message: "Last name must be at least 3 characters" }),
-    // location: z.object({
-    //     latitude: z.number(),
-    //     longitude: z.number(),
-    // }),
     businessAddress: z.union([
       z
         .string()
         .trim()
-        // .refine((value) => value.trim() !== "", {
-        //   message: "Business Address cannot be empty or just whitespace.",
-        // })
         .min(3, { message: "Business Address must be at least 3 characters" }),
       z.object({
         latitude: z.number(),
@@ -84,9 +77,11 @@ const getFormSchema = (isEdit: boolean) =>
       }),
     ]),
     email: z.email(),
-    partnerId: z.string().refine((value) => value.trim() !== "", {
-      message: "Partner Id cannot be empty or just whitespace.",
-    }),
+    partnerId: isPartner
+      ? z.string().optional()
+      : z.string().refine((value) => value.trim() !== "", {
+          message: "Partner Id cannot be empty or just whitespace.",
+        }),
     taxIdNumber: z.string().refine((value) => value.trim() !== "", {
       message: "Tax Id Number cannot be empty or just whitespace.",
     }),
@@ -106,12 +101,9 @@ const getFormSchema = (isEdit: boolean) =>
       .array(z.any())
       .refine(
         (files) => {
-          // If we have existing documents (with url property), they're already validated
           if (files.length > 0 && files.some((file) => file.url)) {
             return true;
           }
-
-          // For new file uploads, validate length
           return files.length >= 1;
         },
         {
@@ -123,7 +115,6 @@ const getFormSchema = (isEdit: boolean) =>
       })
       .refine(
         (files) => {
-          // Only check size for actual File objects, not for existing document objects
           const fileObjects = files.filter((f) => f instanceof File);
           return (
             fileObjects.length === 0 ||
@@ -136,7 +127,6 @@ const getFormSchema = (isEdit: boolean) =>
       )
       .refine(
         (files) => {
-          // Only check mime types for actual File objects, not for existing document objects
           const fileObjects = files.filter((f) => f instanceof File);
           return (
             fileObjects.length === 0 ||
@@ -202,7 +192,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   const { hasPermission } = usePermission();
   const isEdit = type === "Edit Chauffeur";
   const isAuthorized = hasPermission(
-    ["manageChauffeurs", "managePartnerChauffeurs"],
+    "managePartnerChauffeurs",
     isEdit ? "update" : "create",
   );
 
@@ -248,14 +238,17 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     },
     documents: [],
     status: "",
-    partnerId: userPartnerId ?? "",
+    partnerId: "",
     taxIdNumber: "",
     licenseNumber: "",
     vehicleId: "",
     gratuity: "0",
   };
 
-  const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
+  const schema = useMemo(
+    () => getFormSchema(isEdit, isPartner),
+    [isEdit, isPartner],
+  );
   const form = useForm<TChauffeurForm>({
     resolver: zodResolver(schema),
     defaultValues: defaultValues,

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useFetchUserById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { EmptyDataState } from "@/components/EmptyDataState";
+import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import {

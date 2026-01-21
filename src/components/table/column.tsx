@@ -282,6 +282,7 @@ export type TRegionAdmin = {
     paymentMethod: string;
     phoneNumber: string;
     profilePicture: string;
+    roles: string[];
     roleName: string;
     social: string;
     status: string;
@@ -702,10 +703,7 @@ export function getChauffeur(
               <Eye />
             </Button>
           </PermissionGate>
-          <PermissionGate
-            permission={["manageChauffeurs", "managePartnerChauffeurs"]}
-            action="update"
-          >
+          <PermissionGate permission="managePartnerChauffeurs" action="update">
             <Button
               onClick={() => onEdit(row.original.id)}
               variant="outlineNavBtnPrimary"
@@ -716,10 +714,7 @@ export function getChauffeur(
               <Edit />
             </Button>
           </PermissionGate>
-          <PermissionGate
-            permission={["manageChauffeurs", "managePartnerChauffeurs"]}
-            action="delete"
-          >
+          <PermissionGate permission="managePartnerChauffeurs" action="delete">
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -1113,6 +1108,7 @@ export type TFleet = {
     gender: string;
     password: string;
     status: string;
+    roles: string[];
     roleName: string;
     createdAt: string;
     updatedAt: string;
@@ -2956,7 +2952,7 @@ export function getChauffeurAvailablility(
               <Edit />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="manageChauffeurs" action="delete">
+          <PermissionGate permission="managePartnerChauffeurs" action="delete">
             <Dialog>
               <DialogTrigger asChild>
                 <Button

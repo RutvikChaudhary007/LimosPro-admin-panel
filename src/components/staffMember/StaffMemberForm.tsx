@@ -88,10 +88,10 @@ const StaffMemberForm = ({
       };
     }
 
-    let roleValue = initialData?.user?.roles?.id ?? "";
-    if (rolesData?.length > 0) {
-      const foundRole = rolesData.find(
-        (rawData) => rawData?.roleName === initialData?.user?.roles,
+    let roleValue = "";
+    if (rolesData?.length > 0 && Array.isArray(initialData?.user?.roles)) {
+      const foundRole = rolesData.find((rawData) =>
+        initialData.user.roles.includes(rawData?.roleName),
       );
       if (foundRole) {
         roleValue = foundRole.roleName;

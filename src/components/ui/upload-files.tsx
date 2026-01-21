@@ -353,7 +353,7 @@ export default function FilesUpload({
                 f?.mimetype?.startsWith("image/") ? (
                 <img
                   src={f.preview}
-                  className="w-10 h-10 rounded"
+                  className="w-10 h-10 rounded object-fill"
                   alt={f?.name}
                 />
               ) : (

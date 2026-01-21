@@ -23,9 +23,13 @@ export const useAuth = () => {
     try {
       const user = JSON.parse(userStr);
 
-      // Check if role is allowed to access Admin Panel
-      if (!user.role || !ADMIN_PANEL_ALLOWED_ROLES.includes(user.role)) {
-        console.warn(`Access denied for role: ${user.role}`);
+      // Check if any of user's roles are allowed to access Admin Panel
+      const userRoles = user.roles || [];
+      const isAllowed = userRoles.some((role: string) =>
+        ADMIN_PANEL_ALLOWED_ROLES.includes(role),
+      );
+      if (!isAllowed) {
+        console.warn(`Access denied for roles: ${userRoles.join(", ")}`);
         localStorage.clear();
         navigate("/unauthorized");
       }

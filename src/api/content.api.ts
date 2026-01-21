@@ -352,6 +352,7 @@ export const createContentBlock = async (data: unknown) => {
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };
 
@@ -374,6 +375,7 @@ export const editContentBlock = async ({
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };
 
@@ -389,5 +391,6 @@ export const deleteContentBlock = async (id: string) => {
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };

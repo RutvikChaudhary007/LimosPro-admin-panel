@@ -25,7 +25,9 @@ function AddRegionPage() {
         error: (e) =>
           e instanceof AxiosError
             ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Opps! Failed to create region",
+            : e instanceof Error
+              ? e.message
+              : "Opps! Failed to create region",
       });
     } catch (error) {
       // toastPromise already handled the error message display

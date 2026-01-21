@@ -13,10 +13,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   action = "view",
 }) => {
   const location = useLocation();
-  const { hasPermission, user, isLoggedIn } = usePermission();
+  const { hasPermission, permissions, role, isLoggedIn } = usePermission();
 
-  const userRole = user?.role;
-  const userPermissions = user?.permissions || [];
+  const userRole = role;
+  const userPermissions = permissions || [];
 
   if (!isLoggedIn) {
     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
@@ -37,7 +37,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Fallback to legacy path-based check
-  if (!hasDynamicAccess(location.pathname, userRole, userPermissions)) {
+  if (!hasDynamicAccess(location.pathname, userRole, userPermissions as any)) {
     console.log(`Path access denied for ${location.pathname}`);
     if (location.pathname === constant.ROUTING_URLS.DASHBOARD) {
       return <Navigate to="/unauthorized" replace />;

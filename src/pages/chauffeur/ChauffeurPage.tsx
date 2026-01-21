@@ -194,7 +194,7 @@ function ChauffeurPage() {
             label: "Add Chauffeur",
             icon: <Plus />,
             link: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
-            permission: ["manageChauffeurs", "managePartnerChauffeurs"],
+            permission: "managePartnerChauffeurs",
             actionName: "create",
           }}
         />
@@ -227,7 +227,7 @@ function ChauffeurPage() {
               <IconFilterX /> <span>Clear Filter</span>
             </Button>
             <PermissionGate
-              permission={["manageChauffeurs", "managePartnerChauffeurs"]}
+              permission="managePartnerChauffeurs"
               action="bulkDelete"
             >
               <span

@@ -91,6 +91,7 @@ export const createRegion = async (data: TRegion) => {
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };
 
@@ -113,6 +114,7 @@ export const editRegion = async ({
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };
 
@@ -128,6 +130,7 @@ export const deleteRegion = async (id: string) => {
   } catch (error) {
     if (error instanceof AxiosError)
       console.error(error.message || "Opps! An unkown error occured");
+    throw error;
   }
 };
 

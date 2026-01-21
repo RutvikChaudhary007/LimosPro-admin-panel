@@ -39,6 +39,11 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
 
   manageChauffeurs: [
     constant.ROUTING_URLS.CHAUFFEUR,
+    constant.ROUTING_URLS.VIEW_CHAUFFEUR,
+  ],
+
+  managePartnerChauffeurs: [
+    constant.ROUTING_URLS.CHAUFFEUR,
     constant.ROUTING_URLS.CREATE_CHAUFFEUR,
     constant.ROUTING_URLS.EDIT_CHAUFFEUR,
     constant.ROUTING_URLS.VIEW_CHAUFFEUR,

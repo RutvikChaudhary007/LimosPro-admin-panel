@@ -210,6 +210,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
       lastName: string;
       email: string;
       status: string;
+      roles: string[];
       roleName: string;
     }
 
@@ -697,8 +698,8 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
 
                       {userIsFetching ? (
                         <div className="w-full h-14 skeleton rounded"></div>
-                      ) : usersData?.users?.some(
-                          (user: User) => user.roleName === "SEO Agent",
+                      ) : usersData?.users?.some((user: User) =>
+                          (user.roles || []).includes("SEO Agent"),
                         ) || initialData?.blogAuthor ? (
                         <Controller
                           name="authorId"
@@ -713,9 +714,8 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                                   value: string;
                                 }[] =
                                   usersData?.users
-                                    ?.filter(
-                                      (user: User) =>
-                                        user.roleName === "SEO Agent",
+                                    ?.filter((user: User) =>
+                                      (user.roles || []).includes("SEO Agent"),
                                     )
                                     .map((user: User) => ({
                                       label: `${user.firstName} ${user.lastName}`,

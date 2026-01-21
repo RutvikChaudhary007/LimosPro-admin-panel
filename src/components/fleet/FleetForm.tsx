@@ -468,16 +468,8 @@ const FleetForm = ({
   }, [initialData, form]);
 
   const { user } = useUserStore();
-  const userRoles = Array.isArray(user?.roles)
-    ? user?.roles
-    : user?.role
-      ? [user.role]
-      : [];
-  const isPartner = userRoles.some(
-    (role) =>
-      role === "Partner" ||
-      (typeof role === "object" && role.roleName === "Partner"),
-  );
+  const userRoles = user?.roles || [];
+  const isPartner = userRoles.includes("Partner");
 
   useEffect(() => {
     if (isPartner && partnerData?.partners && !initialData) {

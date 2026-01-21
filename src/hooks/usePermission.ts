@@ -95,9 +95,26 @@ export const usePermission = () => {
     canExport,
     canImport,
     permissions,
-    user,
     isLoggedIn,
-    role:
-      user?.role || (Array.isArray(user?.roles) ? user?.roles[0] : user?.roles),
+    roles: user?.roles || [],
+    role: (() => {
+      const roles = user?.roles || [];
+      const priority = [
+        "Super Admin",
+        "Regional Admin",
+        "Dispatcher",
+        "Partner",
+        "Chauffeur",
+        "Staff Member",
+        "SEO Agent",
+      ];
+      for (const r of priority) {
+        if (roles.includes(r)) return r;
+      }
+      return roles[0] || "Super Admin";
+    })(),
+    hasRole: (role: string) => (user?.roles || []).includes(role),
+    hasAnyRole: (roles: string[]) =>
+      roles.some((r) => (user?.roles || []).includes(r)),
   };
 };

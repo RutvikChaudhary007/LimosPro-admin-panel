@@ -276,21 +276,37 @@ export const routesConfig = [
   {
     layout: "protected",
     module: "chauffeur",
-    permission: ["manageChauffeurs", "managePartnerChauffeurs"],
+    permission: "manageChauffeurs",
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.CHAUFFEUR, element: ChauffeurPage },
       {
+        path: constant.ROUTING_URLS.VIEW_CHAUFFEUR,
+        element: ViewChauffeurPage,
+      },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "chauffeur-create",
+    permission: "managePartnerChauffeurs",
+    action: "create",
+    routes: [
+      {
         path: constant.ROUTING_URLS.CREATE_CHAUFFEUR,
         element: CreateChauffeurPage,
       },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "chauffeur-edit",
+    permission: "managePartnerChauffeurs",
+    action: "update",
+    routes: [
       {
         path: constant.ROUTING_URLS.EDIT_CHAUFFEUR,
         element: EditChauffeurPage,
-      },
-      {
-        path: constant.ROUTING_URLS.VIEW_CHAUFFEUR,
-        element: ViewChauffeurPage,
       },
     ],
   },

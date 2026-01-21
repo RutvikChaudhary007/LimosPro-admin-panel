@@ -8,7 +8,9 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  role?: string;
+  roles: string[];
+  partnerId?: string;
+  chauffeurId?: string;
   profilePicture?: string;
   permissions: string[];
   refreshToken: string;
