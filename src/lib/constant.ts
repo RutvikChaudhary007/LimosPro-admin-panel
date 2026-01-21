@@ -119,6 +119,12 @@ export const constant = {
     // NOTIFICATION URLS
     NOTIFICATION: "/notifications",
     VIEW_NOTIFICATION: "/notifications:/id",
+
+    // REQUEST TICKETS URLS
+    SUPPORT_TICKETS: "/support-tickets",
+    CREATE_SUPPORT_TICKETS: "/support-tickets/create",
+    EDIT_SUPPORT_TICKETS: "/support-tickets/:id/edit",
+    VIEW_SUPPORT_TICKETS: "/support-tickets/:id",
   },
   EDITOR_FORMATS: {
     modules: {

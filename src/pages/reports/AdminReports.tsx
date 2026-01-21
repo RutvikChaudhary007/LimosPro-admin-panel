@@ -100,10 +100,11 @@ export default function AdminReports({ reports }: { reports: any }) {
 
     reports?.tickets?.forEach((ticket: { region: string; type: string }) => {
       if (predefinedRegions.includes(ticket.region)) {
-        if (ticket.type === "DISPUTE") {
+        const ticketType = ticket.type?.toLowerCase();
+        if (ticketType === "dispute") {
           disputeCounts[ticket.region] =
-            (disputeCounts[ticket.region] || 0) + 2; // TODO: change it to 1
-        } else {
+            (disputeCounts[ticket.region] || 0) + 1;
+        } else if (ticketType === "support_issue") {
           issueCounts[ticket.region] = (issueCounts[ticket.region] || 0) + 1;
         }
       }
