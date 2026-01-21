@@ -26,6 +26,7 @@ import {
   IconSearch,
   IconShield,
   IconStar,
+  IconTicket,
   IconTruck,
   IconUser,
 } from "@tabler/icons-react";
@@ -217,6 +218,13 @@ const data: {
       url: constant.ROUTING_URLS.IP_WHITE_LIST,
       icon: IconShield,
       permission: "manageIpAccess",
+      action: "view",
+    },
+    {
+      title: "Support Tickets",
+      url: constant.ROUTING_URLS.SUPPORT_TICKETS,
+      icon: IconTicket,
+      permission: "manageContentRequests",
       action: "view",
     },
     {

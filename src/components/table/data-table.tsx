@@ -39,6 +39,7 @@ export function DataTable<TData, TValue>({
   onTableReady,
   emptyMessage = "No results.",
 }: DataTableProps<TData, TValue>) {
+  const safeRowSelection = rowSelection ?? {};
   const table = useReactTable({
     data,
     columns,
@@ -47,10 +48,10 @@ export function DataTable<TData, TValue>({
       ? getFilteredRowModel()
       : undefined,
     state: {
-      rowSelection: rowSelection,
+      rowSelection: safeRowSelection,
       globalFilter: globalFilter,
     },
-    onRowSelectionChange: onRowSelectionChange,
+    onRowSelectionChange: onRowSelectionChange ?? (() => {}),
     onGlobalFilterChange: onGlobalFilterChange,
     enableRowSelection: true,
     enableMultiRowSelection: true,
@@ -65,9 +66,7 @@ export function DataTable<TData, TValue>({
   const headerGroups = table?.getHeaderGroups();
 
   // Trigger re-render when selection state changes
-  const selectedCount = rowSelection
-    ? Object.values(rowSelection).filter(Boolean).length
-    : 0;
+  const selectedCount = Object.values(safeRowSelection).filter(Boolean).length;
 
   // Memoize rows to ensure they re-render when rowSelection changes
   const rows = table?.getRowModel()?.rows || [];

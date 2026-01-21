@@ -41,6 +41,8 @@ export * from "./regionPermission.api";
 export * from "./report.api";
 // Staff & Crew Member Module
 export * from "./staff.api";
+// Support Tickets Module
+export * from "./supportTickets.api";
 // Trip Module
 export * from "./trip.api";
 // User Module

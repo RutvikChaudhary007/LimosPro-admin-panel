@@ -120,6 +120,14 @@ const ContactRequestsPage = lazy(
   () => import("../pages/contactRequests/ContactRequestsPage"),
 );
 
+// Support Tickets
+const SupportTicketsPage = lazy(
+  () => import("../pages/supportTickets/supportTickets"),
+);
+const ViewSupportTicketPage = lazy(
+  () => import("../pages/supportTickets/ViewSupportTicketPage"),
+);
+
 // Testimonials
 const TestimonialPage = lazy(
   () => import("../pages/testimonial/TestimonialPage"),
@@ -216,6 +224,22 @@ export const routesConfig = [
       {
         path: "/",
         element: DashboardRedirect,
+      },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "supportTickets",
+    permission: "manageIpAccess",
+    action: "view",
+    routes: [
+      {
+        path: constant.ROUTING_URLS.SUPPORT_TICKETS,
+        element: SupportTicketsPage,
+      },
+      {
+        path: constant.ROUTING_URLS.VIEW_SUPPORT_TICKETS,
+        element: ViewSupportTicketPage,
       },
     ],
   },

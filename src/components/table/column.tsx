@@ -255,6 +255,112 @@ export function getRegionColumns(
   ];
 }
 
+export function getSupportTickets(
+  onView: (id: string) => void,
+): ColumnDef<TSupportTicket>[] {
+  return [
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Ticket ID" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "title",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Title" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Type" />
+      ),
+      cell: ({ row }) => <Badge variant="outline">{row.original.type}</Badge>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "category",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Category" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "region",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Region" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => (
+        <Badge
+          variant={
+            row.original.status === "OPEN"
+              ? "destructive"
+              : row.original.status === "RESOLVED"
+                ? "success"
+                : "default"
+          }
+        >
+          {row.original.status}
+        </Badge>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "raisedBy",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Raised By" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Date" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {row.original.createdAt
+            ? format(new Date(row.original.createdAt), "dd MMM yyyy")
+            : "N/A"}
+        </span>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "action",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onView(row.original.id)}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View Details"
+          >
+            <Eye />
+          </Button>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ];
+}
+
 export type TRegionAdmin = {
   id: string;
   userId: string;
@@ -1996,6 +2102,17 @@ export type TContactRequest = {
   phone: string;
   message: string;
   isResolved: boolean;
+  createdAt: string;
+};
+
+export type TSupportTicket = {
+  id: string;
+  title: string;
+  type: string;
+  category: string;
+  status: string;
+  region: string;
+  raisedBy: string;
   createdAt: string;
 };
 

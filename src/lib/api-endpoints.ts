@@ -128,6 +128,11 @@ export const API_ENDPOINTS: Record<string, any> = {
   // Reports
   GET_ALL_REPORTS: `${ADMIN_SERVICE_URL}/reports`,
 
+  // Support Tickets
+  GET_ALL_SUPPORT_TICKETS: `${ADMIN_SERVICE_URL}/support-ticket`,
+  GET_SUPPORT_TICKET_BY_ID: `${ADMIN_SERVICE_URL}/support-ticket/:id`,
+  UPDATE_SUPPORT_TICKET_STATUS: `${ADMIN_SERVICE_URL}/support-ticket/:id`,
+
   // Content Management APIs (Admin Service)
   BLOG: {
     GET_ALL: `${ADMIN_SERVICE_URL}/blog/posts`,
