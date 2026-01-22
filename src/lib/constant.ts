@@ -118,6 +118,7 @@ export const constant = {
 
     // SETTINGS URLS
     SETTINGS: "/settings",
+    ACCOUNT_SETTINGS: "/settings/account",
 
     // NOTIFICATION URLS
     NOTIFICATION: "/notifications",

@@ -1,10 +1,11 @@
 import { IconChevronDown, IconLogout } from "@tabler/icons-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import IconBell from "@/assets/Icons/ic-bell.svg?react";
 import IconMail from "@/assets/Icons/ic-mail.svg?react";
 import IconLanguage from "@/assets/Icons/ic-translate.svg?react";
 import IconUserCircle from "@/assets/Icons/ic-user-circle.svg?react";
+import { PermissionGate } from "@/components/permissions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -85,10 +86,14 @@ export function NavUser() {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <IconUserCircle />
-            Account
-          </DropdownMenuItem>
+          <PermissionGate permission="manageAccount" action="view">
+            <DropdownMenuItem asChild>
+              <Link to={constant.ROUTING_URLS.ACCOUNT_SETTINGS}>
+                <IconUserCircle />
+                Account
+              </Link>
+            </DropdownMenuItem>
+          </PermissionGate>
           <DropdownMenuItem className="sm:hidden">
             <IconLanguage />
             Languages

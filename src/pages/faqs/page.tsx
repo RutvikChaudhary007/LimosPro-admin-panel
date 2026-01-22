@@ -2,11 +2,10 @@ import { useFetchCmsFaqContent } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import type { TFaqsCmsData } from "@/types/faq-cms.type";
 import { FAQList } from "./components/faq-list";
-import FaqsCmsFallbackJson from "./data/faqs-cms.json";
 
 export default function FAQsPage() {
   const { data } = useFetchCmsFaqContent();
-  const normalized = (data ?? FaqsCmsFallbackJson ?? {}) as TFaqsCmsData;
+  const normalized = (data ?? {}) as TFaqsCmsData;
   const categoryKeys = Object.keys(normalized?.data?.data ?? {});
 
   const faqs = categoryKeys
