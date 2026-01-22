@@ -1,5 +1,10 @@
 import type * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  useFetchSiteSettingsUI,
+  useUpdateSiteSettingsUIMutation,
+} from "@/api/siteSetting.api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -55,6 +60,7 @@ const defaultValues = {
   firebaseStorageBucket: "limospro.appspot.com",
   firebaseMessagingSenderId: "1234567890",
   firebaseAppId: "1:1234567890:web:abcdef123456",
+  googleMapsApiKey: "",
 };
 
 type SiteSettingsValues = typeof defaultValues & {
@@ -63,8 +69,21 @@ type SiteSettingsValues = typeof defaultValues & {
   faviconUrl: File | string;
 };
 
+const isFile = (value: unknown): value is File => value instanceof File;
+
 const SiteSettingsForm = () => {
   const [values, setValues] = useState<SiteSettingsValues>(defaultValues);
+  const { data: siteSettings, isLoading } = useFetchSiteSettingsUI();
+  const { mutate: updateSiteSettings, isPending } =
+    useUpdateSiteSettingsUIMutation();
+  const normalizedSettings =
+    (siteSettings as { flat?: Partial<SiteSettingsValues> } | null)?.flat ??
+    siteSettings;
+
+  useEffect(() => {
+    if (!normalizedSettings) return;
+    setValues((prev) => ({ ...prev, ...normalizedSettings }));
+  }, [normalizedSettings]);
 
   const updateValue =
     (key: keyof SiteSettingsValues) =>
@@ -84,9 +103,42 @@ const SiteSettingsForm = () => {
       setValues((prev) => ({ ...prev, [key]: nextValue ?? "" }));
     };
 
+  const buildPayload = (currentValues: SiteSettingsValues) => {
+    const allowedKeys = normalizedSettings
+      ? new Set(Object.keys(normalizedSettings as Record<string, unknown>))
+      : null;
+    const entries = Object.entries(currentValues).filter(
+      ([key]) => !allowedKeys || allowedKeys.has(key),
+    );
+    const hasFile = entries.some(([, value]) => isFile(value));
+    if (!hasFile) {
+      return Object.fromEntries(entries) as SiteSettingsValues;
+    }
+
+    const formData = new FormData();
+    entries.forEach(([key, value]) => {
+      if (isFile(value)) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, String(value ?? ""));
+      }
+    });
+    return formData;
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("site-settings:", values);
+    const payload = buildPayload(values);
+    updateSiteSettings(payload, {
+      onSuccess: () => {
+        toast.success("Site settings updated.");
+      },
+      onError: (error: any) => {
+        toast.error(
+          error?.response?.data?.message || "Failed to update site settings.",
+        );
+      },
+    });
   };
 
   return (
@@ -98,7 +150,7 @@ const SiteSettingsForm = () => {
           <TabsTrigger value="application">Application</TabsTrigger>
           <TabsTrigger value="branding">Branding</TabsTrigger>
           <TabsTrigger value="payment">Payment</TabsTrigger>
-          <TabsTrigger value="firebase">Firebase</TabsTrigger>
+          <TabsTrigger value="firebase">Integration</TabsTrigger>
           <TabsTrigger value="ai">AI</TabsTrigger>
         </TabsList>
 
@@ -148,7 +200,9 @@ const SiteSettingsForm = () => {
                 </FieldGroup>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save General</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save General"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>
@@ -236,7 +290,9 @@ const SiteSettingsForm = () => {
                 </Field>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save Pricing</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save Pricing"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>
@@ -306,7 +362,9 @@ const SiteSettingsForm = () => {
                 </Field>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save Application</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save Application"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>
@@ -361,7 +419,9 @@ const SiteSettingsForm = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save Branding</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save Branding"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>
@@ -408,7 +468,9 @@ const SiteSettingsForm = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save Payment</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save Payment"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>
@@ -418,12 +480,23 @@ const SiteSettingsForm = () => {
           <Card>
             <CardBody>
               <CardHeader className="space-y-2">
-                <CardTitle>Firebase</CardTitle>
+                <CardTitle>Integration</CardTitle>
                 <CardDescription>
-                  Client configuration for Firebase SDK.
+                  Client keys for third-party services.
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-6 md:grid-cols-2">
+                <Field>
+                  <FieldLabel htmlFor="googleMapsApiKey">
+                    Google Maps API Key
+                  </FieldLabel>
+                  <Input
+                    id="googleMapsApiKey"
+                    value={values.googleMapsApiKey}
+                    onChange={updateValue("googleMapsApiKey")}
+                  />
+                  <FieldDescription>Used for map services.</FieldDescription>
+                </Field>
                 <Field>
                   <FieldLabel htmlFor="firebaseApiKey">
                     Firebase API Key
@@ -494,7 +567,9 @@ const SiteSettingsForm = () => {
                 </Field>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save Firebase</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save Integration"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>
@@ -560,7 +635,9 @@ const SiteSettingsForm = () => {
                 </Field>
               </CardContent>
               <CardFooter>
-                <Button type="submit">Save AI</Button>
+                <Button type="submit" disabled={isPending || isLoading}>
+                  {isPending ? "Saving..." : "Save AI"}
+                </Button>
               </CardFooter>
             </CardBody>
           </Card>

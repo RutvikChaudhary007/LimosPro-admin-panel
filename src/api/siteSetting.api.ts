@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
@@ -203,4 +203,51 @@ export const bulkDeletePartner = async (ids: string[]) => {
   );
 
   return response.data;
+};
+
+// ============================================
+// SITE SETTINGS UI OPERATIONS
+// ============================================
+
+/**
+ * Fetch site settings UI configuration
+ */
+export const getSiteSettingsUI = async () => {
+  const response = await axiosInstance.get(API_ENDPOINTS.GET_SITE_SETTINGS_UI);
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * Hook to fetch site settings UI configuration
+ */
+export const useFetchSiteSettingsUI = () =>
+  useQuery({
+    queryKey: ["siteSettingsUI"],
+    queryFn: () => getSiteSettingsUI(),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+/**
+ * Update site settings UI configuration
+ */
+export const updateSiteSettingsUI = async (data: object | FormData) => {
+  const response = await axiosInstance.put(
+    API_ENDPOINTS.UPDATE_SITE_SETTINGS_UI,
+    data,
+  );
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * Hook to update site settings UI configuration
+ */
+export const useUpdateSiteSettingsUIMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateSiteSettingsUI,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["siteSettingsUI"] });
+    },
+  });
 };
