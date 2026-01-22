@@ -103,6 +103,7 @@ export const API_ENDPOINTS: Record<string, any> = {
 
   // FAQS
   GET_ALL_FAQ: `${ADMIN_SERVICE_URL}/faqs`,
+  GET_ALL_CMS_FAQ: `${ADMIN_SERVICE_URL}/pages/service-content/faq/all`,
   GET_FAQ_BY_ID: `${ADMIN_SERVICE_URL}/faqs/:id`,
   CREATE_FAQ: `${ADMIN_SERVICE_URL}/faqs`,
   EDIT_FAQ: `${ADMIN_SERVICE_URL}/faqs/:id`,
@@ -223,7 +224,7 @@ export const API_ENDPOINTS: Record<string, any> = {
     BULK_DELETE: `${ADMIN_SERVICE_URL}/tags/bulk-delete`,
   },
   SERVICE_PAGE_CONTENT: {
-    GET_ALL: `${ADMIN_SERVICE_URL}/pages/service-content`,
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/service-content/pages/all`,
     GET_BY_ID: (id: string) =>
       `${ADMIN_SERVICE_URL}/pages/service-content/${id}`,
     CREATE: `${ADMIN_SERVICE_URL}/pages/service-content`,

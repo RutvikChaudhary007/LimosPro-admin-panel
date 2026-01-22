@@ -176,6 +176,12 @@ const data: {
           permission: "manageContentManagement",
           action: "view",
         },
+        {
+          title: "FAQs",
+          url: constant.ROUTING_URLS.CONTENT_FAQ,
+          permission: "manageContentManagement",
+          action: "view",
+        },
       ],
     },
     {
@@ -207,7 +213,7 @@ const data: {
       action: "view",
     },
     {
-      title: "FAQs",
+      title: "App FAQs",
       url: constant.ROUTING_URLS.FAQ,
       icon: IconHelp,
       permission: "manageContentManagement",
@@ -224,7 +230,7 @@ const data: {
       title: "Support Tickets",
       url: constant.ROUTING_URLS.SUPPORT_TICKETS,
       icon: IconTicket,
-      permission: "manageContentRequests",
+      permission: "manageContactRequests",
       action: "view",
     },
     {

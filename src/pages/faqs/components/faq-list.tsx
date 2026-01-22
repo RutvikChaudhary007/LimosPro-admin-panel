@@ -25,7 +25,7 @@ import { useSticky } from "@/hooks/useSticky";
 import { cn } from "@/lib/utils";
 
 interface FAQ {
-  id: number;
+  id: string;
   question: string;
   answer: string;
   category: string;
@@ -33,7 +33,7 @@ interface FAQ {
 
 interface Category {
   name: string;
-  count: number;
+  count?: number;
 }
 
 interface FAQListProps {
@@ -51,8 +51,8 @@ export function FAQList({ faqs, categories }: FAQListProps) {
       selectedCategory === "All" || faq.category === selectedCategory;
     const matchesSearch =
       searchQuery === "" ||
-      faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+      (faq.question ?? "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (faq.answer ?? "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -85,7 +85,7 @@ export function FAQList({ faqs, categories }: FAQListProps) {
                 <div
                   key={category.name}
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 rounded hover:bg-base-light-gray cursor-pointer transition-colors group",
+                    "flex items-center justify-between px-3 py-2 rounded hover:bg-base-light-gray cursor-pointer transition-colors group capitalize",
                     selectedCategory === category.name && "bg-base-light-gray",
                   )}
                   onClick={() => setSelectedCategory(category.name)}
@@ -97,7 +97,9 @@ export function FAQList({ faqs, categories }: FAQListProps) {
                       selectedCategory === category.name ? "default" : "outline"
                     }
                   >
-                    {category.name === "All" ? faqs.length : category.count}
+                    {category.name === "All"
+                      ? faqs.length
+                      : (category.count ?? 0)}
                   </Badge>
                 </div>
               ))}
@@ -111,7 +113,7 @@ export function FAQList({ faqs, categories }: FAQListProps) {
         <Card>
           <CardBody>
             <CardHeader>
-              <CardTitle>
+              <CardTitle className="capitalize">
                 {selectedCategory === "All"
                   ? "All FAQs"
                   : `${selectedCategory} FAQs`}
@@ -137,16 +139,16 @@ export function FAQList({ faqs, categories }: FAQListProps) {
                     <AccordionItem key={item.id} value={`item-${item.id}`}>
                       <AccordionTrigger>
                         <div className="flex items-start text-left">
-                          <span>{item.question}</span>
+                          <span>{item.question ?? ""}</span>
                           <Badge
                             variant="outline"
                             className="ms-3 mt-0.5 shrink-0"
                           >
-                            {item.category}
+                            {item.category ?? ""}
                           </Badge>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent>{item.answer}</AccordionContent>
+                      <AccordionContent>{item.answer ?? ""}</AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>

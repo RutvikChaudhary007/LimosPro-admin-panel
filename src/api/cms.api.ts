@@ -19,7 +19,7 @@ import {
 // ============================================
 
 /**
- * Fetch all FAQs
+ * Fetch all FAQs (mobile app)
  */
 export const getAllFAQs = async (page?: number, limit?: number) => {
   const params: Record<string, number> = {};
@@ -41,7 +41,7 @@ export const getAllFAQs = async (page?: number, limit?: number) => {
 };
 
 /**
- * Hook to fetch all FAQs
+ * Hook to fetch all FAQs (mobile app)
  */
 export const useFetchAllFAQs = ({
   page,
@@ -53,6 +53,78 @@ export const useFetchAllFAQs = ({
   return useQuery({
     queryKey: ["faqs", page, limit],
     queryFn: () => getAllFAQs(page, limit),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+};
+
+/**
+ * Fetch FAQs grouped for CMS pages (no pagination)
+ */
+export const getCmsFaqContent = async () => {
+  try {
+    const response = await adminAxiosInstance.get(
+      API_ENDPOINTS.GET_ALL_CMS_FAQ,
+    );
+    return response.data?.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+/**
+ * Hook to fetch FAQs grouped for CMS pages (no pagination)
+ */
+export const useFetchCmsFaqContent = () => {
+  return useQuery({
+    queryKey: ["cms-faqs-content"],
+    queryFn: () => getCmsFaqContent(),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+};
+
+/**
+ * Fetch all FAQs (CMS pages)
+ */
+export const getAllCmsFAQs = async (page?: number, limit?: number) => {
+  const params: Record<string, number> = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
+  try {
+    const response = await adminAxiosInstance.get(
+      API_ENDPOINTS.GET_ALL_CMS_FAQ,
+      {
+        params,
+      },
+    );
+
+    return response.data?.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error?.status === 400) {
+      return [];
+    }
+    throw error;
+  }
+};
+
+/**
+ * Hook to fetch all FAQs (CMS pages)
+ */
+export const useFetchAllCmsFAQs = ({
+  page,
+  limit,
+}: {
+  page: number;
+  limit: number;
+}) => {
+  return useQuery({
+    queryKey: ["cms-faqs", page, limit],
+    queryFn: () => getAllCmsFAQs(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
   });

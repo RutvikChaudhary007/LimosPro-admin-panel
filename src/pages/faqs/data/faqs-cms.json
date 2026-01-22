@@ -1,0 +1,37 @@
+{
+  "status": true,
+  "message": "faq_statistics_fetched",
+  "data": {
+    "counts": {
+      "home": 0,
+      "business": 0,
+      "service": 3,
+      "destination": 0,
+      "chauffeur": 0,
+      "total": 3
+    },
+    "data": {
+      "home": [],
+      "business": [],
+      "service": [
+        {
+          "id": "faq-1",
+          "answer": "You get a luxury vehicle with a professional chauffeur billed on an hourly basis.",
+          "question": "What is included in hourly chauffeur service?"
+        },
+        {
+          "id": "faq-2",
+          "answer": "Yes, the minimum booking duration is 2 hours.",
+          "question": "Is there a minimum booking duration?"
+        },
+        {
+          "id": "faq-3",
+          "answer": "Welcome, we are here to help you.",
+          "question": "How can I contact support?"
+        }
+      ],
+      "destination": [],
+      "chauffeur": []
+    }
+  }
+}

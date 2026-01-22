@@ -159,8 +159,8 @@ const EditIpWhiteListPage = lazy(
 );
 
 // FAQs
-// const FaqsPage = lazy(() => import("../pages/faqs/FaqsPage")); //** Old Index Page  **//
-const FAQsPage = lazy(() => import("../pages/faqs/page"));
+const FAQsPage = lazy(() => import("../pages/faqs/page")); //** New Index Page Of Faqs For CMS Pages **//
+const FaqsListPage = lazy(() => import("../pages/faqs/FaqsPage")); //** FAQs listing page For Mobile App **//
 const CreateFaqPage = lazy(
   () => import("../pages/faqs/formpage/CreateFaqPage"),
 );
@@ -182,7 +182,7 @@ const EditContent = () => <CMSCategoryRouter mode="edit" />;
 // const PagePreview = lazy(
 //   () => import("../pages/contentManagement/Pages/PagePreview"),
 // );
-const SeoPage = lazy(() => import("../pages/contentManagement/SeoPage"));
+// const SeoPage = lazy(() => import("../pages/contentManagement/SeoPage"));
 
 // Blog Posts
 const BlogPostsPage = lazy(
@@ -500,7 +500,7 @@ export const routesConfig = [
     permission: "manageContentManagement", // FAQs mapped to manageContentManagement as per previous decision
     action: "view",
     routes: [
-      { path: constant.ROUTING_URLS.FAQ, element: FAQsPage },
+      { path: constant.ROUTING_URLS.FAQ, element: FaqsListPage },
       { path: constant.ROUTING_URLS.CREATE_FAQ, element: CreateFaqPage },
       { path: constant.ROUTING_URLS.EDIT_FAQ, element: EditFaqPage },
     ],
@@ -534,13 +534,6 @@ export const routesConfig = [
   },
   {
     layout: "protected",
-    module: "seo",
-    permission: "manageSeo",
-    action: "view",
-    routes: [{ path: constant.ROUTING_URLS.SEO, element: SeoPage }],
-  },
-  {
-    layout: "protected",
     module: "blogPosts",
     permission: "manageBlogs",
     action: "view",
@@ -553,6 +546,13 @@ export const routesConfig = [
       { path: constant.ROUTING_URLS.EDIT_BLOG_POST, element: EditBlogPostPage },
       { path: constant.ROUTING_URLS.VIEW_BLOG_POST, element: ViewBlogPostPage },
     ],
+  },
+  {
+    layout: "protected",
+    module: "Faqs",
+    permission: "manageContentManagement",
+    action: "view",
+    routes: [{ path: constant.ROUTING_URLS.CONTENT_FAQ, element: FAQsPage }],
   },
   {
     layout: "default",

@@ -1,0 +1,237 @@
+{
+  "status": true,
+  "message": "page_statistics_fetched",
+  "data": {
+    "counts": {
+      "home": 0,
+      "business": 0,
+      "service": 3,
+      "destination": 0,
+      "chauffeur": 0,
+      "total": 3
+    },
+    "data": {
+      "home": [],
+      "business": [],
+      "services": [
+        {
+          "id": "df096c5d-1f88-4884-b250-7c61c01cc762",
+          "pageName": "Airport Service",
+          "slug": "airport-service",
+          "isActive": true,
+          "defaultLanguage": "en",
+          "availableLanguages": ["en", "ar", "es", "fr"],
+          "services": {
+            "en": {
+              "service": "Hourly Chauffeur",
+              "subservice": "Business & Personal Travel"
+            }
+          },
+          "premiumFleet": {
+            "en": {
+              "h2": "Premium Chauffeur Fleet",
+              "p1": "Luxury Cars by the Hour",
+              "p2": "Trained & Verified Chauffeurs",
+              "priceCards": [
+                {
+                  "rating": "4.9",
+                  "features": [
+                    "AC Luxury Cars",
+                    "On-Demand Booking",
+                    "Professional Chauffeur",
+                    "Flexible Hours"
+                  ],
+                  "priceInfo": "₹3500 / hour"
+                }
+              ]
+            }
+          },
+          "whyUs": null,
+          "serviceInGlobalCities": null,
+          "airportService": null,
+          "shuttleBooking": null,
+          "faq": {
+            "en": {
+              "faqCards": [
+                {
+                  "id": "faq-1",
+                  "answer": "You get a luxury vehicle with a professional chauffeur billed on an hourly basis.",
+                  "question": "What is included in hourly chauffeur service?"
+                },
+                {
+                  "id": "faq-2",
+                  "answer": "Yes, the minimum booking duration is 2 hours.",
+                  "question": "Is there a minimum booking duration?"
+                },
+                {
+                  "id": "faq-3",
+                  "answer": "",
+                  "question": ""
+                }
+              ]
+            }
+          },
+          "download": null,
+          "seo": {
+            "en": {
+              "twitter": {
+                "card": "summary_large_image",
+                "title": "Hourly Chauffeur Service",
+                "images": ["https://example.com/twitter-hourly-chauffeur.jpg"],
+                "description": "Luxury chauffeur service charged by the hour."
+              },
+              "metaTitle": "Hourly Chauffeur Service | Luxury Car with Driver",
+              "openGraph": {
+                "url": "https://example.com/hourly-chauffeur-service",
+                "type": "website",
+                "title": "Hourly Chauffeur Service",
+                "images": ["https://example.com/og-hourly-chauffeur.jpg"],
+                "siteName": "My Limo App",
+                "description": "Luxury cars with professional chauffeurs, billed hourly."
+              },
+              "canonicalUrl": "https://example.com/hourly-chauffeur-service",
+              "metaKeywords": [
+                "hourly chauffeur",
+                "chauffeur service",
+                "luxury car rental with driver"
+              ],
+              "metaDescription": "Book luxury cars with professional chauffeurs on an hourly basis for business or personal travel."
+            }
+          },
+          "jsonLd": null,
+          "createdAt": "2026-01-21T12:37:35.725Z",
+          "updatedAt": "2026-01-21T12:37:35.725Z"
+        },
+        {
+          "id": "7856848d-4b4a-4183-9002-5613a5e4d802",
+          "pageName": "Hourly Chauffeur Service",
+          "slug": "hourly-chauffeur-service",
+          "isActive": true,
+          "defaultLanguage": "en",
+          "availableLanguages": ["en", "ar", "es", "fr"],
+          "services": {
+            "en": {
+              "service": "Hourly Chauffeur",
+              "subservice": "Business & Personal Travel"
+            }
+          },
+          "premiumFleet": {
+            "en": {
+              "h2": "Premium Chauffeur Fleet",
+              "p1": "Luxury Cars by the Hour",
+              "p2": "Trained & Verified Chauffeurs",
+              "priceCards": [
+                {
+                  "rating": "4.9",
+                  "features": [
+                    "AC Luxury Cars",
+                    "On-Demand Booking",
+                    "Professional Chauffeur",
+                    "Flexible Hours"
+                  ],
+                  "priceInfo": "₹3500 / hour"
+                }
+              ]
+            }
+          },
+          "whyUs": null,
+          "serviceInGlobalCities": null,
+          "airportService": null,
+          "shuttleBooking": null,
+          "faq": null,
+          "download": null,
+          "seo": {
+            "en": {
+              "twitter": {
+                "card": "summary_large_image",
+                "title": "Hourly Chauffeur Service",
+                "images": ["https://example.com/twitter-hourly-chauffeur.jpg"],
+                "description": "Luxury chauffeur service charged by the hour."
+              },
+              "metaTitle": "Hourly Chauffeur Service | Luxury Car with Driver",
+              "openGraph": {
+                "url": "https://example.com/hourly-chauffeur-service",
+                "type": "website",
+                "title": "Hourly Chauffeur Service",
+                "images": ["https://example.com/og-hourly-chauffeur.jpg"],
+                "siteName": "My Limo App",
+                "description": "Luxury cars with professional chauffeurs, billed hourly."
+              },
+              "canonicalUrl": "https://example.com/hourly-chauffeur-service",
+              "metaKeywords": [
+                "hourly chauffeur",
+                "chauffeur service",
+                "luxury car rental with driver"
+              ],
+              "metaDescription": "Book luxury cars with professional chauffeurs on an hourly basis for business or personal travel."
+            }
+          },
+          "jsonLd": null,
+          "createdAt": "2026-01-20T10:27:03.356Z",
+          "updatedAt": "2026-01-20T10:27:03.356Z"
+        },
+        {
+          "id": "d83317bc-9a1a-4eb8-b673-e7035d207faf",
+          "pageName": "Airport Transfer",
+          "slug": "airport-transfer",
+          "isActive": true,
+          "defaultLanguage": "en",
+          "availableLanguages": ["en", "ar", "es", "fr"],
+          "services": {
+            "en": {
+              "service": "Airport Transfer",
+              "subservice": "Pickup & Drop"
+            }
+          },
+          "premiumFleet": {
+            "en": {
+              "h2": "Our Premium Fleet",
+              "p1": "Luxury Vehicles",
+              "p2": "Professional Chauffeurs",
+              "priceCards": [
+                {
+                  "rating": "4.8",
+                  "features": ["AC", "Leather Seats"],
+                  "priceInfo": "₹2500"
+                }
+              ]
+            }
+          },
+          "whyUs": null,
+          "serviceInGlobalCities": null,
+          "airportService": null,
+          "shuttleBooking": null,
+          "faq": null,
+          "download": null,
+          "seo": {
+            "en": {
+              "twitter": {
+                "card": "summary_large_image",
+                "title": "Airport Transfer",
+                "images": ["https://example.com/twitter-image.jpg"],
+                "description": "Luxury airport rides"
+              },
+              "metaTitle": "Airport Transfer Service",
+              "openGraph": {
+                "url": "https://example.com/airport-transfer",
+                "type": "website",
+                "title": "Airport Transfer Service",
+                "images": ["https://example.com/og-image.jpg"],
+                "siteName": "My Limo App",
+                "description": "Luxury airport transfer"
+              },
+              "canonicalUrl": "https://example.com/airport-transfer",
+              "metaKeywords": ["airport transfer", "luxury cab"],
+              "metaDescription": "Best luxury airport transfer service"
+            }
+          },
+          "jsonLd": null,
+          "createdAt": "2026-01-20T10:23:46.520Z",
+          "updatedAt": "2026-01-20T10:23:46.520Z"
+        }
+      ],
+      "destination": [],
+      "chauffeur": []
+    }
+  }
+}

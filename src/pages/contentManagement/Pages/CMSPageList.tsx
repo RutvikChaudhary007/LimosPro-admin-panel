@@ -1,9 +1,8 @@
 "use client";
 
 import { Edit2, FileText, Plus, Search } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFetchAllBusinessPageLayouts } from "@/api";
 import { useFetchAllServicePageContent } from "@/api/pages/servicePages.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -25,61 +24,19 @@ import {
 import { useSticky } from "@/hooks/useSticky";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
+import cmsPageListFallback from "./cmsPageListData.json";
 
-// Dummy Data
-const categoriesData = [
-  { name: "All", label: "All", count: 6 },
-  { name: "Services", label: "Services", count: 3 },
-  { name: "Destinations", label: "Global Cities & Airports", count: 2 },
-  { name: "Business", label: "Business & Diplomats", count: 1 },
-  { name: "Home", label: "Home", count: 1 },
-  { name: "About", label: "About", count: 1 },
-  { name: "Chauffeur", label: "Chauffeur", count: 0 },
-];
-
-const pagesData = [
+const categoryConfig = [
+  { name: "All", label: "All", key: "total" },
+  { name: "Services", label: "Services", key: "service" },
   {
-    id: 1,
-    title: "Chauffeur Service",
-    description: "Premium chauffeur services for your comfort.",
-    lastUpdated: "2 days ago",
-    category: "Services",
+    name: "Destinations",
+    label: "Global Cities & Airports",
+    key: "destination",
   },
-  {
-    id: 2,
-    title: "Airport Transfer",
-    description: "Reliable airport transfers to and from all major airports.",
-    lastUpdated: "1 week ago",
-    category: "Services",
-  },
-  {
-    id: 3,
-    title: "Event Transportation",
-    description: "Luxury transport for corporate events and weddings.",
-    lastUpdated: "3 days ago",
-    category: "Services",
-  },
-  {
-    id: 4,
-    title: "London",
-    description: "Explore our premium services available in London.",
-    lastUpdated: "1 month ago",
-    category: "Destinations",
-  },
-  {
-    id: 5,
-    title: "Paris",
-    description: "Explore our premium services available in Paris.",
-    lastUpdated: "2 weeks ago",
-    category: "Destinations",
-  },
-  {
-    id: 6,
-    title: "Corporate Accounts",
-    description: "Open a business account for streamlined billing.",
-    lastUpdated: "5 days ago",
-    category: "Business",
-  },
+  { name: "Business", label: "Business & Diplomats", key: "business" },
+  { name: "Home", label: "Home", key: "home" },
+  { name: "Chauffeur", label: "Chauffeur", key: "chauffeur" },
 ];
 
 export default function CMSPageList() {
@@ -87,11 +44,60 @@ export default function CMSPageList() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  const { data: servicePageContent } = useFetchAllServicePageContent();
-  const { data: businessPageLayouts } = useFetchAllBusinessPageLayouts();
-  useEffect(() => {
-    console.log("data=>", servicePageContent, businessPageLayouts);
-  }, [servicePageContent, businessPageLayouts]);
+  const {
+    data: servicePageContent,
+    isLoading,
+    isError,
+  } = useFetchAllServicePageContent();
+
+  const resolvedPageContent = useMemo(
+    () =>
+      isError || !servicePageContent
+        ? cmsPageListFallback.data
+        : servicePageContent,
+    [isError, servicePageContent],
+  );
+
+  const categoriesData = useMemo(() => {
+    const counts = resolvedPageContent?.counts ?? {};
+    return categoryConfig.map((category) => ({
+      ...category,
+      count: counts[category.key as keyof typeof counts] ?? 0,
+    }));
+  }, [resolvedPageContent]);
+
+  const pagesData = useMemo(() => {
+    const data = resolvedPageContent?.data ?? {};
+    const buildDescription = (page: any) => {
+      const lang = page?.defaultLanguage ?? "en";
+      const service = page?.services?.[lang]?.service;
+      const subservice = page?.services?.[lang]?.subservice;
+      const fallback = page?.slug ? `/${page.slug}` : "";
+      return [service, subservice, fallback].filter(Boolean).join(" • ");
+    };
+    const formatUpdatedAt = (updatedAt?: string) =>
+      updatedAt ? new Date(updatedAt).toLocaleDateString() : "N/A";
+
+    return [
+      { key: "services", category: "Services" },
+      { key: "destination", category: "Destinations" },
+      { key: "business", category: "Business" },
+      { key: "home", category: "Home" },
+      { key: "chauffeur", category: "Chauffeur" },
+    ].flatMap(
+      ({ key, category }) =>
+        (data as Record<string, any[]>)[key]?.map((page) => ({
+          id: page.id,
+          title: page.pageName,
+          description: buildDescription(page),
+          lastUpdated: formatUpdatedAt(page.updatedAt),
+          category,
+        })) ?? [],
+    );
+  }, [resolvedPageContent]);
+
+  const showLoadingState = isLoading && pagesData.length === 0;
+  const showErrorState = isError && pagesData.length === 0;
   // Filter Pages based on selected category and search query
   const filteredPages = pagesData.filter((page) => {
     const matchesCategory =
@@ -110,10 +116,6 @@ export default function CMSPageList() {
     selectedCategory,
     searchQuery,
   );
-
-  // Update "All" count dynamically
-  /* eslint-disable-next-line */
-  categoriesData.find((c) => c.name === "All")!.count = pagesData.length;
 
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
@@ -198,7 +200,21 @@ export default function CMSPageList() {
               </span>
             </h2>
 
-            {filteredPages.length === 0 ? (
+            {showLoadingState ? (
+              <Card>
+                <CardBody className="flex flex-col items-center justify-center py-12 text-center text-base-black">
+                  <FileText className="h-12 w-12 mb-4 opacity-50" />
+                  <p>Loading pages...</p>
+                </CardBody>
+              </Card>
+            ) : showErrorState ? (
+              <Card>
+                <CardBody className="flex flex-col items-center justify-center py-12 text-center text-base-black">
+                  <FileText className="h-12 w-12 mb-4 opacity-50" />
+                  <p>Unable to load pages right now.</p>
+                </CardBody>
+              </Card>
+            ) : filteredPages.length === 0 ? (
               <Card>
                 <CardBody className="flex flex-col items-center justify-center py-12 text-center text-base-black">
                   <FileText className="h-12 w-12 mb-4 opacity-50" />

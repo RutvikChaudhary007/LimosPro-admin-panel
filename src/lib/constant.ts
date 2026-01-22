@@ -79,6 +79,9 @@ export const constant = {
     CREATE_SEO: "/content-management/seo/create",
     EDIT_SEO: "/content-management/seo/:id/edit",
 
+    // Content Management FAQs URLs
+    CONTENT_FAQ: "/content-management/faq",
+
     // Crew URLS
     CREW_MEMBERS: "/crew-members",
     CREATE_CREW_MEMBERS: "/crew-members/create",
