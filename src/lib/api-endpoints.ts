@@ -133,6 +133,7 @@ export const API_ENDPOINTS: Record<string, any> = {
   GET_ALL_SUPPORT_TICKETS: `${ADMIN_SERVICE_URL}/support-ticket`,
   GET_SUPPORT_TICKET_BY_ID: `${ADMIN_SERVICE_URL}/support-ticket/:id`,
   UPDATE_SUPPORT_TICKET_STATUS: `${ADMIN_SERVICE_URL}/support-ticket/:id`,
+  REPLY_SUPPORT_TICKET: `${ADMIN_SERVICE_URL}/support-ticket/:id/reply`,
 
   // Content Management APIs (Admin Service)
   BLOG: {

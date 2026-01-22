@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
@@ -115,4 +115,44 @@ export const updateSupportTicketStatus = async ({
     { status },
   );
   return response?.data?.data;
+};
+export const replySupportTicket = async ({
+  id,
+  message,
+  attachment,
+}: {
+  id: string;
+  message: string;
+  attachment?: File | null;
+}) => {
+  if (attachment) {
+    const formData = new FormData();
+    formData.append("message", message);
+    formData.append("attachments", attachment);
+    const response = await axiosInstance.post(
+      API_ENDPOINTS.REPLY_SUPPORT_TICKET.replace(":id", id),
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response?.data?.data;
+  }
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.REPLY_SUPPORT_TICKET.replace(":id", id),
+    { message },
+  );
+  return response?.data?.data;
+};
+
+export const useReplySupportTicketMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: replySupportTicket,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supportTicketById"] });
+    },
+  });
 };

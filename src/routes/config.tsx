@@ -147,7 +147,10 @@ const CreateNewsPage = lazy(
 const EditNewsPage = lazy(() => import("../pages/news/formpage/EditNewsPage"));
 
 // Settings & IP Whitelist
-const SettingsPage = lazy(() => import("../pages/settings/SettingsPage"));
+// const SettingsPage = lazy(() => import("../pages/settings/SettingsPage"));
+const SiteSettingsPage = lazy(
+  () => import("../pages/settings/SiteSettingsPage"),
+);
 const IpWhiteListPage = lazy(
   () => import("../pages/ipWhiteList/IpWhiteListPage"),
 );
@@ -475,7 +478,9 @@ export const routesConfig = [
     module: "settings",
     permission: "manageSettings",
     action: "view",
-    routes: [{ path: constant.ROUTING_URLS.SETTINGS, element: SettingsPage }],
+    routes: [
+      { path: constant.ROUTING_URLS.SETTINGS, element: SiteSettingsPage },
+    ],
   },
   {
     layout: "protected",

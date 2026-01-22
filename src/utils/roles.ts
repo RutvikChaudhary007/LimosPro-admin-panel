@@ -125,7 +125,10 @@ export const PERMISSION_TO_ROUTE_MAPPING: Record<string, string[]> = {
   ],
 
   // Settings
-  manageSettings: [constant.ROUTING_URLS.SETTINGS],
+  manageSettings: [
+    constant.ROUTING_URLS.SETTINGS,
+    constant.ROUTING_URLS.SITE_SETTINGS,
+  ],
 
   manageIpAccess: [
     constant.ROUTING_URLS.IP_WHITE_LIST,
@@ -251,5 +254,10 @@ export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   [constant.ROUTING_URLS.VIEW_REFUND]: [ROLES.ADMIN, ROLES.PARTNER],
   [constant.ROUTING_URLS.REFUND_REQUEST]: [ROLES.ADMIN, ROLES.PARTNER],
   [constant.ROUTING_URLS.SETTINGS]: [ROLES.ADMIN, ROLES.PARTNER, ROLES.SEO],
+  [constant.ROUTING_URLS.SITE_SETTINGS]: [
+    ROLES.ADMIN,
+    ROLES.PARTNER,
+    ROLES.SEO,
+  ],
   [constant.ROUTING_URLS.SEO]: [ROLES.ADMIN, ROLES.SEO],
 };
