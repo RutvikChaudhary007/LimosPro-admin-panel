@@ -413,11 +413,6 @@ const ViewSupportTicketPage = () => {
                           setSelectedItem={setAssignee}
                         />
                       </div>
-
-                      <Label className="font-montserrat font-semibold capitalize">
-                        Resolution Notes:
-                      </Label>
-                      <Label>{formatFieldValue(data?.resolutionNotes)}</Label>
                     </div>
                   </div>
 
@@ -485,7 +480,7 @@ const ViewSupportTicketPage = () => {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="[rounded-lg] border border-base-light-gray/60 p-4">
+                  <div className="rounded border border-base-light-gray/60 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                       <h6 className="font-montserrat font-semibold text-sm text-base-black">
                         Conversation
@@ -513,7 +508,7 @@ const ViewSupportTicketPage = () => {
                             )}
                             <div
                               className={cn(
-                                "max-w-[80%] space-y-1 rounded-2xl px-3 py-2 text-sm shadow-sm",
+                                "max-w-[80%] space-y-1 rounded px-3 py-2 text-sm shadow-sm",
                                 message.author === "agent"
                                   ? "bg-base-primary text-base-white"
                                   : "bg-base-white text-base-black border border-base-light-gray/60",
@@ -530,7 +525,7 @@ const ViewSupportTicketPage = () => {
                               )}
                             </div>
                             {message.author === "agent" && (
-                              <div className="size-9 rounded bg-base-black/10 text-base-black grid place-items-center text-xs font-semibold">
+                              <div className="size-9 rounded-full bg-base-black/10 text-base-black grid place-items-center text-xs font-semibold">
                                 {message.name?.[0] || "A"}
                               </div>
                             )}
