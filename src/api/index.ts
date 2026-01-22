@@ -9,6 +9,8 @@
  * import * as chauffeurAPI from '@/api/chauffeur.api'
  */
 
+// Account Module
+export * from "./account.api";
 // Auth Module (Login, Permissions, Roles, Dashboard)
 export * from "./auth.api";
 // Booking Module

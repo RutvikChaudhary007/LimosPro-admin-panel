@@ -160,6 +160,7 @@ const CreateIpWhiteListPage = lazy(
 const EditIpWhiteListPage = lazy(
   () => import("../pages/ipWhiteList/formpage/EditIpWhiteListPage"),
 );
+const AccountSettings = lazy(() => import("../pages/settings/account/page"));
 
 // FAQs
 const FAQsPage = lazy(() => import("../pages/faqs/page")); //** New Index Page Of Faqs For CMS Pages **//
@@ -480,6 +481,18 @@ export const routesConfig = [
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.SETTINGS, element: SiteSettingsPage },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "account",
+    permission: "manageAccount",
+    action: "view",
+    routes: [
+      {
+        path: constant.ROUTING_URLS.ACCOUNT_SETTINGS,
+        element: AccountSettings,
+      },
     ],
   },
   {

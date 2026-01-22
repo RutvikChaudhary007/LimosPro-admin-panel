@@ -42,6 +42,8 @@ export const API_ENDPOINTS: Record<string, any> = {
 
   //Users
   USER_PROFILE: `${USER_SERVICE_URL}/user/profile`,
+  UPDATE_PROFILE: `${USER_SERVICE_URL}/profile`,
+  CHANGE_PASSWORD: `${USER_SERVICE_URL}/change-password`,
   GET_ALL_USERS: `${ADMIN_SERVICE_URL}/users`,
   GET_USERS_BY_ID: `${ADMIN_SERVICE_URL}/user/:id`,
   UPDATE_USER_BY_ID: `${ADMIN_SERVICE_URL}/user/ban/:id`,

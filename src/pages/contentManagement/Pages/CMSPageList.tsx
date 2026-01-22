@@ -24,7 +24,6 @@ import {
 import { useSticky } from "@/hooks/useSticky";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
-import cmsPageListFallback from "./cmsPageListData.json";
 
 const categoryConfig = [
   { name: "All", label: "All", key: "total" },
@@ -51,10 +50,7 @@ export default function CMSPageList() {
   } = useFetchAllServicePageContent();
 
   const resolvedPageContent = useMemo(
-    () =>
-      isError || !servicePageContent
-        ? cmsPageListFallback.data
-        : servicePageContent,
+    () => (isError || !servicePageContent ? null : servicePageContent),
     [isError, servicePageContent],
   );
 
