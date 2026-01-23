@@ -7,6 +7,15 @@ import { useFetchAllRegions } from "@/api";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardFooter, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
@@ -74,6 +83,10 @@ function RegionAdminForm({
   const isEditMode = !!initialData;
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isRegionChangeDialogOpen, setIsRegionChangeDialogOpen] =
+    useState(false);
+  const [pendingSubmitData, setPendingSubmitData] =
+    useState<TRegionAdmin | null>(null);
 
   const resolver = useMemo(() => {
     return zodResolver(getFormSchema(isEditMode));
@@ -100,10 +113,22 @@ function RegionAdminForm({
     }
   }, [initialData, regionData, form]);
 
+  const initialRegionId = useMemo(
+    () => initialData?.region?.id ?? "",
+    [initialData?.region?.id],
+  );
+
   const handleFormSubmit = async (data: TRegionAdmin) => {
     if (isEditMode) {
       // In edit mode, exclude email and password from payload
       const { password, email, ...dataWithoutSensitiveFields } = data;
+      const regionChanged =
+        !!initialRegionId && data.region !== initialRegionId;
+      if (regionChanged) {
+        setPendingSubmitData(dataWithoutSensitiveFields as TRegionAdmin);
+        setIsRegionChangeDialogOpen(true);
+        return;
+      }
       await onSubmit(dataWithoutSensitiveFields as TRegionAdmin);
       return;
     }
@@ -304,6 +329,40 @@ function RegionAdminForm({
               {form.formState.isSubmitting ? "Saving..." : "Save Details"}
             </Button>
           </CardFooter>
+          <Dialog
+            open={isRegionChangeDialogOpen}
+            onOpenChange={setIsRegionChangeDialogOpen}
+          >
+            <DialogContent
+              className="w-full sm:max-w-sm"
+              onOpenAutoFocus={(e) => e.preventDefault()}
+            >
+              <DialogHeader>
+                <DialogTitle>Confirm Region Change</DialogTitle>
+                <DialogDescription>
+                  Changing the region will reset this user's permissions to
+                  role-based permissions for the selected region. Any custom
+                  permissions will be lost. Do you want to continue?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="mt-6">
+                <DialogClose asChild>
+                  <Button variant="outlinePrimary">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  onClick={async () => {
+                    if (!pendingSubmitData) return;
+                    setIsRegionChangeDialogOpen(false);
+                    await onSubmit(pendingSubmitData);
+                    setPendingSubmitData(null);
+                  }}
+                >
+                  Confirm & Reset
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </CardBody>
     </Card>

@@ -30,7 +30,10 @@ export const login = async (data: { email: string; password: string }) => {
     localStorage.setItem("accessToken", response?.data?.data?.accessToken);
     localStorage.setItem("refreshToken", response?.data?.data?.refreshToken);
     const roles = response?.data?.data?.roles;
-    localStorage.setItem("role", roles);
+    const primaryRole = Array.isArray(roles) ? roles[0] : roles;
+    if (primaryRole) {
+      localStorage.setItem("role", primaryRole);
+    }
 
     const userData = { ...response.data.data };
     if (!userData.role && roles) {
