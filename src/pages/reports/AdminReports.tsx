@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { useMemo } from "react";
 import { Bar, Line } from "react-chartjs-2";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -30,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { constant } from "@/lib/constant";
 
 ChartJS.register(
   CategoryScale,
@@ -66,6 +68,7 @@ const barOptions = {
 };
 
 export default function AdminReports({ reports }: { reports: any }) {
+  const navigate = useNavigate();
   // Process Revenue Data for Chart
   const revenueChartData = useMemo(() => {
     return {
@@ -224,7 +227,19 @@ export default function AdminReports({ reports }: { reports: any }) {
                     status: string;
                   }) => (
                     <TableRow key={ticket.id}>
-                      <TableCell className="font-medium">{ticket.id}</TableCell>
+                      <TableCell
+                        className="font-medium"
+                        onClick={() =>
+                          navigate(constant.ROUTING_URLS.SUPPORT_TICKETS)
+                        }
+                      >
+                        <button
+                          type="button"
+                          className="text-left text-primary underline-offset-2"
+                        >
+                          {ticket.id}
+                        </button>
+                      </TableCell>
                       <TableCell>{ticket.title}</TableCell>
                       <TableCell>
                         <Badge variant="outline">{ticket.type}</Badge>

@@ -42,7 +42,7 @@ const defaultValues = {
   address: "123 Luxury Way, Beverly Hills, CA",
   defaultCurrency: "USD",
   timezone: "America/Los_Angeles",
-  headerLogoUrl: "https://example.com/logo.png",
+  headerLogoUrl: "https://example.com/logo-1.png",
   footerLogoUrl: "https://example.com/logo-white.png",
   faviconUrl: "https://example.com/favicon.ico",
   logoAltText: "LimosPro Logo",
@@ -70,6 +70,9 @@ type SiteSettingsValues = typeof defaultValues & {
 };
 
 const isFile = (value: unknown): value is File => value instanceof File;
+
+const isValidEmail = (value: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
 const SiteSettingsForm = () => {
   const [values, setValues] = useState<SiteSettingsValues>(defaultValues);
@@ -103,31 +106,134 @@ const SiteSettingsForm = () => {
       setValues((prev) => ({ ...prev, [key]: nextValue ?? "" }));
     };
 
+  // const buildPayload = (currentValues: SiteSettingsValues) => {
+  //   const allowedKeys = normalizedSettings
+  //     ? new Set(Object.keys(normalizedSettings as Record<string, unknown>))
+  //     : null;
+  //   const entries = Object.entries(currentValues).filter(
+  //     ([key]) => !allowedKeys || allowedKeys.has(key),
+  //   );
+  //   const hasFile = entries.some(([, value]) => isFile(value));
+  //   if (!hasFile) {
+  //     return Object.fromEntries(entries) as SiteSettingsValues;
+  //   }
+
+  //   const formData = new FormData();
+  //   entries.forEach(([key, value]) => {
+  //     if (isFile(value)) {
+  //       formData.append(key, value);
+  //     } else {
+  //       formData.append(key, String(value ?? ""));
+  //     }
+  //   });
+  //   return formData;
+  // };
+
   const buildPayload = (currentValues: SiteSettingsValues) => {
-    const allowedKeys = normalizedSettings
-      ? new Set(Object.keys(normalizedSettings as Record<string, unknown>))
-      : null;
-    const entries = Object.entries(currentValues).filter(
-      ([key]) => !allowedKeys || allowedKeys.has(key),
-    );
-    const hasFile = entries.some(([, value]) => isFile(value));
-    if (!hasFile) {
-      return Object.fromEntries(entries) as SiteSettingsValues;
-    }
+    const hasFile = Object.values(currentValues).some(isFile);
+    if (!hasFile) return currentValues;
 
     const formData = new FormData();
-    entries.forEach(([key, value]) => {
-      if (isFile(value)) {
-        formData.append(key, value);
-      } else {
-        formData.append(key, String(value ?? ""));
-      }
-    });
+
+    if (isFile(currentValues.headerLogoUrl)) {
+      formData.append("headerLogo", currentValues.headerLogoUrl);
+    }
+    if (isFile(currentValues.footerLogoUrl)) {
+      formData.append("footerLogo", currentValues.footerLogoUrl);
+    }
+    if (isFile(currentValues.faviconUrl)) {
+      formData.append("favicon", currentValues.faviconUrl);
+    }
+
+    formData.append(
+      "branding",
+      JSON.stringify({
+        headerLogoUrl: isFile(currentValues.headerLogoUrl)
+          ? undefined
+          : currentValues.headerLogoUrl,
+        footerLogoUrl: isFile(currentValues.footerLogoUrl)
+          ? undefined
+          : currentValues.footerLogoUrl,
+        faviconUrl: isFile(currentValues.faviconUrl)
+          ? undefined
+          : currentValues.faviconUrl,
+        logoAltText: currentValues.logoAltText,
+      }),
+    );
+
     return formData;
+  };
+
+  const validateValues = (currentValues: SiteSettingsValues) => {
+    const requiredFields: Array<{
+      key: keyof SiteSettingsValues;
+      label: string;
+    }> = [
+      { key: "siteName", label: "Site Name" },
+      { key: "siteDescription", label: "Site Description" },
+      { key: "supportEmail", label: "Support Email" },
+      { key: "contactPhone", label: "Contact Phone" },
+      { key: "address", label: "Address" },
+      { key: "defaultCurrency", label: "Default Currency" },
+      { key: "timezone", label: "Timezone" },
+      { key: "googleMapsApiKey", label: "Google Maps API Key" },
+    ];
+
+    for (const field of requiredFields) {
+      if (!String(currentValues[field.key] ?? "").trim()) {
+        toast.error(`${field.label} is required.`);
+        return false;
+      }
+    }
+
+    if (!isValidEmail(String(currentValues.supportEmail))) {
+      toast.error("Support email must be valid.");
+      return false;
+    }
+
+    if (currentValues.stripeEnabled && !currentValues.stripePublicKey.trim()) {
+      toast.error("Stripe public key is required when Stripe is enabled.");
+      return false;
+    }
+
+    if (currentValues.openaiEnabled && !currentValues.openaiApiKey.trim()) {
+      toast.error("OpenAI API key is required when OpenAI is enabled.");
+      return false;
+    }
+
+    const numericFields: Array<{
+      key: keyof SiteSettingsValues;
+      label: string;
+    }> = [
+      { key: "defaultCommissionRate", label: "Default Commission Rate" },
+      { key: "baseFee", label: "Base Fee" },
+      { key: "perMile", label: "Per Mile" },
+      { key: "minimumFare", label: "Minimum Fare" },
+      { key: "surgePeakHours", label: "Surge Peak Hours" },
+      { key: "surgeHolidays", label: "Surge Holidays" },
+      { key: "taxRate", label: "Tax Rate" },
+      { key: "maxTokens", label: "Max Tokens" },
+      { key: "temperature", label: "Temperature" },
+    ];
+
+    for (const field of numericFields) {
+      const value = Number(currentValues[field.key]);
+      if (Number.isNaN(value)) {
+        toast.error(`${field.label} must be a valid number.`);
+        return false;
+      }
+      if (value < 0) {
+        toast.error(`${field.label} must be 0 or greater.`);
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!validateValues(values)) return;
     const payload = buildPayload(values);
     updateSiteSettings(payload, {
       onSuccess: () => {

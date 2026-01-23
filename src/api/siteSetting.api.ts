@@ -232,9 +232,17 @@ export const useFetchSiteSettingsUI = () =>
  * Update site settings UI configuration
  */
 export const updateSiteSettingsUI = async (data: object | FormData) => {
+  const isFormData = data instanceof FormData;
   const response = await axiosInstance.put(
     API_ENDPOINTS.UPDATE_SITE_SETTINGS_UI,
     data,
+    isFormData
+      ? {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      : undefined,
   );
   return response?.data?.data ?? response?.data;
 };
