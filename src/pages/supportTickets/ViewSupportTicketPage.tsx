@@ -32,7 +32,6 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
-import { SelectDropDown } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
@@ -74,7 +73,6 @@ const ViewSupportTicketPage = () => {
     onSuccess: () => refetch(),
   });
 
-  const [assignee, setAssignee] = useState<string | undefined>(undefined);
   const [messageInput, setMessageInput] = useState("");
   const [selectedAttachment, setSelectedAttachment] = useState<File | null>(
     null,
@@ -92,14 +90,6 @@ const ViewSupportTicketPage = () => {
   >([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const conversationRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (data?.assignedTo || data?.assignedToId) {
-      setAssignee(String(data.assignedTo ?? data?.assignedToId));
-    } else {
-      setAssignee(undefined);
-    }
-  }, [data?.assignedTo, data?.assignedToId]);
 
   const normalizeAttachment = (
     value?: SupportTicketConversation["attachments"] | null,
@@ -353,22 +343,6 @@ const ViewSupportTicketPage = () => {
     return [{ label: String(attachments) }];
   }, [data?.attachments]);
 
-  const assigneeOptions = useMemo(
-    () =>
-      [
-        { label: "Unassigned", value: "UNASSIGNED" },
-        { label: "Support Desk", value: "Support Desk" },
-        { label: "Billing Team", value: "Billing Team" },
-        { label: "Operations", value: "Operations" },
-        data?.assignedTo
-          ? { label: String(data.assignedTo), value: String(data.assignedTo) }
-          : null,
-      ].filter(Boolean) as { label: string; value: string }[],
-    [data?.assignedTo],
-  );
-
-  const assigneePlaceholder = data?.assignedTo ? "Assign to" : "N/A";
-
   const isClosed = data?.status === "CLOSED";
   const headerActions: NonNullable<
     ComponentProps<typeof PageHeader>["action"]
@@ -466,7 +440,7 @@ const ViewSupportTicketPage = () => {
             <CardContent className="space-y-6">
               <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
                 <div className="space-y-6">
-                  <div className="rounded-lg border border-base-light-gray/60 p-4">
+                  <div className="rounded border border-base-light-gray/60 p-4">
                     <h6 className="font-montserrat font-semibold text-sm text-base-black mb-4">
                       Ticket Summary
                     </h6>
@@ -490,7 +464,7 @@ const ViewSupportTicketPage = () => {
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-base-light-gray/60 p-4 space-y-4">
+                  <div className="rounded border border-base-light-gray/60 p-4 space-y-4">
                     <h6 className="font-montserrat font-semibold text-sm text-base-black">
                       Timeline
                     </h6>
@@ -507,26 +481,7 @@ const ViewSupportTicketPage = () => {
                     </div>
                   </div>
 
-                  {/* <div className="rounded-lg border border-base-light-gray/60 p-4">
-                    <h6 className="font-montserrat font-semibold text-sm text-base-black mb-4">
-                      Resolution
-                    </h6>
-                    <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
-                      <Label className="font-montserrat font-semibold capitalize">
-                        Assigned To:
-                      </Label>
-                      <div>
-                        <SelectDropDown
-                          placeholder={assigneePlaceholder}
-                          items={assigneeOptions}
-                          value={assignee}
-                          setSelectedItem={setAssignee}
-                        />
-                      </div>
-                    </div>
-                  </div> */}
-
-                  <div className="rounded-lg border border-base-light-gray/60 p-4">
+                  <div className="rounded border border-base-light-gray/60 p-4">
                     <h6 className="font-montserrat font-semibold text-sm text-base-black mb-4">
                       Attachments
                     </h6>
