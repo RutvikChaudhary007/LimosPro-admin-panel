@@ -23,19 +23,19 @@ import { Separator } from "@/components/ui/separator";
 import PermissionActionsEditor from "./PermissionActionsEditor";
 
 interface RegionPermissionManagerProps {
+  regionId: string;
   regionName: string;
 }
 
 const RegionPermissionManager = ({
+  regionId,
   regionName,
 }: RegionPermissionManagerProps) => {
   const [expandedPermission, setExpandedPermission] = useState<string | null>(
     null,
   );
 
-  // Use regionName as the identifier for API calls, as the backend uses it as the slug
-  const apiIdentifier = regionName;
-
+  const apiIdentifier = regionId;
   const { data: regionPermissionsRaw, isLoading: isLoadingRegion } =
     useFetchRegionPermissions(apiIdentifier);
   const { data: allPermissionsRaw, isLoading: isLoadingAll } =

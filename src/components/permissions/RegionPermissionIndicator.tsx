@@ -18,11 +18,12 @@ interface RegionPermissionIndicatorProps {
 }
 
 const RegionPermissionIndicator = ({
+  regionId,
   regionName,
 }: RegionPermissionIndicatorProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: regionPermissionsRaw, isLoading } =
-    useFetchRegionPermissions(regionName);
+    useFetchRegionPermissions(regionId);
 
   // Normalize data
   const regionPermissions = Array.isArray(regionPermissionsRaw)
@@ -78,7 +79,10 @@ const RegionPermissionIndicator = ({
             <DialogTitle>Region Permissions: {regionName}</DialogTitle>
           </DialogHeader>
           <div>
-            <RegionPermissionManager regionName={regionName} />
+            <RegionPermissionManager
+              regionId={regionId}
+              regionName={regionName}
+            />
           </div>
         </DialogContent>
       </Dialog>
