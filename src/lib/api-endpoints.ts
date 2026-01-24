@@ -6,6 +6,8 @@ export const BOOKING_SERVICE_URL = env?.VITE_API_BOOKING_SERVICE_URL;
 
 export const API_ENDPOINTS: Record<string, any> = {
   GLOBAL_SEARCH: `${ADMIN_SERVICE_URL}/global-search`,
+  AUDIT_LOGS: `${ADMIN_SERVICE_URL}/audit/logs`,
+  AUDIT_LOG_DETAIL: `${ADMIN_SERVICE_URL}/audit/logs/:id`,
   // Auth
   SIGN_UP: `${USER_SERVICE_URL}/signup`,
   LOG_IN: `${USER_SERVICE_URL}/login`,

@@ -173,6 +173,12 @@ const EditFaqPage = lazy(() => import("../pages/faqs/formpage/EditFaqPage"));
 // Reports
 const ReportPage = lazy(() => import("../pages/reports/ReportsLayout"));
 
+// Audit Logs
+const AuditLogsPage = lazy(() => import("../pages/auditLogs/AuditLogsPage"));
+const AuditLogDetailsPage = lazy(
+  () => import("../pages/auditLogs/AuditLogDetailsPage"),
+);
+
 // Content Management
 // const ContentManagement = lazy(() => import("../pages/contentManagement/Pages/PageListPage"));
 const ContentManagement = lazy(
@@ -529,6 +535,19 @@ export const routesConfig = [
     permission: "manageReports",
     action: "view",
     routes: [{ path: constant.ROUTING_URLS.REPORTS, element: ReportPage }],
+  },
+  {
+    layout: "protected",
+    module: "auditLogs",
+    permission: "manageReports",
+    action: "view",
+    routes: [
+      { path: constant.ROUTING_URLS.AUDIT_LOGS, element: AuditLogsPage },
+      {
+        path: constant.ROUTING_URLS.AUDIT_LOGS_DETAIL,
+        element: AuditLogDetailsPage,
+      },
+    ],
   },
   {
     layout: "protected",

@@ -11,6 +11,8 @@
 
 // Account Module
 export * from "./account.api";
+// Audit Logs Module
+export * from "./auditLogs.api";
 // Auth Module (Login, Permissions, Roles, Dashboard)
 export * from "./auth.api";
 // Booking Module

@@ -108,6 +108,70 @@ export type TDashboardBooking = {
   status: string;
 };
 
+export type TAuditLog = {
+  id: string;
+  statusCode?: number | string;
+  module?: string;
+  action?: string;
+  method?: string;
+};
+
+export const getAuditLogColumns = (
+  onView: (id: string) => void,
+): ColumnDef<TAuditLog>[] => {
+  return [
+    {
+      accessorKey: "id",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="ID" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "module",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Module" />
+      ),
+      cell: ({ row }) => (
+        <span className="uppercase">{row.original.module || "N/A"}</span>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "action",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Action Type" />
+      ),
+      cell: ({ row }) => (
+        <span className="uppercase">{row.original.action || "N/A"}</span>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "actions",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Actions" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <Button
+            onClick={() => onView(String(row.original.id))}
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View Details"
+          >
+            <Eye />
+          </Button>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ];
+};
+
 export const getDashboardColumns = (): ColumnDef<TDashboardBooking>[] => {
   return [
     {

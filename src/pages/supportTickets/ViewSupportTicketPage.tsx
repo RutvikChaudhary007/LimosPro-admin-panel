@@ -29,6 +29,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { SelectDropDown } from "@/components/ui/select";
@@ -45,9 +46,22 @@ type SupportTicketConversation = {
   userName?: string;
   message?: string;
   text?: string;
+  attachments?: unknown;
+  attachment?: unknown;
+  file?: unknown;
   createdAt?: string;
   updatedAt?: string;
 };
+
+type ConversationAttachment = {
+  label: string;
+  url?: string;
+  type?: string;
+  size?: number;
+  previewUrl?: string;
+};
+
+const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp"];
 
 const ViewSupportTicketPage = () => {
   const { id } = useParams();
@@ -65,6 +79,7 @@ const ViewSupportTicketPage = () => {
   const [selectedAttachment, setSelectedAttachment] = useState<File | null>(
     null,
   );
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [messages, setMessages] = useState<
     {
       id: string;
@@ -72,9 +87,11 @@ const ViewSupportTicketPage = () => {
       name: string;
       message: string;
       date?: string;
+      attachment?: ConversationAttachment;
     }[]
   >([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const conversationRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (data?.assignedTo || data?.assignedToId) {
@@ -83,6 +100,65 @@ const ViewSupportTicketPage = () => {
       setAssignee(undefined);
     }
   }, [data?.assignedTo, data?.assignedToId]);
+
+  const normalizeAttachment = (
+    value?: SupportTicketConversation["attachments"] | null,
+  ): ConversationAttachment | undefined => {
+    if (!value) return undefined;
+    if (Array.isArray(value)) {
+      const [first] = value;
+      if (!first) return undefined;
+      if (typeof first === "string") return { label: first };
+      return {
+        label: String(
+          (first as any)?.originalName ??
+            (first as any)?.fileName ??
+            (first as any)?.fileUrl ??
+            "Attachment",
+        ),
+        url:
+          (first as any)?.fileUrl ??
+          (first as any)?.url ??
+          (first as any)?.path ??
+          (first as any)?.filePath ??
+          (first as any)?.location,
+        type: (first as any)?.fileType ?? (first as any)?.mimeType,
+        size: (first as any)?.fileSize,
+      };
+    }
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      const isUrl = /^https?:\/\//i.test(trimmed);
+      return { label: trimmed, url: isUrl ? trimmed : undefined };
+    }
+    return {
+      label: String(
+        (value as any)?.originalName ??
+          (value as any)?.fileName ??
+          (value as any)?.fileUrl ??
+          (value as any)?.url ??
+          (value as any)?.path ??
+          (value as any)?.filePath ??
+          (value as any)?.location ??
+          "Attachment",
+      ),
+      url:
+        (value as any)?.fileUrl ??
+        (value as any)?.url ??
+        (value as any)?.path ??
+        (value as any)?.filePath ??
+        (value as any)?.location,
+      type: (value as any)?.fileType ?? (value as any)?.mimeType,
+      size: (value as any)?.fileSize,
+    };
+  };
+
+  const isImageAttachment = (attachment?: ConversationAttachment) => {
+    if (!attachment) return false;
+    if ((attachment.type ?? "").startsWith("image/")) return true;
+    const label = attachment.label.toLowerCase();
+    return imageExtensions.some((ext) => label.endsWith(ext));
+  };
 
   useEffect(() => {
     if (!data?.id) return;
@@ -96,6 +172,9 @@ const ViewSupportTicketPage = () => {
             item?.senderType === "admin" || item?.senderType === "support"
               ? ("agent" as const)
               : ("user" as const);
+          const attachment = normalizeAttachment(
+            item?.attachments ?? item?.attachment ?? item?.file,
+          );
           return {
             id: String(item?.id ?? index),
             author,
@@ -104,6 +183,7 @@ const ViewSupportTicketPage = () => {
             ),
             message: String(item?.message ?? item?.text ?? ""),
             date: item?.createdAt ?? item?.updatedAt,
+            attachment,
           };
         })
         .filter((item) => item.message.trim());
@@ -137,6 +217,14 @@ const ViewSupportTicketPage = () => {
     data?.conversations,
   ]);
 
+  useEffect(() => {
+    if (!conversationRef.current) return;
+    conversationRef.current.scrollTo({
+      top: conversationRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages.length]);
+
   const handleSendMessage = async () => {
     const trimmed = messageInput.trim();
     if (!trimmed || !id) return;
@@ -160,6 +248,14 @@ const ViewSupportTicketPage = () => {
         name: "Support Team",
         message: trimmed,
         date: new Date().toISOString(),
+        attachment: selectedAttachment
+          ? {
+              label: selectedAttachment.name,
+              type: selectedAttachment.type,
+              size: selectedAttachment.size,
+              previewUrl: URL.createObjectURL(selectedAttachment),
+            }
+          : undefined,
       },
     ]);
     setMessageInput("");
@@ -220,13 +316,27 @@ const ViewSupportTicketPage = () => {
       return attachments
         .map((item) => {
           if (typeof item === "string") {
-            return { label: item };
+            const trimmed = item.trim();
+            const isUrl = /^https?:\/\//i.test(trimmed);
+            return { label: trimmed, url: isUrl ? trimmed : undefined };
           }
           return {
             label: String(
-              item?.originalName ?? item?.fileName ?? item?.fileUrl ?? "",
+              item?.originalName ??
+                item?.fileName ??
+                item?.fileUrl ??
+                item?.url ??
+                item?.path ??
+                item?.filePath ??
+                item?.location ??
+                "Attachment",
             ),
-            url: item?.fileUrl,
+            url:
+              item?.fileUrl ??
+              item?.url ??
+              item?.path ??
+              item?.filePath ??
+              item?.location,
             type: item?.fileType ?? item?.mimeType,
             size: item?.fileSize,
           };
@@ -397,7 +507,7 @@ const ViewSupportTicketPage = () => {
                     </div>
                   </div>
 
-                  <div className="rounded-lg border border-base-light-gray/60 p-4">
+                  {/* <div className="rounded-lg border border-base-light-gray/60 p-4">
                     <h6 className="font-montserrat font-semibold text-sm text-base-black mb-4">
                       Resolution
                     </h6>
@@ -414,7 +524,7 @@ const ViewSupportTicketPage = () => {
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="rounded-lg border border-base-light-gray/60 p-4">
                     <h6 className="font-montserrat font-semibold text-sm text-base-black mb-4">
@@ -487,6 +597,7 @@ const ViewSupportTicketPage = () => {
                       </h6>
                     </div>
                     <div
+                      ref={conversationRef}
                       className={cn(
                         "space-y-4 rounded bg-base-light-gray/20 p-4 max-h-[420px] overflow-y-auto pr-2",
                       )}
@@ -508,7 +619,7 @@ const ViewSupportTicketPage = () => {
                             )}
                             <div
                               className={cn(
-                                "max-w-[80%] space-y-1 rounded px-3 py-2 text-sm shadow-sm",
+                                "max-w-[80%] space-y-2 rounded px-3 py-2 text-sm shadow-sm",
                                 message.author === "agent"
                                   ? "bg-base-primary text-base-white"
                                   : "bg-base-white text-base-black border border-base-light-gray/60",
@@ -517,6 +628,43 @@ const ViewSupportTicketPage = () => {
                               <p className="text-[11px] font-semibold uppercase tracking-widest opacity-70">
                                 {message.name || "User"}
                               </p>
+                              {message.attachment ? (
+                                <div
+                                  className={cn(
+                                    "rounded border px-2 py-2",
+                                    message.author === "agent"
+                                      ? "border-base-white/20 bg-base-white/10"
+                                      : "border-base-light-gray/60 bg-base-light-gray/20",
+                                  )}
+                                >
+                                  {message.attachment.previewUrl ||
+                                  (message.attachment.url &&
+                                    isImageAttachment(message.attachment)) ? (
+                                    <img
+                                      src={
+                                        message.attachment.previewUrl ??
+                                        message.attachment.url
+                                      }
+                                      alt={message.attachment.label}
+                                      className="w-full max-w-[280px] rounded object-cover cursor-pointer"
+                                      onClick={() =>
+                                        setPreviewImage(
+                                          message.attachment?.previewUrl ??
+                                            message.attachment?.url ??
+                                            null,
+                                        )
+                                      }
+                                    />
+                                  ) : (
+                                    <div className="flex items-center gap-2">
+                                      <Paperclip className="size-4 opacity-70" />
+                                      <span className="text-xs font-semibold">
+                                        {message.attachment.label}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : null}
                               <p>{message.message}</p>
                               {message.date && (
                                 <p className="text-[11px] opacity-0 transition-opacity duration-150 group-hover:opacity-70">
@@ -604,6 +752,21 @@ const ViewSupportTicketPage = () => {
           </CardBody>
         </Card>
       )}
+
+      <Dialog
+        open={Boolean(previewImage)}
+        onOpenChange={() => setPreviewImage(null)}
+      >
+        <DialogContent className="max-w-[90vw] sm:max-w-[720px] p-4">
+          {previewImage ? (
+            <img
+              src={previewImage}
+              alt="Attachment preview"
+              className="w-full max-h-[75vh] object-contain rounded"
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

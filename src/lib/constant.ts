@@ -62,6 +62,10 @@ export const constant = {
     // Reports URLS
     REPORTS: "/reports",
 
+    // Audit Logs URLS
+    AUDIT_LOGS: "/audit-logs",
+    AUDIT_LOGS_DETAIL: "/audit-logs/:id",
+
     // Content Management Blog URLs
     BLOG_POSTS: "/content-management/blog",
     CREATE_BLOG_POST: "/content-management/blog/create",

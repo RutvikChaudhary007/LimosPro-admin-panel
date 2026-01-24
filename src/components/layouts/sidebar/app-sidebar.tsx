@@ -160,6 +160,13 @@ const data: {
       action: "view",
     },
     {
+      title: "Audit Logs",
+      url: constant.ROUTING_URLS.AUDIT_LOGS,
+      icon: IconFileWord,
+      permission: "manageReports",
+      action: "view",
+    },
+    {
       title: "Content Management",
       url: "#",
       icon: IconChartBar,

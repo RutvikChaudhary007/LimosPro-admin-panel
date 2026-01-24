@@ -49,6 +49,7 @@ const defaultValues = {
   stripeEnabled: true,
   stripePublicKey: "pk_test_...",
   taxRate: "8.5",
+  platformFee: "5",
   openaiEnabled: true,
   openaiApiKey: "sk-...",
   modelName: "gpt-4o",
@@ -570,6 +571,20 @@ const SiteSettingsForm = () => {
                       onChange={updateValue("taxRate")}
                     />
                     <FieldDescription>Applied at checkout.</FieldDescription>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="platformFee">
+                      Platform Fee (%)
+                    </FieldLabel>
+                    <Input
+                      id="platformFee"
+                      type="number"
+                      value={values.platformFee}
+                      onChange={updateValue("platformFee")}
+                    />
+                    <FieldDescription>
+                      Platform fee deducted per transaction.
+                    </FieldDescription>
                   </Field>
                 </div>
               </CardContent>
