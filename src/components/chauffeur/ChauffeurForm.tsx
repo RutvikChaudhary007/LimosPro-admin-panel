@@ -145,6 +145,9 @@ const getFormSchema = (isEdit: boolean, isPartner: boolean) =>
         },
       ),
     status: z.string().optional(),
+    drivingLicenseExpiry: z.string().optional(),
+    insuranceExpiry: z.string().optional(),
+    vehiclePermitExpiry: z.string().optional(),
   });
 
 interface IAddressObj {
@@ -164,6 +167,19 @@ const transformInitialData = (
 ): TChauffeurForm | undefined => {
   if (!data) return undefined;
   // console.log("edit chauffeur formdata:>", data);
+
+  // Extract compliance documents
+  const complianceDocs = (data as any)?.complianceDocuments || [];
+  const drivingLicenseDoc = complianceDocs.find(
+    (doc: any) => doc.documentType === "Driving License",
+  );
+  const insuranceDoc = complianceDocs.find(
+    (doc: any) => doc.documentType === "Insurance",
+  );
+  const vehiclePermitDoc = complianceDocs.find(
+    (doc: any) => doc.documentType === "Vehicle Permit",
+  );
+
   return {
     firstName: data?.userFirstName || "",
     lastName: data?.userLastName || "",
@@ -179,6 +195,9 @@ const transformInitialData = (
     gratuity: !Number.isNaN(Number(data.gratuity))
       ? Number(data.gratuity).toString()
       : "0",
+    drivingLicenseExpiry: drivingLicenseDoc?.expiryDate || "",
+    insuranceExpiry: insuranceDoc?.expiryDate || "",
+    vehiclePermitExpiry: vehiclePermitDoc?.expiryDate || "",
   };
 };
 
@@ -243,6 +262,9 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
     licenseNumber: "",
     vehicleId: "",
     gratuity: "0",
+    drivingLicenseExpiry: "",
+    insuranceExpiry: "",
+    vehiclePermitExpiry: "",
   };
 
   const schema = useMemo(
@@ -304,6 +326,34 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
       formData.append("status", values.status);
       // console.log("data:>>", values);
       // console.log("addressObj1:", addressObj);
+
+      // Transform compliance documents
+      const complianceDocuments = [];
+      if (values.drivingLicenseExpiry) {
+        complianceDocuments.push({
+          documentType: "Driving License",
+          expiryDate: values.drivingLicenseExpiry,
+        });
+      }
+      if (values.insuranceExpiry) {
+        complianceDocuments.push({
+          documentType: "Insurance",
+          expiryDate: values.insuranceExpiry,
+        });
+      }
+      if (values.vehiclePermitExpiry) {
+        complianceDocuments.push({
+          documentType: "Vehicle Permit",
+          expiryDate: values.vehiclePermitExpiry,
+        });
+      }
+      if (complianceDocuments.length > 0) {
+        formData.append(
+          "complianceDocuments",
+          JSON.stringify(complianceDocuments),
+        );
+      }
+
       if (addressObj) {
         formData.append(
           "location",
@@ -704,6 +754,105 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                 )}
               </Field>
 
+              <Field>
+                <FieldLabel
+                  htmlFor="drivingLicenseExpiry"
+                  className="text-base-black gap-0"
+                >
+                  Driving License Expiry
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="drivingLicenseExpiry"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="drivingLicenseExpiry"
+                        type="date"
+                        {...field}
+                      />
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Driving license expiry date (optional).
+                </FieldDescription>
+
+                {form.formState.errors.drivingLicenseExpiry && (
+                  <FormMessage>
+                    {form.formState.errors.drivingLicenseExpiry.message}
+                  </FormMessage>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="insuranceExpiry"
+                  className="text-base-black gap-0"
+                >
+                  Insurance Expiry
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="insuranceExpiry"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="insuranceExpiry"
+                        type="date"
+                        {...field}
+                      />
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Insurance expiry date (optional).
+                </FieldDescription>
+
+                {form.formState.errors.insuranceExpiry && (
+                  <FormMessage>
+                    {form.formState.errors.insuranceExpiry.message}
+                  </FormMessage>
+                )}
+              </Field>
+
+              <Field>
+                <FieldLabel
+                  htmlFor="vehiclePermitExpiry"
+                  className="text-base-black gap-0"
+                >
+                  Vehicle Permit Expiry
+                </FieldLabel>
+
+                <Controller
+                  control={form.control}
+                  name="vehiclePermitExpiry"
+                  render={({ field }) => (
+                    <InputGroup>
+                      <InputGroupInput
+                        id="vehiclePermitExpiry"
+                        type="date"
+                        {...field}
+                      />
+                    </InputGroup>
+                  )}
+                />
+
+                <FieldDescription>
+                  Vehicle permit expiry date (optional).
+                </FieldDescription>
+
+                {form.formState.errors.vehiclePermitExpiry && (
+                  <FormMessage>
+                    {form.formState.errors.vehiclePermitExpiry.message}
+                  </FormMessage>
+                )}
+              </Field>
+
               <div className="col-span-full grid grid-cols-2 gap-4">
                 <Field className="col-span-1">
                   <FieldLabel
@@ -826,6 +975,10 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     vehicleId: "",
                     documents: [],
                     status: "",
+                    gratuity: "0",
+                    drivingLicenseExpiry: "",
+                    insuranceExpiry: "",
+                    vehiclePermitExpiry: "",
                   });
                   setStatusValue({ status: "", partner: "" });
                   // if (fileRef.current) fileRef.current.value = "";
