@@ -13,7 +13,7 @@ export default function ReportsLayout() {
 
   const [activeTab, setActiveTab] = useState(
     ["Super Admin", "Regional Admin"].includes(role ?? "")
-      ? "admin"
+      ? "Admin"
       : "Partner",
   );
 
@@ -37,13 +37,13 @@ export default function ReportsLayout() {
           <p className="text-gray-500 mt-1">
             View insights on disputes, revenue, and compliance.
           </p>
-          <p className="text-gray-500 mt-1">
+          {/* <p className="text-gray-500 mt-1">
             <strong>
               {" "}
               <span className="text-red-500">*</span>This is just for demo
               purpose.
             </strong>
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -54,13 +54,13 @@ export default function ReportsLayout() {
       >
         <TabsList className="grid w-full grid-cols-1 max-w-[400px]">
           {["Super Admin", "Regional Admin"].includes(role) ? (
-            <TabsTrigger value="admin">Admin Reports</TabsTrigger>
+            <TabsTrigger value="Admin">Admin Reports</TabsTrigger>
           ) : (
             <TabsTrigger value="Partner">Partner Reports</TabsTrigger>
           )}
         </TabsList>
 
-        <TabsContent value="admin" className="space-y-4">
+        <TabsContent value="Admin" className="space-y-4">
           <AdminReports reports={reports} />
         </TabsContent>
 

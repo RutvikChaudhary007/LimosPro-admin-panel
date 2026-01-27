@@ -53,5 +53,6 @@ export const useFetchAllReports = (
     queryFn: () => getAllReports({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,
+    staleTime: 0,
     enabled,
   });

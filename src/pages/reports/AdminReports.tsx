@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -69,66 +69,68 @@ const barOptions = {
 
 export default function AdminReports({ reports }: { reports: any }) {
   const navigate = useNavigate();
+  const [tickets, setTickets] = useState([]);
+  const [ticketStatsByRegion, setTicketStatsByRegion] = useState([]);
+  const [barData, setBarData] = useState([]);
+  useEffect(() => {
+    if (reports?.tickets) {
+      setTickets(reports?.tickets);
+    }
+    if (reports?.ticketStats && reports?.ticketStats?.length > 0) {
+      const regions = reports?.ticketStats?.map((d: any) => d.region);
+      setTicketStatsByRegion(regions);
+      setBarData(reports?.ticketStats);
+    }
+  }, [reports?.ticketStats]);
   // Process Revenue Data for Chart
   const revenueChartData = useMemo(() => {
+    const revenue = Array.isArray(reports?.revenue) ? reports.revenue : [];
     return {
-      labels: reports?.revenue?.map((d: any) => d.month),
+      labels: revenue.map((d: any) => d.month),
       datasets: [
         {
           fill: true,
           label: "Total Revenue ($)",
-          data: reports?.revenue?.map((d: any) => d.revenue),
+          data: revenue.map((d: any) => d.revenue),
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
         },
         {
           fill: true,
           label: "Commission ($)",
-          data: reports?.revenue?.map((d: any) => d.commission),
+          data: revenue.map((d: any) => d.commission),
           borderColor: "rgb(75, 192, 192)",
           backgroundColor: "rgba(75, 192, 192, 0.5)",
         },
       ],
     };
-  }, []);
+  }, [reports?.revenue]);
 
   // Process Tickets by Region for Bar Chart
 
   const ticketsByRegionData = useMemo(() => {
-    const disputeCounts: Record<string, number> = {};
-    const issueCounts: Record<string, number> = {};
+    // const disputeCounts: Record<string, number> = {};
+    // const issueCounts: Record<string, number> = {};
 
     // Fixed regions as requested
-    const predefinedRegions = ["India", "Dubai", "USA"];
-
-    reports?.tickets?.forEach((ticket: { region: string; type: string }) => {
-      if (predefinedRegions.includes(ticket.region)) {
-        const ticketType = ticket.type?.toLowerCase();
-        if (ticketType === "dispute") {
-          disputeCounts[ticket.region] =
-            (disputeCounts[ticket.region] || 0) + 1;
-        } else if (ticketType === "support_issue") {
-          issueCounts[ticket.region] = (issueCounts[ticket.region] || 0) + 1;
-        }
-      }
-    });
+    // ["India", "Dubai", "USA"]
 
     return {
-      labels: predefinedRegions,
+      labels: ticketStatsByRegion,
       datasets: [
         {
           label: "Disputes",
-          data: predefinedRegions.map((r) => disputeCounts[r] || 0),
+          data: barData.map((r: { disputes: number }) => r.disputes),
           backgroundColor: "rgba(255, 99, 132, 0.7)",
         },
         {
           label: "Support Issues",
-          data: predefinedRegions.map((r) => issueCounts[r] || 0),
+          data: barData.map((r: { supportIssues: number }) => r.supportIssues),
           backgroundColor: "rgba(54, 162, 235, 0.7)",
         },
       ],
     };
-  }, []);
+  }, [ticketStatsByRegion, barData]);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -177,15 +179,19 @@ export default function AdminReports({ reports }: { reports: any }) {
             <Line
               options={revenueOptions}
               data={{
-                labels: reports?.partnerStats?.map(
-                  (s: { month: string }) => s.month,
-                ),
+                labels: Array.isArray(reports?.partnerStats)
+                  ? reports?.partnerStats?.map(
+                      (s: { month: string }) => s.month,
+                    )
+                  : [],
                 datasets: [
                   {
                     label: "New Signups",
-                    data: reports?.partnerStats?.map(
-                      (s: { newSignups: number }) => s.newSignups,
-                    ),
+                    data: Array.isArray(reports?.partnerStats)
+                      ? reports?.partnerStats?.map(
+                          (s: { newSignups: number }) => s.newSignups,
+                        )
+                      : [],
                     borderColor: "rgb(255, 159, 64)",
                     backgroundColor: "rgba(255, 159, 64, 0.5)",
                     fill: true,
@@ -218,48 +224,56 @@ export default function AdminReports({ reports }: { reports: any }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reports?.tickets?.map(
-                  (ticket: {
-                    id: string;
-                    title: string;
-                    type: string;
-                    region: string;
-                    status: string;
-                  }) => (
-                    <TableRow key={ticket.id}>
-                      <TableCell
-                        className="font-medium"
-                        onClick={() =>
-                          navigate(constant.ROUTING_URLS.SUPPORT_TICKETS)
-                        }
-                      >
-                        <button
-                          type="button"
-                          className="text-left text-primary underline-offset-2"
-                        >
-                          {ticket.id}
-                        </button>
-                      </TableCell>
-                      <TableCell>{ticket.title}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{ticket.type}</Badge>
-                      </TableCell>
-                      <TableCell>{ticket.region}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            ticket.status === "OPEN"
-                              ? "destructive"
-                              : ticket.status === "RESOLVED"
-                                ? "success"
-                                : "default"
+                {tickets?.length > 0 ? (
+                  tickets?.map(
+                    (ticket: {
+                      id: string;
+                      title: string;
+                      type: string;
+                      region: string;
+                      status: string;
+                    }) => (
+                      <TableRow key={ticket.id}>
+                        <TableCell
+                          className="font-medium"
+                          onClick={() =>
+                            navigate(constant.ROUTING_URLS.SUPPORT_TICKETS)
                           }
                         >
-                          {ticket.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ),
+                          <button
+                            type="button"
+                            className="text-left text-primary underline-offset-2"
+                          >
+                            {ticket.id}
+                          </button>
+                        </TableCell>
+                        <TableCell>{ticket.title}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{ticket.type}</Badge>
+                        </TableCell>
+                        <TableCell>{ticket.region}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              ticket.status === "OPEN"
+                                ? "destructive"
+                                : ticket.status === "RESOLVED"
+                                  ? "success"
+                                  : "default"
+                            }
+                          >
+                            {ticket.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center h-24">
+                      No Data Found
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
