@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +69,16 @@ const barOptions = {
 
 export default function AdminReports({ reports }: { reports: any }) {
   const navigate = useNavigate();
+
+  const [ticketStatsByRegion, setTicketStatsByRegion] = useState([]);
+  const [barData, setBarData] = useState([]);
+  useEffect(() => {
+    if (reports?.ticketStats && reports?.ticketStats?.length > 0) {
+      const regions = reports?.ticketStats?.map((d: any) => d.region);
+      setTicketStatsByRegion(regions);
+      setBarData(reports?.ticketStats);
+    }
+  }, [reports?.ticketStats]);
   // Process Revenue Data for Chart
   const revenueChartData = useMemo(() => {
     return {
@@ -95,35 +105,23 @@ export default function AdminReports({ reports }: { reports: any }) {
   // Process Tickets by Region for Bar Chart
 
   const ticketsByRegionData = useMemo(() => {
-    const disputeCounts: Record<string, number> = {};
-    const issueCounts: Record<string, number> = {};
+    // const disputeCounts: Record<string, number> = {};
+    // const issueCounts: Record<string, number> = {};
 
     // Fixed regions as requested
-    const predefinedRegions = ["India", "Dubai", "USA"];
-
-    reports?.tickets?.forEach((ticket: { region: string; type: string }) => {
-      if (predefinedRegions.includes(ticket.region)) {
-        const ticketType = ticket.type?.toLowerCase();
-        if (ticketType === "dispute") {
-          disputeCounts[ticket.region] =
-            (disputeCounts[ticket.region] || 0) + 1;
-        } else if (ticketType === "support_issue") {
-          issueCounts[ticket.region] = (issueCounts[ticket.region] || 0) + 1;
-        }
-      }
-    });
+    // ["India", "Dubai", "USA"]
 
     return {
-      labels: predefinedRegions,
+      labels: ticketStatsByRegion,
       datasets: [
         {
           label: "Disputes",
-          data: predefinedRegions.map((r) => disputeCounts[r] || 0),
+          data: barData.map((r: { disputes: number }) => r.disputes),
           backgroundColor: "rgba(255, 99, 132, 0.7)",
         },
         {
           label: "Support Issues",
-          data: predefinedRegions.map((r) => issueCounts[r] || 0),
+          data: barData.map((r: { supportIssues: number }) => r.supportIssues),
           backgroundColor: "rgba(54, 162, 235, 0.7)",
         },
       ],

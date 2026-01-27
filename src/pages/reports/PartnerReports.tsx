@@ -8,6 +8,12 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
+// import {
+//   // mockComplianceData,
+//   // mockPartnerRevenueBreakdown,
+//   mockTickets,
+// } from "@/data/mockReportsData";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -26,11 +32,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  // mockComplianceData,
-  // mockPartnerRevenueBreakdown,
-  mockTickets,
-} from "@/data/mockReportsData";
 
 ChartJS.register(
   ArcElement,
@@ -44,9 +45,18 @@ ChartJS.register(
 
 export default function PartnerReports({ reports }: { reports: any }) {
   // Filter tickets for this "Partner" (dummy filter)
-  const myDisputes = mockTickets.filter(
-    (t) => t.type === "DISPUTE" || t.category === "PAYMENT",
-  );
+  const [myDisputes, setMyDisputes] = useState<any>([]);
+  useEffect(() => {
+    if (reports && reports?.tickets && reports?.tickets.length > 0) {
+      setMyDisputes(
+        reports?.tickets.filter(
+          (t: { type: string; category: string }) =>
+            t?.type?.toLowerCase() === "dispute" ||
+            t?.category?.toLowerCase() === "payment",
+        ),
+      );
+    }
+  }, [reports]);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -98,31 +108,40 @@ export default function PartnerReports({ reports }: { reports: any }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reports?.compliance?.map(
-                  (item: {
-                    id: string;
-                    chauffeurName: string;
-                    documentType: string;
-                    status: string;
-                  }) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">
-                        {item.chauffeurName}
-                      </TableCell>
-                      <TableCell>{item.documentType}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            item.status === "EXPIRED"
-                              ? "destructive"
-                              : "secondary" // "warning" if available, used secondary as fallback/warning style
-                          }
-                        >
-                          {item.status.replace("_", " ")}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ),
+                {reports?.compliance ? (
+                  reports?.compliance?.length > 0 &&
+                  reports?.compliance?.map(
+                    (item: {
+                      id: string;
+                      chauffeurName: string;
+                      documentType: string;
+                      status: string;
+                    }) => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">
+                          {item.chauffeurName}
+                        </TableCell>
+                        <TableCell>{item.documentType}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              item.status === "EXPIRED"
+                                ? "destructive"
+                                : "secondary" // "warning" if available, used secondary as fallback/warning style
+                            }
+                          >
+                            {item.status.replace("_", " ")}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ),
+                  )
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} className="h-24 text-center">
+                      No compliance data available.
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
@@ -152,27 +171,35 @@ export default function PartnerReports({ reports }: { reports: any }) {
               </TableHeader>
               <TableBody>
                 {myDisputes.length > 0 ? (
-                  myDisputes.map((ticket) => (
-                    <TableRow key={ticket.id}>
-                      <TableCell>{ticket.id}</TableCell>
-                      <TableCell>{ticket.title}</TableCell>
-                      <TableCell>{ticket.category}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            ticket.status === "OPEN"
-                              ? "destructive"
-                              : ticket.status === "RESOLVED"
-                                ? "success"
-                                : "default"
-                          }
-                        >
-                          {ticket.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{ticket.createdAt}</TableCell>
-                    </TableRow>
-                  ))
+                  myDisputes.map(
+                    (ticket: {
+                      id: string;
+                      title: string;
+                      category: string;
+                      status: string;
+                      createdAt: string;
+                    }) => (
+                      <TableRow key={ticket.id}>
+                        <TableCell>{ticket.id}</TableCell>
+                        <TableCell>{ticket.title}</TableCell>
+                        <TableCell>{ticket.category}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              ticket.status === "OPEN"
+                                ? "destructive"
+                                : ticket.status === "RESOLVED"
+                                  ? "success"
+                                  : "default"
+                            }
+                          >
+                            {ticket.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{ticket.createdAt}</TableCell>
+                      </TableRow>
+                    ),
+                  )
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center h-24">
