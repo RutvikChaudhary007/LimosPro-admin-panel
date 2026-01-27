@@ -47,16 +47,18 @@ export default function PartnerReports({ reports }: { reports: any }) {
   // Filter tickets for this "Partner" (dummy filter)
   const [myDisputes, setMyDisputes] = useState<any>([]);
   useEffect(() => {
-    if (reports && reports?.tickets && reports?.tickets.length > 0) {
+    if (Array.isArray(reports?.tickets)) {
       setMyDisputes(
-        reports?.tickets.filter(
+        reports.tickets.filter(
           (t: { type: string; category: string }) =>
             t?.type?.toLowerCase() === "dispute" ||
             t?.category?.toLowerCase() === "payment",
         ),
       );
+    } else {
+      setMyDisputes([]);
     }
-  }, [reports]);
+  }, [reports?.tickets]);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -78,7 +80,7 @@ export default function PartnerReports({ reports }: { reports: any }) {
                   datasets: [
                     {
                       label: "Revenue Source",
-                      data: [reports?.revenue],
+                      data: [reports?.revenue ?? 0],
                       backgroundColor: ["#4ade80"],
                     },
                   ],
@@ -108,9 +110,9 @@ export default function PartnerReports({ reports }: { reports: any }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reports?.compliance ? (
-                  reports?.compliance?.length > 0 &&
-                  reports?.compliance?.map(
+                {Array.isArray(reports?.compliance) &&
+                reports.compliance.length > 0 ? (
+                  reports.compliance.map(
                     (item: {
                       id: string;
                       chauffeurName: string;
@@ -127,7 +129,7 @@ export default function PartnerReports({ reports }: { reports: any }) {
                             variant={
                               item.status === "EXPIRED"
                                 ? "destructive"
-                                : "secondary" // "warning" if available, used secondary as fallback/warning style
+                                : "secondary"
                             }
                           >
                             {item.status.replace("_", " ")}
