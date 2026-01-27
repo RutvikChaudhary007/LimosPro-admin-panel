@@ -17,6 +17,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import { useState } from "react";
 import type { INotification } from "@/api";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,6 +46,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import {
   Tooltip,
   TooltipContent,
@@ -1630,22 +1633,24 @@ export function getNotification(
 }
 
 export type TPayments = {
+  userDetails: any;
   id: string;
-  PassengerName: string;
-  BookingId: string;
-  PaymentId: string;
-  Amount: string;
-  Status: string;
-  userDetails?: {
-    firstName: string;
-    lastName: string;
-  };
+  partnerId?: string;
+  partnerName?: string;
+  transactionType?: string;
+  amount?: number | string;
+  status?: string;
+  bookingId?: string;
+  grossCallback?: number | string;
+  platformMargin?: number | string;
 };
 export function getPayments(
   onView: (id: string) => void,
   // onMap: (id: string) => void,
   // onAccess: (id: string) => void,
+  options?: { showWithdraw?: boolean },
 ): ColumnDef<TPayments>[] {
+  const showWithdraw = options?.showWithdraw ?? true;
   return [
     {
       id: "select",
@@ -1661,18 +1666,50 @@ export function getPayments(
       enableHiding: false,
     },
     {
-      accessorKey: "PassengerName",
+      accessorKey: "partnerId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Passenger Name" />
+        <DataTableColumnHeader column={column} title="Partner Id" />
       ),
-      cell: ({ row }) => {
-        return (
-          <span className="text-[#3A3A3A] font-medium">
-            {row.original?.userDetails?.firstName}{" "}
-            {row.original?.userDetails?.lastName}
-          </span>
-        );
-      },
+      enableSorting: false,
+    },
+    {
+      accessorKey: "partnerName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Partner Name" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "transactionType",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Transaction Type" />
+      ),
+      cell: ({ row }) => (
+        <span className="capitalize">{row.original.transactionType}</span>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "amount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Amount" />
+      ),
+      cell: ({ row }) => <span>${row.original.amount}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => (
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
+        >
+          {row.original.status}
+        </Badge>
+      ),
       enableSorting: false,
     },
     {
@@ -1683,17 +1720,19 @@ export function getPayments(
       enableSorting: false,
     },
     {
-      accessorKey: "paymentId",
+      accessorKey: "grossCallback",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="PaymentId" />
+        <DataTableColumnHeader column={column} title="Gross Callback" />
       ),
+      cell: ({ row }) => <span>${row.original.grossCallback}</span>,
       enableSorting: false,
     },
     {
-      accessorKey: "amount",
+      accessorKey: "platformMargin",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Amount $" />
+        <DataTableColumnHeader column={column} title="Platform Margin" />
       ),
+      cell: ({ row }) => <span>${row.original.platformMargin}</span>,
       enableSorting: false,
     },
     {
@@ -1703,24 +1742,121 @@ export function getPayments(
           <DataTableColumnHeader column={column} title="Action" />
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="text-right flex gap-2 items-center justify-end">
-          <PermissionGate permission="managePayments" action="view">
-            <Button
-              onClick={() => onView(row.original.id)}
-              variant="outlineNavBtnBlack"
-              size="xl"
-              spacing="lg"
-              tooltip="View Details"
-            >
-              <Eye />
-            </Button>
-          </PermissionGate>
-          <PermissionGate permission="Payments" action="update">
-            <ManageRefund<TPayments> row={row} refundId={row.original.id} />
-          </PermissionGate>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const [withdrawType, setWithdrawType] = useState<"full" | "personal">(
+          "full",
+        );
+        const [amount, setAmount] = useState("");
+
+        return (
+          <div className="text-right flex gap-2 items-center justify-end">
+            {showWithdraw && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outlineNavBtnPrimary"
+                    size="xl"
+                    spacing="lg"
+                    tooltip="Withdraw"
+                  >
+                    Withdraw
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-full sm:max-w-2xl">
+                  <DialogHeader className="space-y-2">
+                    <DialogTitle className="text-2xl">Withdraw</DialogTitle>
+                    <DialogDescription>
+                      Select a withdrawal type and confirm the amount.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-6">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Label
+                        className="rounded border bg-muted/30 p-5 flex items-start gap-3 cursor-pointer transition hover:border-primary/60"
+                        htmlFor={`withdraw-${row.original.id}-full`}
+                      >
+                        <Input
+                          type="radio"
+                          id={`withdraw-${row.original.id}-full`}
+                          name={`withdraw-${row.original.id}`}
+                          value="full"
+                          checked={withdrawType === "full"}
+                          onChange={() => setWithdrawType("full")}
+                          className="mt-1"
+                        />
+                        <span>
+                          <span className="block text-sm font-semibold">
+                            Full withdraw
+                          </span>
+                          <span className="block text-xs text-muted-foreground">
+                            Withdraw the entire available balance.
+                          </span>
+                        </span>
+                      </Label>
+                      <Label
+                        className="rounded-xl border bg-muted/30 p-5 flex items-start gap-3 cursor-pointer transition hover:border-primary/60"
+                        htmlFor={`withdraw-${row.original.id}-full`}
+                      >
+                        <Input
+                          type="radio"
+                          name={`withdraw-${row.original.id}`}
+                          value="personal"
+                          checked={withdrawType === "personal"}
+                          onChange={() => setWithdrawType("personal")}
+                          className="mt-1"
+                        />
+                        <span>
+                          <span className="block text-sm font-semibold">
+                            Perssual payment
+                          </span>
+                          <span className="block text-xs text-muted-foreground">
+                            Enter a custom amount for this payment.
+                          </span>
+                        </span>
+                      </Label>
+                    </div>
+                    {withdrawType === "personal" && (
+                      <div className="space-y-2 rounded-xl border bg-muted/20 p-4">
+                        <Label className="text-sm font-medium" htmlFor="amount">
+                          Amount
+                        </Label>
+                        <Input
+                          className="w-full rounded-lg border bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                          id="amount"
+                          type="number"
+                          min="0"
+                          placeholder="Enter amount"
+                          value={amount}
+                          onChange={(event) => setAmount(event.target.value)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button className="px-8" variant="outlineBlack">
+                      Submit
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+            <PermissionGate permission="managePayments" action="view">
+              <Button
+                onClick={() => onView(row.original.id)}
+                variant="outlineNavBtnBlack"
+                size="xl"
+                spacing="lg"
+                tooltip="View Details"
+              >
+                <Eye />
+              </Button>
+            </PermissionGate>
+            <PermissionGate permission="Payments" action="update">
+              <ManageRefund<TPayments> row={row} refundId={row.original.id} />
+            </PermissionGate>
+          </div>
+        );
+      },
       enableSorting: false,
     },
   ];

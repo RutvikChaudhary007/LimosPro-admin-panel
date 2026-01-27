@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetchAuditLogById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
@@ -8,6 +8,7 @@ import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardBody,
@@ -18,7 +19,6 @@ import {
 import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
-import { cn } from "@/lib/utils";
 import { formatFieldValue } from "@/utils/formatters";
 import { generatePageTitle } from "@/utils/seo";
 
@@ -245,12 +245,8 @@ const getInitials = (value?: string) => {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 };
 
-const formatChangeLabel = (key: string) => {
-  if (/user/i.test(key)) return "This user's details were updated";
-  return key.replace(/_/g, " ");
-};
-
 const ChangesSection = ({ value }: { value: unknown }) => {
+  const [showFullJson, setShowFullJson] = useState(false);
   if (!value || typeof value !== "object") {
     return <span className="text-sm text-base-gray">N/A</span>;
   }
@@ -258,196 +254,96 @@ const ChangesSection = ({ value }: { value: unknown }) => {
   const changes = value as Record<string, any>;
   const before = (changes.before ?? {}) as Record<string, unknown>;
   const after = (changes.after ?? {}) as Record<string, unknown>;
-  const keys = Array.from(
+  const changeKeys = Array.from(
     new Set([...Object.keys(before), ...Object.keys(after)]),
   );
-  const tailKeys = ["createdAt", "updatedAt", "created_at", "updated_at"];
-  const hiddenKeys = ["businessLocation", "business_location"];
-  const orderedKeys = [
-    ...keys
-      .filter((key) => !hiddenKeys.includes(key))
-      .filter((key) => !tailKeys.includes(key)),
-    ...keys
-      .filter((key) => !hiddenKeys.includes(key))
-      .filter((key) => tailKeys.includes(key)),
-  ];
-
-  if (keys.length === 0) {
+  const changedOnly = changeKeys.filter(
+    (key) => serializeValue(before[key]) !== serializeValue(after[key]),
+  );
+  const hasChanges =
+    Object.keys(before).length > 0 || Object.keys(after).length > 0;
+  if (!hasChanges) {
     return <span className="text-sm text-base-gray">N/A</span>;
   }
 
   return (
-    <div className="md:col-span-2">
-      <div className="hidden md:grid grid-cols-[200px_1fr_1fr] gap-x-6 text-xs font-bold uppercase tracking-widest text-base-gray px-4">
-        <span>Field</span>
-        <span>Before</span>
-        <span>After</span>
+    <div className="space-y-6">
+      <div>
+        <div className="hidden md:grid grid-cols-[200px_1fr_1fr] gap-x-6 text-xs font-bold uppercase tracking-widest text-base-gray px-4">
+          <span>Field</span>
+          <span>Before</span>
+          <span>After</span>
+        </div>
+        <div className="mt-3 rounded-lg border border-base-light-gray divide-y divide-base-light-gray/70 bg-base-white">
+          {changedOnly.length === 0 ? (
+            <div className="px-4 py-4 text-sm text-base-gray">No changes</div>
+          ) : (
+            changedOnly.map((key) => (
+              <div
+                key={key}
+                className="grid gap-3 px-4 py-4 md:grid-cols-[200px_1fr_1fr]"
+              >
+                <Label className="font-montserrat font-semibold capitalize text-base-black">
+                  {formatChangeLabel(key)}
+                </Label>
+                <pre className="whitespace-pre-wrap break-words rounded border border-base-light-gray/60 bg-base-light-gray/20 p-2 text-xs text-base-black/80">
+                  {renderRawValue(before[key])}
+                </pre>
+                <pre className="whitespace-pre-wrap break-words rounded border border-base-light-gray/60 bg-base-light-gray/20 p-2 text-xs text-base-black/80">
+                  {renderRawValue(after[key])}
+                </pre>
+              </div>
+            ))
+          )}
+        </div>
       </div>
-      <div className="mt-3 rounded-lg border border-base-light-gray divide-y divide-base-light-gray/70 bg-base-white">
-        {orderedKeys.map((key) => (
-          <div
-            key={key}
-            className="grid gap-3 px-4 py-4 md:grid-cols-[200px_1fr_1fr]"
-          >
-            <Label className="font-montserrat font-semibold capitalize text-base-black">
-              {formatChangeLabel(key)}
+
+      <div className="flex items-center justify-center">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowFullJson((prev) => !prev)}
+        >
+          {showFullJson ? "Hide full JSON" : "View more"}
+        </Button>
+      </div>
+
+      {showFullJson && (
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-3">
+            <Label className="text-xs font-bold uppercase tracking-widest text-base-gray">
+              Before (Raw JSON)
             </Label>
-            <div className="text-sm text-base-black/80">
-              {renderChangeValue(before[key], key)}
-            </div>
-            <div className="text-sm text-base-black/80">
-              {renderChangeValue(after[key], key)}
-            </div>
+            <pre className="whitespace-pre-wrap break-words rounded border border-base-light-gray bg-base-light-gray/20 p-3 text-xs text-base-black/80">
+              {JSON.stringify(before, null, 2)}
+            </pre>
           </div>
-        ))}
-      </div>
+          <div className="space-y-3">
+            <Label className="text-xs font-bold uppercase tracking-widest text-base-gray">
+              After (Raw JSON)
+            </Label>
+            <pre className="whitespace-pre-wrap break-words rounded border border-base-light-gray bg-base-light-gray/20 p-3 text-xs text-base-black/80">
+              {JSON.stringify(after, null, 2)}
+            </pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-const renderChangeValue = (value: unknown, key?: string) => {
-  if (value === null || value === undefined || value === "") {
-    return <span className="text-base-gray">N/A</span>;
-  }
+const formatChangeLabel = (key: string) => key.replace(/_/g, " ");
 
-  if (typeof value === "string" && isImageUrl(value)) {
-    return (
-      <img
-        src={value}
-        alt="Document"
-        className="h-16 w-16 rounded border border-base-light-gray object-cover"
-        loading="lazy"
-      />
-    );
-  }
-
-  if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="text-base-gray">N/A</span>;
-    return (
-      <div className="flex flex-wrap gap-2">
-        {value.map((item, index) => (
-          <div
-            key={index}
-            className="rounded border border-base-light-gray p-2"
-          >
-            {renderChangeValue(item)}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (typeof value === "object") {
-    const record = value as Record<string, unknown>;
-    if (key && /user/i.test(key)) {
-      return (
-        <div className="space-y-1">
-          <div>
-            <span className="font-semibold">Name:</span>{" "}
-            {formatFieldValue(
-              record.name ||
-                record.fullName ||
-                record.userName ||
-                record.firstName,
-            )}
-          </div>
-          <div>
-            <span className="font-semibold">Email:</span>{" "}
-            {formatFieldValue(record.email || record.userEmail)}
-          </div>
-        </div>
-      );
-    }
-    const imageUrl =
-      (record.fileUrl as string) ||
-      (record.url as string) ||
-      (record.imageUrl as string);
-    if (imageUrl && isImageUrl(imageUrl)) {
-      return (
-        <img
-          src={imageUrl}
-          alt="Document"
-          className="h-16 w-16 rounded border border-base-light-gray object-cover"
-          loading="lazy"
-        />
-      );
-    }
-    return <KeyValueTree value={record} />;
-  }
-
-  return <span>{formatFieldValue(value)}</span>;
+const serializeValue = (value: unknown) => {
+  if (value === undefined) return "__undefined__";
+  return JSON.stringify(value);
 };
 
-const KeyValueTree = ({ value }: { value: unknown }) => {
+const renderRawValue = (value: unknown) => {
   if (value === null || value === undefined || value === "") {
-    return <span className="text-sm text-base-gray">N/A</span>;
+    return "N/A";
   }
-
-  if (Array.isArray(value)) {
-    if (value.length === 0) {
-      return <span className="text-sm text-base-gray">N/A</span>;
-    }
-    return (
-      <div className="space-y-2">
-        {value.map((item, index) => (
-          <div
-            key={index}
-            className="rounded border border-base-light-gray bg-base-light-gray/40 p-3"
-          >
-            <KeyValueTree value={item} />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>);
-    if (entries.length === 0) {
-      return <span className="text-sm text-base-gray">N/A</span>;
-    }
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-[max-content_1fr] gap-x-4 gap-y-3">
-        {entries.map(([key, val]) => (
-          <div
-            key={key}
-            className={cn(
-              "grid grid-cols-1 md:grid-cols-[max-content_1fr] gap-x-4 gap-y-2",
-              typeof val === "object" && val !== null && "md:col-span-2",
-            )}
-          >
-            <Label className="font-montserrat font-semibold capitalize text-base-black">
-              {key}:
-            </Label>
-            <div className="text-sm text-base-black/80 break-words">
-              <KeyValueTree value={val} />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (typeof value === "string" && isImageUrl(value)) {
-    return (
-      <img
-        src={value}
-        alt="Document"
-        className="h-24 w-24 rounded border border-base-light-gray object-cover"
-        loading="lazy"
-      />
-    );
-  }
-
-  return (
-    <span className="text-sm text-base-black/80 break-words">
-      {formatFieldValue(value)}
-    </span>
-  );
+  return typeof value === "string" ? value : JSON.stringify(value, null, 2);
 };
-
-const isImageUrl = (value: string) =>
-  /^https?:\/\//i.test(value) &&
-  /(\.png|\.jpe?g|\.gif|\.webp|\.svg|\.bmp|\.tiff)$/i.test(value.split("?")[0]);
 
 export default AuditLogDetailsPage;

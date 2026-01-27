@@ -147,10 +147,22 @@ const data: {
     },
     {
       title: "Payments",
-      url: constant.ROUTING_URLS.PAYMENTS,
+      url: "#",
       icon: IconPayments,
-      permission: "managePayments",
-      action: "view",
+      items: [
+        {
+          title: "Payments",
+          url: constant.ROUTING_URLS.PAYMENTS,
+          permission: "managePayments",
+          action: "view",
+        },
+        {
+          title: "Payouts",
+          url: constant.ROUTING_URLS.PAYOUTS,
+          permission: "managePayments",
+          action: "view",
+        },
+      ],
     },
     {
       title: "Reports",

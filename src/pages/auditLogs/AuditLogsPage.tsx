@@ -66,20 +66,24 @@ const AuditLogsPage = () => {
       pagination?.total ??
       pagination?.count,
   );
-  const totalItems =
+  const serverTotalItems =
     typeof pagination?.totalItems === "number"
       ? pagination.totalItems
       : typeof pagination?.total === "number"
         ? pagination.total
         : typeof pagination?.count === "number"
           ? pagination.count
-          : filteredLogs.length;
-  const totalPages =
-    typeof pagination?.totalPages === "number"
+          : undefined;
+  const totalItems = serverTotalItems ?? filteredLogs.length;
+  const totalPages = isServerPaginated
+    ? typeof pagination?.totalPages === "number"
       ? pagination.totalPages
       : typeof pagination?.pages === "number"
         ? pagination.pages
-        : Math.max(1, Math.ceil(totalItems / perPage));
+        : typeof serverTotalItems === "number"
+          ? Math.max(1, Math.ceil(serverTotalItems / perPage))
+          : newPage
+    : Math.max(1, Math.ceil(totalItems / perPage));
   const paginatedLogs = useMemo(() => {
     if (isServerPaginated) return filteredLogs;
     const start = (newPage - 1) * perPage;

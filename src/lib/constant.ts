@@ -53,6 +53,7 @@ export const constant = {
     // Payments URLS
     PAYMENTS: "/payments",
     VIEW_PAYMENTS: "/payments/:id",
+    PAYOUTS: "/payouts",
     REFUND_REQUEST: "/payments/refund_request",
 
     // REFUND URLS

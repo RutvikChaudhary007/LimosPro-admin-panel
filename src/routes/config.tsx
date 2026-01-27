@@ -90,6 +90,7 @@ const TripMapPage = lazy(() => import("../pages/trips/TripMapPage"));
 // Payments & Refunds
 const PaymentsPage = lazy(() => import("../pages/payments/PaymentsPage"));
 const ViewPaymentPage = lazy(() => import("../pages/payments/ViewPaymentPage"));
+const PayoutsPage = lazy(() => import("../pages/payments/PayoutsPage"));
 const RefundPage = lazy(() => import("../pages/refund/RefundPage"));
 const ViewRefundPage = lazy(() => import("../pages/refund/ViewRefundPage"));
 const RefundRequestPage = lazy(
@@ -405,6 +406,7 @@ export const routesConfig = [
     action: "view",
     routes: [
       { path: constant.ROUTING_URLS.PAYMENTS, element: PaymentsPage },
+      { path: constant.ROUTING_URLS.PAYOUTS, element: PayoutsPage },
       { path: constant.ROUTING_URLS.VIEW_PAYMENTS, element: ViewPaymentPage },
       { path: constant.ROUTING_URLS.REFUND, element: RefundPage },
       { path: constant.ROUTING_URLS.VIEW_REFUND, element: ViewRefundPage },
