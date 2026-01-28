@@ -81,7 +81,7 @@ export default function AdminReports({ reports }: { reports: any }) {
       setTicketStatsByRegion(regions);
       setBarData(reports?.ticketStats);
     }
-  }, [reports?.ticketStats]);
+  }, [reports]);
   // Process Revenue Data for Chart
   const revenueChartData = useMemo(() => {
     const revenue = Array.isArray(reports?.revenue) ? reports.revenue : [];
