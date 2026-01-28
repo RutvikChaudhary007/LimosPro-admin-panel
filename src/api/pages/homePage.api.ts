@@ -16,17 +16,25 @@ export interface HomePageData {
 }
 
 export const fetchAllHomePages = async (params: any) => {
-  const { data } = await api.get("/pages/home", { params });
+  const { data } = await api.get(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/home`,
+    { params },
+  );
   return data.data; // Assuming standard response structure { data: { pages: [], pagination: {} } }
 };
 
 export const fetchHomePageById = async (id: string) => {
-  const { data } = await api.get(`/pages/home/${id}`);
+  const { data } = await api.get(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/home/${id}`,
+  );
   return data.data;
 };
 
 export const createHomePage = async (formData: HomePageData) => {
-  const { data } = await api.post("/pages/home", formData);
+  const { data } = await api.post(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/home`,
+    formData,
+  );
   return data.data;
 };
 
@@ -37,7 +45,10 @@ export const updateHomePage = async ({
   id: string;
   data: Partial<HomePageData>;
 }) => {
-  const { data: response } = await api.put(`/pages/home/${id}`, data);
+  const { data: response } = await api.put(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/home/${id}`,
+    data,
+  );
   return response.data;
 };
 

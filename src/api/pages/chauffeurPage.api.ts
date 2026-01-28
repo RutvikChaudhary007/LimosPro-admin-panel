@@ -17,17 +17,25 @@ export interface ChauffeurPageData {
 }
 
 export const fetchAllChauffeurPages = async (params: any) => {
-  const { data } = await api.get("/pages/chauffeur", { params });
+  const { data } = await api.get(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/chauffeur`,
+    { params },
+  );
   return data.data;
 };
 
 export const fetchChauffeurPageById = async (id: string) => {
-  const { data } = await api.get(`/pages/chauffeur/${id}`);
+  const { data } = await api.get(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/chauffeur/${id}`,
+  );
   return data.data;
 };
 
 export const createChauffeurPage = async (formData: ChauffeurPageData) => {
-  const { data } = await api.post("/pages/chauffeur", formData);
+  const { data } = await api.post(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/chauffeur`,
+    formData,
+  );
   return data.data;
 };
 
@@ -38,7 +46,10 @@ export const updateChauffeurPage = async ({
   id: string;
   data: Partial<ChauffeurPageData>;
 }) => {
-  const { data: response } = await api.put(`/pages/chauffeur/${id}`, data);
+  const { data: response } = await api.put(
+    `${import.meta.env.VITE_API_BASE_URL}/pages/chauffeur/${id}`,
+    data,
+  );
   return response.data;
 };
 
