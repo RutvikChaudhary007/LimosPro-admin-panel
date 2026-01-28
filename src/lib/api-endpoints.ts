@@ -250,6 +250,20 @@ export const API_ENDPOINTS: Record<string, any> = {
     DELETE: (id: string) =>
       `${ADMIN_SERVICE_URL}/pages/destination-content/${id}`,
   },
+  CHAUFFEUR_PAGE_CONTENT: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/chauffeur/pages/all`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/chauffeur/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/chauffeur`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/chauffeur/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/chauffeur/${id}`,
+  },
+  HOME_PAGE_CONTENT: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/home/pages/all`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/home/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/home`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/home/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/home/${id}`,
+  },
   USER_PERMISSIONS: {
     GET_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId`,
     SYNC_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId/sync`,
