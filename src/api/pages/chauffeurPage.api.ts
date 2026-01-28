@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
-
-const api = axiosInstance;
 
 export interface ChauffeurPageData {
   id?: string;
@@ -17,17 +16,25 @@ export interface ChauffeurPageData {
 }
 
 export const fetchAllChauffeurPages = async (params: any) => {
-  const { data } = await api.get("/pages/chauffeur", { params });
+  const { data } = await axiosInstance.get(
+    API_ENDPOINTS.CHAUFFEUR_PAGE_CONTENT.GET_ALL,
+    { params },
+  );
   return data.data;
 };
 
 export const fetchChauffeurPageById = async (id: string) => {
-  const { data } = await api.get(`/pages/chauffeur/${id}`);
+  const { data } = await axiosInstance.get(
+    API_ENDPOINTS.CHAUFFEUR_PAGE_CONTENT.GET_BY_ID(id),
+  );
   return data.data;
 };
 
 export const createChauffeurPage = async (formData: ChauffeurPageData) => {
-  const { data } = await api.post("/pages/chauffeur", formData);
+  const { data } = await axiosInstance.post(
+    API_ENDPOINTS.CHAUFFEUR_PAGE_CONTENT.CREATE,
+    formData,
+  );
   return data.data;
 };
 
@@ -38,7 +45,10 @@ export const updateChauffeurPage = async ({
   id: string;
   data: Partial<ChauffeurPageData>;
 }) => {
-  const { data: response } = await api.put(`/pages/chauffeur/${id}`, data);
+  const { data: response } = await axiosInstance.put(
+    API_ENDPOINTS.CHAUFFEUR_PAGE_CONTENT.UPDATE(id),
+    data,
+  );
   return response.data;
 };
 

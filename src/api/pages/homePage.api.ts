@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
-
-const api = axiosInstance;
 
 export interface HomePageData {
   id?: string;
@@ -16,17 +15,25 @@ export interface HomePageData {
 }
 
 export const fetchAllHomePages = async (params: any) => {
-  const { data } = await api.get("/pages/home", { params });
-  return data.data; // Assuming standard response structure { data: { pages: [], pagination: {} } }
+  const { data } = await axiosInstance.get(
+    API_ENDPOINTS.HOME_PAGE_CONTENT.GET_ALL,
+    { params },
+  );
+  return data.data;
 };
 
 export const fetchHomePageById = async (id: string) => {
-  const { data } = await api.get(`/pages/home/${id}`);
+  const { data } = await axiosInstance.get(
+    API_ENDPOINTS.HOME_PAGE_CONTENT.GET_BY_ID(id),
+  );
   return data.data;
 };
 
 export const createHomePage = async (formData: HomePageData) => {
-  const { data } = await api.post("/pages/home", formData);
+  const { data } = await axiosInstance.post(
+    API_ENDPOINTS.HOME_PAGE_CONTENT.CREATE,
+    formData,
+  );
   return data.data;
 };
 
@@ -37,11 +44,12 @@ export const updateHomePage = async ({
   id: string;
   data: Partial<HomePageData>;
 }) => {
-  const { data: response } = await api.put(`/pages/home/${id}`, data);
+  const { data: response } = await axiosInstance.put(
+    API_ENDPOINTS.HOME_PAGE_CONTENT.UPDATE(id),
+    data,
+  );
   return response.data;
 };
-
-// Hooks
 
 export const useFetchAllHomePages = (params: any = {}) => {
   return useQuery({
