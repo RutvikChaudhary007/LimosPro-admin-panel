@@ -1,39 +1,19 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  useFetchPartnerTransactions,
+  useManualPartnerPayoutMutation,
+} from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { PaginationControls } from "@/components/pagination";
-import { getPayments, type TPayments } from "@/components/table/column";
+import {
+  getPayoutWalletColumns,
+  type TPayoutWallet,
+} from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
-
-const dummyPayouts: TPayments[] = [
-  {
-    id: "63f78860-ca8c-4708-a656-b3f9e90ab00d",
-    partnerId: "edb4bbc2-1868-42d5-8830-637b4f405e79",
-    partnerName: "bhoraniya enterprice",
-    transactionType: "payment",
-    amount: 631.24,
-    status: "completed",
-    bookingId: "77c23874-34d9-48dd-aa12-379b62917700",
-    grossCallback: 792.99,
-    platformMargin: 138.45,
-    userDetails: undefined,
-  },
-  {
-    id: "693e93a1-8019-4a5b-9f87-14a1a9c3b959",
-    partnerId: "edb4bbc2-1868-42d5-8830-637b4f405e79",
-    partnerName: "bhoraniya enterprice",
-    transactionType: "payment",
-    amount: 746.68,
-    status: "completed",
-    bookingId: "45a011b6-47b9-467e-a21b-5d6058a8d6aa",
-    grossCallback: 904.99,
-    platformMargin: 131.77,
-    userDetails: undefined,
-  },
-];
 
 const PayoutsPage = () => {
   const navigate = useNavigate();
@@ -41,12 +21,23 @@ const PayoutsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
-  const data = useMemo(() => dummyPayouts, []);
-  const totalPages = Math.max(1, Math.ceil(data.length / perPage));
-  const currentItems = useMemo(() => {
-    const start = (currentPage - 1) * perPage;
-    return data.slice(start, start + perPage);
-  }, [currentPage, data, perPage]);
+  // API hook
+  const {
+    data: apiData,
+    isError,
+    isFetching,
+  } = useFetchPartnerTransactions({ page: currentPage, limit: perPage });
+  const manualPayoutMutation = useManualPartnerPayoutMutation();
+
+  const payoutsData: TPayoutWallet[] = useMemo(() => {
+    if (isError || !apiData?.wallets?.length) {
+      return [];
+    }
+    return apiData.wallets;
+  }, [apiData, isError]);
+
+  const totalPages = Math.max(1, apiData?.pagination?.totalPages || 1);
+  const currentItems = useMemo(() => payoutsData, [payoutsData]);
 
   const handleView = useCallback(
     (id: string) => {
@@ -56,8 +47,13 @@ const PayoutsPage = () => {
   );
 
   const columns = useMemo(
-    () => getPayments(handleView, { showWithdraw: false }),
-    [handleView],
+    () =>
+      getPayoutWalletColumns(
+        handleView,
+        (payload) => manualPayoutMutation.mutateAsync(payload),
+        { showWithdraw: true },
+      ),
+    [handleView, manualPayoutMutation],
   );
 
   const handlePageChange = (page: number) => {
@@ -87,14 +83,14 @@ const PayoutsPage = () => {
           data={currentItems}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
-          emptyMessage="No payouts found."
+          emptyMessage={isFetching ? "Loading..." : "No payouts found."}
         />
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
           onPerPageChange={handlePerPageChange}
-          totalItems={data.length}
+          totalItems={payoutsData.length}
           perPage={perPage}
         />
       </div>

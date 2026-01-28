@@ -1644,6 +1644,226 @@ export type TPayments = {
   grossCallback?: number | string;
   platformMargin?: number | string;
 };
+
+export type TPayoutWallet = {
+  id: string;
+  partnerId: string;
+  partnerName: string;
+  balance: string | number;
+  totalEarnings: string | number;
+  totalWithdrawn: string | number;
+  updatedAt: string;
+};
+
+export function getPayoutWalletColumns(
+  onView: (id: string) => void,
+  onManualPayout: (payload: {
+    partnerId: string;
+    amount: string | number;
+  }) => void,
+  options?: { showWithdraw?: boolean },
+): ColumnDef<TPayoutWallet>[] {
+  const showWithdraw = options?.showWithdraw ?? true;
+  return [
+    {
+      accessorKey: "partnerName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Partner Name" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "partnerId",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Partner Id" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "balance",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Balance" />
+      ),
+      cell: ({ row }) => <span>${row.original.balance}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "totalEarnings",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Total Earnings" />
+      ),
+      cell: ({ row }) => <span>${row.original.totalEarnings}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "totalWithdrawn",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Total Withdrawn" />
+      ),
+      cell: ({ row }) => <span>${row.original.totalWithdrawn}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Updated At" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {row.original.updatedAt
+            ? format(new Date(row.original.updatedAt), "dd MMM yyyy")
+            : "N/A"}
+        </span>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "action",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
+      ),
+      cell: ({ row }) => {
+        const [withdrawType, setWithdrawType] = useState<"full" | "personal">(
+          "full",
+        );
+        const [amount, setAmount] = useState("");
+
+        return (
+          <div className="text-right flex gap-2 items-center justify-end">
+            <Button
+              onClick={() => onView(row.original.id)}
+              variant="outlineNavBtnBlack"
+              size="xl"
+              spacing="lg"
+              tooltip="View Details"
+            >
+              <Eye />
+            </Button>
+            {showWithdraw && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outlineNavBtnPrimary" size="xl" spacing="lg">
+                    Dispute
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="w-full sm:max-w-2xl rounded-2xl shadow-xl p-0">
+                  <DialogHeader className="px-6 pt-6 pb-2">
+                    <DialogTitle className="text-2xl font-bold text-center">
+                      Withdraw
+                    </DialogTitle>
+                    <DialogDescription className="text-center text-base text-muted-foreground">
+                      Select a withdrawal type and confirm the amount.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="px-6 pb-0 pt-2 flex flex-col gap-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 w-full justify-center">
+                      <Label
+                        className={`flex-1 rounded-xl border bg-muted/30 p-5 flex flex-col items-center gap-2 cursor-pointer transition hover:border-primary/60 ${withdrawType === "full" ? "border-primary ring-2 ring-primary/20" : ""}`}
+                        htmlFor={`withdraw-${row.original.id}-full`}
+                      >
+                        <Input
+                          type="radio"
+                          id={`withdraw-${row.original.id}-full`}
+                          name={`withdraw-${row.original.id}`}
+                          value="full"
+                          checked={withdrawType === "full"}
+                          onChange={() => setWithdrawType("full")}
+                          className="mb-2 size-5 accent-primary"
+                        />
+                        <span className="block text-base font-semibold text-center">
+                          Full Withdraw
+                        </span>
+                        <span className="block text-xs text-muted-foreground text-center">
+                          Withdraw the entire available balance.
+                        </span>
+                      </Label>
+                      <Label
+                        className={`flex-1 rounded-xl border bg-muted/30 p-5 flex flex-col items-center gap-2 cursor-pointer transition hover:border-primary/60 ${withdrawType === "personal" ? "border-primary ring-2 ring-primary/20" : ""}`}
+                        htmlFor={`withdraw-${row.original.id}-personal`}
+                      >
+                        <Input
+                          type="radio"
+                          id={`withdraw-${row.original.id}-personal`}
+                          name={`withdraw-${row.original.id}`}
+                          value="personal"
+                          checked={withdrawType === "personal"}
+                          onChange={() => setWithdrawType("personal")}
+                          className="mb-2 size-5 accent-primary"
+                        />
+                        <span className="block text-base font-semibold text-center">
+                          partial Payment
+                        </span>
+                        <span className="block text-xs text-muted-foreground text-center">
+                          Enter a custom amount for this payment.
+                        </span>
+                      </Label>
+                    </div>
+                    {withdrawType === "personal" && (
+                      <div className="space-y-2 rounded-xl border bg-muted/20 p-4 flex flex-col items-center">
+                        <Label
+                          className="text-sm font-medium w-full"
+                          htmlFor={`amount-${row.original.id}`}
+                        >
+                          Amount
+                        </Label>
+                        <Input
+                          className="w-full rounded-lg border bg-background px-4 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                          id={`amount-${row.original.id}`}
+                          type="number"
+                          min="0"
+                          max={row.original.balance}
+                          placeholder={`Max: ${row.original.balance}`}
+                          value={amount}
+                          onChange={(event) => {
+                            const val = event.target.value;
+                            if (Number(val) > Number(row.original.balance)) {
+                              setAmount(String(row.original.balance));
+                            } else {
+                              setAmount(val);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <DialogFooter className="px-6 py-4 flex flex-row gap-3 justify-end">
+                    <DialogClose asChild>
+                      <Button variant="outlinePrimary" className="w-28">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                      className="w-28 font-semibold text-white bg-primary hover:bg-primary/90 shadow-sm rounded-lg"
+                      variant="default"
+                      onClick={() => {
+                        const rawAmount =
+                          withdrawType === "full"
+                            ? row.original.balance
+                            : amount;
+                        const payloadAmount = Number(rawAmount);
+                        onManualPayout({
+                          partnerId: row.original.partnerId,
+                          amount: Number.isNaN(payloadAmount)
+                            ? 0
+                            : payloadAmount,
+                        });
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
+        );
+      },
+      enableSorting: false,
+    },
+  ];
+}
 export function getPayments(
   onView: (id: string) => void,
   // onMap: (id: string) => void,
@@ -1666,26 +1886,39 @@ export function getPayments(
       enableHiding: false,
     },
     {
-      accessorKey: "partnerId",
+      id: "passengerName",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Partner Id" />
+        <DataTableColumnHeader column={column} title="Passenger Name" />
       ),
+      cell: ({ row }) => {
+        const user = row.original.userDetails;
+        return (
+          <span>
+            {(user?.firstName || "").trim()} {(user?.lastName || "").trim()}
+          </span>
+        );
+      },
       enableSorting: false,
     },
     {
-      accessorKey: "partnerName",
+      accessorKey: "bookingId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Partner Name" />
-      ),
-      enableSorting: false,
-    },
-    {
-      accessorKey: "transactionType",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Transaction Type" />
+        <DataTableColumnHeader column={column} title="Booking Id" />
       ),
       cell: ({ row }) => (
-        <span className="capitalize">{row.original.transactionType}</span>
+        <span>{row.original.bookingId || (row.original as any).BookingId}</span>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "paymentId",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="PaymentId" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {(row.original as any).paymentId || (row.original as any).PaymentId}
+        </span>
       ),
       enableSorting: false,
     },
@@ -1695,44 +1928,6 @@ export function getPayments(
         <DataTableColumnHeader column={column} title="Amount" />
       ),
       cell: ({ row }) => <span>${row.original.amount}</span>,
-      enableSorting: false,
-    },
-    {
-      accessorKey: "status",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
-      ),
-      cell: ({ row }) => (
-        <Badge
-          variant={getStatusVariant(row?.original?.status ?? "")}
-          className="capitalize"
-        >
-          {row.original.status}
-        </Badge>
-      ),
-      enableSorting: false,
-    },
-    {
-      accessorKey: "bookingId",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Booking Id" />
-      ),
-      enableSorting: false,
-    },
-    {
-      accessorKey: "grossCallback",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Gross Callback" />
-      ),
-      cell: ({ row }) => <span>${row.original.grossCallback}</span>,
-      enableSorting: false,
-    },
-    {
-      accessorKey: "platformMargin",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Platform Margin" />
-      ),
-      cell: ({ row }) => <span>${row.original.platformMargin}</span>,
       enableSorting: false,
     },
     {
@@ -1750,29 +1945,35 @@ export function getPayments(
 
         return (
           <div className="text-right flex gap-2 items-center justify-end">
+            <Button
+              onClick={() => onView(row.original.id)}
+              variant="outlineNavBtnBlack"
+              size="xl"
+              spacing="lg"
+              tooltip="View Details"
+            >
+              <Eye />
+            </Button>
             {showWithdraw && (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="outlineNavBtnPrimary"
-                    size="xl"
-                    spacing="lg"
-                    tooltip="Withdraw"
-                  >
-                    Withdraw
+                  <Button variant="outlineNavBtnPrimary" size="xl" spacing="lg">
+                    Dispute
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="w-full sm:max-w-2xl">
-                  <DialogHeader className="space-y-2">
-                    <DialogTitle className="text-2xl">Withdraw</DialogTitle>
-                    <DialogDescription>
+                <DialogContent className="w-full sm:max-w-2xl rounded-2xl shadow-xl p-0">
+                  <DialogHeader className="px-6 pt-6 pb-2">
+                    <DialogTitle className="text-2xl font-bold text-center">
+                      Withdraw
+                    </DialogTitle>
+                    <DialogDescription className="text-center text-base text-muted-foreground">
                       Select a withdrawal type and confirm the amount.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="grid gap-6">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="px-6 pb-0 pt-2 flex flex-col gap-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:gap-6 w-full justify-center">
                       <Label
-                        className="rounded border bg-muted/30 p-5 flex items-start gap-3 cursor-pointer transition hover:border-primary/60"
+                        className={`flex-1 rounded-xl border bg-muted/30 p-5 flex flex-col items-center gap-2 cursor-pointer transition hover:border-primary/60 ${withdrawType === "full" ? "border-primary ring-2 ring-primary/20" : ""}`}
                         htmlFor={`withdraw-${row.original.id}-full`}
                       >
                         <Input
@@ -1782,75 +1983,80 @@ export function getPayments(
                           value="full"
                           checked={withdrawType === "full"}
                           onChange={() => setWithdrawType("full")}
-                          className="mt-1"
+                          className="mb-2 size-5 accent-primary"
                         />
-                        <span>
-                          <span className="block text-sm font-semibold">
-                            Full withdraw
-                          </span>
-                          <span className="block text-xs text-muted-foreground">
-                            Withdraw the entire available balance.
-                          </span>
+                        <span className="block text-base font-semibold text-center">
+                          Full Withdraw
+                        </span>
+                        <span className="block text-xs text-muted-foreground text-center">
+                          Withdraw the entire available balance.
                         </span>
                       </Label>
                       <Label
-                        className="rounded-xl border bg-muted/30 p-5 flex items-start gap-3 cursor-pointer transition hover:border-primary/60"
-                        htmlFor={`withdraw-${row.original.id}-full`}
+                        className={`flex-1 rounded-xl border bg-muted/30 p-5 flex flex-col items-center gap-2 cursor-pointer transition hover:border-primary/60 ${withdrawType === "personal" ? "border-primary ring-2 ring-primary/20" : ""}`}
+                        htmlFor={`withdraw-${row.original.id}-personal`}
                       >
                         <Input
                           type="radio"
+                          id={`withdraw-${row.original.id}-personal`}
                           name={`withdraw-${row.original.id}`}
                           value="personal"
                           checked={withdrawType === "personal"}
                           onChange={() => setWithdrawType("personal")}
-                          className="mt-1"
+                          className="mb-2 size-5 accent-primary"
                         />
-                        <span>
-                          <span className="block text-sm font-semibold">
-                            Perssual payment
-                          </span>
-                          <span className="block text-xs text-muted-foreground">
-                            Enter a custom amount for this payment.
-                          </span>
+                        <span className="block text-base font-semibold text-center">
+                          Personal Payment
+                        </span>
+                        <span className="block text-xs text-muted-foreground text-center">
+                          Enter a custom amount for this payment.
                         </span>
                       </Label>
                     </div>
                     {withdrawType === "personal" && (
-                      <div className="space-y-2 rounded-xl border bg-muted/20 p-4">
-                        <Label className="text-sm font-medium" htmlFor="amount">
+                      <div className="space-y-2 rounded-xl border bg-muted/20 p-4 flex flex-col items-center">
+                        <Label
+                          className="text-sm font-medium w-full"
+                          htmlFor={`amount-${row.original.id}`}
+                        >
                           Amount
                         </Label>
                         <Input
-                          className="w-full rounded-lg border bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-                          id="amount"
+                          className="w-full rounded-lg border bg-background px-4 py-2 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                          id={`amount-${row.original.id}`}
                           type="number"
                           min="0"
-                          placeholder="Enter amount"
+                          max={row.original.amount}
+                          placeholder={`Max: ${row.original.amount}`}
                           value={amount}
-                          onChange={(event) => setAmount(event.target.value)}
+                          onChange={(event) => {
+                            const val = event.target.value;
+                            if (Number(val) > Number(row.original.amount)) {
+                              setAmount(String(row.original.amount));
+                            } else {
+                              setAmount(val);
+                            }
+                          }}
                         />
                       </div>
                     )}
                   </div>
-                  <DialogFooter>
-                    <Button className="px-8" variant="outlineBlack">
+                  <DialogFooter className="px-6 py-4 flex flex-row gap-3 justify-end">
+                    <DialogClose asChild>
+                      <Button variant="outlinePrimary" className="w-28">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button
+                      className="w-28 font-semibold text-white bg-primary hover:bg-primary/90 shadow-sm rounded-lg"
+                      variant="default"
+                    >
                       Submit
                     </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             )}
-            <PermissionGate permission="managePayments" action="view">
-              <Button
-                onClick={() => onView(row.original.id)}
-                variant="outlineNavBtnBlack"
-                size="xl"
-                spacing="lg"
-                tooltip="View Details"
-              >
-                <Eye />
-              </Button>
-            </PermissionGate>
             <PermissionGate permission="Payments" action="update">
               <ManageRefund<TPayments> row={row} refundId={row.original.id} />
             </PermissionGate>

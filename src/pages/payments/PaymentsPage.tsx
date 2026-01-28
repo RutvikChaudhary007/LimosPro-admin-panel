@@ -59,8 +59,8 @@ const managePaymentsPage = () => {
     [navigate],
   );
   const columns = useMemo(
-    () => getPayments(handleView, handleEdit),
-    [handleView, handleEdit],
+    () => getPayments(handleView, { showWithdraw: false }),
+    [handleView],
   );
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});

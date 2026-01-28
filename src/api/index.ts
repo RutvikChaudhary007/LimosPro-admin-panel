@@ -35,6 +35,8 @@ export * from "./notification.api";
 export * from "./pages/businessPageLayout.api";
 // Partner Module
 export * from "./partner.api";
+// Partner Transactions Module
+export * from "./partnerTransactions.api";
 // Payment & Refund Module
 export * from "./payment.api";
 // Region Module

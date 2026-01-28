@@ -5,6 +5,8 @@ export const ADMIN_SERVICE_URL = env?.VITE_API_ADMIN_SERVICE_URL;
 export const BOOKING_SERVICE_URL = env?.VITE_API_BOOKING_SERVICE_URL;
 
 export const API_ENDPOINTS: Record<string, any> = {
+  PARTNER_TRANSACTIONS: `${ADMIN_SERVICE_URL}/partner-wallets`,
+  PARTNER_MANUAL_PAYOUT: `${ADMIN_SERVICE_URL}/partner/manual-payout`,
   GLOBAL_SEARCH: `${ADMIN_SERVICE_URL}/global-search`,
   AUDIT_LOGS: `${ADMIN_SERVICE_URL}/audit/logs`,
   AUDIT_LOG_DETAIL: `${ADMIN_SERVICE_URL}/audit/logs/:id`,
