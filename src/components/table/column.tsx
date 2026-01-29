@@ -1729,6 +1729,10 @@ export function getPayoutWalletColumns(
           "full",
         );
         const [amount, setAmount] = useState("");
+        const balanceAmount = Number(
+          String(row.original.balance ?? "").replace(/[^0-9.]/g, ""),
+        );
+        const hasBalance = Number.isFinite(balanceAmount) && balanceAmount > 0;
 
         return (
           <div className="text-right flex gap-2 items-center justify-end">
@@ -1741,7 +1745,7 @@ export function getPayoutWalletColumns(
             >
               <Eye />
             </Button>
-            {showWithdraw && (
+            {showWithdraw && hasBalance && (
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outlineNavBtnPrimary" size="xl" spacing="lg">

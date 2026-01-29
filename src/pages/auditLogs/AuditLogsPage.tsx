@@ -91,8 +91,9 @@ const AuditLogsPage = () => {
   }, [filteredLogs, isServerPaginated, newPage, perPage]);
 
   useEffect(() => {
+    if (isFetching || !data) return;
     if (newPage > totalPages) setNewPage(1);
-  }, [newPage, totalPages]);
+  }, [data, isFetching, newPage, totalPages]);
 
   const handleView = (id: string) => {
     navigate(constant.ROUTING_URLS.AUDIT_LOGS_DETAIL.replace(":id", id));

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import axiosInstance from "@/utils/axiosInstance";
@@ -11,6 +11,26 @@ import axiosInstance from "@/utils/axiosInstance";
  */
 
 type DateRange = { from?: Date; to?: Date };
+
+export type BookingNoteVisibility =
+  | "internal_ops"
+  | "partner_visible"
+  | "customer_visible";
+
+export type BookingNote = {
+  id: string;
+  bookingId: string;
+  message: string;
+  visibility: BookingNoteVisibility;
+  senderRole?: string;
+  receiverIds?: string[];
+  createdAt?: string;
+};
+
+type BookingNotesResponse = {
+  bookingId?: string;
+  notes?: BookingNote[];
+};
 
 // ============================================
 // GET OPERATIONS
@@ -114,3 +134,56 @@ export const useFetchBookingById = ({ id }: { id?: string }) =>
     refetchOnWindowFocus: false,
     retry: false,
   });
+
+/**
+ * Fetch booking notes by booking ID
+ */
+export const getBookingNotes = async (bookingId?: string) => {
+  if (!bookingId) return { bookingId, notes: [] } as BookingNotesResponse;
+  const response = await axiosInstance.get(
+    API_ENDPOINTS.BOOKING_NOTES.replace(":bookingId", bookingId),
+  );
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * Hook to fetch booking notes
+ */
+export const useFetchBookingNotes = ({ bookingId }: { bookingId?: string }) =>
+  useQuery({
+    queryKey: ["bookingNotes", bookingId],
+    queryFn: () => getBookingNotes(bookingId),
+    refetchOnWindowFocus: false,
+    retry: false,
+    enabled: Boolean(bookingId),
+  });
+
+export type CreateBookingNotePayload = {
+  bookingId: string;
+  message: string;
+  visibility: BookingNoteVisibility;
+};
+
+/**
+ * Create booking note
+ */
+export const createBookingNote = async (payload: CreateBookingNotePayload) => {
+  const response = await axiosInstance.post(API_ENDPOINTS.NOTES, payload);
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * Hook to create booking note
+ */
+export const useCreateBookingNote = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateBookingNotePayload) =>
+      createBookingNote(payload),
+    onSuccess: (_data, payload) => {
+      queryClient.invalidateQueries({
+        queryKey: ["bookingNotes", payload.bookingId],
+      });
+    },
+  });
+};
