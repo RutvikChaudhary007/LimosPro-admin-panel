@@ -3,7 +3,9 @@ import { formatDate } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
 import { useFetchBookingById } from "@/api";
+import { PartnerAssignModal } from "@/components/booking/PartnerAssignModal";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -21,6 +23,7 @@ import {
 } from "@/components/ui/card";
 import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
+import { useSocket } from "@/context/SocketContext";
 import { constant } from "@/lib/constant";
 import { env } from "@/utils/env";
 import { formatFieldValue } from "@/utils/formatters";
@@ -42,6 +45,31 @@ const ViewBookingPage = () => {
     googleMapsApiKey: googleMapsApiKey || "",
     libraries: libraries as Libraries,
   });
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (socket && id) {
+      const handleUpdate = (payload: {
+        bookingId: string;
+        status: string;
+        message: string;
+      }) => {
+        if (payload.bookingId === id) {
+          toast.info(
+            payload.message || `Booking assignment status: ${payload.status}`,
+          );
+          refetch();
+        }
+      };
+
+      socket.on("adminAssignmentUpdate", handleUpdate);
+      return () => {
+        socket.off("adminAssignmentUpdate", handleUpdate);
+      };
+    }
+  }, [socket, id, refetch]);
+
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
@@ -123,9 +151,24 @@ const ViewBookingPage = () => {
                 )}{" "}
               </CardDescription>
               <CardAction>
-                <Button variant="black" className="capitalize">
-                  Payment Done
-                </Button>
+                <div className="flex gap-2">
+                  {data?.trip?.tripType === "scheduled" &&
+                    typeof data?.status === "string" &&
+                    ["created", "booked"].includes(
+                      data?.status?.toLowerCase(),
+                    ) && (
+                      <Button
+                        variant="black"
+                        className="capitalize"
+                        onClick={() => setIsAssignModalOpen(true)}
+                      >
+                        Assign
+                      </Button>
+                    )}
+                  <Button variant="black" className="capitalize">
+                    Payment Done
+                  </Button>
+                </div>
               </CardAction>
             </CardHeader>
             <FieldSeparator />
@@ -212,6 +255,11 @@ const ViewBookingPage = () => {
           </CardBody>
         </Card>
       )}
+      <PartnerAssignModal
+        isOpen={isAssignModalOpen}
+        onOpenChange={setIsAssignModalOpen}
+        bookingId={id || ""}
+      />
     </div>
   );
 };

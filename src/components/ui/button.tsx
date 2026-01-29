@@ -1,5 +1,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Loader2 } from "lucide-react";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -106,20 +107,33 @@ function Button({
   spacing,
   asChild = false,
   tooltip,
+  loading = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     tooltip?: string;
+    loading?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
+
+  const buttonContent = (
+    <>
+      {loading && <Loader2 className="animate-spin" />}
+      {children}
+    </>
+  );
 
   const button = (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, spacing, className }))}
+      disabled={props.disabled || loading}
       {...props}
-    />
+    >
+      {asChild ? children : buttonContent}
+    </Comp>
   );
 
   return tooltip ? (

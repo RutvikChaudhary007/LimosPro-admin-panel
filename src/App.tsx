@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import "./App.css";
 import { toast } from "sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { SocketProvider } from "@/context/SocketContext";
 import { renderRoutes } from "./routes/renderRoutes";
 import { envValidationError } from "./utils/env";
 
@@ -55,7 +56,7 @@ function App() {
         <Sonner position="top-right" richColors />
         <BrowserRouter>
           <QueryClientProvider client={queryClient}>
-            {renderRoutes()}
+            <SocketProvider>{renderRoutes()}</SocketProvider>
           </QueryClientProvider>
         </BrowserRouter>
       </TooltipProvider>
