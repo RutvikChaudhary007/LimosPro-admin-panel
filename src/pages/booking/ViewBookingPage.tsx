@@ -9,6 +9,7 @@ import {
   useFetchBookingById,
   useFetchBookingNotes,
 } from "@/api";
+import { PartnerAssignModal } from "@/components/booking/PartnerAssignModal";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { EmptyDataState } from "@/components/EmptyDataState";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -48,6 +49,7 @@ const ViewBookingPage = () => {
   }>({ pickUpAddress: "", dropOffAddress: "" });
   const { data, isFetching, isError, refetch } = useFetchBookingById({ id });
   const { role } = usePermission();
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const {
     data: notesData,
     isFetching: isNotesFetching,
@@ -220,9 +222,24 @@ const ViewBookingPage = () => {
                 )}{" "}
               </CardDescription>
               <CardAction>
-                <Button variant="black" className="capitalize">
-                  Payment Done
-                </Button>
+                <div className="flex gap-2">
+                  {data?.trip?.tripType === "scheduled" &&
+                    typeof data?.status === "string" &&
+                    ["created", "booked"].includes(
+                      data?.status?.toLowerCase(),
+                    ) && (
+                      <Button
+                        variant="black"
+                        className="capitalize"
+                        onClick={() => setIsAssignModalOpen(true)}
+                      >
+                        Assign
+                      </Button>
+                    )}
+                  <Button variant="black" className="capitalize">
+                    Payment Done
+                  </Button>
+                </div>
               </CardAction>
             </CardHeader>
             <FieldSeparator />
@@ -417,6 +434,11 @@ const ViewBookingPage = () => {
           </CardBody>
         </Card>
       )}
+      <PartnerAssignModal
+        isOpen={isAssignModalOpen}
+        onOpenChange={setIsAssignModalOpen}
+        bookingId={id || ""}
+      />
     </div>
   );
 };

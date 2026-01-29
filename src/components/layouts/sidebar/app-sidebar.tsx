@@ -15,6 +15,7 @@
 import {
   IconCar,
   IconChartBar,
+  IconCoin,
   IconDatabase,
   IconFileWord,
   IconHeartHandshake,
@@ -136,6 +137,13 @@ const data: {
       url: constant.ROUTING_URLS.FLEETS,
       icon: IconTruck,
       permission: "manageFleets",
+      action: "view",
+    },
+    {
+      title: "Service Pricing",
+      url: constant.ROUTING_URLS.SERVICE_PRICING,
+      icon: IconCoin,
+      permission: "",
       action: "view",
     },
     {

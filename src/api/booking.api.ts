@@ -138,8 +138,10 @@ export const useFetchBookingById = ({ id }: { id?: string }) =>
 /**
  * Fetch booking notes by booking ID
  */
-export const getBookingNotes = async (bookingId?: string) => {
-  if (!bookingId) return { bookingId, notes: [] } as BookingNotesResponse;
+export const getBookingNotes = async (
+  bookingId?: string,
+): Promise<BookingNotesResponse> => {
+  if (!bookingId) return { bookingId, notes: [] };
   const response = await axiosInstance.get(
     API_ENDPOINTS.BOOKING_NOTES.replace(":bookingId", bookingId),
   );
@@ -150,7 +152,7 @@ export const getBookingNotes = async (bookingId?: string) => {
  * Hook to fetch booking notes
  */
 export const useFetchBookingNotes = ({ bookingId }: { bookingId?: string }) =>
-  useQuery({
+  useQuery<BookingNotesResponse>({
     queryKey: ["bookingNotes", bookingId],
     queryFn: () => getBookingNotes(bookingId),
     refetchOnWindowFocus: false,
