@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building2, Globe, Plane, Route, Trash2, X } from "lucide-react";
+import { Building2, Globe, Plane, Route, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   Controller,

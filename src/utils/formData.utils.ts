@@ -1,6 +1,6 @@
 export const jsonToFormData = (
   data: any,
-  parentKey?: string,
+  // parentKey?: string,
   formData: FormData = new FormData(),
 ) => {
   // We need to traverse the object in a deterministic order that matches
@@ -44,7 +44,7 @@ export const jsonToFormData = (
   const cleanContent = traverseAndExtract(data);
 
   // Append all files
-  files.forEach((file, index) => {
+  files.forEach((file) => {
     // We use a generic name or indexed name. The backend logic 'extractImageUrls'
     // ignores names if we use array, BUT 'extractImageUrls' pushes them
     // in order of appearance in req.files.
