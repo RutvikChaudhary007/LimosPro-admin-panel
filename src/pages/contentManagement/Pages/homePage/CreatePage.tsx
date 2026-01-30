@@ -12,21 +12,22 @@ export default function CreatePage() {
   const createHomeMutation = useCreateHomePage();
 
   const handleCreateHome = (data: any) => {
+    // data is FormData, so we need to append to it, not spread it
+    data.append("pageName", "Home");
+    data.append("category", "home");
+
     try {
-      toastPromise(
-        createHomeMutation.mutateAsync({ ...data, category: "home" }),
-        {
-          loading: "Creating home page...",
-          success: () => {
-            navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-            return "Home page created successfully!";
-          },
-          error: (e) =>
-            e instanceof AxiosError
-              ? e.response?.data?.message || "Failed to create home"
-              : "Failed to create home",
+      toastPromise(createHomeMutation.mutateAsync(data), {
+        loading: "Creating home page...",
+        success: () => {
+          navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+          return "Home page created successfully!";
         },
-      );
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.message || "Failed to create home"
+            : "Failed to create home",
+      });
     } catch (error) {
       console.error("Create home error:", error);
     }
