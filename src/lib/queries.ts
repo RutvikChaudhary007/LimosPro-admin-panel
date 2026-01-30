@@ -82,6 +82,12 @@ import {
   deleteServicePageContent,
   updateServicePageContent,
 } from "@/api/pages/servicePages.api";
+import {
+  bulkDeleteServicePricing,
+  createServicePricing,
+  deleteServicePricing,
+  editServicePricingById,
+} from "@/api/servicePricing.api";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
@@ -280,6 +286,112 @@ const useBulkDeletefleetMutation = () => {
       //   description: errorMessage,
       //   variant: "destructive",
       // });
+    },
+  });
+};
+
+/**
+ * ##########################################
+ * Service Pricing
+ * ##########################################
+ */
+
+const useCreateServicePricingMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: createServicePricing,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      navigate(constant.ROUTING_URLS.SERVICE_PRICING);
+      return res;
+    },
+    onError: (err: unknown) => {
+      let errorMessage = "An unexpected error occurred";
+
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
+      }
+
+      if (errorMessage.includes("429")) return;
+    },
+  });
+};
+
+const useEditServicePricingMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: editServicePricingById,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      navigate(constant.ROUTING_URLS.SERVICE_PRICING);
+      return res;
+    },
+    onError: (err: unknown) => {
+      let errorMessage = "An unexpected error occurred";
+
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
+      }
+
+      if (errorMessage.includes("429")) return;
+    },
+  });
+};
+
+const useDeleteServicePricingMutation = (refetch: TRefetch) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteServicePricing,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      refetch();
+    },
+    onError: (err: unknown) => {
+      let errorMessage = "An unexpected error occurred";
+
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
+      }
+
+      if (errorMessage.includes("429")) return;
+    },
+  });
+};
+
+const useBulkDeleteServicePricingMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bulkDeleteServicePricing,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      return res;
+    },
+    onError: (err: unknown) => {
+      let errorMessage = "An unexpected error occurred";
+
+      if (err && typeof err === "object" && "isAxiosError" in err) {
+        const axiosError = err as AxiosError<ApiErrorResponse>;
+        errorMessage =
+          axiosError.response?.data?.message ||
+          axiosError.response?.data?.error ||
+          errorMessage;
+      }
+
+      if (errorMessage.includes("429")) return;
     },
   });
 };
@@ -1467,10 +1579,16 @@ export default {
   useEditfleetMutation,
   useDeletefleetMutation,
   useBulkDeletefleetMutation,
+  // Service Pricing
+  useCreateServicePricingMutation,
+  useEditServicePricingMutation,
+  useDeleteServicePricingMutation,
+  useBulkDeleteServicePricingMutation,
   // User
   useUpdateUserMutation,
   useDeleteUserMutation,
   useBulkDeleteUserMutation,
+  // Partner
   useCreatePartnerMutation,
   useEditPartnerMutation,
   useDeletePartnerMutation,

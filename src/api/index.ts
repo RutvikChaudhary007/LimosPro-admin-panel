@@ -45,6 +45,8 @@ export * from "./region.api";
 export * from "./regionPermission.api";
 // Report Module
 export * from "./report.api";
+// Service Pricing Module
+export * from "./servicePricing.api";
 // Staff & Crew Member Module
 export * from "./staff.api";
 // Support Tickets Module

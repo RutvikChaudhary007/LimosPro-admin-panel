@@ -32,6 +32,14 @@ export const API_ENDPOINTS: Record<string, any> = {
   DELETE_FLEET: `${ADMIN_SERVICE_URL}/vehicle/:id`,
   BULK_DELETE_FLEET: `${ADMIN_SERVICE_URL}/vehicles/bulk-delete`,
 
+  // Service Pricing
+  GET_ALL_SERVICE_PRICING: `${ADMIN_SERVICE_URL}/service-pricing`,
+  GET_SERVICE_PRICING_BY_ID: `${ADMIN_SERVICE_URL}/service-pricing/:id`,
+  CREATE_SERVICE_PRICING: `${ADMIN_SERVICE_URL}/service-pricing`,
+  EDIT_SERVICE_PRICING_BY_ID: `${ADMIN_SERVICE_URL}/service-pricing/:id`,
+  DELETE_SERVICE_PRICING: `${ADMIN_SERVICE_URL}/service-pricing/:id`,
+  BULK_DELETE_SERVICE_PRICING: `${ADMIN_SERVICE_URL}/service-pricing/bulk-delete`,
+
   // Booking
   GET_ALL_BOOKINGS: `${BOOKING_SERVICE_URL}/bookings`,
   GET_BOOKING_BY_ID: `${BOOKING_SERVICE_URL}/booking/:id`,
