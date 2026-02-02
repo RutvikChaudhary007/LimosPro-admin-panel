@@ -3992,7 +3992,7 @@ export function getServicePricing(
       ),
       cell: ({ row }) => (
         <div className="text-right flex gap-2 items-center justify-end">
-          <PermissionGate permission="manageServicePricing" action="update">
+          <PermissionGate permission="setRegionPricing" action="update">
             <Button
               onClick={() => onEdit(row.original.id)}
               variant="outlineNavBtnPrimary"
@@ -4003,7 +4003,7 @@ export function getServicePricing(
               <Edit />
             </Button>
           </PermissionGate>
-          <PermissionGate permission="manageServicePricing" action="delete">
+          <PermissionGate permission="setRegionPricing" action="delete">
             <Dialog>
               <DialogTrigger asChild>
                 <Button

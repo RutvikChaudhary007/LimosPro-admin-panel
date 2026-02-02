@@ -107,9 +107,9 @@ function ServicePricingPage() {
     );
 
   const handleEdit = (id: string) => {
-    navigate(constant.ROUTING_URLS.SERVICE_PRICING.replace(":id", id));
+    navigate(constant.ROUTING_URLS.EDIT_SERVICE_PRICING.replace(":id", id));
   };
-  const deleteMutation = queries.useDeletefleetMutation(refetch);
+  const deleteMutation = queries.useDeleteServicePricingMutation(refetch);
   const bulkDeleteFleetsMutation = queries.useBulkDeletefleetMutation();
   const handleDelete = async (id: string) => {
     try {
