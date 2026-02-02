@@ -166,8 +166,8 @@ const serviceTypeOptions = [
 
 const statusOptions = [
   { label: "Active", value: "Active" },
-  { label: "Inactive", value: "Inactive" },
-  { label: "Pending", value: "Pending" },
+  { label: "Scheduled", value: "Scheduled" },
+  { label: "Expired", value: "Expired" },
 ];
 
 const pricingLevelOptions = [
