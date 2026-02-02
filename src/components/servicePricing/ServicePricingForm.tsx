@@ -45,14 +45,31 @@ const zonePricingSchema = z.discriminatedUnion("zonePricingEnabled", [
     zonePricingEnabled: z.literal(true),
     zonePricings: z
       .array(
-        z.object({
-          zoneStart: z.number().gt(0),
-          zoneEnd: z.number().gt(0),
-          pricePerMile: z.number(),
-          pricePerMinute: z.number(),
-        }),
+        z
+          .object({
+            zoneStart: z.coerce
+              .number({ invalid_type_error: "Zone start must be a number" })
+              .gt(0, { message: "Zone start must be greater than 0" }),
+            zoneEnd: z.coerce
+              .number({ invalid_type_error: "Zone end must be a number" })
+              .gt(0, { message: "Zone end must be greater than 0" }),
+            pricePerMile: z.coerce
+              .number({ invalid_type_error: "Price per mile must be a number" })
+              .min(0, { message: "Price per mile must be non-negative" }),
+            pricePerMinute: z.coerce
+              .number({
+                invalid_type_error: "Price per minute must be a number",
+              })
+              .min(0, { message: "Price per minute must be non-negative" }),
+          })
+          .refine((data) => data.zoneEnd > data.zoneStart, {
+            message: "Zone end must be greater than zone start",
+            path: ["zoneEnd"],
+          }),
       )
-      .min(1),
+      .min(1, {
+        message: "At least one zone is required when zone pricing is enabled",
+      }),
   }),
   z.object({ zonePricingEnabled: z.literal(false) }),
 ]);
@@ -166,23 +183,27 @@ const transformInitialData = (
 ): TServicePricingForm | undefined => {
   if (!data) return undefined;
 
-  const zonePricing = zoneEnabled
+  const zonePricing = data?.zonePricingEnabled
     ? {
         zonePricingEnabled: true,
         zonePricings:
           data?.zonePricings?.map((zone) => ({
-            zoneStart: !Number.isNaN(zone.zoneStart)
-              ? Number(zone.zoneStart)?.toFixed(2)
-              : 0,
-            zoneEnd: !Number.isNaN(zone.zoneEnd)
-              ? Number(zone.zoneEnd)?.toFixed(2)
-              : 0,
-            pricePerMile: !Number.isNaN(zone.pricePerMile)
-              ? Number(zone.pricePerMile)?.toFixed(2)
-              : 0,
-            pricePerMinute: !Number.isNaN(zone.pricePerMinute)
-              ? Number(zone.pricePerMinute)?.toFixed(2)
-              : 0,
+            zoneStart:
+              typeof zone.zoneStart === "number"
+                ? zone.zoneStart
+                : Number(zone.zoneStart) || 0,
+            zoneEnd:
+              typeof zone.zoneEnd === "number"
+                ? zone.zoneEnd
+                : Number(zone.zoneEnd) || 0,
+            pricePerMile:
+              typeof zone.pricePerMile === "number"
+                ? zone.pricePerMile
+                : Number(zone.pricePerMile) || 0,
+            pricePerMinute:
+              typeof zone.pricePerMinute === "number"
+                ? zone.pricePerMinute
+                : Number(zone.pricePerMinute) || 0,
           })) ?? [],
       }
     : {
@@ -203,7 +224,7 @@ const transformInitialData = (
     cityToCityHourlyRate: data?.cityToCityHourlyRate?.toString() || "0",
     pricePerMile: data?.pricePerMile?.toString() || "0",
     pricePerMinute: data?.pricePerMinute?.toString() || "0",
-    zonePricingEnabled: data?.zonePricingEnabled || false,
+    // zonePricingEnabled: data?.zonePricingEnabled || false,
     rateValidFrom: data?.rateValidFrom || "",
     rateValidTo: data?.rateValidTo || "",
     status: data?.status || "",
@@ -255,6 +276,7 @@ function ServicePricingForm({
   const form = useForm<TServicePricingForm>({
     resolver: zodResolver(servicePricingSchema),
     defaultValues: transformInitialData(initialData) || defaultFormValues,
+    mode: "all",
   });
 
   const {
@@ -1008,11 +1030,11 @@ function ServicePricingForm({
                   Select the zones for which pricing applies.
                 </FieldDescription>
 
-                {/* {form.formState.errors.zonePricings && (
+                {form.formState.errors.zonePricingEnabled && (
                   <FormMessage>
                     {form.formState.errors.zonePricingEnabled.message}
                   </FormMessage>
-                )} */}
+                )}
               </Field>
 
               {/* SHOW/HIDE DIV */}
@@ -1070,6 +1092,16 @@ function ServicePricingForm({
                                   <FieldDescription>
                                     Enter the starting mile of the zone.
                                   </FieldDescription>
+                                  {form.formState.errors.zonePricings?.[index]
+                                    ?.zoneStart && (
+                                    <FormMessage>
+                                      {
+                                        form.formState.errors.zonePricings[
+                                          index
+                                        ].zoneStart.message
+                                      }
+                                    </FormMessage>
+                                  )}
                                 </Field>
 
                                 {/* ---- Zone End ---- */}
@@ -1104,6 +1136,17 @@ function ServicePricingForm({
                                   <FieldDescription>
                                     Enter the ending mile for this zone.
                                   </FieldDescription>
+
+                                  {form.formState.errors.zonePricings?.[index]
+                                    ?.zoneEnd && (
+                                    <FormMessage>
+                                      {
+                                        form.formState.errors.zonePricings[
+                                          index
+                                        ].zoneEnd.message
+                                      }
+                                    </FormMessage>
+                                  )}
                                 </Field>
 
                                 {/* ---- Price Per Mile ---- */}
@@ -1135,6 +1178,16 @@ function ServicePricingForm({
                                   <FieldDescription>
                                     Enter the rate per mile.
                                   </FieldDescription>
+                                  {form.formState.errors.zonePricings?.[index]
+                                    ?.pricePerMile && (
+                                    <FormMessage>
+                                      {
+                                        form.formState.errors.zonePricings[
+                                          index
+                                        ].pricePerMile.message
+                                      }
+                                    </FormMessage>
+                                  )}
                                 </Field>
 
                                 {/* ---- Price Per Minute ---- */}
@@ -1168,6 +1221,16 @@ function ServicePricingForm({
                                   <FieldDescription>
                                     Enter the rate per minute.
                                   </FieldDescription>
+                                  {form.formState.errors.zonePricings?.[index]
+                                    ?.pricePerMinute && (
+                                    <FormMessage>
+                                      {
+                                        form.formState.errors.zonePricings[
+                                          index
+                                        ].pricePerMinute.message
+                                      }
+                                    </FormMessage>
+                                  )}
                                 </Field>
 
                                 {/* ---- Remove Button ---- */}

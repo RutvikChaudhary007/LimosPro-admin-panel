@@ -30,6 +30,7 @@ import {
   IconTruck,
   IconUser,
 } from "@tabler/icons-react";
+import { Store } from "lucide-react";
 import type * as React from "react";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
@@ -136,6 +137,13 @@ const data: {
       url: constant.ROUTING_URLS.FLEETS,
       icon: IconTruck,
       permission: "manageFleets",
+      action: "view",
+    },
+    {
+      title: "Service Pricing",
+      url: constant.ROUTING_URLS.SERVICE_PRICING,
+      icon: Store,
+      permission: "setRegionPricing",
       action: "view",
     },
     {
