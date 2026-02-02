@@ -1,12 +1,15 @@
 import { type Libraries, useLoadScript } from "@react-google-maps/api";
+import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   type BookingNoteVisibility,
+  getUserById,
   useCreateBookingNote,
   useFetchBookingById,
+  useFetchBookingHistory,
   useFetchBookingNotes,
 } from "@/api";
 import { PartnerAssignModal } from "@/components/booking/PartnerAssignModal";
@@ -48,8 +51,21 @@ const ViewBookingPage = () => {
     dropOffAddress: string;
   }>({ pickUpAddress: "", dropOffAddress: "" });
   const { data, isFetching, isError, refetch } = useFetchBookingById({ id });
+  const { data: passengerUser } = useQuery({
+    queryKey: ["bookingPassengerUser", data?.userId],
+    queryFn: () => getUserById(data?.userId),
+    enabled: !!data?.userId && !data?.thirdPartyUser,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
   const { role } = usePermission();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const {
+    data: bookingHistoryData,
+    isFetching: isHistoryFetching,
+    isError: isHistoryError,
+    refetch: refetchHistory,
+  } = useFetchBookingHistory({ bookingId: id });
   const {
     data: notesData,
     isFetching: isNotesFetching,
@@ -110,6 +126,109 @@ const ViewBookingPage = () => {
       return bTime - aTime;
     });
   }, [notesData?.notes]);
+
+  const bookingStatusHistory = useMemo(() => {
+    const history = Array.isArray(bookingHistoryData?.history)
+      ? bookingHistoryData?.history
+      : [];
+    const normalizedHistory = history
+      .filter((item) => item?.status)
+      .map((item) => {
+        const parsedTimestamp = item?.timestamp
+          ? formatDate(new Date(item.timestamp), "dd-MM-yyyy hh:mm a")
+          : "N/A";
+        return {
+          status: formatFieldValue(item?.status, "Unknown"),
+          timestamp: parsedTimestamp,
+          note: formatFieldValue(item?.note, "No additional details."),
+          state: item?.state,
+        };
+      });
+
+    if (normalizedHistory.length) {
+      const hasPending = normalizedHistory.some(
+        (item) => item.status.toLowerCase() === "pending",
+      );
+      if (!hasPending) {
+        const pendingTimestamp = data?.createdAt
+          ? formatDate(new Date(data.createdAt), "dd-MM-yyyy hh:mm a")
+          : normalizedHistory[normalizedHistory.length - 1]?.timestamp || "N/A";
+        return [
+          {
+            status: "Pending",
+            timestamp: pendingTimestamp,
+            note: "Booking created and pending confirmation.",
+            state: "completed",
+          },
+          ...normalizedHistory,
+        ];
+      }
+      return normalizedHistory;
+    }
+
+    if (data?.status) {
+      const currentTimestamp = data?.updatedAt
+        ? formatDate(new Date(data.updatedAt), "dd-MM-yyyy hh:mm a")
+        : data?.createdAt
+          ? formatDate(new Date(data.createdAt), "dd-MM-yyyy hh:mm a")
+          : "N/A";
+      const currentStatus = formatFieldValue(data?.status, "Unknown");
+      const pendingTimestamp = data?.createdAt
+        ? formatDate(new Date(data.createdAt), "dd-MM-yyyy hh:mm a")
+        : currentTimestamp;
+
+      const fallbackHistory = [
+        {
+          status: "Pending",
+          timestamp: pendingTimestamp,
+          note: "Booking created and pending confirmation.",
+          state: "completed",
+        },
+        {
+          status: currentStatus,
+          timestamp: currentTimestamp,
+          note: "Current booking status.",
+          state: "active",
+        },
+      ];
+
+      if (currentStatus.toLowerCase() === "pending") {
+        return fallbackHistory.slice(0, 1);
+      }
+
+      return fallbackHistory;
+    }
+
+    return [];
+  }, [
+    bookingHistoryData?.history,
+    data?.status,
+    data?.updatedAt,
+    data?.createdAt,
+  ]);
+
+  const currentStatusIndex = useMemo(() => {
+    const normalizedStatus = (
+      bookingHistoryData?.currentStatus ||
+      data?.status ||
+      ""
+    )
+      .toString()
+      .toLowerCase();
+    if (!bookingStatusHistory.length) return 0;
+    const foundIndex = bookingStatusHistory.findIndex((item) => {
+      const status = item.status.toLowerCase();
+      return (
+        status === normalizedStatus ||
+        status.replace(/\s+/g, "") === normalizedStatus
+      );
+    });
+    if (foundIndex >= 0) return foundIndex;
+    const activeIndex = bookingStatusHistory.findIndex(
+      (item) => item.state === "active",
+    );
+    return activeIndex >= 0 ? activeIndex : bookingStatusHistory.length - 1;
+  }, [bookingHistoryData?.currentStatus, bookingStatusHistory, data?.status]);
 
   useEffect(() => {
     const defaultVisibility = visibilityOptions[0]?.value as
@@ -175,7 +294,6 @@ const ViewBookingPage = () => {
         }
       }
     };
-
     fetchAddress();
 
     return () => {
@@ -243,194 +361,319 @@ const ViewBookingPage = () => {
               </CardAction>
             </CardHeader>
             <FieldSeparator />
-            <Tabs defaultValue="details" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2 max-w-[320px]">
-                <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="notes">Notes</TabsTrigger>
-              </TabsList>
-              <TabsContent value="details">
-                <CardContent>
-                  <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
-                    Passenger
-                  </h6>
-                  <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Name:
-                    </Label>
-                    <Label>
-                      {formatFieldValue(data?.thirdPartyUser?.name)}
-                    </Label>
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Email:
-                    </Label>
-                    <Label>
-                      {formatFieldValue(data?.thirdPartyUser?.email)}
-                    </Label>
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Phone:
-                    </Label>
-                    <Label>
-                      {formatFieldValue(data?.thirdPartyUser?.phone)}
-                    </Label>
+            <div className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
+              <Tabs defaultValue="details" className="space-y-6 max-w-[720px]">
+                <TabsList className="grid w-full grid-cols-2 max-w-[320px]">
+                  <TabsTrigger value="details">Details</TabsTrigger>
+                  <TabsTrigger value="notes">Notes</TabsTrigger>
+                </TabsList>
+                <TabsContent value="details">
+                  <CardContent>
+                    <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
+                      Passenger
+                    </h6>
+                    <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Name:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(
+                          data?.thirdPartyUser?.name ||
+                            `${passengerUser?.firstName || ""} ${passengerUser?.lastName || ""}`.trim() ||
+                            null,
+                        )}
+                      </Label>
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Email:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(
+                          data?.thirdPartyUser?.email ||
+                            passengerUser?.email ||
+                            null,
+                        )}
+                      </Label>
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Phone:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(
+                          data?.thirdPartyUser?.phone ||
+                            passengerUser?.phoneNumber ||
+                            null,
+                        )}
+                      </Label>
 
-                    <div className="col-span-2">
-                      <FieldSeparator />
+                      <div className="col-span-2">
+                        <FieldSeparator />
+                      </div>
+
+                      <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
+                        Car and Chauffeur
+                      </h6>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Car Name:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(
+                          `${data?.vehicle?.make || ""} ${data?.vehicle?.model || ""}`.trim() ||
+                            null,
+                        )}
+                      </Label>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Chauffeur:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(
+                          `${data?.chauffeur?.firstName || ""} ${data?.chauffeur?.lastName || ""}`.trim() ||
+                            null,
+                        )}
+                      </Label>
+
+                      <div className="col-span-2">
+                        <FieldSeparator />
+                      </div>
+
+                      <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
+                        Ride
+                      </h6>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Status:
+                      </Label>
+                      <Badge variant="black">{data?.status}</Badge>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Type:
+                      </Label>
+                      <Label>{formatFieldValue(data?.bookingType)}</Label>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        From:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(Locations?.pickUpAddress)}
+                      </Label>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        to:
+                      </Label>
+                      <Label>
+                        {formatFieldValue(Locations?.dropOffAddress)}
+                      </Label>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        price:
+                      </Label>
+                      <Label>{formatFieldValue(data?.price, "N/A")}</Label>
                     </div>
-
-                    <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
-                      Car and Chauffeur
-                    </h6>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Car Name:
-                    </Label>
-                    <Label>
-                      {formatFieldValue(
-                        `${data?.vehicle?.make || ""} ${data?.vehicle?.model || ""}`.trim() ||
-                          null,
-                      )}
-                    </Label>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Chauffeur:
-                    </Label>
-                    <Label>
-                      {formatFieldValue(
-                        `${data?.chauffeur?.firstName || ""} ${data?.chauffeur?.lastName || ""}`.trim() ||
-                          null,
-                      )}
-                    </Label>
-
-                    <div className="col-span-2">
-                      <FieldSeparator />
-                    </div>
-
-                    <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2">
-                      Ride
-                    </h6>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Status:
-                    </Label>
-                    <Badge variant="black">{data?.status}</Badge>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      Type:
-                    </Label>
-                    <Label>{formatFieldValue(data?.bookingType)}</Label>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      From:
-                    </Label>
-                    <Label>{formatFieldValue(Locations?.pickUpAddress)}</Label>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      to:
-                    </Label>
-                    <Label>{formatFieldValue(Locations?.dropOffAddress)}</Label>
-
-                    <Label className="font-montserrat font-semibold capitalize">
-                      price:
-                    </Label>
-                    <Label>{formatFieldValue(data?.price, "N/A")}</Label>
-                  </div>
-                </CardContent>
-              </TabsContent>
-              <TabsContent value="notes">
-                <CardContent className="space-y-6">
-                  <div className="space-y-3 rounded border border-base-light-gray/60 p-4">
-                    <h6 className="font-montserrat font-bold text-base-black text-sm">
-                      Add Note
-                    </h6>
-                    <Textarea
-                      placeholder="Add booking note"
-                      className="min-h-24"
-                      value={noteMessage}
-                      onChange={(event) => setNoteMessage(event.target.value)}
-                    />
-                    <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-                      <SelectDropDown
-                        value={noteVisibility}
-                        onChange={(value) =>
-                          setNoteVisibility(value as BookingNoteVisibility)
-                        }
-                        items={visibilityOptions}
-                        placeholder="Select visibility"
-                        classname="w-full"
+                  </CardContent>
+                </TabsContent>
+                <TabsContent value="notes">
+                  <CardContent className="space-y-6">
+                    <div className="space-y-3 rounded border border-base-light-gray/60 p-4">
+                      <h6 className="font-montserrat font-bold text-base-black text-sm">
+                        Add Note
+                      </h6>
+                      <Textarea
+                        placeholder="Add booking note"
+                        className="min-h-24"
+                        value={noteMessage}
+                        onChange={(event) => setNoteMessage(event.target.value)}
                       />
+                      <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+                        <SelectDropDown
+                          value={noteVisibility}
+                          onChange={(value) =>
+                            setNoteVisibility(value as BookingNoteVisibility)
+                          }
+                          items={visibilityOptions}
+                          placeholder="Select visibility"
+                          classname="w-full"
+                        />
+                        <Button
+                          type="button"
+                          variant="black"
+                          className="w-full sm:w-auto"
+                          onClick={handleCreateNote}
+                          disabled={
+                            createNoteMutation.isPending || !noteMessage.trim()
+                          }
+                        >
+                          Add Note
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <h6 className="font-montserrat font-bold text-base-black text-sm">
+                          Notes
+                        </h6>
+                        <span className="text-xs text-base-gray">
+                          {isNotesFetching
+                            ? "Loading..."
+                            : `${notesList.length} notes`}
+                        </span>
+                      </div>
+                      {isNotesFetching ? (
+                        <Spinner />
+                      ) : notesList.length ? (
+                        <div className="space-y-3">
+                          {notesList.map((note) => (
+                            <div
+                              key={note.id}
+                              className="rounded border border-base-light-gray/60 p-4 space-y-2"
+                            >
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <div className="flex flex-wrap items-center gap-2 text-xs text-base-gray">
+                                  <span>
+                                    {note?.createdAt
+                                      ? formatDate(
+                                          new Date(note.createdAt),
+                                          "dd-MM-yyyy hh:mm a",
+                                        )
+                                      : "N/A"}
+                                  </span>
+                                  <span>•</span>
+                                  <span className="capitalize">
+                                    {formatFieldValue(
+                                      note?.senderRole,
+                                      "Unknown",
+                                    )}
+                                  </span>
+                                </div>
+                                <Badge
+                                  variant={visibilityBadgeMap[note.visibility]}
+                                >
+                                  {visibilityLabelMap[note.visibility]}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-base-black">
+                                {formatFieldValue(note?.message)}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-base-gray">
+                          No notes yet. Add the first update above.
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </TabsContent>
+              </Tabs>
+              <CardContent className="space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px]">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h6 className="font-montserrat text-sm font-semibold text-base-black">
+                      Booking Lifecycle
+                    </h6>
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] uppercase"
+                    >
+                      Active Trip
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-base-gray">
+                    Live status timeline with estimated progress.
+                  </p>
+                </div>
+                <div className="space-y-6">
+                  {isHistoryFetching ? (
+                    <Spinner />
+                  ) : isHistoryError ? (
+                    <div className="space-y-3 text-sm text-base-gray">
+                      <p>Unable to load booking lifecycle history.</p>
                       <Button
                         type="button"
-                        variant="black"
-                        className="w-full sm:w-auto"
-                        onClick={handleCreateNote}
-                        disabled={
-                          createNoteMutation.isPending || !noteMessage.trim()
-                        }
+                        variant="outlinePrimary"
+                        className="w-full"
+                        onClick={() => refetchHistory()}
                       >
-                        Add Note
+                        Retry
                       </Button>
                     </div>
-                  </div>
+                  ) : bookingStatusHistory.length ? (
+                    bookingStatusHistory.map((item, index) => {
+                      const isActive =
+                        item.state === "active" || index === currentStatusIndex;
+                      const isCompleted =
+                        item.state === "completed" ||
+                        index < currentStatusIndex;
+                      const dotClasses = isCompleted
+                        ? "border-base-black bg-base-black"
+                        : isActive
+                          ? "border-base-black bg-base-white"
+                          : "border-base-light-gray bg-base-white";
+                      const lineClasses = isCompleted
+                        ? "bg-base-black"
+                        : "bg-base-light-gray/80";
+                      const titleClasses = isActive
+                        ? "text-base-black"
+                        : isCompleted
+                          ? "text-base-black"
+                          : "text-base-gray";
+                      const timestampClasses =
+                        isCompleted || isActive
+                          ? "text-base-gray"
+                          : "text-base-gray/70";
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <h6 className="font-montserrat font-bold text-base-black text-sm">
-                        Notes
-                      </h6>
-                      <span className="text-xs text-base-gray">
-                        {isNotesFetching
-                          ? "Loading..."
-                          : `${notesList.length} notes`}
-                      </span>
-                    </div>
-                    {isNotesFetching ? (
-                      <Spinner />
-                    ) : notesList.length ? (
-                      <div className="space-y-3">
-                        {notesList.map((note) => (
-                          <div
-                            key={note.id}
-                            className="rounded border border-base-light-gray/60 p-4 space-y-2"
-                          >
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                              <div className="flex flex-wrap items-center gap-2 text-xs text-base-gray">
-                                <span>
-                                  {note?.createdAt
-                                    ? formatDate(
-                                        new Date(note.createdAt),
-                                        "dd-MM-yyyy hh:mm a",
-                                      )
-                                    : "N/A"}
+                      return (
+                        <div
+                          key={`${item.status}-${item.timestamp}-${index}`}
+                          className="relative pl-7"
+                        >
+                          {index < bookingStatusHistory.length - 1 ? (
+                            <span
+                              className={`absolute left-[37px] top-6 h-full w-0.5 ${lineClasses}`}
+                            />
+                          ) : null}
+                          <div className="flex items-start gap-3">
+                            <div
+                              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${dotClasses}`}
+                            >
+                              {isCompleted ? (
+                                <span className="text-[10px] font-semibold text-white">
+                                  ✓
                                 </span>
-                                <span>•</span>
-                                <span className="capitalize">
-                                  {formatFieldValue(
-                                    note?.senderRole,
-                                    "Unknown",
-                                  )}
+                              ) : isActive ? (
+                                <span className="h-2 w-2 rounded-full bg-base-black" />
+                              ) : null}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <span
+                                  className={`text-sm font-semibold ${titleClasses}`}
+                                >
+                                  {item.status}
+                                </span>
+                                <span
+                                  className={`text-[11px] font-medium ${timestampClasses}`}
+                                >
+                                  {item.timestamp}
                                 </span>
                               </div>
-                              <Badge
-                                variant={visibilityBadgeMap[note.visibility]}
-                              >
-                                {visibilityLabelMap[note.visibility]}
-                              </Badge>
+                              <p className="text-xs text-base-gray leading-relaxed">
+                                {item.note}
+                              </p>
                             </div>
-                            <p className="text-sm text-base-black">
-                              {formatFieldValue(note?.message)}
-                            </p>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-base-gray">
-                        No notes yet. Add the first update above.
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-              </TabsContent>
-            </Tabs>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-base-gray">
+                      No booking lifecycle data available yet.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </div>
           </CardBody>
         </Card>
       )}

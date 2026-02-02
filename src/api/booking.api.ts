@@ -32,6 +32,19 @@ type BookingNotesResponse = {
   notes?: BookingNote[];
 };
 
+export type BookingHistoryEntry = {
+  status?: string;
+  timestamp?: string;
+  note?: string;
+  state?: "active" | "pending" | "completed";
+};
+
+type BookingHistoryResponse = {
+  bookingId?: string;
+  currentStatus?: string;
+  history?: BookingHistoryEntry[];
+};
+
 // ============================================
 // GET OPERATIONS
 // ============================================
@@ -133,6 +146,60 @@ export const useFetchBookingById = ({ id }: { id?: string }) =>
     queryFn: () => getBookingById(id),
     refetchOnWindowFocus: false,
     retry: false,
+  });
+
+/**
+ * Fetch booking history (lifecycle)
+ */
+export const getBookingHistory = async (
+  bookingId?: string,
+): Promise<BookingHistoryResponse> => {
+  if (!bookingId) return { bookingId, history: [] };
+  try {
+    const response = await axiosInstance.get(
+      API_ENDPOINTS.BOOKING_HISTORY.replace(":bookingId", bookingId),
+    );
+    const responseData = response?.data?.data ?? response?.data;
+    const lifecycle = Array.isArray(responseData?.lifecycle)
+      ? responseData.lifecycle
+      : [];
+    const lifecycleHistory: BookingHistoryEntry[] = lifecycle.map(
+      (item: any) => ({
+        status: item?.label || item?.key,
+        timestamp: item?.timestamp ?? undefined,
+        note: item?.description ?? undefined,
+        state: item?.state,
+      }),
+    );
+    return {
+      bookingId,
+      currentStatus: responseData?.currentStatus,
+      history: lifecycleHistory.length
+        ? lifecycleHistory
+        : Array.isArray(responseData?.history)
+          ? responseData.history
+          : Array.isArray(responseData)
+            ? responseData
+            : [],
+    };
+  } catch (error) {
+    if (isAxiosError(error)) {
+      return { bookingId, history: [] };
+    }
+    throw new Error("Failed to fetch booking history");
+  }
+};
+
+/**
+ * Hook to fetch booking history
+ */
+export const useFetchBookingHistory = ({ bookingId }: { bookingId?: string }) =>
+  useQuery<BookingHistoryResponse>({
+    queryKey: ["bookingHistory", bookingId],
+    queryFn: () => getBookingHistory(bookingId),
+    refetchOnWindowFocus: false,
+    retry: false,
+    enabled: Boolean(bookingId),
   });
 
 /**
