@@ -62,6 +62,11 @@ export const constant = {
 
     VIEW_USERS: "/users/:id",
 
+    // Service Pricing URLS
+    SERVICE_PRICING: "/service-pricing",
+    CREATE_SERVICE_PRICING: "/service-pricing/create",
+    EDIT_SERVICE_PRICING: "/service-pricing/:id/edit",
+
     // Fleets URLS
 
     FLEETS: "/fleets",
@@ -99,10 +104,6 @@ export const constant = {
     // Reports URLS
 
     REPORTS: "/reports",
-
-    // Service Pricing URLS
-
-    SERVICE_PRICING: "/service-pricing",
 
     // Audit Logs URLS
 

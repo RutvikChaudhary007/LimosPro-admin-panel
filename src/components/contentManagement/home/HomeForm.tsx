@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash2, X } from "lucide-react";
+import { Building2, Globe, Plane, Route, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   Controller,
@@ -15,12 +15,20 @@ import {
   Card,
   CardBody,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
@@ -30,7 +38,8 @@ import {
   LANGUAGE_CODES,
   type LanguageCode,
 } from "@/lib/language";
-import { uid } from "@/utils/pagebuilder.utils";
+import { jsonToFormData } from "@/utils/formData.utils";
+// import { uid } from "@/utils/pagebuilder.utils";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
@@ -66,83 +75,147 @@ interface HomeFormProps {
 }
 
 const getEmptyLanguageContent = () => ({
-  // hero: {
-  //   heroSectionText: { src: "", alt: "", height: "", gradient: "" },
-  //   p1: "", p2: "", description: "", btn1: "", btn2: ""
-  // },
   content: {
-    servicesOverview: {
-      paragraph: "",
-      h2: "",
-      description: "",
-      serviceCards: [],
+    // SECTION 2
+    services: {
+      overview: {
+        premium: "",
+        title: "",
+        description: "",
+        cards: [
+          {
+            src: "",
+            title: "",
+            alt: "",
+            description: "",
+            button: "",
+            buttonLink: "",
+          },
+        ],
+      },
     },
+    // SECTION 3
     GlobalCoverage: {
       eyebrow: "",
       title: "",
       description1: "",
       description2: "",
-      stats: [{ label: "", value: "" }],
-      img: { src: "", alt: "" },
+      stats: [
+        { icon: "globe", iconAlt: "", label: "", value: "" },
+        { icon: "building2", iconAlt: "", label: "", value: "" },
+        { icon: "plane", iconAlt: "", label: "", value: "" },
+        { icon: "route", iconAlt: "", label: "", value: "" },
+      ],
+      image: { src: "", alt: "" },
     },
-    cityRoutes: {
-      paragraph: "",
-      h2: "",
-      description: "",
-      cities: { h3: "", link: "", cityCards: [] },
-      routes: { h3: "", link: "", routeCards: [] },
-    },
+    // SECTION 4
     HighlyPopularServices: {
       eyebrow: "",
       title: "",
       description: "",
-      cards: [{ title: "", href: "", img: { src: "", alt: "" } }],
+      cards: [
+        {
+          title: "",
+          href: "",
+          image: { src: "", alt: "" },
+        },
+      ],
     },
-    safetyAndPrivacy: { infoCards: [] },
-    corporateGroundTransportation: {
-      src: "",
-      alt: "",
-      t1: "",
-      t2: "",
-      description: "",
-      imageLeft: false,
+    // SECTION 5
+    CityRoutes: {
+      headingTop: "",
+      headingBottom: "",
+      description1: "",
+      description2: "",
+      topCities: "",
+      seeAll: "",
+      seeAllLink: "",
+      topRoutes: "",
+      topRoutesSeeAllLink: "",
+      topRoutesSeeAll: "",
+      citycards: [{ src: "", title: "", alt: "", description: "" }],
+      routeCards: [{ from: "", to: "", time: "", distance: "" }],
     },
-    meetingsAndSpecialEvents: {
-      imageLeft: true,
-      src: "",
-      alt: "",
-      t1: "",
-      t2: "",
-      description: "",
-    },
-    bookARide: { h2: "", p: "", btn: "" },
-    downloadOptions: {
-      h2: "",
-      p: "",
-      appStoreLink: "",
-      playStoreLink: "",
-      image: { src: "", alt: "" },
-    },
-    testimonial: {
-      testimonialCard: {
-        h2: "",
-        Quote: "",
-        Name: "",
-        Position: "",
-        src: "",
-        alt: "",
-      },
-      image: { src: "", alt: "" },
-    },
-    faq: {
+    // SECTION 6 (New)
+    CityToCityFleetCarousel: {
       eyebrow: "",
       title: "",
       description: "",
+      footnote: "",
+      vehicles: [
+        {
+          title: "",
+          icon: { src: "", alt: "" },
+          details: [],
+        },
+      ],
+    },
+    // SECTION 7
+    SafetyAndPrivacy: {
+      cards: [{ title: "", src: "", alt: "", description: "" }],
+    },
+    // SECTION 8 & 9
+    CorporateGroundTransportation: {
+      src: "",
+      alt: "",
+      t1: "",
+      t2: "",
+      description: "",
+      italicText: "",
+      images: [],
+    },
+    MeetingsAndSpecialEvents: {
+      src: "",
+      alt: "",
+      t1: "",
+      t2: "",
+      description: "",
+      italicText: "",
+      images: [],
+    },
+    // SECTION 10
+    BookARide: {
+      title: "",
+      description: "",
+      Button: "",
+      buttonLink: "",
+    },
+    // SECTION 11
+    DownloadOptions: {
+      Heading: "",
+      Description: "",
+      image: { src: "", alt: "" },
+      qrImage: { src: "", alt: "" },
+      apps: [{ image: "", url: "", alt: "" }],
+      QRAlt: "",
+      AppStoreAlt: "",
+      PlayStoreAlt: "",
+      list: [],
+    },
+    Testimonial: {
+      Heading: "",
+      src: "",
+      alt: "",
+      TestimonialCards: [
+        {
+          rating: "",
+          Quote: "",
+          Name: "",
+          Position: "",
+          alt: "",
+          src: "",
+        },
+      ],
+    },
+    // SECTION 12
+    FAQ: {
+      Heading: "",
+      title: "",
+      description: "",
       cta: { label: "", href: "" },
-      faqCards: [{ question: "", answer: "" }],
+      items: [{ Question: "", Answer: "" }],
     },
   },
-  // seo and jsonLd removed from language content
 });
 
 // Helper to get empty SEO/JSON-LD
@@ -226,8 +299,33 @@ const normalizeHomeData = (data: any): HomeFormData => {
     }
 
     // normalized.hero[lang] = heroData || getEmptyLanguageContent().hero;
-    normalized.content[lang] =
-      data.content?.[lang] || getEmptyLanguageContent().content;
+    let contentData = data.content?.[lang] || getEmptyLanguageContent().content;
+
+    // Map legacy structure to new if necessary
+    if (contentData.servicesOverview && !contentData.services?.overview) {
+      contentData = {
+        ...contentData,
+        services: {
+          overview: contentData.servicesOverview,
+        },
+      };
+      delete contentData.servicesOverview;
+    }
+
+    // Normalize DownloadOptions.list to object array for useFieldArray
+    if (
+      contentData.DownloadOptions?.list &&
+      Array.isArray(contentData.DownloadOptions.list) &&
+      contentData.DownloadOptions.list.length > 0
+    ) {
+      if (typeof contentData.DownloadOptions.list[0] === "string") {
+        contentData.DownloadOptions.list = contentData.DownloadOptions.list.map(
+          (item: string) => ({ value: item }),
+        );
+      }
+    }
+
+    normalized.content[lang] = contentData;
   });
 
   return normalized;
@@ -252,6 +350,7 @@ export default function HomeForm({
   const form = useForm<HomeFormData>({
     resolver: zodResolver(multiLangHomeSchema) as any,
     defaultValues: normalizedData,
+    mode: "all",
   });
 
   const { control, register, handleSubmit, watch, setValue, getValues } = form;
@@ -263,7 +362,7 @@ export default function HomeForm({
   // Field Arrays for selected language
   const serviceCards = useFieldArray({
     control,
-    name: `content.${selectedLanguage}.servicesOverview.serviceCards` as any,
+    name: `content.${selectedLanguage}.services.overview.cards` as any,
   });
   const globalCoverageStats = useFieldArray({
     control,
@@ -275,20 +374,89 @@ export default function HomeForm({
   });
   const cityCards = useFieldArray({
     control,
-    name: `content.${selectedLanguage}.cityRoutes.cities.cityCards` as any,
+    name: `content.${selectedLanguage}.CityRoutes.citycards` as any,
   });
   const routeCards = useFieldArray({
     control,
-    name: `content.${selectedLanguage}.cityRoutes.routes.routeCards` as any,
+    name: `content.${selectedLanguage}.CityRoutes.routeCards` as any,
+  });
+  const fleetVehicles = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.CityToCityFleetCarousel.vehicles` as any,
   });
   const safetyCards = useFieldArray({
     control,
-    name: `content.${selectedLanguage}.safetyAndPrivacy.infoCards` as any,
+    name: `content.${selectedLanguage}.SafetyAndPrivacy.cards` as any,
   });
-  const faqCards = useFieldArray({
+  const corpImages = useFieldArray({
     control,
-    name: `content.${selectedLanguage}.faq.faqCards` as any,
+    name: `content.${selectedLanguage}.CorporateGroundTransportation.images` as any,
   });
+  const meetingsImages = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.MeetingsAndSpecialEvents.images` as any,
+  });
+  const appList = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.DownloadOptions.apps` as any,
+  });
+  const downloadList = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.DownloadOptions.list` as any,
+  });
+  // Testimonial
+  const testimonialCards = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.Testimonial.TestimonialCards` as any,
+  });
+  const faqItems = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.FAQ.items` as any,
+  });
+
+  const onHandleSubmit = (data: HomeFormData) => {
+    // Deep copy to avoid mutating state, using structuredClone to preserve File objects
+    console.log("data==>", data);
+    const submissionData = structuredClone(data);
+
+    // Convert DownloadOptions.list back to string array for all languages
+    if (submissionData.content) {
+      Object.keys(submissionData.content).forEach((lang) => {
+        const dlOptions = submissionData.content[lang]?.DownloadOptions;
+        if (dlOptions?.list && Array.isArray(dlOptions.list)) {
+          // If it's an object array (managed by useFieldArray), extract value
+          if (
+            dlOptions.list.length > 0 &&
+            typeof dlOptions.list[0] === "object" &&
+            dlOptions.list[0] !== null &&
+            "value" in dlOptions.list[0]
+          ) {
+            dlOptions.list = dlOptions.list.map((item: any) => item.value);
+          }
+        }
+      });
+    }
+
+    // Convert to FormData for file handling
+    const formData = jsonToFormData(submissionData);
+
+    // Log FormData contents (FormData doesn't display properly with console.log)
+    console.log("FormData entries:");
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}: [File] ${value.name} (${value.size} bytes)`);
+      } else {
+        console.log(
+          `${key}:`,
+          typeof value === "string" && value.length > 100
+            ? value.substring(0, 100) + "..."
+            : value,
+        );
+      }
+    }
+
+    onSubmit(formData as any);
+  };
 
   const handleLanguageChange = (lang: LanguageCode) => {
     setSelectedLanguage(lang);
@@ -306,10 +474,6 @@ export default function HomeForm({
     if (lang !== "en" && (activeTab === "seo" || activeTab === "jsonld")) {
       setActiveTab("general");
     }
-  };
-
-  const onHandleSubmit = (data: HomeFormData) => {
-    onSubmit(data);
   };
 
   return (
@@ -386,16 +550,17 @@ export default function HomeForm({
                     <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>Services Overview</CardTitle>
+                          <CardTitle>Services Overview (Section 2)</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel>Heading (H2)</FieldLabel>
+                            <FieldLabel>Premium Tag</FieldLabel>
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `content.${selectedLanguage}.servicesOverview.h2` as any,
+                                  `content.${selectedLanguage}.services.overview.premium` as any,
                                 )}
+                                placeholder="Premium"
                               />
                             </InputGroup>
                           </Field>
@@ -404,7 +569,7 @@ export default function HomeForm({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `content.${selectedLanguage}.servicesOverview.paragraph` as any,
+                                  `content.${selectedLanguage}.services.overview.title` as any,
                                 )}
                               />
                             </InputGroup>
@@ -412,11 +577,11 @@ export default function HomeForm({
                           <Controller
                             control={control}
                             name={
-                              `content.${selectedLanguage}.servicesOverview.description` as any
+                              `content.${selectedLanguage}.services.overview.description` as any
                             }
                             render={({ field }) => (
                               <Field>
-                                <FieldLabel>Description (Rich Text)</FieldLabel>
+                                <FieldLabel>Description</FieldLabel>
                                 <TinyEditorRHF
                                   value={field.value || ""}
                                   onChange={field.onChange}
@@ -435,12 +600,12 @@ export default function HomeForm({
                                 size="sm"
                                 onClick={() =>
                                   serviceCards.append({
-                                    id: uid(),
                                     src: "",
-                                    alt: "",
                                     title: "",
+                                    alt: "",
                                     description: "",
-                                    button: "",
+                                    button: "BOOK NOW",
+                                    buttonLink: "",
                                   })
                                 }
                               >
@@ -480,6 +645,16 @@ export default function HomeForm({
                                       )}
                                     />
                                     <Field>
+                                      <FieldLabel>Alt Text</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.alt` as any,
+                                          )}
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
                                       <FieldLabel>Title</FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
@@ -507,6 +682,16 @@ export default function HomeForm({
                                         />
                                       </InputGroup>
                                     </Field>
+                                    <Field>
+                                      <FieldLabel>Button Link</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.buttonLink` as any,
+                                          )}
+                                        />
+                                      </InputGroup>
+                                    </Field>
                                   </CardContent>
                                 </Card>
                               ))}
@@ -520,7 +705,7 @@ export default function HomeForm({
                     <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>Global Coverage</CardTitle>
+                          <CardTitle>Global Coverage (Section 3)</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-2 gap-4">
@@ -563,7 +748,7 @@ export default function HomeForm({
                           </Field>
                           <Controller
                             name={
-                              `content.${selectedLanguage}.GlobalCoverage.img.src` as any
+                              `content.${selectedLanguage}.GlobalCoverage.image.src` as any
                             }
                             control={control}
                             render={({ field }) => (
@@ -579,7 +764,7 @@ export default function HomeForm({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `content.${selectedLanguage}.GlobalCoverage.img.alt` as any,
+                                  `content.${selectedLanguage}.GlobalCoverage.image.alt` as any,
                                 )}
                               />
                             </InputGroup>
@@ -593,6 +778,8 @@ export default function HomeForm({
                                 size="sm"
                                 onClick={() =>
                                   globalCoverageStats.append({
+                                    icon: "globe",
+                                    iconAlt: "",
                                     label: "",
                                     value: "",
                                   })
@@ -601,7 +788,7 @@ export default function HomeForm({
                                 Add Stat
                               </Button>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               {globalCoverageStats.fields.map(
                                 (field, index) => (
                                   <Card
@@ -623,6 +810,66 @@ export default function HomeForm({
                                         >
                                           <Trash2 className="w-4 h-4 text-red-500" />
                                         </Button>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <Field className="col-span-2">
+                                          <FieldLabel>Icon Name</FieldLabel>
+                                          {/* <InputGroup> */}
+                                          <Controller
+                                            control={control}
+                                            name={
+                                              `content.${selectedLanguage}.GlobalCoverage.stats.${index}.icon` as any
+                                            }
+                                            render={({ field }) => (
+                                              <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                                value={field.value}
+                                              >
+                                                <SelectTrigger className="w-full">
+                                                  <SelectValue placeholder="Select Icon" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                  <SelectItem value="globe">
+                                                    <div className="flex items-center gap-2">
+                                                      <Globe className="w-4 h-4" />{" "}
+                                                      <span>Globe</span>
+                                                    </div>
+                                                  </SelectItem>
+                                                  <SelectItem value="building2">
+                                                    <div className="flex items-center gap-2">
+                                                      <Building2 className="w-4 h-4" />{" "}
+                                                      <span>Building</span>
+                                                    </div>
+                                                  </SelectItem>
+                                                  <SelectItem value="plane">
+                                                    <div className="flex items-center gap-2">
+                                                      <Plane className="w-4 h-4" />{" "}
+                                                      <span>Plane</span>
+                                                    </div>
+                                                  </SelectItem>
+                                                  <SelectItem value="route">
+                                                    <div className="flex items-center gap-2">
+                                                      <Route className="w-4 h-4" />{" "}
+                                                      <span>Route</span>
+                                                    </div>
+                                                  </SelectItem>
+                                                </SelectContent>
+                                              </Select>
+                                            )}
+                                          />
+                                          {/* </InputGroup> */}
+                                        </Field>
+                                        <Field className="col-span-2">
+                                          <FieldLabel>Icon Alt</FieldLabel>
+                                          <InputGroup>
+                                            <InputGroupInput
+                                              {...register(
+                                                `content.${selectedLanguage}.GlobalCoverage.stats.${index}.iconAlt` as any,
+                                              )}
+                                            />
+                                          </InputGroup>
+                                        </Field>
                                       </div>
                                       <Field>
                                         <FieldLabel>Label</FieldLabel>
@@ -658,7 +905,9 @@ export default function HomeForm({
                     <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>Highly Popular Services</CardTitle>
+                          <CardTitle>
+                            Highly Popular Services (Section 4)
+                          </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="grid grid-cols-2 gap-4">
@@ -685,9 +934,16 @@ export default function HomeForm({
                           </div>
                           <Field>
                             <FieldLabel>Description</FieldLabel>
-                            <Textarea
-                              {...register(
-                                `content.${selectedLanguage}.HighlyPopularServices.description` as any,
+                            <Controller
+                              name={
+                                `content.${selectedLanguage}.HighlyPopularServices.description` as any
+                              }
+                              control={control}
+                              render={({ field }) => (
+                                <TinyEditorRHF
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
                               )}
                             />
                           </Field>
@@ -704,7 +960,7 @@ export default function HomeForm({
                                   highlyPopularCards.append({
                                     title: "",
                                     href: "",
-                                    img: { src: "", alt: "" },
+                                    image: { src: "", alt: "" },
                                   })
                                 }
                               >
@@ -732,7 +988,7 @@ export default function HomeForm({
                                     </div>
                                     <Controller
                                       name={
-                                        `content.${selectedLanguage}.HighlyPopularServices.cards.${index}.img.src` as any
+                                        `content.${selectedLanguage}.HighlyPopularServices.cards.${index}.image.src` as any
                                       }
                                       control={control}
                                       render={({ field }) => (
@@ -748,7 +1004,7 @@ export default function HomeForm({
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.HighlyPopularServices.cards.${index}.img.alt` as any,
+                                            `content.${selectedLanguage}.HighlyPopularServices.cards.${index}.image.alt` as any,
                                           )}
                                         />
                                       </InputGroup>
@@ -786,308 +1042,457 @@ export default function HomeForm({
                     <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>City Routes</CardTitle>
+                          <CardTitle>City Routes (Section 5)</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
                           <div className="grid grid-cols-2 gap-4">
                             <Field>
-                              <FieldLabel>Small Heading</FieldLabel>
+                              <FieldLabel>Heading Top</FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
                                   {...register(
-                                    `content.${selectedLanguage}.cityRoutes.paragraph` as any,
+                                    `content.${selectedLanguage}.CityRoutes.headingTop` as any,
                                   )}
                                 />
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel>Title (H2)</FieldLabel>
+                              <FieldLabel>Heading Bottom</FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
                                   {...register(
-                                    `content.${selectedLanguage}.cityRoutes.h2` as any,
+                                    `content.${selectedLanguage}.CityRoutes.headingBottom` as any,
+                                  )}
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Description 1</FieldLabel>
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.CityRoutes.description1` as any
+                                }
+                                control={control}
+                                render={({ field }) => (
+                                  <TinyEditorRHF
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                )}
+                              />
+                            </Field>
+                            <Field>
+                              <FieldLabel>Description 2</FieldLabel>
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.CityRoutes.description2` as any
+                                }
+                                control={control}
+                                render={({ field }) => (
+                                  <TinyEditorRHF
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                )}
+                              />
+                            </Field>
+                            <Field>
+                              <FieldLabel>Top Cities</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.CityRoutes.topCities` as any,
+                                  )}
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Top Cities</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.CityRoutes.topCities` as any,
+                                  )}
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Top Cities See All Link</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.CityRoutes.seeAllLink` as any,
+                                  )}
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Top Routes See All Link</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.CityRoutes.topRoutesSeeAllLink` as any,
                                   )}
                                 />
                               </InputGroup>
                             </Field>
                           </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-                            {/* Cities Section */}
-                            <div className="space-y-4 border p-4 rounded-lg bg-gray-50/50">
-                              <h4 className="text-lg font-bold border-b pb-2">
-                                Cities Overview
-                              </h4>
-                              <Field>
-                                <FieldLabel>City Heading (H3)</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.cityRoutes.cities.h3` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>Link</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.cityRoutes.cities.link` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-
-                              <div className="flex justify-between items-center pt-2">
-                                <label
-                                  htmlFor="cityCards"
-                                  className="text-sm font-semibold"
-                                >
-                                  City Cards
-                                </label>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outlinePrimary"
-                                  onClick={() =>
-                                    cityCards.append({
-                                      id: uid(),
-                                      src: "",
-                                      alt: "",
-                                      title: "",
-                                      description: "",
-                                    })
-                                  }
-                                >
-                                  Add City
-                                </Button>
-                              </div>
-                              <div className="space-y-3">
-                                {cityCards.fields.map((field, index) => (
-                                  <Card key={field.id} className="bg-white">
-                                    <CardContent className="p-3 space-y-2">
-                                      <div className="flex justify-between items-center">
-                                        <span className="text-xs font-semibold">
-                                          #{index + 1}
-                                        </span>
-                                        <Button
-                                          type="button"
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() =>
-                                            cityCards.remove(index)
-                                          }
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </Button>
-                                      </div>
+                          <Separator />
+                          {/* City Cards */}
+                          <div className="space-y-4">
+                            <div className="flex justify-between">
+                              <h4 className="font-bold">City Cards</h4>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  cityCards.append({
+                                    src: "",
+                                    title: "",
+                                    alt: "",
+                                    description: "",
+                                  })
+                                }
+                              >
+                                Add City
+                              </Button>
+                            </div>
+                            <div className="flex gap-4 overflow-x-auto pb-4">
+                              {cityCards.fields.map((field, idx) => (
+                                <Card key={field.id}>
+                                  <CardContent className="p-4 space-y-3">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs font-bold uppercase text-gray-400">
+                                        City #{idx + 1}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => cityCards.remove(idx)}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <Controller
+                                      name={
+                                        `content.${selectedLanguage}.CityRoutes.citycards.${idx}.src` as any
+                                      }
+                                      control={control}
+                                      render={({ field }) => (
+                                        <UploadWithUrl
+                                          value={field.value}
+                                          onChange={field.onChange}
+                                          title="Image"
+                                        />
+                                      )}
+                                    />
+                                    <Field>
+                                      <FieldLabel>Image Alt Text</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.citycards.${idx}.alt` as any,
+                                          )}
+                                          placeholder="Image Alt Text"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>Title</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.citycards.${idx}.title` as any,
+                                          )}
+                                          placeholder="Title"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>Description</FieldLabel>
                                       <Controller
                                         name={
-                                          `content.${selectedLanguage}.cityRoutes.cities.cityCards.${index}.src` as any
+                                          `content.${selectedLanguage}.CityRoutes.citycards.${idx}.description` as any
                                         }
                                         control={control}
                                         render={({ field }) => (
-                                          <UploadWithUrl
+                                          <TinyEditorRHF
                                             value={field.value}
                                             onChange={field.onChange}
-                                            title="Image"
                                           />
                                         )}
                                       />
+                                    </Field>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          </div>
+                          <Separator />
+                          {/* Route Cards */}
+                          <div className="space-y-4">
+                            <div className="flex justify-between">
+                              <h4 className="font-bold">Route Cards</h4>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  routeCards.append({
+                                    from: "",
+                                    to: "",
+                                    time: "",
+                                    distance: "",
+                                  })
+                                }
+                              >
+                                Add Route
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              {routeCards.fields.map((field, idx) => (
+                                <Card key={field.id}>
+                                  <CardContent className="p-4 space-y-3">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs font-bold uppercase text-gray-400">
+                                        Route #{idx + 1}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => routeCards.remove(idx)}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <Field>
+                                      <FieldLabel>From</FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
-                                          placeholder="City Name"
                                           {...register(
-                                            `content.${selectedLanguage}.cityRoutes.cities.cityCards.${index}.title` as any,
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.from` as any,
                                           )}
+                                          placeholder="From"
                                         />
                                       </InputGroup>
-                                      <Textarea
-                                        placeholder="Description"
-                                        rows={2}
-                                        {...register(
-                                          `content.${selectedLanguage}.cityRoutes.cities.cityCards.${index}.description` as any,
-                                        )}
-                                      />
-                                    </CardContent>
-                                  </Card>
-                                ))}
-                              </div>
-                            </div>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>To</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.to` as any,
+                                          )}
+                                          placeholder="To"
+                                        />
+                                      </InputGroup>
+                                    </Field>
 
-                            {/* Routes Section */}
-                            <div className="space-y-4 border p-4 rounded-lg bg-gray-50/50">
-                              <h4 className="text-lg font-bold border-b pb-2">
-                                Popular Routes
-                              </h4>
-                              <Field>
-                                <FieldLabel>Route Heading (H3)</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.cityRoutes.routes.h3` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>Link</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.cityRoutes.routes.link` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
+                                    <Field>
+                                      <FieldLabel>Time</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.time` as any,
+                                          )}
+                                          placeholder="Time"
+                                        />
+                                      </InputGroup>
+                                    </Field>
 
-                              <div className="flex justify-between items-center pt-2">
-                                <label
-                                  htmlFor="routeCards"
-                                  className="text-sm font-semibold"
-                                >
-                                  Route Cards
-                                </label>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outlinePrimary"
-                                  onClick={() =>
-                                    routeCards.append({
-                                      id: uid(),
-                                      from: "",
-                                      to: "",
-                                      time: "",
-                                      distance: "",
-                                    })
-                                  }
-                                >
-                                  Add Route
-                                </Button>
-                              </div>
-                              <div className="space-y-3">
-                                {routeCards.fields.map((field, index) => (
-                                  <Card key={field.id} className="bg-white">
-                                    <CardContent className="p-3 space-y-2">
-                                      <div className="flex justify-between items-center">
-                                        <span className="text-xs font-semibold">
-                                          #{index + 1}
-                                        </span>
-                                        <Button
-                                          type="button"
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() =>
-                                            routeCards.remove(index)
-                                          }
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </Button>
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <InputGroup>
-                                          <InputGroupInput
-                                            placeholder="From"
-                                            {...register(
-                                              `content.${selectedLanguage}.cityRoutes.routes.routeCards.${index}.from` as any,
-                                            )}
-                                          />
-                                        </InputGroup>
-                                        <InputGroup>
-                                          <InputGroupInput
-                                            placeholder="To"
-                                            {...register(
-                                              `content.${selectedLanguage}.cityRoutes.routes.routeCards.${index}.to` as any,
-                                            )}
-                                          />
-                                        </InputGroup>
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <InputGroup>
-                                          <InputGroupInput
-                                            placeholder="Time"
-                                            {...register(
-                                              `content.${selectedLanguage}.cityRoutes.routes.routeCards.${index}.time` as any,
-                                            )}
-                                          />
-                                        </InputGroup>
-                                        <InputGroup>
-                                          <InputGroupInput
-                                            placeholder="Distance"
-                                            {...register(
-                                              `content.${selectedLanguage}.cityRoutes.routes.routeCards.${index}.distance` as any,
-                                            )}
-                                          />
-                                        </InputGroup>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                ))}
-                              </div>
+                                    <Field>
+                                      <FieldLabel>Distance</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.distance` as any,
+                                          )}
+                                          placeholder="Distance"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                  </CardContent>
+                                </Card>
+                              ))}
                             </div>
                           </div>
                         </CardContent>
                       </CardBody>
                     </Card>
 
-                    {/* Hero Section (was Find Yours) */}
-                    {/* <Card>
+                    {/* City To City Fleet Carousel (New Section 6) */}
+                    <Card>
                       <CardBody>
-                        <CardHeader><CardTitle>Hero Section (Banner)</CardTitle></CardHeader>
+                        <CardHeader>
+                          <CardTitle>City To City Fleet (Section 6)</CardTitle>
+                        </CardHeader>
                         <CardContent className="space-y-4">
-                           <Controller
-                              name={`hero.${selectedLanguage}.heroSectionText.src` as any}
+                          <div className="grid grid-cols-2 gap-4">
+                            <Field>
+                              <FieldLabel>Eyebrow</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.CityToCityFleetCarousel.eyebrow` as any,
+                                  )}
+                                  placeholder="Eyebrow"
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Title</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.CityToCityFleetCarousel.title` as any,
+                                  )}
+                                  placeholder="Title"
+                                />
+                              </InputGroup>
+                            </Field>
+                          </div>
+                          <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <Controller
+                              name={
+                                `content.${selectedLanguage}.CityToCityFleetCarousel.description` as any
+                              }
                               control={control}
                               render={({ field }) => (
-                                <UploadWithUrl value={field.value} onChange={field.onChange} title="Banner Background" />
+                                <TinyEditorRHF
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
                               )}
-                           />
-                           <div className="grid grid-cols-2 gap-4">
-                              <Field><FieldLabel>Overlay Gradient</FieldLabel><InputGroup><InputGroupInput {...register(`hero.${selectedLanguage}.heroSectionText.gradient` as any)} /></InputGroup></Field>
-                              <Field><FieldLabel>Height (CSS class)</FieldLabel><InputGroup><InputGroupInput {...register(`hero.${selectedLanguage}.heroSectionText.height` as any)} /></InputGroup></Field>
-                           </div>
-                           <div className="grid grid-cols-2 gap-4">
-                              <Field><FieldLabel>Heading 1</FieldLabel><InputGroup><InputGroupInput {...register(`hero.${selectedLanguage}.p1` as any)} /></InputGroup></Field>
-                              <Field><FieldLabel>Heading 2</FieldLabel><InputGroup><InputGroupInput {...register(`hero.${selectedLanguage}.p2` as any)} /></InputGroup></Field>
-                           </div>
-                           <div className="grid grid-cols-2 gap-4">
-                              <Field><FieldLabel>Button 1</FieldLabel><InputGroup><InputGroupInput {...register(`hero.${selectedLanguage}.btn1` as any)} /></InputGroup></Field>
-                              <Field><FieldLabel>Button 2</FieldLabel><InputGroup><InputGroupInput {...register(`hero.${selectedLanguage}.btn2` as any)} /></InputGroup></Field>
-                           </div>
-                           <Controller
-                              control={control}
-                              name={`hero.${selectedLanguage}.description` as any}
-                              render={({ field }) => (
-                                <Field><FieldLabel>Rich Text Description</FieldLabel><TinyEditorRHF value={field.value || ""} onChange={field.onChange} /></Field>
-                              )}
-                           />
-                        </CardContent>
-                      </CardBody>
-                    </Card> */}
-
-                    {/* Secondary Sections */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      {/* Safety & Privacy */}
-                      <Card>
-                        <CardBody>
-                          <CardHeader>
-                            <CardTitle>Safety & Privacy</CardTitle>
+                            />
+                          </Field>
+                          <Field>
+                            <FieldLabel>Footnote</FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...register(
+                                  `content.${selectedLanguage}.CityToCityFleetCarousel.footnote` as any,
+                                )}
+                                placeholder="Footnote"
+                              />
+                            </InputGroup>
+                          </Field>
+                          <Separator />
+                          <div className="flex justify-between">
+                            <h4 className="font-bold">Vehicles</h4>
                             <Button
                               type="button"
                               size="sm"
                               onClick={() =>
-                                safetyCards.append({
-                                  id: uid(),
-                                  src: "",
-                                  alt: "",
+                                fleetVehicles.append({
                                   title: "",
-                                  description: "",
+                                  icon: { src: "", alt: "" },
+                                  details: [],
                                 })
                               }
                             >
-                              Add Card
+                              Add Vehicle
                             </Button>
+                          </div>
+                          <div className="space-y-4">
+                            {fleetVehicles.fields.map((field, idx) => (
+                              <Card
+                                key={field.id}
+                                className="border border-muted"
+                              >
+                                <CardContent className="p-4 space-y-2">
+                                  <div className="flex justify-between">
+                                    <span className="font-bold">
+                                      Vehicle #{idx + 1}
+                                    </span>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => fleetVehicles.remove(idx)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                  </div>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.CityToCityFleetCarousel.vehicles.${idx}.title` as any,
+                                      )}
+                                      placeholder="Vehicle Title"
+                                    />
+                                  </InputGroup>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <Controller
+                                        name={
+                                          `content.${selectedLanguage}.CityToCityFleetCarousel.vehicles.${idx}.icon.src` as any
+                                        }
+                                        control={control}
+                                        render={({ field }) => (
+                                          <UploadWithUrl
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            title="Icon"
+                                          />
+                                        )}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Field>
+                                        <FieldLabel>Icon Alt Text</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.CityToCityFleetCarousel.vehicles.${idx}.icon.alt` as any,
+                                            )}
+                                            placeholder="Icon Alt Text"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <FieldLabel>
+                                        Details (Comma Separated)
+                                      </FieldLabel>
+                                      <Controller
+                                        name={
+                                          `content.${selectedLanguage}.CityToCityFleetCarousel.vehicles.${idx}.details` as any
+                                        }
+                                        control={control}
+                                        render={({ field }) => (
+                                          <Textarea
+                                            value={
+                                              Array.isArray(field.value)
+                                                ? field.value.join(", ")
+                                                : field.value
+                                            }
+                                            onChange={(e) =>
+                                              field.onChange(
+                                                e.target.value
+                                                  .split(",")
+                                                  .map((s: string) => s.trim()),
+                                              )
+                                            }
+                                            placeholder="e.g. 2 Bags, 3 Passengers"
+                                          />
+                                        )}
+                                      />
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* Secondary Sections */}
+                    <div className="space-y-8">
+                      {/* Safety & Privacy (Section 7) */}
+                      <Card>
+                        <CardBody>
+                          <CardHeader>
+                            <CardTitle>Safety & Privacy (Section 7)</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-4">
                             {safetyCards.fields.map((field, index) => (
@@ -1111,7 +1516,7 @@ export default function HomeForm({
                                   </div>
                                   <Controller
                                     name={
-                                      `content.${selectedLanguage}.safetyAndPrivacy.infoCards.${index}.src` as any
+                                      `content.${selectedLanguage}.SafetyAndPrivacy.cards.${index}.src` as any
                                     }
                                     control={control}
                                     render={({ field }) => (
@@ -1122,32 +1527,241 @@ export default function HomeForm({
                                       />
                                     )}
                                   />
-                                  <InputGroup>
-                                    <InputGroupInput
-                                      placeholder="Title"
-                                      {...register(
-                                        `content.${selectedLanguage}.safetyAndPrivacy.infoCards.${index}.title` as any,
+
+                                  <Field>
+                                    <FieldLabel>Image Alt Text</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        placeholder="Alt Text"
+                                        {...register(
+                                          `content.${selectedLanguage}.SafetyAndPrivacy.cards.${index}.alt` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                  <Field>
+                                    <FieldLabel>Title</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        placeholder="Title"
+                                        {...register(
+                                          `content.${selectedLanguage}.SafetyAndPrivacy.cards.${index}.title` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                  <Field>
+                                    <FieldLabel>Description</FieldLabel>
+                                    <Controller
+                                      name={
+                                        `content.${selectedLanguage}.SafetyAndPrivacy.cards.${index}.description` as any
+                                      }
+                                      control={control}
+                                      render={({ field }) => (
+                                        <TinyEditorRHF
+                                          value={field.value}
+                                          onChange={field.onChange}
+                                        />
                                       )}
                                     />
-                                  </InputGroup>
-                                  <Textarea
-                                    placeholder="Description"
-                                    {...register(
-                                      `content.${selectedLanguage}.safetyAndPrivacy.infoCards.${index}.description` as any,
-                                    )}
-                                  />
+                                  </Field>
                                 </CardContent>
                               </Card>
                             ))}
                           </CardContent>
+                          <CardFooter>
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() =>
+                                safetyCards.append({
+                                  title: "",
+                                  src: "",
+                                  alt: "",
+                                  description: "",
+                                })
+                              }
+                            >
+                              Add Card
+                            </Button>
+                          </CardFooter>
                         </CardBody>
                       </Card>
 
-                      {/* Book A Ride */}
+                      {/* Corporate & Meetings (Sections 8 & 9) */}
+                      {[
+                        {
+                          id: "CorporateGroundTransportation",
+                          label: "Corporate Ground (Section 8)",
+                          imagesArray: corpImages,
+                        },
+                        {
+                          id: "MeetingsAndSpecialEvents",
+                          label: "Meetings & Special Events (Section 9)",
+                          imagesArray: meetingsImages,
+                        },
+                      ].map((section) => (
+                        <Card key={section.id}>
+                          <CardBody>
+                            <CardHeader>
+                              <CardTitle>{section.label}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <Field>
+                                  {" "}
+                                  <FieldLabel>Title 1</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.${section.id}.t1` as any,
+                                      )}
+                                      placeholder="Title 1"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>Title 2</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.${section.id}.t2` as any,
+                                      )}
+                                      placeholder="Title 2"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                              </div>
+                              <Field>
+                                <FieldLabel>Description</FieldLabel>
+                                <Controller
+                                  name={
+                                    `content.${selectedLanguage}.${section.id}.description` as any
+                                  }
+                                  control={control}
+                                  render={({ field }) => (
+                                    <TinyEditorRHF
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                    />
+                                  )}
+                                />
+                              </Field>
+                              <Field>
+                                <FieldLabel>Italic Text</FieldLabel>
+                                <InputGroup>
+                                  <InputGroupInput
+                                    {...register(
+                                      `content.${selectedLanguage}.${section.id}.italicText` as any,
+                                    )}
+                                    placeholder="Italic Text"
+                                  />
+                                </InputGroup>
+                              </Field>
+
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.${section.id}.src` as any
+                                }
+                                control={control}
+                                render={({ field }) => (
+                                  <UploadWithUrl
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    title="Main Image"
+                                  />
+                                )}
+                              />
+                              <Field>
+                                <FieldLabel>Image Alt Text</FieldLabel>
+                                <InputGroup>
+                                  <InputGroupInput
+                                    {...register(
+                                      `content.${selectedLanguage}.${section.id}.alt` as any,
+                                    )}
+                                    placeholder="Image Alt"
+                                  />
+                                </InputGroup>
+                              </Field>
+
+                              <Separator />
+                              <div className="flex justify-between">
+                                <h4 className="font-bold">Gallery Images</h4>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  onClick={() =>
+                                    (section.imagesArray as any).append("")
+                                  }
+                                >
+                                  Add Image
+                                </Button>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                {(section.imagesArray as any).fields.map(
+                                  (field: any, idx: number) => (
+                                    <Card
+                                      key={field.id}
+                                      className="border p-2 rounded"
+                                    >
+                                      <CardContent className="p-4 space-y-3">
+                                        <div className="flex justify-between mb-2">
+                                          <span className="text-xs">
+                                            Image #{idx + 1}
+                                          </span>
+                                          <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() =>
+                                              (
+                                                section.imagesArray as any
+                                              ).remove(idx)
+                                            }
+                                          >
+                                            <Trash2 className="w-4 h-4 text-red-500" />
+                                          </Button>
+                                        </div>
+                                        <Controller
+                                          name={
+                                            `content.${selectedLanguage}.${section.id}.images.${idx}` as any
+                                          }
+                                          control={control}
+                                          render={({ field }) => (
+                                            <UploadWithUrl
+                                              value={field.value}
+                                              onChange={field.onChange}
+                                              title="Gallery Image"
+                                            />
+                                          )}
+                                        />
+                                        <Field>
+                                          <FieldLabel>
+                                            Image Alt Text
+                                          </FieldLabel>
+                                          <InputGroup>
+                                            <InputGroupInput
+                                              {...register(
+                                                `content.${selectedLanguage}.${section.id}.images.${idx}.alt` as any,
+                                              )}
+                                              placeholder="Image Alt"
+                                            />
+                                          </InputGroup>
+                                        </Field>
+                                      </CardContent>
+                                    </Card>
+                                  ),
+                                )}
+                              </div>
+                            </CardContent>
+                          </CardBody>
+                        </Card>
+                      ))}
+
+                      {/* Book A Ride (Section 10) */}
                       <Card>
                         <CardBody>
                           <CardHeader>
-                            <CardTitle>Book A Ride</CardTitle>
+                            <CardTitle>Book A Ride (Section 10)</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-4">
                             <Field>
@@ -1155,256 +1769,468 @@ export default function HomeForm({
                               <InputGroup>
                                 <InputGroupInput
                                   {...register(
-                                    `content.${selectedLanguage}.bookARide.h2` as any,
+                                    `content.${selectedLanguage}.BookARide.title` as any,
                                   )}
+                                  placeholder="Title"
                                 />
                               </InputGroup>
                             </Field>
                             <Field>
                               <FieldLabel>Description</FieldLabel>
-                              <Textarea
-                                {...register(
-                                  `content.${selectedLanguage}.bookARide.p` as any,
-                                )}
-                              />
-                            </Field>
-                            <Field>
-                              <FieldLabel>Button Label</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.bookARide.btn` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                          </CardContent>
-                        </CardBody>
-                      </Card>
-                    </div>
-
-                    {/* Side Image Sections */}
-                    {[
-                      {
-                        id: "corporateGroundTransportation",
-                        label: "Corporate Ground Transportation",
-                      },
-                      {
-                        id: "meetingsAndSpecialEvents",
-                        label: "Meetings & Special Events",
-                      },
-                    ].map((section) => (
-                      <Card key={section.id}>
-                        <CardBody>
-                          <CardHeader>
-                            <CardTitle>{section.label}</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <Controller
-                              name={
-                                `content.${selectedLanguage}.${section.id}.src` as any
-                              }
-                              control={control}
-                              render={({ field }) => (
-                                <UploadWithUrl
-                                  value={field.value}
-                                  onChange={field.onChange}
-                                  title="Section Image"
-                                />
-                              )}
-                            />
-                            <Field>
-                              <FieldLabel>Image Alt Text</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.${section.id}.alt` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                            <div className="grid grid-cols-2 gap-4">
-                              <Field>
-                                <FieldLabel>Title Layer 1</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.${section.id}.t1` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>Title Layer 2</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.${section.id}.t2` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                            </div>
-                            <Field>
-                              <FieldLabel>Short Description</FieldLabel>
-                              <Textarea
-                                {...register(
-                                  `content.${selectedLanguage}.${section.id}.description` as any,
-                                )}
-                              />
-                            </Field>
-                            <div className="flex items-center space-x-2 border p-3 rounded bg-base-primary/10 w-fit">
-                              <Checkbox
-                                id={`${section.id}_left_${selectedLanguage}`}
-                                checked={watch(
-                                  `content.${selectedLanguage}.${section.id}.imageLeft` as any,
-                                )}
-                                onCheckedChange={(v) =>
-                                  setValue(
-                                    `content.${selectedLanguage}.${section.id}.imageLeft` as any,
-                                    v === true,
-                                  )
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.BookARide.description` as any
                                 }
-                              />
-                              <label
-                                htmlFor={`${section.id}_left_${selectedLanguage}`}
-                                className="text-sm font-medium"
-                              >
-                                Image on Left?
-                              </label>
-                            </div>
-                          </CardContent>
-                        </CardBody>
-                      </Card>
-                    ))}
-
-                    {/* Download & Partners */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <Card>
-                        <CardBody>
-                          <CardHeader>
-                            <CardTitle>Download Options</CardTitle>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <Field>
-                              <FieldLabel>Title</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.downloadOptions.h2` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                            <Controller
-                              control={control}
-                              name={
-                                `content.${selectedLanguage}.downloadOptions.p` as any
-                              }
-                              render={({ field }) => (
-                                <Field>
-                                  <FieldLabel>Rich Text Description</FieldLabel>
+                                control={control}
+                                render={({ field }) => (
                                   <TinyEditorRHF
-                                    value={field.value || ""}
+                                    value={field.value}
                                     onChange={field.onChange}
                                   />
-                                </Field>
-                              )}
-                            />
-                            <div className="grid grid-cols-2 gap-2">
+                                )}
+                              />
+                            </Field>
+                            <div className="grid grid-cols-2 gap-4">
                               <Field>
-                                <FieldLabel>App Store URL</FieldLabel>
+                                <FieldLabel>Button Label</FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
                                     {...register(
-                                      `content.${selectedLanguage}.downloadOptions.appStoreLink` as any,
+                                      `content.${selectedLanguage}.BookARide.Button` as any,
                                     )}
+                                    placeholder="Button Label"
                                   />
                                 </InputGroup>
                               </Field>
                               <Field>
-                                <FieldLabel>Play Store URL</FieldLabel>
+                                <FieldLabel>Button Link</FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
                                     {...register(
-                                      `content.${selectedLanguage}.downloadOptions.playStoreLink` as any,
+                                      `content.${selectedLanguage}.BookARide.buttonLink` as any,
                                     )}
+                                    placeholder="Button Link"
                                   />
                                 </InputGroup>
                               </Field>
                             </div>
+                          </CardContent>
+                        </CardBody>
+                      </Card>
+
+                      {/* Download Options (Section 11) */}
+                      <Card>
+                        <CardBody>
+                          <CardHeader>
+                            <CardTitle>Download Options (Section 11)</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <Field>
+                              <FieldLabel>Heading</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.DownloadOptions.Heading` as any,
+                                  )}
+                                  placeholder="Heading"
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Description</FieldLabel>
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.DownloadOptions.Description` as any
+                                }
+                                control={control}
+                                render={({ field }) => (
+                                  <TinyEditorRHF
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                  />
+                                )}
+                              />
+                            </Field>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                {/* <Field><FieldLabel>Main Image</FieldLabel> */}
+                                <Controller
+                                  name={
+                                    `content.${selectedLanguage}.DownloadOptions.image.src` as any
+                                  }
+                                  control={control}
+                                  render={({ field }) => (
+                                    <UploadWithUrl
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      title="Main Image"
+                                    />
+                                  )}
+                                />
+                                {/* </Field> */}
+                                <Field>
+                                  <FieldLabel>Image Alt Text</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.DownloadOptions.image.alt` as any,
+                                      )}
+                                      placeholder="Main Image Alt"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                              </div>
+                              <div>
+                                {/* <Field><FieldLabel>QR Image</FieldLabel> */}
+                                <Controller
+                                  name={
+                                    `content.${selectedLanguage}.DownloadOptions.qrImage.src` as any
+                                  }
+                                  control={control}
+                                  render={({ field }) => (
+                                    <UploadWithUrl
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      title="QR Image"
+                                    />
+                                  )}
+                                />
+                                {/* </Field> */}
+                                <Field>
+                                  <FieldLabel>QR Image Alt Text</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.DownloadOptions.QRAlt` as any,
+                                      )}
+                                      placeholder="QR Image Alt"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                              </div>
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between">
+                              <h4 className="font-bold">App Buttons</h4>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  appList.append({
+                                    image: "",
+                                    url: "",
+                                    alt: "",
+                                  })
+                                }
+                              >
+                                Add App
+                              </Button>
+                            </div>
+                            <div className="space-y-2">
+                              {appList.fields.map((field, idx) => (
+                                <Card key={field.id}>
+                                  <CardBody className="p-4 space-y-3">
+                                    <div className="flex-1 space-y-2">
+                                      <Controller
+                                        name={
+                                          `content.${selectedLanguage}.DownloadOptions.apps.${idx}.image` as any
+                                        }
+                                        control={control}
+                                        render={({ field }) => (
+                                          <UploadWithUrl
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            title="Store Icon"
+                                          />
+                                        )}
+                                      />
+                                      <Field>
+                                        <FieldLabel>URL</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.DownloadOptions.apps.${idx}.url` as any,
+                                            )}
+                                            placeholder="URL"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <Field>
+                                        <FieldLabel>Alt</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.DownloadOptions.apps.${idx}.alt` as any,
+                                            )}
+                                            placeholder="Alt"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                    </div>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => appList.remove(idx)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                  </CardBody>
+                                </Card>
+                              ))}
+                            </div>
+                            <Separator />
+                            <div className="flex justify-between">
+                              <h4 className="font-bold">List Items</h4>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  downloadList.append({ value: "" })
+                                }
+                              >
+                                Add Item
+                              </Button>
+                            </div>
+                            <div className="space-y-2">
+                              {downloadList.fields.map((field, idx) => (
+                                <Card key={field.id}>
+                                  <CardBody className="p-4 space-y-3">
+                                    <Field>
+                                      <FieldLabel>Feature Item</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.DownloadOptions.list.${idx}.value` as any,
+                                          )}
+                                          placeholder="Feature Item"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => downloadList.remove(idx)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                  </CardBody>
+                                </Card>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </CardBody>
+                      </Card>
+
+                      {/* Testimonial */}
+                      <Card>
+                        <CardBody>
+                          <CardHeader>
+                            <CardTitle>Testimonials</CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <InputGroup>
+                              <InputGroupInput
+                                {...register(
+                                  `content.${selectedLanguage}.Testimonial.Heading` as any,
+                                )}
+                                placeholder="Heading"
+                              />
+                            </InputGroup>
                             <Controller
                               name={
-                                `content.${selectedLanguage}.downloadOptions.image.src` as any
+                                `content.${selectedLanguage}.Testimonial.src` as any
                               }
                               control={control}
                               render={({ field }) => (
                                 <UploadWithUrl
                                   value={field.value}
                                   onChange={field.onChange}
-                                  title="Mobile Mockup/Image"
+                                  title="Main Image"
                                 />
                               )}
                             />
-                            <Field>
-                              <FieldLabel>Image Alt Text</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.downloadOptions.image.alt` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...register(
+                                  `content.${selectedLanguage}.Testimonial.alt` as any,
+                                )}
+                                placeholder="Image Alt"
+                              />
+                            </InputGroup>
+
+                            <div className="flex justify-between mt-4">
+                              <h4 className="font-bold">Testimonial Cards</h4>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  testimonialCards.append({
+                                    rating: "",
+                                    Quote: "",
+                                    Name: "",
+                                    Position: "",
+                                    alt: "",
+                                    src: "",
+                                  })
+                                }
+                              >
+                                Add Testimonial
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-1 gap-4">
+                              {testimonialCards.fields.map((field, idx) => (
+                                <Card
+                                  key={field.id}
+                                  className="border border-muted"
+                                >
+                                  <CardContent className="p-4 space-y-2">
+                                    <div className="flex justify-between">
+                                      <span className="font-bold">
+                                        Testimonial #{idx + 1}
+                                      </span>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() =>
+                                          testimonialCards.remove(idx)
+                                        }
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <Field>
+                                        <FieldLabel>Name</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.Testimonial.TestimonialCards.${idx}.Name` as any,
+                                            )}
+                                            placeholder="Name"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <Field>
+                                        <FieldLabel>Position</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.Testimonial.TestimonialCards.${idx}.Position` as any,
+                                            )}
+                                            placeholder="Position"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                    </div>
+                                    <Field>
+                                      <FieldLabel>Quote</FieldLabel>
+                                      <InputGroup>
+                                        <Textarea
+                                          {...register(
+                                            `content.${selectedLanguage}.Testimonial.TestimonialCards.${idx}.Quote` as any,
+                                          )}
+                                          placeholder="Quote"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>Rating</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.Testimonial.TestimonialCards.${idx}.rating` as any,
+                                          )}
+                                          placeholder="Rating (1-5)"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Controller
+                                      name={
+                                        `content.${selectedLanguage}.Testimonial.TestimonialCards.${idx}.src` as any
+                                      }
+                                      control={control}
+                                      render={({ field }) => (
+                                        <UploadWithUrl
+                                          value={field.value}
+                                          onChange={field.onChange}
+                                          title="Avatar"
+                                        />
+                                      )}
+                                    />
+                                    <Field>
+                                      <FieldLabel>Avatar Alt</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.Testimonial.TestimonialCards.${idx}.alt` as any,
+                                          )}
+                                          placeholder="Avatar Alt"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
                           </CardContent>
                         </CardBody>
                       </Card>
 
-                      {/* FAQ Section */}
+                      {/* FAQ (Section 12) */}
                       <Card>
                         <CardBody>
                           <CardHeader>
-                            <CardTitle>FAQs</CardTitle>
+                            <CardTitle>FAQs (Section 12)</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-4">
+                            <Field>
+                              <FieldLabel>Heading</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.FAQ.Heading` as any,
+                                  )}
+                                  placeholder="Heading"
+                                />
+                              </InputGroup>
+                            </Field>
                             <div className="grid grid-cols-2 gap-4">
-                              <Field>
-                                <FieldLabel>Eyebrow</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.faq.eyebrow` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
                               <Field>
                                 <FieldLabel>Title</FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
                                     {...register(
-                                      `content.${selectedLanguage}.faq.title` as any,
+                                      `content.${selectedLanguage}.FAQ.title` as any,
                                     )}
+                                    placeholder="Title"
                                   />
                                 </InputGroup>
                               </Field>
+                              <Field>
+                                <FieldLabel>Description</FieldLabel>
+                                <Controller
+                                  name={
+                                    `content.${selectedLanguage}.FAQ.description` as any
+                                  }
+                                  control={control}
+                                  render={({ field }) => (
+                                    <TinyEditorRHF
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                    />
+                                  )}
+                                />
+                              </Field>
                             </div>
-                            <Field>
-                              <FieldLabel>Description</FieldLabel>
-                              <Textarea
-                                {...register(
-                                  `content.${selectedLanguage}.faq.description` as any,
-                                )}
-                              />
-                            </Field>
                             <div className="grid grid-cols-2 gap-4">
                               <Field>
                                 <FieldLabel>CTA Label</FieldLabel>
                                 <InputGroup>
                                   <InputGroupInput
                                     {...register(
-                                      `content.${selectedLanguage}.faq.cta.label` as any,
+                                      `content.${selectedLanguage}.FAQ.cta.label` as any,
                                     )}
+                                    placeholder="CTA Label"
                                   />
                                 </InputGroup>
                               </Field>
@@ -1413,183 +2239,80 @@ export default function HomeForm({
                                 <InputGroup>
                                   <InputGroupInput
                                     {...register(
-                                      `content.${selectedLanguage}.faq.cta.href` as any,
+                                      `content.${selectedLanguage}.FAQ.cta.href` as any,
                                     )}
+                                    placeholder="CTA Link"
                                   />
                                 </InputGroup>
                               </Field>
                             </div>
                             <Separator />
+                            <div className="flex justify-between">
+                              <h4 className="font-bold">FAQ Items</h4>
+                              <Button
+                                type="button"
+                                size="sm"
+                                onClick={() =>
+                                  faqItems.append({ Question: "", Answer: "" })
+                                }
+                              >
+                                Add Item
+                              </Button>
+                            </div>
                             <div className="space-y-4">
-                              <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-medium">
-                                  FAQ Cards
-                                </h3>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  onClick={() =>
-                                    faqCards.append({
-                                      question: "",
-                                      answer: "",
-                                    })
-                                  }
+                              {faqItems.fields.map((field, idx) => (
+                                <Card
+                                  key={field.id}
+                                  className="border border-muted"
                                 >
-                                  Add FAQ
-                                </Button>
-                              </div>
-                              <div className="space-y-4">
-                                {faqCards.fields.map((field, index) => (
-                                  <Card
-                                    key={field.id}
-                                    className="border-dashed"
-                                  >
-                                    <CardContent className="p-4 space-y-3">
-                                      <div className="flex justify-between items-center bg-gray-50 -mx-4 -mt-4 p-2 rounded-t">
-                                        <span className="text-xs font-bold text-gray-400 px-2">
-                                          FAQ #{index + 1}
-                                        </span>
-                                        <Button
-                                          type="button"
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() => faqCards.remove(index)}
-                                        >
-                                          <Trash2 className="w-4 h-4 text-red-500" />
-                                        </Button>
-                                      </div>
-                                      <Field>
-                                        <FieldLabel>Question</FieldLabel>
-                                        <InputGroup>
-                                          <InputGroupInput
-                                            {...register(
-                                              `content.${selectedLanguage}.faq.faqCards.${index}.question` as any,
-                                            )}
-                                          />
-                                        </InputGroup>
-                                      </Field>
-                                      <Field>
-                                        <FieldLabel>Answer</FieldLabel>
-                                        <Textarea
+                                  <CardContent className="p-4 space-y-2">
+                                    <div className="flex justify-between">
+                                      <span className="font-bold">
+                                        FAQ #{idx + 1}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => faqItems.remove(idx)}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <Field>
+                                      <FieldLabel>Question</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.faq.faqCards.${index}.answer` as any,
+                                            `content.${selectedLanguage}.FAQ.items.${idx}.Question` as any,
                                           )}
+                                          placeholder="Question"
                                         />
-                                      </Field>
-                                    </CardContent>
-                                  </Card>
-                                ))}
-                              </div>
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>Answer</FieldLabel>
+                                      <Controller
+                                        name={
+                                          `content.${selectedLanguage}.FAQ.items.${idx}.Answer` as any
+                                        }
+                                        control={control}
+                                        render={({ field }) => (
+                                          <TinyEditorRHF
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                          />
+                                        )}
+                                      />
+                                    </Field>
+                                  </CardContent>
+                                </Card>
+                              ))}
                             </div>
                           </CardContent>
                         </CardBody>
                       </Card>
                     </div>
-
-                    {/* Testimonial */}
-                    <Card>
-                      <CardBody>
-                        <CardHeader>
-                          <CardTitle>Testimonial Section</CardTitle>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div className="space-y-4 border-r pr-6">
-                            <h4 className="font-bold underline">
-                              Author Details
-                            </h4>
-                            <Field>
-                              <FieldLabel>Card Heading</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.testimonial.testimonialCard.h2` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                            <Field>
-                              <FieldLabel>Quote Text</FieldLabel>
-                              <Textarea
-                                {...register(
-                                  `content.${selectedLanguage}.testimonial.testimonialCard.Quote` as any,
-                                )}
-                              />
-                            </Field>
-                            <div className="grid grid-cols-2 gap-2">
-                              <Field>
-                                <FieldLabel>Name</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.testimonial.testimonialCard.Name` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>Position</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...register(
-                                      `content.${selectedLanguage}.testimonial.testimonialCard.Position` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                            </div>
-                            <Controller
-                              name={
-                                `content.${selectedLanguage}.testimonial.testimonialCard.src` as any
-                              }
-                              control={control}
-                              render={({ field }) => (
-                                <UploadWithUrl
-                                  value={field.value}
-                                  onChange={field.onChange}
-                                  title="Author Avatar"
-                                />
-                              )}
-                            />
-                            <Field>
-                              <FieldLabel>Avatar Alt Text</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.testimonial.testimonialCard.alt` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                          </div>
-                          <div className="space-y-4">
-                            <h4 className="font-bold underline">Main Visual</h4>
-                            <Controller
-                              name={
-                                `content.${selectedLanguage}.testimonial.image.src` as any
-                              }
-                              control={control}
-                              render={({ field }) => (
-                                <UploadWithUrl
-                                  value={field.value}
-                                  onChange={field.onChange}
-                                  title="Large Section Image"
-                                />
-                              )}
-                            />
-                            <Field>
-                              <FieldLabel>Section Image Alt Text</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...register(
-                                    `content.${selectedLanguage}.testimonial.image.alt` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                          </div>
-                        </CardContent>
-                      </CardBody>
-                    </Card>
                   </div>
                 )}
 

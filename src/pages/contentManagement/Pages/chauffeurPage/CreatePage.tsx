@@ -13,20 +13,19 @@ export default function CreatePage() {
 
   const handleCreateChauffeur = (data: any) => {
     try {
-      toastPromise(
-        createChauffeurMutation.mutateAsync({ ...data, category: "chauffeur" }),
-        {
-          loading: "Creating chauffeur page...",
-          success: () => {
-            navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-            return "Chauffeur page created successfully!";
-          },
-          error: (e) =>
-            e instanceof AxiosError
-              ? e.response?.data?.message || "Failed to create chauffeur page"
-              : "Failed to create chauffeur page",
+      data.append("pageName", "Chauffeur");
+      data.append("category", "chauffeur");
+      toastPromise(createChauffeurMutation.mutateAsync(data), {
+        loading: "Creating chauffeur page...",
+        success: () => {
+          navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+          return "Chauffeur page created successfully!";
         },
-      );
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.message || "Failed to create chauffeur page"
+            : "Failed to create chauffeur page",
+      });
     } catch (error) {
       console.error("Create chauffeur error:", error);
     }

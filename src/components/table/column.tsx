@@ -3874,3 +3874,178 @@ export function getBlogColumns(
     },
   ];
 }
+
+export type TServicePricing = {
+  id: string;
+  regionId: string;
+  country: string;
+  city: string;
+  serviceType: string;
+  vehicleId: string;
+  ratePerHour: number;
+  minHours: number;
+  basePrice: number;
+  minimumFare: number;
+  status: string;
+  pricingLevel: string;
+  rateValidFrom: string;
+  rateValidTo: string;
+  region?: {
+    id: string;
+    regionName: string;
+  };
+  vehicle?: {
+    id: string;
+    vehicleType: string;
+    brand?: string;
+    model?: string;
+  };
+};
+
+export function getServicePricing(
+  onEdit: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TServicePricing>[] {
+  return [
+    {
+      id: "select",
+      header: ({ table }) => <SelectHeaderCheckbox table={table} />,
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "region.regionName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Region" />
+      ),
+      cell: ({ row }) => <span>{row.original?.region?.regionName || "-"}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "city",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="City" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "serviceType",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Service Type" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "vehicle.vehicleType",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Vehicle Type" />
+      ),
+      cell: ({ row }) => (
+        <span>{row.original?.vehicle?.vehicleType || "-"}</span>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "basePrice",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Base Price" />
+      ),
+      cell: ({ row }) => <span>${row.original.basePrice}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "ratePerHour",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Rate/Hour" />
+      ),
+      cell: ({ row }) => <span>${row.original.ratePerHour}</span>,
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => (
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "")}
+          className="capitalize"
+        >
+          <span>{row.original.status}</span>
+        </Badge>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "action",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <PermissionGate permission="manageServicePricing" action="update">
+            <Button
+              onClick={() => onEdit(row.original.id)}
+              variant="outlineNavBtnPrimary"
+              size="xl"
+              spacing="lg"
+              tooltip="Edit Service Pricing"
+            >
+              <Edit />
+            </Button>
+          </PermissionGate>
+          <PermissionGate permission="manageServicePricing" action="delete">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete Service Pricing"
+                >
+                  <Trash2 />
+                </Button>
+              </DialogTrigger>
+              <DialogContent
+                className="w-full sm:max-w-sm"
+                onOpenAutoFocus={(e) => e.preventDefault()}
+              >
+                <DialogHeader>
+                  <DialogTitle>Delete Service Pricing</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this service pricing? This
+                    action cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Are you absolutely sure?</strong> This action cannot
+                    be undone.
+                  </p>
+                </div>
+                <DialogFooter>
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive"
+                  >
+                    Confirm Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </PermissionGate>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ];
+}

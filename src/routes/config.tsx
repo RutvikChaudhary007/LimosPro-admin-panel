@@ -44,6 +44,17 @@ const EditRegionAdmin = lazy(
   () => import("../pages/regionAdmin/formpage/EditRegionAdmin"),
 );
 
+// Service Pricing
+const ServicePricingPage = lazy(
+  () => import("../pages/servicePricing/servicePricing"),
+);
+const AddServicePricing = lazy(
+  () => import("../pages/servicePricing/formPage/CreateServicePricingPage"),
+);
+const EditServicePricing = lazy(
+  () => import("../pages/servicePricing/formPage/EditServicePricingPage"),
+);
+
 // Partner
 
 const PartnerPage = lazy(() => import("../pages/partner/PartnerPage"));
@@ -408,7 +419,26 @@ export const routesConfig = [
       },
     ],
   },
-
+  {
+    layout: "protected",
+    module: "servicePricing",
+    permission: "setRegionPricing",
+    action: "view",
+    routes: [
+      {
+        path: constant.ROUTING_URLS.SERVICE_PRICING,
+        element: ServicePricingPage,
+      },
+      {
+        path: constant.ROUTING_URLS.CREATE_SERVICE_PRICING,
+        element: AddServicePricing,
+      },
+      {
+        path: constant.ROUTING_URLS.EDIT_SERVICE_PRICING,
+        element: EditServicePricing,
+      },
+    ],
+  },
   {
     layout: "protected",
 
