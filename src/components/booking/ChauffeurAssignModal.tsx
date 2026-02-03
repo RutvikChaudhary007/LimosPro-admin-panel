@@ -37,7 +37,7 @@ export const ChauffeurAssignModal = ({
       partnerId?: string;
     }) => {
       if (data.bookingId === bookingId) {
-        toast.success("Booking accepted by partner");
+        toast.success("Booking accepted by chauffuer");
         onOpenChange(false);
       }
     };
@@ -48,7 +48,7 @@ export const ChauffeurAssignModal = ({
       reason?: string;
     }) => {
       if (data.bookingId === bookingId) {
-        toast.error(data.reason || "Booking rejected by partner");
+        toast.error(data.reason || "Booking rejected by chauffuer");
       }
     };
 
