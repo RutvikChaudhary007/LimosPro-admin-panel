@@ -293,4 +293,6 @@ export const API_ENDPOINTS: Record<string, any> = {
     REMOVE_PERMISSION: `${ADMIN_SERVICE_URL}/region-permissions/:regionId/permissions/:permissionId`,
     SYNC_TO_USERS: `${ADMIN_SERVICE_URL}/region-permissions/:regionId/sync-to-users`,
   },
+  PARTNER_ASSIGN_CHAUFFEUR: (id: string) =>
+    `${BOOKING_SERVICE_URL}/booking/${id}/auto-dispatch-partner`,
 };

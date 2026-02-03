@@ -256,3 +256,22 @@ export const useCreateBookingNote = () => {
     },
   });
 };
+
+export const assignChauffeurs = async (id: string) => {
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.PARTNER_ASSIGN_CHAUFFEUR(id),
+  );
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * assignchauffeur
+ */
+export const useAssignChauffeurs = () => {
+  return useMutation({
+    mutationFn: (id: string) => assignChauffeurs(id),
+    onSuccess: (_data) => {
+      // toast.success("Chauffeur assigned successfully",_data);
+    },
+  });
+};

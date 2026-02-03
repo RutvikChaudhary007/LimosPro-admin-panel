@@ -15,7 +15,6 @@
 import {
   IconCar,
   IconChartBar,
-  IconCoin,
   IconDatabase,
   IconFileWord,
   IconHeartHandshake,

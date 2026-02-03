@@ -12,6 +12,7 @@ import {
   useFetchBookingHistory,
   useFetchBookingNotes,
 } from "@/api";
+import { ChauffeurAssignModal } from "@/components/booking/ChauffeurAssignModal";
 import { PartnerAssignModal } from "@/components/booking/PartnerAssignModal";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { EmptyDataState } from "@/components/EmptyDataState";
@@ -46,6 +47,9 @@ const ViewBookingPage = () => {
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
   );
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  console.log("user:", user?.roles);
+  // console.log("user:",user?.roles?.includes("Super Admin"))
   const [Locations, setLocations] = useState<{
     pickUpAddress: string;
     dropOffAddress: string;
@@ -343,7 +347,7 @@ const ViewBookingPage = () => {
                 <div className="flex gap-2">
                   {data?.trip?.tripType === "scheduled" &&
                     typeof data?.status === "string" &&
-                    ["created", "booked"].includes(
+                    ["created", "booked", "assigned"].includes(
                       data?.status?.toLowerCase(),
                     ) && (
                       <Button
@@ -677,11 +681,22 @@ const ViewBookingPage = () => {
           </CardBody>
         </Card>
       )}
-      <PartnerAssignModal
-        isOpen={isAssignModalOpen}
-        onOpenChange={setIsAssignModalOpen}
-        bookingId={id || ""}
-      />
+      {user?.roles?.includes("Super Admin") ||
+      user?.roles?.includes("Regional Admin") ? (
+        <PartnerAssignModal
+          isOpen={isAssignModalOpen}
+          onOpenChange={setIsAssignModalOpen}
+          bookingId={id || ""}
+        />
+      ) : (
+        user?.roles.includes("Partner") && (
+          <ChauffeurAssignModal
+            isOpen={isAssignModalOpen}
+            onOpenChange={setIsAssignModalOpen}
+            bookingId={id || ""}
+          />
+        )
+      )}
     </div>
   );
 };
