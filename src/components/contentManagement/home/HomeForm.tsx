@@ -1107,11 +1107,11 @@ export default function HomeForm({
                               </InputGroup>
                             </Field>
                             <Field>
-                              <FieldLabel>Top Cities</FieldLabel>
+                              <FieldLabel>Top Routes</FieldLabel>
                               <InputGroup>
                                 <InputGroupInput
                                   {...register(
-                                    `content.${selectedLanguage}.CityRoutes.topCities` as any,
+                                    `content.${selectedLanguage}.CityRoutes.topRoutes` as any,
                                   )}
                                 />
                               </InputGroup>
