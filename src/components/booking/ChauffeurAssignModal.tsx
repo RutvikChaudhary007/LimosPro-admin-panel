@@ -77,17 +77,17 @@ export const ChauffeurAssignModal = ({
       }
     };
 
-    socket.on("bookingAccepted", handleBookingAccepted);
-    socket.on("bookingRejected", handleBookingRejected);
+    socket.on("acceptBooking", handleBookingAccepted);
+    socket.on("rejectBooking", handleBookingRejected);
     socket.on("bookingCancelled", handleBookingCancelled);
-    socket.on("assignmentTimeout", handleTimeout);
+    socket.on("timeout", handleTimeout);
     socket.on("bookingError", handleBookingError);
 
     return () => {
-      socket.off("bookingAccepted", handleBookingAccepted);
-      socket.off("bookingRejected", handleBookingRejected);
+      socket.off("acceptBooking", handleBookingAccepted);
+      socket.off("rejectBooking", handleBookingRejected);
       socket.off("bookingCancelled", handleBookingCancelled);
-      socket.off("assignmentTimeout", handleTimeout);
+      socket.off("timeout", handleTimeout);
       socket.off("bookingError", handleBookingError);
     };
   }, [socket, bookingId, onOpenChange]);
