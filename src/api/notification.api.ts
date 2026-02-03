@@ -47,10 +47,21 @@ export interface IUpdateNotificationPayload {
   metadata?: Record<string, any>;
 }
 
+export interface INotificationsListData {
+  notifications: INotification[];
+  total: number;
+}
+
 export interface INotificationResponse {
   success: boolean;
-  data: INotification | INotification[];
+  data: INotification | INotification[] | INotificationsListData;
   message?: string;
+}
+
+export interface IGetNotificationsFilters {
+  isRead?: boolean;
+  type?: string;
+  category?: string;
 }
 
 // ============================================
@@ -64,12 +75,16 @@ export const getAllNotifications = async (
   userId: string,
   limit?: number,
   skip?: number,
+  filters?: IGetNotificationsFilters,
 ) => {
   try {
     const params: Record<string, any> = { userId };
 
     if (limit !== undefined) params.limit = limit;
     if (skip !== undefined) params.skip = skip;
+    if (filters?.isRead !== undefined) params.isRead = String(filters.isRead);
+    if (filters?.type !== undefined) params.type = filters.type;
+    if (filters?.category !== undefined) params.category = filters.category;
 
     const response = await axiosInstance.get<INotificationResponse>(
       API_ENDPOINTS.NOTIFICATION.GET_ALL,
@@ -90,10 +105,17 @@ export const useGetAllNotifications = (
   limit?: number,
   skip?: number,
   enabled: boolean = true,
+  filters?: IGetNotificationsFilters,
 ) => {
   return useQuery({
-    queryKey: ["notifications", userId, limit, skip],
-    queryFn: () => getAllNotifications(userId, limit, skip),
+    queryKey: [
+      "notifications",
+      userId,
+      limit,
+      skip,
+      filters ? JSON.stringify(filters) : "",
+    ],
+    queryFn: () => getAllNotifications(userId, limit, skip, filters),
     enabled: enabled && !!userId,
     staleTime: 1000 * 60 * 5,
   });

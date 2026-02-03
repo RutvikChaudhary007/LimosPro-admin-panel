@@ -24,6 +24,7 @@ export function NotificationsDrawer() {
     setIsDrawerOpen,
     notifications,
     setNotifications,
+    unreadCount,
     isFetching,
     markAllAsRead,
   } = useNotifications();
@@ -39,9 +40,9 @@ export function NotificationsDrawer() {
           <Button variant="outlineNavBtnBlack" size="xl" spacing="lg">
             <IconBell />
           </Button>
-          {notifications.filter((n) => !n.isRead).length > 0 && (
+          {unreadCount > 0 && (
             <Badge className="absolute -right-1 -top-1 p-0 size-5">
-              {notifications.filter((n) => !n.isRead).length}
+              {unreadCount}
             </Badge>
           )}
         </div>

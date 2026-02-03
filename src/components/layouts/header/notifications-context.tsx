@@ -17,6 +17,7 @@ interface NotificationsContextType {
   setIsDrawerOpen: (open: boolean) => void;
   notifications: INotification[];
   setNotifications: (notifications: INotification[]) => void;
+  unreadCount: number;
   isFetching: boolean;
   markAllAsRead: () => Promise<void>;
 }
@@ -46,12 +47,21 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { user } = useUserStore();
   const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const userId = user?.id || "";
 
   // Fetch notifications
   const { data: notificationsResponse, isLoading: isFetching } =
-    useGetAllNotifications(userId, 10, 0, !!userId);
+    useGetAllNotifications(userId, 50, 0, !!userId);
+
+  const { data: unreadCountResponse } = useGetAllNotifications(
+    userId,
+    1,
+    0,
+    !!userId,
+    { isRead: false },
+  );
 
   // Mark all as read mutation
   const { mutateAsync: markAllAsReadMutation } =
@@ -67,6 +77,17 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     }
   }, [notificationsResponse]);
 
+  useEffect(() => {
+    if (!unreadCountResponse?.data) return;
+
+    if (Array.isArray(unreadCountResponse.data)) {
+      setUnreadCount(unreadCountResponse.data.filter((n) => !n.isRead).length);
+      return;
+    }
+
+    setUnreadCount((unreadCountResponse.data as any)?.total || 0);
+  }, [unreadCountResponse]);
+
   const markAllAsRead = async () => {
     try {
       await markAllAsReadMutation(userId);
@@ -77,6 +98,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
           isRead: true,
         })),
       );
+      setUnreadCount(0);
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
     }
@@ -89,6 +111,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         setIsDrawerOpen,
         notifications,
         setNotifications,
+        unreadCount,
         isFetching,
         markAllAsRead,
       }}
@@ -110,6 +133,7 @@ export function useNotifications() {
       setIsDrawerOpen: () => {},
       notifications: [],
       setNotifications: () => {},
+      unreadCount: 0,
       isFetching: false,
       markAllAsRead: async () => {},
     };
