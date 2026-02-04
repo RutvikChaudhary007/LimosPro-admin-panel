@@ -48,7 +48,7 @@ const ViewBookingPage = () => {
     env?.VITE_GOOGLE_MAP_KEY ?? "",
   );
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  console.log("user:", user?.roles);
+  // console.log("user:", user?.roles);
   // console.log("user:",user?.roles?.includes("Super Admin"))
   const [Locations, setLocations] = useState<{
     pickUpAddress: string;

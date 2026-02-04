@@ -1,31 +1,36 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  useNavigate,
-  // useParams
-} from "react-router-dom";
-// import {
-//   useFetchBusinessPageLayoutById,
-//   useUpdateBusinessPageLayout,
-// } from "@/api";
-// import { ErrorCard } from "@/components/common/ErrorCard";
+  useFetchHomePageById,
+  useUpdateHomePage,
+} from "@/api/pages/homePage.api";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import HomeForm from "@/components/contentManagement/home/HomeForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { Spinner } from "@/components/Spinner";
 // import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 
 export default function EditPage() {
-  // const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
+  const {
+    data: homePageData,
+    isFetching,
+    isError,
+    refetch,
+  } = useFetchHomePageById(id as string);
+  const updateHomeMutation = useUpdateHomePage();
   const handleSubmit = (data: any) => {
     try {
       toastPromise(
-        new Promise<unknown>((resolve) => {
-          resolve(data);
+        updateHomeMutation.mutateAsync({
+          id: id as string,
+          data,
         }),
         {
           loading: "Updating home page...",
@@ -44,7 +49,7 @@ export default function EditPage() {
     }
   };
 
-  //   if (isError) return <ErrorCard refetch={refetch} />;
+  if (isError) return <ErrorCard refetch={refetch} />;
 
   return (
     <>
@@ -71,11 +76,15 @@ export default function EditPage() {
             link: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
           }}
         />
-        {/* {isFetching ? (
+        {isFetching ? (
           <Spinner />
-        ) : ( */}
-        <HomeForm initialData={{}} onSubmit={handleSubmit} type="Update Home" />
-        {/* )} */}
+        ) : (
+          <HomeForm
+            initialData={homePageData}
+            onSubmit={handleSubmit}
+            type="Update Home"
+          />
+        )}
       </div>
     </>
   );
