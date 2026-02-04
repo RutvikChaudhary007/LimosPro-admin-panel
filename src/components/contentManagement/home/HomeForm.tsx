@@ -266,6 +266,14 @@ const normalizeHomeData = (data: any): HomeFormData => {
     sharedSeo = getEmptySeo();
   }
 
+  // Ensure nested SEO objects exist to prevent validation errors
+  if (!sharedSeo.openGraph) {
+    sharedSeo.openGraph = {};
+  }
+  if (!sharedSeo.twitter) {
+    sharedSeo.twitter = {};
+  }
+
   if (
     sharedJsonLd &&
     !Array.isArray(sharedJsonLd) &&

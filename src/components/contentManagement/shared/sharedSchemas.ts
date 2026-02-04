@@ -24,8 +24,8 @@ export const seoSchema = z.object({
   metaDescription: z.string().optional(),
   metaKeywords: z.array(z.string()).default([]),
   canonicalUrl: z.string().optional(),
-  openGraph: openGraphSchema,
-  twitter: twitterSchema,
+  openGraph: openGraphSchema.optional().default({}),
+  twitter: twitterSchema.optional().default({}),
 });
 
 export const jsonLdItemSchema = z.object({
