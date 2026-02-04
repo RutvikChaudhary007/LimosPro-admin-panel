@@ -14,7 +14,7 @@ export default function CreatePage() {
   const handleCreateChauffeur = (data: any) => {
     try {
       data.append("pageName", "Chauffeur");
-      data.append("category", "chauffeur");
+      data.append("slug", "chauffeur");
       toastPromise(createChauffeurMutation.mutateAsync(data), {
         loading: "Creating chauffeur page...",
         success: () => {
