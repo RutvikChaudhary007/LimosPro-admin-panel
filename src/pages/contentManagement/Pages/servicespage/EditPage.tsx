@@ -44,7 +44,7 @@ export default function EditPage() {
       console.error(error);
     }
   };
-  console.log("serviceData", serviceData);
+  // console.log("serviceData", serviceData);
   if (isError) return <ErrorCard refetch={refetch} />;
 
   return (

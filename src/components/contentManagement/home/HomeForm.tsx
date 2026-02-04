@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2, Globe, Plane, Route, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -350,11 +350,26 @@ export default function HomeForm({
   const form = useForm<HomeFormData>({
     resolver: zodResolver(multiLangHomeSchema) as any,
     defaultValues: normalizedData,
-    mode: "all",
+    mode: "onSubmit",
   });
 
-  const { control, register, handleSubmit, watch, setValue, getValues } = form;
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = form;
   const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
+
+  // Debug: Log validation errors in production
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.error("HomeForm validation errors:", errors);
+    }
+  }, [errors]);
 
   // const formData = watch();
   const availableLanguages = watch("availableLanguages") || ["en"];
@@ -415,8 +430,9 @@ export default function HomeForm({
   });
 
   const onHandleSubmit = (data: HomeFormData) => {
+    console.log("onHandleSubmit called with data:", data);
+
     // Deep copy to avoid mutating state, using structuredClone to preserve File objects
-    console.log("data==>", data);
     const submissionData = structuredClone(data);
 
     // Convert DownloadOptions.list back to string array for all languages
