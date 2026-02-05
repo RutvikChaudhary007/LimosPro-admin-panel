@@ -1,11 +1,15 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { ErrorCard } from "@/components/common/ErrorCard";
+import {
+  useFetchChauffeurPageById,
+  useUpdateChauffeurPage,
+} from "@/api/pages/chauffeurPage.api";
+import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
 import ChauffeurForm from "@/components/contentManagement/chauffeur/ChauffeurForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
-// import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/Spinner";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
@@ -13,26 +17,35 @@ import { generatePageTitle } from "@/utils/seo";
 export default function EditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  console.log(id);
+  const {
+    data: pageData,
+    isFetching,
+    isError,
+    refetch,
+  } = useFetchChauffeurPageById(id || "");
+  const updateChauffeurPageMutation = useUpdateChauffeurPage();
   const handleSubmit = (data: any) => {
     try {
-      toastPromise(Promise.resolve(data), {
-        loading: "Updating chauffeur page...",
-        success: () => {
-          navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-          return "Chauffeur page updated successfully";
+      toastPromise(
+        updateChauffeurPageMutation.mutateAsync({ id: id || "", data }),
+        {
+          loading: "Updating chauffeur page...",
+          success: () => {
+            navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+            return "Chauffeur page updated successfully";
+          },
+          error: (e) =>
+            e instanceof AxiosError
+              ? e.response?.data?.message
+              : "Failed to update chauffeur page",
         },
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.message
-            : "Failed to update chauffeur page",
-      });
+      );
     } catch (error) {
       console.error(error);
     }
   };
 
-  // if (isError) return <ErrorCard refetch={refetch} />;
+  if (isError) return <ErrorCard refetch={refetch} />;
 
   return (
     <>
@@ -55,15 +68,15 @@ export default function EditPage() {
             link: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
           }}
         />
-        {/* {isFetching ? (
+        {isFetching ? (
           <Spinner />
-        ) : ( */}
-        <ChauffeurForm
-          initialData={{}}
-          onSubmit={handleSubmit}
-          type="Update Chauffeur"
-        />
-        {/* )} */}
+        ) : (
+          <ChauffeurForm
+            initialData={pageData || {}}
+            onSubmit={handleSubmit}
+            type="Update Chauffeur"
+          />
+        )}
       </div>
     </>
   );
