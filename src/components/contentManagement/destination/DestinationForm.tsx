@@ -30,6 +30,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea"; // Added import
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import UploadWithUrl from "@/components/ui/upload-with-url";
@@ -105,9 +106,9 @@ const multiLangDestinationSchema = z.object({
   premiumFleet: z.record(
     z.string(),
     z.object({
-      p1: z.string().optional(),
-      p2: z.string().optional(),
+      h1: z.string().optional(),
       h2: z.string().optional(),
+      p: z.string().optional(),
       priceCards: z
         .array(
           z.object({
@@ -117,6 +118,8 @@ const multiLangDestinationSchema = z.object({
             priceInfo: z.string().optional(),
             rating: z.string().optional(),
             CarInfo: z.string().optional(),
+            btn: z.string().optional(),
+            btnLink: z.string().optional(),
             features: z.array(z.string()).optional(),
           }),
         )
@@ -137,6 +140,7 @@ const multiLangDestinationSchema = z.object({
   faq: z.record(
     z.string(),
     z.object({
+      heading: z.string().optional(),
       faqCards: z
         .array(
           z.object({
@@ -200,9 +204,9 @@ const getEmptyLanguageContent = () => ({
     },
   },
   premiumFleet: {
-    p1: "",
-    p2: "",
+    h1: "",
     h2: "",
+    p: "",
     priceCards: [],
   },
   bookARide: {
@@ -573,7 +577,7 @@ function LanguageFields({
                     <FieldLabel
                       htmlFor={`${section.id}.${selectedLanguage}.h2`}
                     >
-                      Heading (H2)
+                      Heading
                     </FieldLabel>
                     <InputGroup>
                       <InputGroupInput
@@ -599,6 +603,16 @@ function LanguageFields({
                       )}
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Field className="md:col-span-2">
+                        <FieldLabel>Alt Image Text</FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            {...register(
+                              `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.alt` as any,
+                            )}
+                          />
+                        </InputGroup>
+                      </Field>
                       <Field>
                         <FieldLabel>Title 1</FieldLabel>
                         <InputGroup>
@@ -670,33 +684,31 @@ function LanguageFields({
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel>Paragraph 1</FieldLabel>
+                    <FieldLabel>Heading 1</FieldLabel>
                     <InputGroup>
                       <InputGroupInput
                         {...register(
-                          `premiumFleet.${selectedLanguage}.p1` as any,
+                          `premiumFleet.${selectedLanguage}.h1` as any,
                         )}
                       />
                     </InputGroup>
                   </Field>
                   <Field>
-                    <FieldLabel>Paragraph 2</FieldLabel>
+                    <FieldLabel>Heading 2</FieldLabel>
                     <InputGroup>
                       <InputGroupInput
                         {...register(
-                          `premiumFleet.${selectedLanguage}.p2` as any,
+                          `premiumFleet.${selectedLanguage}.h2` as any,
                         )}
                       />
                     </InputGroup>
                   </Field>
                 </div>
                 <Field>
-                  <FieldLabel>Heading (H2)</FieldLabel>
+                  <FieldLabel>Description</FieldLabel>
                   <InputGroup>
                     <InputGroupInput
-                      {...register(
-                        `premiumFleet.${selectedLanguage}.h2` as any,
-                      )}
+                      {...register(`premiumFleet.${selectedLanguage}.p` as any)}
                     />
                   </InputGroup>
                 </Field>
@@ -794,6 +806,26 @@ function LanguageFields({
                                 />
                               </InputGroup>
                             </Field>
+                            <Field>
+                              <FieldLabel>Button Text</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `premiumFleet.${selectedLanguage}.priceCards.${index}.btn` as any,
+                                  )}
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>Button Link</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `premiumFleet.${selectedLanguage}.priceCards.${index}.btnLink` as any,
+                                  )}
+                                />
+                              </InputGroup>
+                            </Field>
                           </div>
                           <Field>
                             <FieldLabel>Features</FieldLabel>
@@ -878,20 +910,21 @@ function LanguageFields({
             <CardBody>
               <CardHeader>
                 <CardTitle>FAQ</CardTitle>
-                <CardAction>
-                  <Button
-                    type="button"
-                    onClick={() =>
-                      faqCards.append({ id: uid(), question: "", answer: "" })
-                    }
-                    variant="outlinePrimary"
-                    size="sm"
-                  >
-                    Add FAQ
-                  </Button>
-                </CardAction>
               </CardHeader>
               <CardContent className="space-y-4">
+                <Field>
+                  <FieldLabel>FAQ Heading</FieldLabel>
+                  <InputGroup>
+                    <InputGroupInput
+                      {...register(`faq.${selectedLanguage}.heading` as any)}
+                    />
+                  </InputGroup>
+                </Field>
+                <Separator />
+
+                <Field>
+                  <FieldLabel>FAQ Cards</FieldLabel>
+                </Field>
                 {faqCards.fields.map((field, index) => (
                   <Card key={field.id} className="border-dashed">
                     <CardContent className="p-4 space-y-3">
@@ -929,6 +962,19 @@ function LanguageFields({
                     </CardContent>
                   </Card>
                 ))}
+
+                <CardAction>
+                  <Button
+                    type="button"
+                    onClick={() =>
+                      faqCards.append({ id: uid(), question: "", answer: "" })
+                    }
+                    variant="outlinePrimary"
+                    size="sm"
+                  >
+                    Add FAQ
+                  </Button>
+                </CardAction>
               </CardContent>
             </CardBody>
           </Card>
