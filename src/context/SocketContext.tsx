@@ -22,7 +22,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (user?.accessToken) {
-      const baseUrl = env?.VITE_API_USER_SERVICE_URL || "http://localhost:3000";
+      const baseUrl = env?.VITE_API_SOCKET_URL || "http://localhost:3000";
       const socketUrl = baseUrl.replace("/api/v1", "");
 
       const socket = io(socketUrl, {

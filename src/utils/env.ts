@@ -6,6 +6,7 @@ const envSchema = z.object({
   VITE_API_USER_SERVICE_URL: z.url(),
   VITE_API_ADMIN_SERVICE_URL: z.url(),
   VITE_API_BOOKING_SERVICE_URL: z.url(),
+  VITE_API_SOCKET_URL: z.url(),
 });
 
 let parsedEnv: z.infer<typeof envSchema> | null = null;
