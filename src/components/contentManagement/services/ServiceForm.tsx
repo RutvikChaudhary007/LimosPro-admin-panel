@@ -1307,14 +1307,9 @@ function LanguageFields({
                     name={`whyUs.${selectedLanguage}.featureList` as any}
                     control={control}
                     render={({ field }) => (
-                      <Textarea
-                        value={field.value?.join("\n") || ""}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value.split("\n").filter(Boolean),
-                          )
-                        }
-                        placeholder="Feature 1\nFeature 2..."
+                      <FeaturesAddonInput
+                        value={field.value}
+                        onChange={field.onChange}
                       />
                     )}
                   />
