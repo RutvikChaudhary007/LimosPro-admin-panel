@@ -29,7 +29,7 @@ export function LayoutBlock({
         <CardTitle className="text-sm font-bold flex items-center gap-2">
           <Badge variant="black">{String(index + 1).padStart(2, "0")}</Badge>
           <span className="uppercase tracking-wider text-base-black/70">
-            {block.type
+            {(block.type || "")
               .replace(/([A-Z])/g, " $1")
               .replace(/\b\w/g, (c: string) => c.toUpperCase())}
           </span>

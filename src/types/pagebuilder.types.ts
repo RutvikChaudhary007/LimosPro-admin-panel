@@ -2,11 +2,13 @@ import { z } from "zod";
 
 // Schema Definitions
 export const heroSchema = z.object({
-  image: z.string().url().or(z.literal("")).optional(),
+  image: z.url().or(z.literal("")).optional(),
   alt: z.string().optional(),
   h1: z.string().optional(),
-  p: z.string().optional(),
+  h2: z.string().optional(),
+  // p: z.string().optional(),
   btn: z.string().optional(),
+  btnLink: z.string().optional(),
 });
 
 export const serviceSectionSchema = z.object({
@@ -14,6 +16,8 @@ export const serviceSectionSchema = z.object({
   type: z.literal("serviceSection"),
   service: z.string().optional(),
   subService: z.string().optional(),
+  headingTop: z.string().optional(),
+  headingBottom: z.string().optional(),
   infoCards: z
     .array(
       z.object({
@@ -21,6 +25,62 @@ export const serviceSectionSchema = z.object({
         alt: z.string().optional(),
         title: z.string().optional(),
         description: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+export const sideImageSectionSchema = z.object({
+  id: z.string().optional(),
+  type: z.literal("sideImageSection"),
+  src: z.string().url().or(z.literal("")).optional(),
+  alt: z.string().or(z.literal("")).optional(),
+  headingTop: z.string().or(z.literal("")).optional(),
+  headingBottom: z.string().or(z.literal("")).optional(),
+  description: z.string().optional(),
+  imageLeft: z.boolean().default(false),
+});
+
+export const bookRideSectionSchema = z.object({
+  id: z.string().optional(),
+  type: z.literal("bookRideSection"),
+  heading: z.string().or(z.literal("")).optional(),
+  description: z.string().optional(),
+  btn: z.string().optional(),
+  btnLink: z.string().optional(),
+});
+
+export const premiumFleetSectionSchema = z.object({
+  id: z.string().optional(),
+  type: z.literal("premiumFleetSection"),
+  headingTop: z.string().optional(),
+  headingBottom: z.string().optional(),
+  description: z.string().optional(),
+  serviceCards: z
+    .array(
+      z.object({
+        src: z.string().url().or(z.literal("")).optional(),
+        alt: z.string().optional(),
+        btnTitle: z.string().optional(),
+        btnLink: z.string().optional(),
+        heading: z.string().optional(),
+        title: z.string().optional(),
+        rating: z.number().optional(),
+        features: z.array(z.string()).optional(),
+      }),
+    )
+    .default([]), // Required but defaults to empty array
+});
+
+export const FaqSectionSchema = z.object({
+  id: z.string().optional(),
+  type: z.literal("faqSection"),
+  heading: z.string().optional(),
+  faqCards: z
+    .array(
+      z.object({
+        question: z.string().optional(),
+        answer: z.string().optional(),
       }),
     )
     .optional(),
@@ -112,13 +172,25 @@ export const contactForServiceSchema = z.object({
 
 export const contentBlockSchema = z.union([
   serviceSectionSchema,
-  dedicatedServiceSectionSchema,
-  corporateServiceOfferingsSchema,
-  corporateServicesAndFeaturesSchema,
-  whoWeSupportSchema,
-  ourGlobalReachSchema,
-  contactForServiceSchema,
+  sideImageSectionSchema,
+  bookRideSectionSchema,
+  premiumFleetSectionSchema,
+  FaqSectionSchema,
+  // dedicatedServiceSectionSchema,
+  // corporateServiceOfferingsSchema,
+  // corporateServicesAndFeaturesSchema,
+  // whoWeSupportSchema,
+  // ourGlobalReachSchema,
+  // contactForServiceSchema,
 ]);
+
+export type Sections = z.infer<typeof contentBlockSchema>;
+// export type Sections =
+//   | z.infer<typeof serviceSectionSchema>
+//   | z.infer<typeof sideImageSectionSchema>
+//   | z.infer<typeof bookRideSectionSchema>
+//   | z.infer<typeof premiumFleetSectionSchema>
+//   | z.infer<typeof FaqSectionSchema>;
 
 export const openGraphSchema = z.object({
   title: z.string().optional(),
@@ -362,7 +434,6 @@ export const seoSchema = z.object({
 });
 
 export const pageTemplateSchema = z.object({
-  category: z.string(),
   pageName: z
     .string()
     .refine((v) => v.trim() !== "", { message: "Page name is required" }),
@@ -370,8 +441,10 @@ export const pageTemplateSchema = z.object({
     .string()
     .max(100)
     .refine((v) => v.trim() !== "", { message: "Slug is required" }),
-  hero: heroSchema.optional(),
-  content: z.array(contentBlockSchema).optional(),
+  defaultLanguage: z.string(),
+  availableLanguages: z.array(z.string()),
+  hero: z.record(z.string(), heroSchema).optional(),
+  content: z.record(z.string(), z.array(contentBlockSchema)).optional(),
   seo: seoSchema.optional(),
   jsonLd: jsonLdSchema.optional(),
   isActive: z.boolean().default(true).optional(),
@@ -387,10 +460,21 @@ export type PageTemplateWithTimestamps = PageTemplateFormData & {
 
 // Component Props Interfaces
 export interface ServiceSectionBlockProps {
+  selectedLanguage: string;
   blockIndex: number;
   openMedia: (cb: (url: string) => void) => void;
 }
 
+export interface SideImageSectionBlockProps {
+  selectedLanguage: string;
+  blockIndex: number;
+  // openMedia: (cb: (url: string) => void) => void;
+}
+
+export interface PremiumFleetSectionBlockProps {
+  selectedLanguage: string;
+  blockIndex: number;
+}
 export interface CorporateServiceOfferingsBlockProps {
   blockIndex: number;
   openMedia: (cb: (url: string) => void) => void;

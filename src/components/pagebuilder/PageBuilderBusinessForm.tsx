@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
 import LanguageSelector from "@/components/language/LanguageSelector";
-import PreviewRenderer from "@/components/pagebuilder/partials/PreviewRenderer";
+import BusinessPreviewRenderer from "@/components/pagebuilder/partials/BusinessPreviewRenderer";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -50,7 +50,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Separator } from "@/components/ui/separator";
-import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
+// import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import { useSticky } from "@/hooks/useSticky";
 import {
   DEFAULT_LANGUAGE,
@@ -61,8 +61,10 @@ import {
   contentBlockSchema,
   // pageTemplateSchema,
   heroSchema,
+  type PageTemplateFormData,
   // type PageTemplateFormData,
   type PageTemplateWithTimestamps,
+  type Sections,
 } from "@/types/pagebuilder.types";
 import { formatDateTime, uid } from "@/utils/pagebuilder.utils.tsx";
 import { generateSlug } from "@/utils/slug";
@@ -74,13 +76,14 @@ import {
 } from "../contentManagement/shared/sharedSchemas";
 import { Badge } from "../ui/badge";
 import {
-  ContactForServiceBlock,
-  CorporateServiceOfferingsBlock,
-  CorporateServicesAndFeaturesBlock,
-  DedicatedServiceSectionBlock,
-  ImageCardsBlock,
+  BookRideSectionBlock,
+  FaqSectionBlock,
   LayoutBlock,
+  PremiumFleetSectionBlock,
   ServiceSectionBlock,
+  // ContactForServiceBlock,
+  // CorporateServiceOfferingsBlock,
+  SideImageSectionBlock,
   SortableItem,
 } from ".";
 
@@ -108,14 +111,32 @@ export const keywordSuggestions = [
 ];
 
 export const multiLangPageTemplateSchema = z.object({
-  category: z.string(),
   pageName: z.string().min(1, "Page name is required"),
   slug: z.string().min(1, "Slug is required"),
   isActive: z.boolean(),
   defaultLanguage: z.string(),
   availableLanguages: z.array(z.string()),
   hero: z.record(z.string(), heroSchema),
-  content: z.record(z.string(), z.array(contentBlockSchema)).default({}),
+  content: z
+    .preprocess(
+      (val) => {
+        // If content is an array, convert to record format
+        if (Array.isArray(val)) {
+          return { [DEFAULT_LANGUAGE]: val };
+        }
+        // If content is an object/record, ensure each language value is an array
+        if (val && typeof val === "object") {
+          const normalized: Record<string, any[]> = {};
+          Object.entries(val).forEach(([key, value]) => {
+            normalized[key] = Array.isArray(value) ? value : [];
+          });
+          return normalized;
+        }
+        return { [DEFAULT_LANGUAGE]: [] };
+      },
+      z.record(z.string(), z.array(contentBlockSchema)),
+    )
+    .default({ [DEFAULT_LANGUAGE]: [] }),
   seo: sharedSeoSchema,
   jsonLd: sharedJsonLdSchema,
 });
@@ -125,10 +146,19 @@ export type MultiLangPageTemplateFormData = z.infer<
 >;
 
 const getEmptyLanguageContent = () => ({
-  hero: { image: "", alt: "", h1: "", p: "", btn: "" },
+  pageName: "",
+  slug: "",
+  defaultLanguage: "en",
+  availableLanguages: [],
+  hero: {
+    image: "",
+    alt: "",
+    h1: "",
+    h2: "",
+    btn: "",
+    btnLink: "",
+  },
   content: [],
-  // seo: { metaTitle: "", metaDescription: "", metaKeywords: [], canonicalUrl: "", openGraph: {}, twitter: {} },
-  // jsonLd: [],
 });
 
 const getEmptySeo = () => ({
@@ -144,7 +174,6 @@ const getEmptyJsonLd = () => [];
 const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
   if (!data)
     return {
-      category: "business",
       pageName: "",
       slug: "",
       isActive: true,
@@ -156,44 +185,14 @@ const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
       jsonLd: getEmptyJsonLd(),
     };
 
-  if (
-    data.availableLanguages &&
-    data.content &&
-    typeof data.content === "object" &&
-    !Array.isArray(data.content)
-  ) {
-    // If it's already in the structure we want (with shared SEO/JSONLD), fine.
-    // If it's old structure with SEO/JSONLD as records, we might need to fix it here?
-    // Assuming data passed here is potentially old structure needing normalization.
-    if (
-      data.seo &&
-      !data.seo.metaTitle &&
-      (data.seo.en || data.seo[DEFAULT_LANGUAGE])
-    ) {
-      // It's a record, extract shared
-      data.seo =
-        data.seo[DEFAULT_LANGUAGE] || data.seo.en || Object.values(data.seo)[0];
-    }
-    if (
-      data.jsonLd &&
-      !Array.isArray(data.jsonLd) &&
-      (data.jsonLd.en || data.jsonLd[DEFAULT_LANGUAGE])
-    ) {
-      // It's a record, extract shared
-      data.jsonLd =
-        data.jsonLd[DEFAULT_LANGUAGE] ||
-        data.jsonLd.en ||
-        Object.values(data.jsonLd)[0];
-    }
-    return data as MultiLangPageTemplateFormData;
-  }
-
   const languages = data.availableLanguages || [DEFAULT_LANGUAGE];
+  const defaultLang = data.defaultLanguage || DEFAULT_LANGUAGE;
 
   // Extract Shared SEO/JSON-LD
   let sharedSeo = data.seo;
   let sharedJsonLd = data.jsonLd;
 
+  // Normalize SEO
   if (
     sharedSeo &&
     (sharedSeo.en ||
@@ -211,6 +210,7 @@ const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
     sharedSeo = getEmptySeo();
   }
 
+  // Normalize JSON-LD
   if (
     sharedJsonLd &&
     !Array.isArray(sharedJsonLd) &&
@@ -226,11 +226,10 @@ const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
   }
 
   const normalized: MultiLangPageTemplateFormData = {
-    category: data.category || "business",
     pageName: data.pageName || "",
     slug: data.slug || "",
     isActive: typeof data.isActive === "boolean" ? data.isActive : true,
-    defaultLanguage: data.defaultLanguage || DEFAULT_LANGUAGE,
+    defaultLanguage: defaultLang,
     availableLanguages: languages,
     hero: {},
     content: {},
@@ -239,20 +238,50 @@ const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
   };
 
   languages.forEach((lang: string) => {
-    // If we have multi-lang data but flattened, or if it's the old single-lang format
-    const langHero =
-      data.hero?.[lang] ||
-      (lang === DEFAULT_LANGUAGE ? data.hero : getEmptyLanguageContent().hero);
-    const langContent =
-      data.content?.[lang] ||
-      (lang === DEFAULT_LANGUAGE
-        ? data.content
-        : getEmptyLanguageContent().content);
+    // 1. Handle Hero Isolation
+    let langHero: {
+      image: string;
+      alt: string;
+      h1: string;
+      h2: string;
+      btn: string;
+      btnLink: string;
+    };
+    if (
+      data.hero &&
+      typeof data.hero === "object" &&
+      !Array.isArray(data.hero) &&
+      data.hero[lang]
+    ) {
+      // Already a record with this language
+      langHero = data.hero[lang];
+    } else if (lang === defaultLang && data.hero && !data.hero[lang]) {
+      // Old format, map to default language
+      langHero = data.hero;
+    } else {
+      langHero = getEmptyLanguageContent().hero;
+    }
+    normalized.hero[lang] = structuredClone(
+      langHero || getEmptyLanguageContent().hero,
+    );
 
-    normalized.hero[lang] = langHero || getEmptyLanguageContent().hero;
-    normalized.content[lang] = Array.isArray(langContent)
-      ? langContent
-      : getEmptyLanguageContent().content;
+    // 2. Handle Content Isolation
+    let langContent: any;
+    if (
+      data.content &&
+      typeof data.content === "object" &&
+      !Array.isArray(data.content) &&
+      Array.isArray(data.content[lang])
+    ) {
+      // New format: content is a record with arrays
+      langContent = data.content[lang];
+    } else if (lang === defaultLang && Array.isArray(data.content)) {
+      // Old format: content itself is an array
+      langContent = data.content;
+    } else {
+      langContent = getEmptyLanguageContent().content;
+    }
+    normalized.content[lang] = structuredClone(langContent || []);
   });
 
   return normalized;
@@ -268,8 +297,8 @@ export default function PageTemplateEditor({
   const [selectedLanguage, setSelectedLanguage] =
     useState<LanguageCode>(DEFAULT_LANGUAGE);
   const [activeTab, setActiveTab] = useState<
-    "hero" | "content" | "seo" | "jsonld"
-  >("hero");
+    "general" | "hero" | "content" | "seo" | "jsonld"
+  >("general");
 
   const normalizedData = useMemo(
     () => normalizeTemplateData(initialData),
@@ -279,6 +308,7 @@ export default function PageTemplateEditor({
   const form = useForm<MultiLangPageTemplateFormData>({
     resolver: zodResolver(multiLangPageTemplateSchema) as any,
     defaultValues: normalizedData,
+    shouldUnregister: false,
   });
 
   const {
@@ -306,39 +336,116 @@ export default function PageTemplateEditor({
   const availableLanguages = watch("availableLanguages") || [DEFAULT_LANGUAGE];
 
   // Field Arrays for selected language
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, remove, move, replace } = useFieldArray({
     control,
     name: `content.${selectedLanguage}` as any,
     keyName: "_key",
   });
 
-  const handleLanguageChange = (lang: LanguageCode) => {
-    setSelectedLanguage(lang);
-    const currentData = getValues();
+  const ensureLanguageExists = (lang: LanguageCode) => {
+    const values = getValues();
 
-    // Ensure the new language has initialized content if it doesn't exist
-    if (!currentData.content?.[lang]) {
-      const empty = getEmptyLanguageContent();
-      setValue(`content.${lang}` as any, empty.content);
-      setValue(`hero.${lang}` as any, empty.hero);
-      // setValue(`seo.${lang}` as any, empty.seo);
-      // setValue(`jsonLd.${lang}` as any, empty.jsonLd);
+    const nextHero = values.hero?.[lang] ?? getEmptyLanguageContent().hero;
+    const nextContent = Array.isArray(values.content?.[lang])
+      ? values.content?.[lang]
+      : getEmptyLanguageContent().content;
+
+    // Always set with a clone to avoid shared references across languages.
+    setValue(`hero.${lang}` as any, structuredClone(nextHero), {
+      shouldDirty: false,
+      shouldValidate: false,
+    });
+    setValue(`content.${lang}` as any, structuredClone(nextContent), {
+      shouldDirty: false,
+      shouldValidate: false,
+    });
+  };
+
+  const handleLanguageChange = (lang: LanguageCode) => {
+    const values = getValues();
+    console.log("values=>>", values);
+    ensureLanguageExists(lang);
+
+    const currentLanguages = values.availableLanguages || [DEFAULT_LANGUAGE];
+    if (!currentLanguages.includes(lang)) {
+      setValue("availableLanguages", [...currentLanguages, lang], {
+        shouldDirty: true,
+        shouldValidate: false,
+      });
     }
 
-    if (!availableLanguages.includes(lang)) {
-      setValue("availableLanguages", [...availableLanguages, lang]);
+    setSelectedLanguage(lang);
+
+    if (
+      lang !== DEFAULT_LANGUAGE &&
+      ["general", "seo", "jsonld"].includes(activeTab)
+    ) {
+      setActiveTab("hero");
     }
   };
 
+  //   const handleLanguageChange = (lang: LanguageCode) => {
+  //     setSelectedLanguage(lang);
+  //     const values = getValues();
+  //     console.log("currentData=>", values);
+
+  //     ["hero", "content"].forEach((section) => {
+  //   const sectionData = values[section as keyof PageTemplateFormData];
+
+  //   if (!sectionData || !(sectionData as any)[lang]) {
+  //     const empty = getEmptyLanguageContent();
+  //     setValue(
+  //       `${section}.${lang}` as any,
+  //       (empty as any)[section],
+  //       { shouldDirty: false }
+  //     );
+  //   }
+  // });
+
+  //   // if (!values.hero || !values.hero[lang]) {
+  //   //   setValue(`hero.${lang}`, getEmptyLanguageContent().hero, {
+  //   //     shouldDirty: false,
+  //   //     shouldValidate: false,
+  //   //   });
+  //   // }
+
+  //   // // CONTENT
+  //   // if (!values.content || !values.content[lang]) {
+  //   //   setValue(`content.${lang}`, getEmptyLanguageContent().content, {
+  //   //     shouldDirty: false,
+  //   //     shouldValidate: false,
+  //   //   });
+  //   // }
+
+  //     if (!availableLanguages.includes(lang)) {
+  //       setValue("availableLanguages", [...availableLanguages, lang], { shouldDirty: true, shouldValidate: false });
+  //     }
+
+  //     // Switch to content if switching to non-default and currently on shared tabs
+  //     if (lang !== DEFAULT_LANGUAGE && (activeTab === "general" || activeTab === "seo" || activeTab === "jsonld")) {
+  //       setActiveTab("hero");
+  //     }
+  //   };
+
   useEffect(() => {
     // This effect ensures each block has an ID, but it's now per-language.
-    // For now, let's ensure the default language has IDs.
-    const c = getValues().content?.[selectedLanguage] || [];
-    const next = c.map((b: any) => ({ id: b.id || uid(), ...b }));
-    if (next.length > 0) {
-      setValue(`content.${selectedLanguage}` as any, next as any);
+    const c = getValues().content?.[selectedLanguage];
+    if (Array.isArray(c) && c.length > 0) {
+      const needsId = c.some((b: any) => !b.id);
+      if (needsId) {
+        const next = c.map((b: any) => ({ id: b.id || uid(), ...b }));
+        setValue(`content.${selectedLanguage}` as any, next as any, {
+          shouldValidate: false,
+        });
+      }
     }
-  }, [selectedLanguage]);
+  }, [selectedLanguage, getValues, setValue]);
+
+  useEffect(() => {
+    // Keep field array in sync when switching languages
+    const next = getValues().content?.[selectedLanguage];
+    replace(Array.isArray(next) ? next : []);
+  }, [selectedLanguage, getValues, replace]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -376,6 +483,40 @@ export default function PageTemplateEditor({
   };
 
   const watched = watch();
+
+  // Real-time normalization: ensure content is always a record, never an array
+  useEffect(() => {
+    if (Array.isArray(watched.content)) {
+      console.error(
+        "Content became an array! Converting back to record...",
+        watched.content,
+      );
+      const languages = watched.availableLanguages || [DEFAULT_LANGUAGE];
+      const contentRecord: Record<string, Sections[]> = {};
+
+      languages.forEach((lang) => {
+        if (
+          lang === DEFAULT_LANGUAGE ||
+          lang === (watched as any).defaultLanguage
+        ) {
+          contentRecord[lang] = watched.content?.[lang] ?? [];
+        } else {
+          contentRecord[lang] = [];
+        }
+      });
+      setValue("content", contentRecord, { shouldValidate: false });
+    } else if (watched.content && typeof watched.content === "object") {
+      // Also check each language value
+      const languages = watched.availableLanguages || [DEFAULT_LANGUAGE];
+      languages.forEach((lang: string) => {
+        const langContent = watched.content[lang];
+        if (langContent && !Array.isArray(langContent)) {
+          console.error(`content[${lang}] is not an array!`, langContent);
+          setValue(`content.${lang}` as any, [], { shouldValidate: false });
+        }
+      });
+    }
+  }, [watched.content, watched.availableLanguages, setValue]);
 
   const handleSyncSlug = () => {
     const currentTitle = getValues("pageName");
@@ -420,7 +561,51 @@ export default function PageTemplateEditor({
   };
 
   const onHandleSubmit = (data: any) => {
-    onSubmit(data as MultiLangPageTemplateFormData);
+    console.log("onHandleSubmit raw data=>>", data);
+
+    // Ensure content is a record with array values for all availableLanguages
+    const normalizedData = { ...data };
+    const langs = normalizedData.availableLanguages || [DEFAULT_LANGUAGE];
+
+    // 1. Basic normalization (ensure arrays)
+    if (normalizedData.content && typeof normalizedData.content === "object") {
+      langs.forEach((lang: string) => {
+        const langContent = normalizedData.content[lang];
+        if (langContent && !Array.isArray(langContent)) {
+          normalizedData.content[lang] = [];
+        } else if (!langContent) {
+          normalizedData.content[lang] = [];
+        }
+      });
+    }
+
+    // 2. Filter out empty non-default languages
+    // Keep DEFAULT_LANGUAGE always. For others, check if they have content.
+    const finalHero: Record<string, any> = {};
+    const finalContent: Record<string, any[]> = {};
+
+    langs.forEach((lang: string) => {
+      const hero = normalizedData.hero?.[lang];
+      const content = normalizedData.content?.[lang] || [];
+
+      const isHeroEmpty =
+        !hero || (!hero.image && !hero.h1 && !hero.h2 && !hero.btn);
+      const isContentEmpty = content.length === 0;
+
+      // Keep if it's the default language OR if it has actual data
+      if (lang === DEFAULT_LANGUAGE || !isHeroEmpty || !isContentEmpty) {
+        if (hero) finalHero[lang] = hero;
+        finalContent[lang] = content;
+      }
+    });
+
+    normalizedData.hero = finalHero;
+    normalizedData.content = finalContent;
+    // Also update availableLanguages to only include those with data (plus default)
+    normalizedData.availableLanguages = Object.keys(finalContent);
+
+    console.log("onHandleSubmit filtered data=>>", normalizedData);
+    onSubmit(normalizedData as MultiLangPageTemplateFormData);
   };
 
   // Sticky hook for the Block Adder panel
@@ -471,6 +656,20 @@ export default function PageTemplateEditor({
                   <div className="flex gap-8">
                     <Button
                       type="button"
+                      onClick={() => setActiveTab("general")}
+                      variant="ghost"
+                      spacing="sm"
+                      disabled={selectedLanguage !== DEFAULT_LANGUAGE}
+                      className={`capitalize border-b-2 rounded-none transition ${
+                        activeTab === "general"
+                          ? "border-base-black font-semibold text-primary"
+                          : "border-transparent text-gray-500"
+                      } ${selectedLanguage !== DEFAULT_LANGUAGE ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      General (Shared)
+                    </Button>
+                    <Button
+                      type="button"
                       onClick={() => setActiveTab("hero")}
                       variant="ghost"
                       spacing="sm"
@@ -500,11 +699,12 @@ export default function PageTemplateEditor({
                       onClick={() => setActiveTab("seo")}
                       variant="ghost"
                       spacing="sm"
+                      disabled={selectedLanguage !== DEFAULT_LANGUAGE}
                       className={`capitalize border-b-2 rounded-none transition ${
                         activeTab === "seo"
                           ? "border-base-black font-semibold text-primary"
                           : "border-transparent text-gray-500"
-                      }`}
+                      } ${selectedLanguage !== DEFAULT_LANGUAGE ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       SEO (Shared)
                     </Button>
@@ -513,11 +713,12 @@ export default function PageTemplateEditor({
                       onClick={() => setActiveTab("jsonld")}
                       variant="ghost"
                       spacing="sm"
+                      disabled={selectedLanguage !== DEFAULT_LANGUAGE}
                       className={`capitalize border-b-2 rounded-none transition ${
                         activeTab === "jsonld"
                           ? "border-base-black font-semibold text-primary"
                           : "border-transparent text-gray-500"
-                      }`}
+                      } ${selectedLanguage !== DEFAULT_LANGUAGE ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       JSON-LD (Shared)
                     </Button>
@@ -535,8 +736,8 @@ export default function PageTemplateEditor({
                     }`}
                   >
                     <div className="w-full space-y-6">
-                      {/* Hero Tab */}
-                      {activeTab === "hero" && (
+                      {/* General Tab */}
+                      {activeTab === "general" && (
                         <div className="space-y-6">
                           <Card>
                             <CardBody>
@@ -618,7 +819,15 @@ export default function PageTemplateEditor({
                               </CardContent>
                             </CardBody>
                           </Card>
+                        </div>
+                      )}
 
+                      {/* Hero Tab */}
+                      {activeTab === "hero" && (
+                        <div
+                          key={`hero-${selectedLanguage}`}
+                          className="space-y-6"
+                        >
                           <Card>
                             <CardBody>
                               <CardHeader>
@@ -686,7 +895,7 @@ export default function PageTemplateEditor({
                                       className="text-base-black gap-0"
                                       htmlFor={`hero.${selectedLanguage}.h1`}
                                     >
-                                      Heading (H1)
+                                      Heading 1
                                     </FieldLabel>
                                     <Controller
                                       control={control}
@@ -699,6 +908,30 @@ export default function PageTemplateEditor({
                                             id={`hero.${selectedLanguage}.h1`}
                                             type="text"
                                             placeholder="Hero heading"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
+                                    />
+                                  </Field>
+                                  <Field>
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`hero.${selectedLanguage}.h2`}
+                                    >
+                                      Heading 2
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name={
+                                        `hero.${selectedLanguage}.h2` as any
+                                      }
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            id={`hero.${selectedLanguage}.h2`}
+                                            type="text"
+                                            placeholder="Hero sub heading"
                                             {...field}
                                           />
                                         </InputGroup>
@@ -730,29 +963,31 @@ export default function PageTemplateEditor({
                                       )}
                                     />
                                   </Field>
+                                  <Field>
+                                    <FieldLabel
+                                      className="text-base-black gap-0"
+                                      htmlFor={`hero.${selectedLanguage}.btnLink`}
+                                    >
+                                      Button Link
+                                    </FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name={
+                                        `hero.${selectedLanguage}.btnLink` as any
+                                      }
+                                      render={({ field }) => (
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            id={`hero.${selectedLanguage}.btnLink`}
+                                            type="text"
+                                            placeholder="Button link"
+                                            {...field}
+                                          />
+                                        </InputGroup>
+                                      )}
+                                    />
+                                  </Field>
                                 </div>
-
-                                <Field>
-                                  <FieldLabel
-                                    className="text-base-black gap-0"
-                                    htmlFor={`hero.${selectedLanguage}.p`}
-                                  >
-                                    Description (Paragraph)
-                                  </FieldLabel>
-                                  <Controller
-                                    control={control}
-                                    name={`hero.${selectedLanguage}.p` as any}
-                                    render={({ field }) => (
-                                      <TinyEditorRHF
-                                        id={`hero.${selectedLanguage}.p`}
-                                        value={(field.value as string) || ""}
-                                        onChange={(val) => {
-                                          field.onChange(val);
-                                        }}
-                                      />
-                                    )}
-                                  />
-                                </Field>
                               </CardContent>
                             </CardBody>
                           </Card>
@@ -761,7 +996,10 @@ export default function PageTemplateEditor({
 
                       {/* Content Tab */}
                       {activeTab === "content" && (
-                        <div className="flex flex-col md:flex-row gap-6 h-full">
+                        <div
+                          key={`content-${selectedLanguage}`}
+                          className="flex flex-col md:flex-row gap-6 h-full"
+                        >
                           <div className="w-full [992px]:w-3/4 lg:w-7/12 xl:w-9/12 flex flex-col gap-3">
                             <h3 className="text-xl font-bold leading-[120%] font-montserrat">
                               Content Blocks
@@ -809,11 +1047,46 @@ export default function PageTemplateEditor({
                                           >
                                             {type === "serviceSection" && (
                                               <ServiceSectionBlock
+                                                selectedLanguage={
+                                                  selectedLanguage
+                                                }
                                                 blockIndex={index}
                                                 openMedia={openMedia}
                                               />
                                             )}
-                                            {type ===
+                                            {type === "sideImageSection" && (
+                                              <SideImageSectionBlock
+                                                selectedLanguage={
+                                                  selectedLanguage
+                                                }
+                                                blockIndex={index}
+                                              />
+                                            )}
+                                            {type === "faqSection" && (
+                                              <FaqSectionBlock
+                                                selectedLanguage={
+                                                  selectedLanguage
+                                                }
+                                                blockIndex={index}
+                                              />
+                                            )}
+                                            {type === "bookRideSection" && (
+                                              <BookRideSectionBlock
+                                                selectedLanguage={
+                                                  selectedLanguage
+                                                }
+                                                blockIndex={index}
+                                              />
+                                            )}
+                                            {type === "premiumFleetSection" && (
+                                              <PremiumFleetSectionBlock
+                                                selectedLanguage={
+                                                  selectedLanguage
+                                                }
+                                                blockIndex={index}
+                                              />
+                                            )}
+                                            {/* {type ===
                                               "dedicatedServiceSection" && (
                                               <DedicatedServiceSectionBlock
                                                 blockIndex={index}
@@ -856,7 +1129,7 @@ export default function PageTemplateEditor({
                                               <ContactForServiceBlock
                                                 blockIndex={index}
                                               />
-                                            )}
+                                            )} */}
                                           </LayoutBlock>
                                         </SortableItem>
                                       );
@@ -877,6 +1150,7 @@ export default function PageTemplateEditor({
                                 </CardHeader>
                                 <CardContent className="flex flex-col gap-2">
                                   <Button
+                                    type="button"
                                     variant="outline"
                                     onClick={() =>
                                       append({
@@ -889,9 +1163,75 @@ export default function PageTemplateEditor({
                                     }
                                     className="justify-start"
                                   >
-                                    + Service Section
+                                    + Service Section Block
                                   </Button>
                                   <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() =>
+                                      append({
+                                        id: uid(),
+                                        type: "sideImageSection",
+                                        src: "",
+                                        alt: "",
+                                        headingTop: "",
+                                        headingBottom: "",
+                                        description: "",
+                                      })
+                                    }
+                                    className="justify-start"
+                                  >
+                                    + Side Image Section Block
+                                  </Button>
+
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() =>
+                                      append({
+                                        id: uid(),
+                                        type: "bookRideSection",
+                                        heading: "",
+                                        description: "",
+                                        btn: "",
+                                        btnLink: "",
+                                      })
+                                    }
+                                    className="justify-start"
+                                  >
+                                    + Book Ride Section Block
+                                  </Button>
+
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() =>
+                                      append({
+                                        id: uid(),
+                                        type: "premiumFleetSection",
+                                        serviceCards: [],
+                                      })
+                                    }
+                                    className="justify-start"
+                                  >
+                                    + Premium Fleet Section Block
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() =>
+                                      append({
+                                        id: uid(),
+                                        type: "faqSection",
+                                        heading: "",
+                                        faqCards: [],
+                                      })
+                                    }
+                                    className="justify-start"
+                                  >
+                                    + FAQ Section Block
+                                  </Button>
+                                  {/* <Button
                                     variant="outline"
                                     onClick={() =>
                                       append({
@@ -911,7 +1251,7 @@ export default function PageTemplateEditor({
                                       append({
                                         id: uid(),
                                         type: "corporateServiceOfferings",
-                                        serviceCards: undefined,
+                                        serviceCards: [],
                                       })
                                     }
                                     className="justify-start"
@@ -955,7 +1295,7 @@ export default function PageTemplateEditor({
                                     className="justify-start"
                                   >
                                     + Contact CTA
-                                  </Button>
+                                  </Button> */}
                                 </CardContent>
                               </CardBody>
                             </Card>
@@ -1017,7 +1357,10 @@ export default function PageTemplateEditor({
                       </div>
 
                       {/* Render the actual preview */}
-                      <PreviewRenderer data={previewData} />
+                      <BusinessPreviewRenderer
+                        data={previewData}
+                        language={selectedLanguage}
+                      />
                     </div>
                   )}
                 </div>

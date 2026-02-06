@@ -1,115 +1,141 @@
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardAction,
-  CardBody,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Controller,
+  //  useFieldArray,
+  useFormContext,
+} from "react-hook-form";
+import { Checkbox } from "@/components/ui/checkbox";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardAction,
+//   CardBody,
+//   CardContent,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import UploadWithUrl from "@/components/ui/upload-with-url";
-import type { ServiceSectionBlockProps } from "@/types/pagebuilder.types";
+import type { SideImageSectionBlockProps } from "@/types/pagebuilder.types";
 
-export function ServiceSectionBlock({
+export function SideImageSectionBlock({
   selectedLanguage,
   blockIndex,
-  // openMedia,
-}: ServiceSectionBlockProps) {
-  const { register, control } = useFormContext();
-
-  // Nested field array for infoCards
-  const {
-    fields: infocardFields,
-    append: appendInfocard,
-    remove: removeInfocard,
-  } = useFieldArray({
-    name: `content.${selectedLanguage}.${blockIndex}.infoCards` as const,
-  });
+}: SideImageSectionBlockProps) {
+  const { register, setValue, control, watch } = useFormContext();
 
   return (
     <div className="space-y-6">
+      <Controller
+        name={`content.${selectedLanguage}.${blockIndex}.src` as any}
+        control={control}
+        render={({ field }) => (
+          <UploadWithUrl
+            value={field.value}
+            onChange={field.onChange}
+            title="Image"
+          />
+        )}
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field>
+        <Field className="col-span-2">
           <FieldLabel
             className="text-base-black gap-0"
-            htmlFor={`content.${selectedLanguage}.${blockIndex}.service`}
+            htmlFor={`content.${selectedLanguage}.${blockIndex}.alt`}
           >
-            Service
+            Image Alt Text
           </FieldLabel>
           <InputGroup>
             <InputGroupInput
-              id={`content.${selectedLanguage}.${blockIndex}.service`}
+              id={`content.${selectedLanguage}.${blockIndex}.alt`}
               type="text"
-              placeholder="e.g. Corporate Relocation"
-              {...register(`content.${selectedLanguage}.${blockIndex}.service`)}
+              placeholder="e.g. Image Alt Text"
+              {...register(`content.${selectedLanguage}.${blockIndex}.alt`)}
             />
           </InputGroup>
         </Field>
-
-        <Field>
-          <FieldLabel
-            className="text-base-black gap-0"
-            htmlFor={`content.${selectedLanguage}.${blockIndex}.subService`}
-          >
-            Subservice
-          </FieldLabel>
-          <InputGroup>
-            <InputGroupInput
-              id={`content.${selectedLanguage}.${blockIndex}.subService`}
-              type="text"
-              placeholder="e.g. Office Move"
-              {...register(
-                `content.${selectedLanguage}.${blockIndex}.subService`,
-              )}
-            />
-          </InputGroup>
-        </Field>
-
         <Field>
           <FieldLabel
             className="text-base-black gap-0"
             htmlFor={`content.${selectedLanguage}.${blockIndex}.headingTop`}
           >
-            Heading Top
+            Top Heading
           </FieldLabel>
           <InputGroup>
             <InputGroupInput
               id={`content.${selectedLanguage}.${blockIndex}.headingTop`}
               type="text"
-              placeholder="e.g. Office Move"
+              placeholder="Title 1"
               {...register(
                 `content.${selectedLanguage}.${blockIndex}.headingTop`,
               )}
             />
           </InputGroup>
         </Field>
-
         <Field>
           <FieldLabel
             className="text-base-black gap-0"
             htmlFor={`content.${selectedLanguage}.${blockIndex}.headingBottom`}
           >
-            Heading Bottom
+            Bottom Heading
           </FieldLabel>
           <InputGroup>
             <InputGroupInput
               id={`content.${selectedLanguage}.${blockIndex}.headingBottom`}
               type="text"
-              placeholder="e.g. Office Move"
+              placeholder="Title 2"
               {...register(
                 `content.${selectedLanguage}.${blockIndex}.headingBottom`,
               )}
             />
           </InputGroup>
         </Field>
+
+        <Field className="col-span-2">
+          <FieldLabel
+            className="text-base-black gap-0"
+            htmlFor={`content.${selectedLanguage}.${blockIndex}.description`}
+          >
+            Description
+          </FieldLabel>
+          <Controller
+            control={control}
+            name={`content.${selectedLanguage}.${blockIndex}.description`}
+            render={({ field }) => (
+              <TinyEditorRHF
+                id={`content.${selectedLanguage}.${blockIndex}.description`}
+                value={field.value || ""}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
+          />
+        </Field>
       </div>
 
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id={`content.${selectedLanguage}.${blockIndex}.imageLeft`}
+          checked={watch(
+            `content.${selectedLanguage}.${blockIndex}.imageLeft` as any,
+          )}
+          onCheckedChange={(v) =>
+            setValue(
+              `content.${selectedLanguage}.${blockIndex}.imageLeft` as any,
+              v === true,
+            )
+          }
+        />
+        <label
+          htmlFor={`content.${selectedLanguage}.${blockIndex}.imageLeft`}
+          className="text-sm"
+        >
+          Image on Left?
+        </label>
+      </div>
       {/* Info Cards Section */}
-      <div className="border-t border-border pt-6 mt-6">
+      {/* <div className="border-t border-border pt-6 mt-6">
         <div className="flex items-center justify-between mb-6">
           <h4 className="text-sm font-bold text-base-black uppercase tracking-wider">
             Info Cards ({infocardFields.length})
@@ -151,34 +177,56 @@ export function ServiceSectionBlock({
                     </CardAction>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <Controller
-                      name={
-                        `content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.src` as any
-                      }
-                      control={control}
-                      render={({ field }) => (
-                        <UploadWithUrl
-                          value={field.value}
-                          onChange={field.onChange}
-                          title="Image"
-                        />
-                      )}
-                    />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Field className="col-span-2">
+                      <Field>
                         <FieldLabel
                           className="text-base-black gap-0"
-                          htmlFor={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.alt`}
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.src`}
+                        >
+                          Image URL
+                        </FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.src`}
+                            type="text"
+                            placeholder="https://..."
+                            {...register(
+                              `content.${blockIndex}.infoCards.${cardIndex}.src`,
+                            )}
+                          />
+                        </InputGroup>
+                        <Button
+                          type="button"
+                          onClick={() =>
+                            openMedia((url) =>
+                              setValue(
+                                `content.${blockIndex}.infoCards.${cardIndex}.src`,
+                                url,
+                              ),
+                            )
+                          }
+                          variant="linkPrimary"
+                          spacing="none"
+                          className="mt-1 h-auto text-xs justify-start"
+                        >
+                          Choose from Media
+                        </Button>
+                      </Field>
+
+                      <Field>
+                        <FieldLabel
+                          className="text-base-black gap-0"
+                          htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.alt`}
                         >
                           Alt Text
                         </FieldLabel>
                         <InputGroup>
                           <InputGroupInput
-                            id={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.alt`}
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.alt`}
                             type="text"
                             placeholder="Image accessibility text"
                             {...register(
-                              `content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.alt`,
+                              `content.${blockIndex}.infoCards.${cardIndex}.alt`,
                             )}
                           />
                         </InputGroup>
@@ -188,17 +236,17 @@ export function ServiceSectionBlock({
                     <Field>
                       <FieldLabel
                         className="text-base-black gap-0"
-                        htmlFor={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.title`}
+                        htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.title`}
                       >
                         Title
                       </FieldLabel>
                       <InputGroup>
                         <InputGroupInput
-                          id={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.title`}
+                          id={`content.${blockIndex}.infoCards.${cardIndex}.title`}
                           type="text"
                           placeholder="Card title"
                           {...register(
-                            `content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.title`,
+                            `content.${blockIndex}.infoCards.${cardIndex}.title`,
                           )}
                         />
                       </InputGroup>
@@ -207,16 +255,16 @@ export function ServiceSectionBlock({
                     <Field>
                       <FieldLabel
                         className="text-base-black gap-0"
-                        htmlFor={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.description`}
+                        htmlFor={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                       >
                         Description
                       </FieldLabel>
                       <Controller
                         control={control}
-                        name={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.description`}
+                        name={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                         render={({ field }) => (
                           <TinyEditorRHF
-                            id={`content.${selectedLanguage}.${blockIndex}.infoCards.${cardIndex}.description`}
+                            id={`content.${blockIndex}.infoCards.${cardIndex}.description`}
                             value={field.value || ""}
                             onChange={field.onChange}
                             onBlur={field.onBlur}
@@ -230,7 +278,7 @@ export function ServiceSectionBlock({
             ))}
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
