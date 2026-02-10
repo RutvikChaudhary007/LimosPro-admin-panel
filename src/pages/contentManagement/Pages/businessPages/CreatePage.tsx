@@ -16,7 +16,7 @@ function CreatePage() {
 
   const handleSubmit = (data: MultiLangPageTemplateFormData) => {
     // styledLog(data, "data:", "info");
-    data.category = "business";
+    // data.category = "business";
     toastPromise(createPageMutation.mutateAsync(data as any), {
       loading: "Creating page...",
       success: () => {

@@ -329,7 +329,7 @@ const BusinessPriceCard = ({
   src,
   alt,
   title,
-  description,
+  // description,
   features,
   priceInfo,
   language,

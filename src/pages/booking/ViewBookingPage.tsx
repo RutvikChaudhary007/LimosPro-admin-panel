@@ -11,7 +11,7 @@ import {
   useFetchBookingById,
   useFetchBookingHistory,
   useFetchBookingNotes,
-  useRetryPartnerDispatch,
+  // useRetryPartnerDispatch,
   useUpdateBookingStatus,
 } from "@/api";
 import { ChauffeurAssignModal } from "@/components/booking/ChauffeurAssignModal";
@@ -70,7 +70,7 @@ const ViewBookingPage = () => {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isManualAssignModalOpen, setIsManualAssignModalOpen] = useState(false);
   const updateStatusMutation = useUpdateBookingStatus();
-  const retryDispatchMutation = useRetryPartnerDispatch();
+  // const retryDispatchMutation = useRetryPartnerDispatch();
   const {
     data: bookingHistoryData,
     isFetching: isHistoryFetching,

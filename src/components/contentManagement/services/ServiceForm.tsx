@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
-import { Link2, Plus, RefreshCw, Trash2, X } from "lucide-react";
+import { Link2, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
@@ -13,7 +13,7 @@ import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
 import { FeaturesAddonInput } from "@/components/common/FeaturesAddonInput";
 import LanguageSelector from "@/components/language/LanguageSelector";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,

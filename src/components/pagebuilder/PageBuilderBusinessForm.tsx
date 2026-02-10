@@ -61,7 +61,6 @@ import {
   contentBlockSchema,
   // pageTemplateSchema,
   heroSchema,
-  type PageTemplateFormData,
   // type PageTemplateFormData,
   type PageTemplateWithTimestamps,
   type Sections,
@@ -333,7 +332,7 @@ export default function PageTemplateEditor({
   if (Object.keys(errors).length > 0) {
     console.log("Form validation errors:", errors);
   }
-  const availableLanguages = watch("availableLanguages") || [DEFAULT_LANGUAGE];
+  // const availableLanguages = watch("availableLanguages") || [DEFAULT_LANGUAGE];
 
   // Field Arrays for selected language
   const { fields, append, remove, move, replace } = useFieldArray({
