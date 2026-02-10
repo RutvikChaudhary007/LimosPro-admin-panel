@@ -12,25 +12,25 @@ import {
 } from "@/components/ui/dialog";
 import { useSocket } from "@/context/SocketContext";
 
-interface Chauffeur {
-  id: string;
-  partnerId: string;
-  userFirstName: string;
-  userLastName: string;
-  userEmail: string;
-  userPhoneNumber: string;
-  status: string;
-  rating: string;
-  partner?: {
-    id: string;
-    companyName: string;
-  };
-  vehicle?: {
-    make: string;
-    model: string;
-    vehicleType: string;
-  };
-}
+// interface Chauffeur {
+//   id: string;
+//   partnerId: string;
+//   userFirstName: string;
+//   userLastName: string;
+//   userEmail: string;
+//   userPhoneNumber: string;
+//   status: string;
+//   rating: string;
+//   partner?: {
+//     id: string;
+//     companyName: string;
+//   };
+//   vehicle?: {
+//     make: string;
+//     model: string;
+//     vehicleType: string;
+//   };
+// }
 
 interface ManualChauffeurAssignModalProps {
   isOpen: boolean;
