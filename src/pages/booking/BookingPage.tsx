@@ -19,6 +19,7 @@ import {
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { SelectDropDown } from "@/components/ui/select";
+import { useSocket } from "@/context/SocketContext";
 import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import { exportToCsv } from "@/utils/export";
@@ -121,9 +122,9 @@ function BookingPage() {
     const headers = [
       "ID",
       "Partner Id",
-      "bookingType",
+      "Trip Type",
       "scheduledTime",
-      "price",
+      "Fare",
       "Status",
       "Created At",
     ];
@@ -131,7 +132,7 @@ function BookingPage() {
     const csvData = data?.bookings?.map((v) => [
       v?.id || "",
       v?.partnerId || "",
-      v?.bookingType || "",
+      v?.trip?.tripType || v?.bookingType || "",
       v?.scheduledTime || "",
       v?.fare?.toString() || "",
       v?.status || "",
@@ -168,6 +169,32 @@ function BookingPage() {
       toast.error(error?.response?.data?.message);
     }
   }, [isError, error]);
+
+  // Real-time updates via socket
+  const { socket } = useSocket();
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleBookingUpdate = (data?: any) => {
+      console.log("📩 Booking update received in List:", data);
+      refetch().then((res) => {
+        console.log(
+          "✅ Booking list refetched. Status of first item:",
+          res.data?.bookings?.[0]?.status,
+        );
+      });
+    };
+
+    socket.on("adminNewBooking", handleBookingUpdate);
+    socket.on("adminAssignmentUpdate", handleBookingUpdate);
+    socket.on("bookingStatusUpdate", handleBookingUpdate);
+
+    return () => {
+      socket.off("adminNewBooking", handleBookingUpdate);
+      socket.off("adminAssignmentUpdate", handleBookingUpdate);
+      socket.off("bookingStatusUpdate", handleBookingUpdate);
+    };
+  }, [socket, refetch]);
 
   return (
     <>

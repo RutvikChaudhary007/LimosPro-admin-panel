@@ -22,13 +22,13 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (user?.accessToken) {
-      const baseUrl = env?.VITE_API_SOCKET_URL || "http://localhost:3000";
-      const socketUrl = baseUrl.replace("/api/v1", "");
+      const socketUrl = env?.VITE_API_SOCKET_URL;
 
       const socket = io(socketUrl, {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
+        transports: ["websocket"],
       });
 
       socket.on("connect", () => {

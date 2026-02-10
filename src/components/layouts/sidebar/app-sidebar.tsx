@@ -125,6 +125,13 @@ const data: {
       permission: "manageBookings",
       action: "view",
     },
+    // {
+    //   title: "Dispatch",
+    //   url: constant.ROUTING_URLS.DISPATCH_DASHBOARD,
+    //   icon: IconChartBar,
+    //   permission: "manageBookings",
+    //   action: "view",
+    // },
     {
       title: "Users",
       url: constant.ROUTING_URLS.USERS,

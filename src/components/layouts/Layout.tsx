@@ -5,6 +5,7 @@ import { NotificationsProvider } from "@/components/layouts/header/notifications
 import { SiteHeader } from "@/components/layouts/header/site-header";
 import { AppSidebar } from "@/components/layouts/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { PartnerBookingNotification } from "../booking/PartnerBookingNotification";
 
 export default function Layout() {
   const location = useLocation();
@@ -29,6 +30,7 @@ export default function Layout() {
             </ErrorBoundary>
           </div>
           <SiteFooter />
+          <PartnerBookingNotification />
         </SidebarInset>
       </SidebarProvider>
     </NotificationsProvider>

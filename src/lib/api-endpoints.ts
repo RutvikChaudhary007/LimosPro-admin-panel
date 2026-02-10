@@ -47,6 +47,10 @@ export const API_ENDPOINTS: Record<string, any> = {
   BOOKING_NOTES: `${ADMIN_SERVICE_URL}/bookings/:bookingId/notes`,
   NOTES: `${ADMIN_SERVICE_URL}/notes`,
   NOTES_ALL: `${ADMIN_SERVICE_URL}/notes/all`,
+  UPDATE_BOOKING_STATUS: (id: string, status: string) =>
+    `${BOOKING_SERVICE_URL}/booking/updateBookingStatus/${id}/${status}`,
+  RETRY_PARTNER_DISPATCH: (id: string) =>
+    `${BOOKING_SERVICE_URL}/booking/${id}/retry-partner-dispatch`,
 
   // Chauffeur
   GET_ALL_CHAUFFEUR: `${ADMIN_SERVICE_URL}/chauffeurs`,

@@ -7,6 +7,7 @@ export const constant = {
     // Dashboard URLS
 
     DASHBOARD: "/dashboard",
+    DISPATCH_DASHBOARD: "/dispatch-dashboard",
 
     // Region Management URLs
 

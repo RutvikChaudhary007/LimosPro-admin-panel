@@ -11,6 +11,9 @@ const LoginPage = lazy(() => import("../pages/auth/LoginPage"));
 // Dashboard
 
 const DashboardPage = lazy(() => import("../pages/dashboard/Dashboard"));
+const DispatchDashboardPage = lazy(
+  () => import("../pages/dispatch/DispatchDashboardPage"),
+);
 
 const DashboardRedirect = () => (
   <Navigate to={constant.ROUTING_URLS.DASHBOARD} replace />
@@ -374,6 +377,24 @@ export const routesConfig = [
     module: "dashboard",
 
     routes: [{ path: constant.ROUTING_URLS.DASHBOARD, element: DashboardPage }],
+  },
+
+  {
+    layout: "protected",
+
+    module: "dispatch",
+
+    permission: "manageBookings",
+
+    action: "view",
+
+    routes: [
+      {
+        path: constant.ROUTING_URLS.DISPATCH_DASHBOARD,
+
+        element: DispatchDashboardPage,
+      },
+    ],
   },
 
   {

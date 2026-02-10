@@ -11,8 +11,11 @@ import {
   useFetchBookingById,
   useFetchBookingHistory,
   useFetchBookingNotes,
+  useRetryPartnerDispatch,
+  useUpdateBookingStatus,
 } from "@/api";
 import { ChauffeurAssignModal } from "@/components/booking/ChauffeurAssignModal";
+import { ManualChauffeurAssignModal } from "@/components/booking/ManualChauffeurAssignModal";
 import { PartnerAssignModal } from "@/components/booking/PartnerAssignModal";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import { EmptyDataState } from "@/components/EmptyDataState";
@@ -34,6 +37,7 @@ import { Label } from "@/components/ui/label";
 import { SelectDropDown } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useSocket } from "@/context/SocketContext";
 import { toastPromise } from "@/hooks/use-toast";
 import { usePermission } from "@/hooks/usePermission";
 import { constant } from "@/lib/constant";
@@ -64,6 +68,9 @@ const ViewBookingPage = () => {
   });
   const { role } = usePermission();
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isManualAssignModalOpen, setIsManualAssignModalOpen] = useState(false);
+  const updateStatusMutation = useUpdateBookingStatus();
+  const retryDispatchMutation = useRetryPartnerDispatch();
   const {
     data: bookingHistoryData,
     isFetching: isHistoryFetching,
@@ -135,7 +142,8 @@ const ViewBookingPage = () => {
     const history = Array.isArray(bookingHistoryData?.history)
       ? bookingHistoryData?.history
       : [];
-    const normalizedHistory = history
+
+    return history
       .filter((item) => item?.status)
       .map((item) => {
         const parsedTimestamp = item?.timestamp
@@ -144,72 +152,16 @@ const ViewBookingPage = () => {
         return {
           status: formatFieldValue(item?.status, "Unknown"),
           timestamp: parsedTimestamp,
-          note: formatFieldValue(item?.note, "No additional details."),
+          note: formatFieldValue(
+            item?.note,
+            item?.state === "pending"
+              ? "Awaiting this step."
+              : "No additional details.",
+          ),
           state: item?.state,
         };
       });
-
-    if (normalizedHistory.length) {
-      const hasPending = normalizedHistory.some(
-        (item) => item.status.toLowerCase() === "pending",
-      );
-      if (!hasPending) {
-        const pendingTimestamp = data?.createdAt
-          ? formatDate(new Date(data.createdAt), "dd-MM-yyyy hh:mm a")
-          : normalizedHistory[normalizedHistory.length - 1]?.timestamp || "N/A";
-        return [
-          {
-            status: "Pending",
-            timestamp: pendingTimestamp,
-            note: "Booking created and pending confirmation.",
-            state: "completed",
-          },
-          ...normalizedHistory,
-        ];
-      }
-      return normalizedHistory;
-    }
-
-    if (data?.status) {
-      const currentTimestamp = data?.updatedAt
-        ? formatDate(new Date(data.updatedAt), "dd-MM-yyyy hh:mm a")
-        : data?.createdAt
-          ? formatDate(new Date(data.createdAt), "dd-MM-yyyy hh:mm a")
-          : "N/A";
-      const currentStatus = formatFieldValue(data?.status, "Unknown");
-      const pendingTimestamp = data?.createdAt
-        ? formatDate(new Date(data.createdAt), "dd-MM-yyyy hh:mm a")
-        : currentTimestamp;
-
-      const fallbackHistory = [
-        {
-          status: "Pending",
-          timestamp: pendingTimestamp,
-          note: "Booking created and pending confirmation.",
-          state: "completed",
-        },
-        {
-          status: currentStatus,
-          timestamp: currentTimestamp,
-          note: "Current booking status.",
-          state: "active",
-        },
-      ];
-
-      if (currentStatus.toLowerCase() === "pending") {
-        return fallbackHistory.slice(0, 1);
-      }
-
-      return fallbackHistory;
-    }
-
-    return [];
-  }, [
-    bookingHistoryData?.history,
-    data?.status,
-    data?.updatedAt,
-    data?.createdAt,
-  ]);
+  }, [bookingHistoryData?.history]);
 
   const currentStatusIndex = useMemo(() => {
     const normalizedStatus = (
@@ -304,6 +256,37 @@ const ViewBookingPage = () => {
       isMounted = false;
     };
   }, [isLoaded, loadError, data]);
+
+  // Real-time updates via socket
+  const { socket } = useSocket();
+  useEffect(() => {
+    if (!socket || !id) return;
+
+    const handleAssignmentUpdate = (data: any) => {
+      console.log("📩 Assignment update received:", data);
+      if (data.bookingId === id) {
+        refetch();
+        refetchHistory();
+      }
+    };
+
+    const handleStatusUpdate = (data: any) => {
+      console.log("📩 Status update received:", data);
+      if (data.bookingId === id) {
+        refetch();
+        refetchHistory();
+      }
+    };
+
+    socket.on("adminAssignmentUpdate", handleAssignmentUpdate);
+    socket.on("bookingStatusUpdate", handleStatusUpdate);
+
+    return () => {
+      socket.off("adminAssignmentUpdate", handleAssignmentUpdate);
+      socket.off("bookingStatusUpdate", handleStatusUpdate);
+    };
+  }, [socket, id, refetch, refetchHistory]);
+
   if (isError) return <ErrorCard refetch={refetch} />;
   if (!isFetching && (!data || !data.id)) {
     return (
@@ -345,9 +328,13 @@ const ViewBookingPage = () => {
               </CardDescription>
               <CardAction>
                 <div className="flex gap-2">
-                  {data?.trip?.tripType === "scheduled" &&
+                  {/* Admin: Assign Partner (Scheduled & Created/Booked) */}
+                  {user?.roles?.some((r: string) =>
+                    ["Super Admin", "Regional Admin", "Dispatcher"].includes(r),
+                  ) &&
+                    data?.trip?.tripType === "scheduled" &&
                     typeof data?.status === "string" &&
-                    ["created", "booked", "assigned"].includes(
+                    ["created", "booked"].includes(
                       data?.status?.toLowerCase(),
                     ) && (
                       <Button
@@ -355,9 +342,53 @@ const ViewBookingPage = () => {
                         className="capitalize"
                         onClick={() => setIsAssignModalOpen(true)}
                       >
-                        Assign
+                        Assign Partner
                       </Button>
                     )}
+
+                  {/* Partner: Dispatch Chauffeur (Scheduled & Accepted/PartnerAssigned) */}
+                  {user?.roles?.includes("Partner") &&
+                    data?.trip?.tripType === "scheduled" &&
+                    typeof data?.status === "string" &&
+                    ["partnerassigned", "accepted"].includes(
+                      data?.status?.toLowerCase(),
+                    ) && (
+                      <Button
+                        variant="black"
+                        className="capitalize"
+                        onClick={() => setIsAssignModalOpen(true)}
+                      >
+                        Dispatch Chauffeur
+                      </Button>
+                    )}
+
+                  {/* Temporary Removed: Direct Assign and Retry Dispatch */}
+
+                  <SelectDropDown
+                    placeholder="Force Status"
+                    items={[
+                      { label: "Booked", value: "booked" },
+                      { label: "Assigned", value: "assigned" },
+                      { label: "En Route", value: "enRoute" },
+                      { label: "On Location", value: "onLocation" },
+                      { label: "Trip Started", value: "tripStarted" },
+                      { label: "Completed", value: "completed" },
+                      { label: "Cancelled", value: "cancelled" },
+                    ]}
+                    onChange={async (val) => {
+                      await toastPromise(
+                        updateStatusMutation.mutateAsync({
+                          id: id!,
+                          status: val,
+                        }),
+                        {
+                          loading: `Updating to ${val}...`,
+                          success: "Status updated",
+                          error: "Failed to update status",
+                        },
+                      );
+                    }}
+                  />
                   <Button variant="black" className="capitalize">
                     Payment Done
                   </Button>
@@ -450,6 +481,21 @@ const ViewBookingPage = () => {
                       <Badge variant="black">{data?.status}</Badge>
 
                       <Label className="font-montserrat font-semibold capitalize">
+                        Trip Type:
+                      </Label>
+                      <Badge variant="outline" className="capitalize">
+                        {data?.trip?.tripType || "N/A"}
+                      </Badge>
+
+                      <Label className="font-montserrat font-semibold capitalize">
+                        Fare:
+                      </Label>
+                      <Label className="font-bold">
+                        {data?.trip?.fare
+                          ? `$${Number(data.trip.fare).toFixed(2)}`
+                          : "N/A"}
+                      </Label>
+                      <Label className="font-montserrat font-semibold capitalize">
                         Type:
                       </Label>
                       <Label>{formatFieldValue(data?.bookingType)}</Label>
@@ -467,11 +513,6 @@ const ViewBookingPage = () => {
                       <Label>
                         {formatFieldValue(Locations?.dropOffAddress)}
                       </Label>
-
-                      <Label className="font-montserrat font-semibold capitalize">
-                        price:
-                      </Label>
-                      <Label>{formatFieldValue(data?.price, "N/A")}</Label>
                     </div>
                   </CardContent>
                 </TabsContent>
@@ -683,11 +724,19 @@ const ViewBookingPage = () => {
       )}
       {user?.roles?.includes("Super Admin") ||
       user?.roles?.includes("Regional Admin") ? (
-        <PartnerAssignModal
-          isOpen={isAssignModalOpen}
-          onOpenChange={setIsAssignModalOpen}
-          bookingId={id || ""}
-        />
+        <>
+          <PartnerAssignModal
+            isOpen={isAssignModalOpen}
+            onOpenChange={setIsAssignModalOpen}
+            bookingId={id || ""}
+          />
+          <ManualChauffeurAssignModal
+            isOpen={isManualAssignModalOpen}
+            onOpenChange={setIsManualAssignModalOpen}
+            bookingId={id || ""}
+            vehicleType={data?.vehicleType}
+          />
+        </>
       ) : (
         user?.roles.includes("Partner") && (
           <ChauffeurAssignModal

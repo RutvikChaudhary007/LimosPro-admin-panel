@@ -120,7 +120,7 @@ export const useFetchAllBookings = ({
     queryFn: () => getAllBookings(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
-    // staleTime: 0,
+    staleTime: 0,
     ...queryOptions,
   });
 
@@ -273,5 +273,48 @@ export const useAssignChauffeurs = () => {
     onSuccess: (_data) => {
       // toast.success("Chauffeur assigned successfully",_data);
     },
+  });
+};
+
+/**
+ * Update booking status
+ */
+export const updateBookingStatus = async ({
+  id,
+  status,
+}: {
+  id: string;
+  status: string;
+}) => {
+  const response = await axiosInstance.put(
+    API_ENDPOINTS.UPDATE_BOOKING_STATUS(id, status),
+  );
+  return response?.data?.data ?? response?.data;
+};
+
+export const useUpdateBookingStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateBookingStatus,
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["bookingById", id] });
+      queryClient.invalidateQueries({ queryKey: ["bookingHistory", id] });
+    },
+  });
+};
+
+/**
+ * Retry partner dispatch
+ */
+export const retryPartnerDispatch = async (id: string) => {
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.RETRY_PARTNER_DISPATCH(id),
+  );
+  return response?.data?.data ?? response?.data;
+};
+
+export const useRetryPartnerDispatch = () => {
+  return useMutation({
+    mutationFn: retryPartnerDispatch,
   });
 };
