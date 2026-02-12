@@ -309,14 +309,39 @@ const normalizeHomeData = (data: any): HomeFormData => {
     // normalized.hero[lang] = heroData || getEmptyLanguageContent().hero;
     let contentData = data.content?.[lang] || getEmptyLanguageContent().content;
 
-    // Map legacy structure to new if necessary
-    if (contentData.servicesOverview && !contentData.services?.overview) {
-      contentData = {
-        ...contentData,
-        services: {
-          overview: contentData.servicesOverview,
-        },
+    // Map legacy servicesOverview -> services.overview, then always drop legacy key.
+    if (contentData.servicesOverview) {
+      const legacyOverview = contentData.servicesOverview;
+      const normalizedLegacyOverview = {
+        ...legacyOverview,
+        cards: legacyOverview?.cards || legacyOverview?.serviceCards || [],
       };
+
+      if (!contentData.services?.overview) {
+        contentData = {
+          ...contentData,
+          services: {
+            ...(contentData.services || {}),
+            overview: normalizedLegacyOverview,
+          },
+        };
+      } else if (
+        (!contentData.services.overview.cards ||
+          contentData.services.overview.cards.length === 0) &&
+        normalizedLegacyOverview.cards.length > 0
+      ) {
+        contentData = {
+          ...contentData,
+          services: {
+            ...(contentData.services || {}),
+            overview: {
+              ...contentData.services.overview,
+              cards: normalizedLegacyOverview.cards,
+            },
+          },
+        };
+      }
+
       delete contentData.servicesOverview;
     }
 
@@ -446,6 +471,9 @@ export default function HomeForm({
     // Convert DownloadOptions.list back to string array for all languages
     if (submissionData.content) {
       Object.keys(submissionData.content).forEach((lang) => {
+        // Do not persist legacy duplicate structure.
+        delete submissionData.content[lang]?.servicesOverview;
+
         const dlOptions = submissionData.content[lang]?.DownloadOptions;
         if (dlOptions?.list && Array.isArray(dlOptions.list)) {
           // If it's an object array (managed by useFieldArray), extract value
@@ -657,7 +685,7 @@ export default function HomeForm({
                                     </div>
                                     <Controller
                                       name={
-                                        `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.src` as any
+                                        `content.${selectedLanguage}.services.overview.cards.${index}.src` as any
                                       }
                                       control={control}
                                       render={({ field }) => (
@@ -673,7 +701,7 @@ export default function HomeForm({
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.alt` as any,
+                                            `content.${selectedLanguage}.services.overview.cards.${index}.alt` as any,
                                           )}
                                         />
                                       </InputGroup>
@@ -683,7 +711,7 @@ export default function HomeForm({
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.title` as any,
+                                            `content.${selectedLanguage}.services.overview.cards.${index}.title` as any,
                                           )}
                                         />
                                       </InputGroup>
@@ -692,7 +720,7 @@ export default function HomeForm({
                                       <FieldLabel>Description</FieldLabel>
                                       <Textarea
                                         {...register(
-                                          `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.description` as any,
+                                          `content.${selectedLanguage}.services.overview.cards.${index}.description` as any,
                                         )}
                                       />
                                     </Field>
@@ -701,7 +729,7 @@ export default function HomeForm({
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.button` as any,
+                                            `content.${selectedLanguage}.services.overview.cards.${index}.button` as any,
                                           )}
                                         />
                                       </InputGroup>
@@ -711,7 +739,7 @@ export default function HomeForm({
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.servicesOverview.serviceCards.${index}.buttonLink` as any,
+                                            `content.${selectedLanguage}.services.overview.cards.${index}.buttonLink` as any,
                                           )}
                                         />
                                       </InputGroup>
