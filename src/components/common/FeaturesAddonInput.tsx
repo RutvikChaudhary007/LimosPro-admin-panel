@@ -42,6 +42,7 @@ export function FeaturesAddonInput({
           />
         </InputGroup>
         <Button
+          type="button"
           className="bg-base-primary text-white rounded"
           onClick={handleAdd}
         >
