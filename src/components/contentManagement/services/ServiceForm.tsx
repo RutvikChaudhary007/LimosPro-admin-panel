@@ -1660,7 +1660,51 @@ export default function ServiceForm({
   };
 
   const onHandleSubmit: SubmitHandler<ServiceFormData> = (data) => {
-    const formData = jsonToFormData(data);
+    const submissionData = structuredClone(data);
+
+    // Remove empty placeholder price cards so DB only stores meaningful cards.
+    Object.keys(submissionData.premiumFleet || {}).forEach((lang) => {
+      const cards = submissionData.premiumFleet?.[lang]?.priceCards;
+      if (!Array.isArray(cards)) return;
+
+      submissionData.premiumFleet[lang].priceCards = cards.filter(
+        (card: any) => {
+          const hasSrc =
+            card?.src instanceof File ||
+            (typeof card?.src === "string" && card.src.trim() !== "");
+          const hasPriceInfo =
+            typeof card?.priceInfo === "string" && card.priceInfo.trim() !== "";
+          const hasRating =
+            typeof card?.rating === "string" && card.rating.trim() !== "";
+          const hasCarInfo =
+            typeof card?.CarInfo === "string" && card.CarInfo.trim() !== "";
+          const hasButtonText =
+            typeof card?.buttonText === "string" &&
+            card.buttonText.trim() !== "";
+          const hasButtonLink =
+            typeof card?.buttonLink === "string" &&
+            card.buttonLink.trim() !== "";
+          const hasFeatures =
+            Array.isArray(card?.features) &&
+            card.features.some(
+              (feature: any) =>
+                typeof feature === "string" && feature.trim() !== "",
+            );
+
+          return (
+            hasSrc ||
+            hasPriceInfo ||
+            hasRating ||
+            hasCarInfo ||
+            hasButtonText ||
+            hasButtonLink ||
+            hasFeatures
+          );
+        },
+      );
+    });
+
+    const formData = jsonToFormData(submissionData);
     onSubmit(formData as any);
   };
 
