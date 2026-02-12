@@ -65,6 +65,7 @@ import {
   type PageTemplateWithTimestamps,
   type Sections,
 } from "@/types/pagebuilder.types";
+import { jsonToFormData } from "@/utils/formData.utils";
 import { formatDateTime, uid } from "@/utils/pagebuilder.utils.tsx";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../contentManagement/shared/JSONLDSection";
@@ -362,7 +363,7 @@ export default function PageTemplateEditor({
 
   const handleLanguageChange = (lang: LanguageCode) => {
     const values = getValues();
-    console.log("values=>>", values);
+    // console.log("values=>>", values);
     ensureLanguageExists(lang);
 
     const currentLanguages = values.availableLanguages || [DEFAULT_LANGUAGE];
@@ -567,13 +568,17 @@ export default function PageTemplateEditor({
     const langs = normalizedData.availableLanguages || [DEFAULT_LANGUAGE];
 
     // 1. Basic normalization (ensure arrays)
-    if (normalizedData.content && typeof normalizedData.content === "object") {
+    if (
+      normalizedData.content &&
+      typeof normalizedData.content === "object" &&
+      !Array.isArray(normalizedData.content)
+    ) {
       langs.forEach((lang: string) => {
-        const langContent = normalizedData.content[lang];
+        const langContent = (normalizedData.content as any)[lang];
         if (langContent && !Array.isArray(langContent)) {
-          normalizedData.content[lang] = [];
+          (normalizedData.content as any)[lang] = [];
         } else if (!langContent) {
-          normalizedData.content[lang] = [];
+          (normalizedData.content as any)[lang] = [];
         }
       });
     }
@@ -585,7 +590,7 @@ export default function PageTemplateEditor({
 
     langs.forEach((lang: string) => {
       const hero = normalizedData.hero?.[lang];
-      const content = normalizedData.content?.[lang] || [];
+      const content = (normalizedData.content as any)?.[lang] || [];
 
       const isHeroEmpty =
         !hero || (!hero.image && !hero.h1 && !hero.h2 && !hero.btn);
@@ -604,7 +609,9 @@ export default function PageTemplateEditor({
     normalizedData.availableLanguages = Object.keys(finalContent);
 
     console.log("onHandleSubmit filtered data=>>", normalizedData);
-    onSubmit(normalizedData as MultiLangPageTemplateFormData);
+
+    const formData = jsonToFormData(normalizedData);
+    onSubmit(formData as any);
   };
 
   // Sticky hook for the Block Adder panel

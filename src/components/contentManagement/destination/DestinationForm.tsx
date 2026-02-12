@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import {
   Controller,
   FormProvider,
+  type SubmitHandler,
   useFieldArray,
   useForm,
 } from "react-hook-form";
@@ -39,6 +40,7 @@ import {
   LANGUAGE_CODES,
   type LanguageCode,
 } from "@/lib/language";
+import { jsonToFormData } from "@/utils/formData.utils";
 import { uid } from "@/utils/pagebuilder.utils";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
@@ -1049,8 +1051,9 @@ export default function DestinationForm({
     }
   };
 
-  const onHandleSubmit = (data: DestinationFormData) => {
-    onSubmit(data);
+  const onHandleSubmit: SubmitHandler<DestinationFormData> = (data) => {
+    const formData = jsonToFormData(data);
+    onSubmit(formData as any);
   };
 
   const handleSyncSlug = () => {

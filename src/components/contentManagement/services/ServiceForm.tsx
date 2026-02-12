@@ -41,6 +41,7 @@ import {
   LANGUAGE_CODES,
   type LanguageCode,
 } from "@/lib/language";
+import { jsonToFormData } from "@/utils/formData.utils";
 import { uid } from "@/utils/pagebuilder.utils";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
@@ -1659,7 +1660,8 @@ export default function ServiceForm({
   };
 
   const onHandleSubmit: SubmitHandler<ServiceFormData> = (data) => {
-    onSubmit(data);
+    const formData = jsonToFormData(data);
+    onSubmit(formData as any);
   };
 
   const handleSyncSlug = () => {
