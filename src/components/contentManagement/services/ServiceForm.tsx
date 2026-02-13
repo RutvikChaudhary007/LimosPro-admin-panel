@@ -153,7 +153,7 @@ const imageCardWithTextSideSchema = z.object({
 const downloadSchema = z.object({
   h2: z.string().optional(),
   p: z.string().optional(),
-  features: z.array(z.string()).optional(),
+  list: z.array(z.string()).optional(),
   qr: z
     .object({
       src: imageSchema.optional(),
@@ -304,7 +304,7 @@ const getEmptyLanguageContent = () => ({
     appStore: undefined,
     playStore: undefined,
     image: undefined,
-    features: undefined,
+    list: undefined,
   },
   // seo: { metaTitle: "", metaDescription: "", metaKeywords: [], canonicalUrl: "", openGraph: undefined, twitter: undefined },
   // jsonLd: [],
@@ -1456,7 +1456,7 @@ function LanguageFields({
                   <Field>
                     <FieldLabel>Features</FieldLabel>
                     <Controller
-                      name={`download.${selectedLanguage}.features` as any}
+                      name={`download.${selectedLanguage}.list` as any}
                       control={control}
                       render={({ field }) => (
                         <FeaturesAddonInput
