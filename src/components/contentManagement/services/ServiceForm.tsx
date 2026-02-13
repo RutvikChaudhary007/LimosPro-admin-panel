@@ -153,6 +153,7 @@ const imageCardWithTextSideSchema = z.object({
 const downloadSchema = z.object({
   h2: z.string().optional(),
   p: z.string().optional(),
+  features: z.array(z.string()).optional(),
   qr: z
     .object({
       src: imageSchema.optional(),
@@ -303,6 +304,7 @@ const getEmptyLanguageContent = () => ({
     appStore: undefined,
     playStore: undefined,
     image: undefined,
+    features: undefined,
   },
   // seo: { metaTitle: "", metaDescription: "", metaKeywords: [], canonicalUrl: "", openGraph: undefined, twitter: undefined },
   // jsonLd: [],
@@ -1450,6 +1452,19 @@ function LanguageFields({
                         {...register(`download.${selectedLanguage}.p` as any)}
                       />
                     </InputGroup>
+                  </Field>
+                  <Field>
+                    <FieldLabel>Features</FieldLabel>
+                    <Controller
+                      name={`download.${selectedLanguage}.features` as any}
+                      control={control}
+                      render={({ field }) => (
+                        <FeaturesAddonInput
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      )}
+                    />
                   </Field>
                 </div>
                 <div className="grid grid-cols-3 gap-4 border-t pt-4">
