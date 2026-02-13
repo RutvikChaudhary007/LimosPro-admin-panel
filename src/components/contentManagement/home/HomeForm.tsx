@@ -345,6 +345,22 @@ const normalizeHomeData = (data: any): HomeFormData => {
       delete contentData.servicesOverview;
     }
 
+    // Bridge backend/lowercase keys to the current form keys.
+    if (
+      contentData.corporateGroundTransportation &&
+      !contentData.CorporateGroundTransportation
+    ) {
+      contentData.CorporateGroundTransportation =
+        contentData.corporateGroundTransportation;
+    }
+    if (
+      contentData.meetingsAndSpecialEvents &&
+      !contentData.MeetingsAndSpecialEvents
+    ) {
+      contentData.MeetingsAndSpecialEvents =
+        contentData.meetingsAndSpecialEvents;
+    }
+
     // Normalize DownloadOptions.list to object array for useFieldArray
     if (
       contentData.DownloadOptions?.list &&
@@ -357,6 +373,29 @@ const normalizeHomeData = (data: any): HomeFormData => {
         );
       }
     }
+
+    // Normalize gallery image arrays to object shape: { src, alt }.
+    ["CorporateGroundTransportation", "MeetingsAndSpecialEvents"].forEach(
+      (sectionKey) => {
+        const section = contentData?.[sectionKey];
+        if (!section) return;
+        if (!Array.isArray(section.images)) {
+          section.images = [];
+          return;
+        }
+        section.images = section.images.map((item: any) => {
+          if (typeof item === "string") return { src: item, alt: "" };
+          if (item instanceof File) return { src: item, alt: "" };
+          if (item && typeof item === "object") {
+            return {
+              src: item.src ?? "",
+              alt: item.alt ?? "",
+            };
+          }
+          return { src: "", alt: "" };
+        });
+      },
+    );
 
     normalized.content[lang] = contentData;
   });
@@ -480,6 +519,8 @@ export default function HomeForm({
 
         // Do not persist legacy duplicate structure.
         delete submissionData.content[lang]?.servicesOverview;
+        delete submissionData.content[lang]?.corporateGroundTransportation;
+        delete submissionData.content[lang]?.meetingsAndSpecialEvents;
 
         const dlOptions = submissionData.content[lang]?.DownloadOptions;
         if (dlOptions?.list && Array.isArray(dlOptions.list)) {
@@ -1750,7 +1791,10 @@ export default function HomeForm({
                                   type="button"
                                   size="sm"
                                   onClick={() =>
-                                    (section.imagesArray as any).append("")
+                                    (section.imagesArray as any).append({
+                                      src: "",
+                                      alt: "",
+                                    })
                                   }
                                 >
                                   Add Image
@@ -1782,7 +1826,7 @@ export default function HomeForm({
                                         </div>
                                         <Controller
                                           name={
-                                            `content.${selectedLanguage}.${section.id}.images.${idx}` as any
+                                            `content.${selectedLanguage}.${section.id}.images.${idx}.src` as any
                                           }
                                           control={control}
                                           render={({ field }) => (
