@@ -39,6 +39,10 @@ import UploadWithUrl from "../ui/upload-with-url";
 
 const imageSchema = z.union([z.string(), z.instanceof(File)]);
 
+/**
+ * Get blog post schema for the blog post form
+ * @returns {blogPostSchema} - The blog post schema
+ */
 const blogPostSchema = z.object({
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   slug: z.string().min(1, "Slug is required").max(100, "Slug too long"),
@@ -367,9 +371,9 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
           })}
           className="space-y-6"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="space-y-6 lg:col-span-2">
               <Card>
                 <CardBody>
                   <CardHeader>
@@ -379,7 +383,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                     <Field>
                       <FieldLabel
                         htmlFor="title"
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                       >
                         Title <span className="text-base-danger">*</span>
                       </FieldLabel>
@@ -415,7 +419,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                     <Field>
                       <FieldLabel
                         htmlFor="slug"
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                       >
                         Slug <span className="text-base-danger">*</span>
                       </FieldLabel>
@@ -459,7 +463,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                     <Field>
                       <FieldLabel
                         htmlFor="excerpt"
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                       >
                         Excerpt <span className="text-base-danger">*</span>
                       </FieldLabel>
@@ -493,7 +497,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                     <Field>
                       <FieldLabel
                         htmlFor="content"
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                       >
                         Content <span className="text-base-danger">*</span>
                       </FieldLabel>
@@ -548,7 +552,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {faqFields.length === 0 && (
-                      <p className="text-sm text-base-gray text-center py-4">
+                      <p className="py-4 text-sm text-center text-base-gray">
                         No FAQs added yet.
                       </p>
                     )}
@@ -574,7 +578,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                           <CardContent className="space-y-4">
                             <Field>
                               <FieldLabel
-                                className="text-base-black gap-0"
+                                className="gap-0 text-base-black"
                                 htmlFor={`faqs.${index}.question`}
                               >
                                 Question {index + 1}
@@ -610,7 +614,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
 
                             <Field>
                               <FieldLabel
-                                className="text-base-black gap-0"
+                                className="gap-0 text-base-black"
                                 htmlFor={`faqs.${index}.answer`}
                               >
                                 Answer {index + 1}
@@ -691,13 +695,13 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                     <Field>
                       <FieldLabel
                         htmlFor="authorId"
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                       >
                         Author
                       </FieldLabel>
 
                       {userIsFetching ? (
-                        <div className="w-full h-14 skeleton rounded"></div>
+                        <div className="w-full rounded h-14 skeleton"></div>
                       ) : usersData?.users?.some((user: User) =>
                           (user.roles || []).includes("SEO Agent"),
                         ) || initialData?.blogAuthor ? (
@@ -847,7 +851,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                   <CardContent>
                     <Field>
                       <FieldLabel
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                         htmlFor="tag-input"
                       >
                         Tags
@@ -925,7 +929,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                     <Field>
                       <FieldLabel
                         htmlFor="metaTitle"
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                       >
                         Meta Title
                       </FieldLabel>
@@ -962,7 +966,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
 
                     <Field>
                       <FieldLabel
-                        className="text-base-black gap-0"
+                        className="gap-0 text-base-black"
                         htmlFor="keyword-input"
                       >
                         Meta Keywords

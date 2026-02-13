@@ -247,7 +247,10 @@ interface ServiceFormProps {
   onSubmit: (data: ServiceFormData) => void;
   type: string;
 }
-
+/**
+ * Get empty language content for the service form
+ * @returns {getEmptyLanguageContent} - The empty language content
+ */
 const getEmptyLanguageContent = () => ({
   services: { service: "", subservice: "", infoCards: [] },
   cityRoutes: {
@@ -501,7 +504,7 @@ function LanguageFields({
                 <CardTitle>Services & InfoCards</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field>
                     <FieldLabel>Service</FieldLabel>
                     <InputGroup>
@@ -526,7 +529,7 @@ function LanguageFields({
                   </Field>
                 </div>
                 <Separator />
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <h3 className="font-medium">Info Cards</h3>
                   <Button
                     type="button"
@@ -545,12 +548,12 @@ function LanguageFields({
                     Add Info Card
                   </Button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {infoCards.fields.map((field, index) => (
                     <Card key={field.id} className="border-dashed">
                       <CardContent className="p-4 space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-xs font-bold uppercase text-gray-400">
+                          <span className="text-xs font-bold text-gray-400 uppercase">
                             Card #{index + 1}
                           </span>
                           <Button
@@ -680,7 +683,7 @@ function LanguageFields({
                     />
                     <FieldLabel
                       htmlFor={`cityRoutesToggle-${selectedLanguage}`}
-                      className="text-base-black gap-0 cursor-pointer mb-0"
+                      className="gap-0 mb-0 cursor-pointer text-base-black"
                     >
                       Enable City Routes Section
                     </FieldLabel>
@@ -842,12 +845,12 @@ function LanguageFields({
                         </Button>
                       </div>
                       {cityCards.fields.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                           {cityCards.fields.map((field, idx) => (
                             <Card key={field.id} className="border-dashed">
                               <CardContent className="p-4 space-y-3">
                                 <div className="flex justify-between">
-                                  <span className="text-xs font-bold uppercase text-gray-400">
+                                  <span className="text-xs font-bold text-gray-400 uppercase">
                                     City #{idx + 1}
                                   </span>
                                   <Button
@@ -908,7 +911,7 @@ function LanguageFields({
                           ))}
                         </div>
                       ) : (
-                        <div className="text-center py-8 text-gray-500 border border-dashed rounded">
+                        <div className="py-8 text-center text-gray-500 border border-dashed rounded">
                           No city cards added. Click "Add City" to create one.
                         </div>
                       )}
@@ -939,12 +942,12 @@ function LanguageFields({
                         </Button>
                       </div>
                       {routeCards.fields.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           {routeCards.fields.map((field, idx) => (
                             <Card key={field.id} className="border-dashed">
                               <CardContent className="p-4 space-y-3">
                                 <div className="flex justify-between">
-                                  <span className="text-xs font-bold uppercase text-gray-400">
+                                  <span className="text-xs font-bold text-gray-400 uppercase">
                                     Route #{idx + 1}
                                   </span>
                                   <Button
@@ -1007,7 +1010,7 @@ function LanguageFields({
                           ))}
                         </div>
                       ) : (
-                        <div className="text-center py-8 text-gray-500 border border-dashed rounded">
+                        <div className="py-8 text-center text-gray-500 border border-dashed rounded">
                           No route cards added. Click "Add Route" to create one.
                         </div>
                       )}
@@ -1025,7 +1028,7 @@ function LanguageFields({
                 <CardTitle>Premium Fleet</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <Field>
                     <FieldLabel>Paragraph 1</FieldLabel>
                     <InputGroup>
@@ -1061,7 +1064,7 @@ function LanguageFields({
                   )}
                 />
                 <Separator />
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <h3 className="font-medium">Price Cards</h3>
                   <Button
                     type="button"
@@ -1084,12 +1087,12 @@ function LanguageFields({
                     Add Price Card
                   </Button>
                 </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   {priceCards.fields.map((field, index) => (
                     <Card key={field.id} className="border-dashed">
                       <CardContent className="p-4 space-y-3">
                         <div className="flex justify-between">
-                          <span className="text-xs font-bold uppercase text-gray-400">
+                          <span className="text-xs font-bold text-gray-400 uppercase">
                             Price Card #{index + 1}
                           </span>
                           <Button
@@ -1467,9 +1470,9 @@ function LanguageFields({
                     />
                   </Field>
                 </div>
-                <div className="grid grid-cols-3 gap-4 border-t pt-4">
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t">
                   <Card className="p-2">
-                    <CardTitle className="text-xs mb-2">Qr Code</CardTitle>
+                    <CardTitle className="mb-2 text-xs">Qr Code</CardTitle>
                     <Controller
                       name={`download.${selectedLanguage}.qr.src` as any}
                       control={control}
@@ -1494,7 +1497,7 @@ function LanguageFields({
                     </Field>
                   </Card>
                   <Card className="p-2">
-                    <CardTitle className="text-xs mb-2">App Store</CardTitle>
+                    <CardTitle className="mb-2 text-xs">App Store</CardTitle>
                     <Controller
                       name={`download.${selectedLanguage}.appStore.src` as any}
                       control={control}
@@ -1530,7 +1533,7 @@ function LanguageFields({
                     </Field>
                   </Card>
                   <Card className="p-2">
-                    <CardTitle className="text-xs mb-2">Play Store</CardTitle>
+                    <CardTitle className="mb-2 text-xs">Play Store</CardTitle>
                     <Controller
                       name={`download.${selectedLanguage}.playStore.src` as any}
                       control={control}
@@ -1566,7 +1569,7 @@ function LanguageFields({
                     </Field>
                   </Card>
                   <Card className="p-2">
-                    <CardTitle className="text-xs mb-2">Main Image</CardTitle>
+                    <CardTitle className="mb-2 text-xs">Main Image</CardTitle>
                     <Controller
                       name={`download.${selectedLanguage}.image.src` as any}
                       control={control}
@@ -1773,7 +1776,7 @@ export default function ServiceForm({
                     </CardAction>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <Field>
                         <FieldLabel htmlFor="pageName">
                           Page Name (Title){" "}
@@ -1888,7 +1891,7 @@ export default function ServiceForm({
         </Card>
 
         {/* Form Actions */}
-        <Card className="sticky bottom-6 z-10 bg-base-white/80 backdrop-blur">
+        <Card className="sticky z-10 bottom-6 bg-base-white/80 backdrop-blur">
           <CardBody className="p-4">
             <CardContent className="flex justify-between gap-3">
               <Button
