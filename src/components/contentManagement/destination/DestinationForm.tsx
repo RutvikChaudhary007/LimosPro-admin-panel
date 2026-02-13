@@ -1052,7 +1052,7 @@ export default function DestinationForm({
   };
 
   const onHandleSubmit: SubmitHandler<DestinationFormData> = (data) => {
-    const formData = jsonToFormData(data);
+    const formData = jsonToFormData(data, { fileKeyMode: "path" });
     onSubmit(formData as any);
   };
 

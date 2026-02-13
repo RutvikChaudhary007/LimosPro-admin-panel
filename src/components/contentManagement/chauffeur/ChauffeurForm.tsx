@@ -286,7 +286,7 @@ export default function ChauffeurForm({
 
   const onHandleSubmit = (data: ChauffeurFormData) => {
     const submissionData = structuredClone(data);
-    const formData = jsonToFormData(submissionData);
+    const formData = jsonToFormData(submissionData, { fileKeyMode: "path" });
     console.log("FormData entries:");
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) {

@@ -873,7 +873,7 @@ export default function AboutForm({
   };
 
   const onHandleSubmit: SubmitHandler<AboutFormData> = (data) => {
-    const formData = jsonToFormData(data);
+    const formData = jsonToFormData(data, { fileKeyMode: "path" });
     onSubmit(formData as any);
   };
 

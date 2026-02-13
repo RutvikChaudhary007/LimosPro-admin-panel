@@ -465,12 +465,19 @@ export default function HomeForm({
   const onHandleSubmit = (data: HomeFormData) => {
     console.log("onHandleSubmit called with data:", data);
 
-    // Deep copy to avoid mutating state, using structuredClone to preserve File objects
-    const submissionData = structuredClone(data);
+    // Build a mutable copy while preserving original File references
+    const submissionData: HomeFormData = {
+      ...data,
+      content: { ...(data.content || {}) },
+    };
 
     // Convert DownloadOptions.list back to string array for all languages
     if (submissionData.content) {
       Object.keys(submissionData.content).forEach((lang) => {
+        submissionData.content[lang] = {
+          ...(submissionData.content[lang] || {}),
+        };
+
         // Do not persist legacy duplicate structure.
         delete submissionData.content[lang]?.servicesOverview;
 
@@ -490,7 +497,7 @@ export default function HomeForm({
     }
 
     // Convert to FormData for file handling
-    const formData = jsonToFormData(submissionData);
+    const formData = jsonToFormData(submissionData, { fileKeyMode: "path" });
 
     // Log FormData contents (FormData doesn't display properly with console.log)
     console.log("FormData entries:");

@@ -165,7 +165,9 @@ export default function UploadWithUrl({
   };
 
   const fetchImageFromUrl = async (url: string) => {
-    if (!isValidUrl(url)) {
+    const normalizedUrl = url.trim();
+
+    if (!isValidUrl(normalizedUrl)) {
       setUrlError("Please enter a valid URL");
       return;
     }
@@ -174,46 +176,19 @@ export default function UploadWithUrl({
     setUrlError(null);
 
     try {
-      // In a real app, you might want to verify the URL is an image via a HEAD request or similar,
-      // but here we might just trust it or let the img tag fail.
-      // The previous implementation fetched the blob. We can keep that if we want to validate size/type.
-      // However, for "Upload with URL", often we just want to store the URL string.
-      // If we fetch blob, we are converting URL -> File essentially.
-      // But the requirement says "File | string". So if it's a URL, we keep it as string.
-      // We can do a quick check if it's reachable/image if needed, but simple is better.
+      if (multiple) {
+        const currentArray = Array.isArray(value)
+          ? value
+          : value
+            ? [value]
+            : [];
+        onChange?.([...currentArray, normalizedUrl]);
+      } else {
+        onChange?.(normalizedUrl);
+      }
 
-      // Let's just validate it loads as an image or simple fetch check?
-      // The previous code did a fetch. Let's keep it lightweight but robust.
-      // If we just want the URL string, we don't need to fetch the blob unless we want to validate constraints.
-
-      // Let's try to fetch headers to validate type/size if possible, otherwise just add it.
-      // CORS might block fetch.
-
-      // For this implementation, let's assume if it's a valid URL string, we accept it.
-      // We can try to load it in an Image object to verify it's an image.
-
-      const img = new Image();
-      img.onload = () => {
-        if (multiple) {
-          // For multiple, work with arrays
-          const currentArray = Array.isArray(value)
-            ? value
-            : value
-              ? [value]
-              : [];
-          onChange?.([...currentArray, url]);
-        } else {
-          // For single, emit just the string
-          onChange?.(url);
-        }
-        setUrlInput("");
-        setUrlLoading(false);
-      };
-      img.onerror = () => {
-        setUrlError("Failed to load image from URL");
-        setUrlLoading(false);
-      };
-      img.src = url;
+      setUrlInput("");
+      setUrlLoading(false);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to fetch image";

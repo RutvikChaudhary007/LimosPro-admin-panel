@@ -610,7 +610,7 @@ export default function PageTemplateEditor({
 
     console.log("onHandleSubmit filtered data=>>", normalizedData);
 
-    const formData = jsonToFormData(normalizedData);
+    const formData = jsonToFormData(normalizedData, { fileKeyMode: "path" });
     onSubmit(formData as any);
   };
 

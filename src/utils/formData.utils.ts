@@ -1,39 +1,32 @@
 export const jsonToFormData = (
   data: any,
-  // parentKey?: string,
+  options?: {
+    fileKeyMode?: "legacy" | "path";
+  },
   formData: FormData = new FormData(),
 ) => {
-  // We need to traverse the object in a deterministic order that matches
-  // the backend's traversal to ensure file indices match.
-  // The backend uses a recursive traversal on Object.keys().
+  const fileKeyMode = options?.fileKeyMode ?? "legacy";
+  const files: Array<{ file: File; path: string }> = [];
 
-  // Helper to deep clone and replace Files with placeholders for the JSON body
-  // We do NOT use this for traversal for FormData appending, we do them properly.
-
-  // Actually, allow me to define the strategy:
-  // 1. Traverse 'data' to find Files.
-  // 2. Append Files to FormData in order.
-  // 3. Create a clean 'content' object where Files are replaced by null/placeholder.
-  // 4. Append 'content' string to FormData.
-
-  const files: File[] = [];
-
-  const traverseAndExtract = (obj: any): any => {
+  const traverseAndExtract = (obj: any, path = ""): any => {
     if (!obj) return obj;
 
     if (obj instanceof File) {
-      files.push(obj);
+      files.push({ file: obj, path });
       return null; // Replace File with null in JSON
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => traverseAndExtract(item));
+      return obj.map((item, index) =>
+        traverseAndExtract(item, path ? `${path}.${index}` : String(index)),
+      );
     }
 
     if (typeof obj === "object") {
       const newObj: any = {};
       Object.keys(obj).forEach((key) => {
-        newObj[key] = traverseAndExtract(obj[key]);
+        const nextPath = path ? `${path}.${key}` : key;
+        newObj[key] = traverseAndExtract(obj[key], nextPath);
       });
       return newObj;
     }
@@ -43,24 +36,11 @@ export const jsonToFormData = (
 
   const cleanContent = traverseAndExtract(data);
 
-  // Append all files
-  files.forEach((file) => {
-    // We use a generic name or indexed name. The backend logic 'extractImageUrls'
-    // ignores names if we use array, BUT 'extractImageUrls' pushes them
-    // in order of appearance in req.files.
-    // Multer preserves order.
-    formData.append("files", file);
+  files.forEach(({ file, path }) => {
+    const fieldName = fileKeyMode === "path" && path ? path : "files";
+    formData.append(fieldName, file);
   });
 
-  // Append the cleaned JSON content
-  // If 'data' was the whole payload, we might want to split specific fields?
-  // HomeForm sends { pageName, content: {...}, seo: {...}, ... }
-  // We want to stringify the whole thing?
-  // Backend 'createHomePage' expects: pageName, slug, content (stringified or obj), ...
-  // If we assume the wrapper calls this helper on the WHOLE form data:
-
-  // We should append each top-level key.
-  // Specialized for our Controller:
   Object.keys(cleanContent).forEach((key) => {
     const value = cleanContent[key];
     if (value && typeof value === "object") {

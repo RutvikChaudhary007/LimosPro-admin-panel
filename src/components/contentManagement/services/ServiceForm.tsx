@@ -1704,7 +1704,7 @@ export default function ServiceForm({
       );
     });
 
-    const formData = jsonToFormData(submissionData);
+    const formData = jsonToFormData(submissionData, { fileKeyMode: "path" });
     onSubmit(formData as any);
   };
 
