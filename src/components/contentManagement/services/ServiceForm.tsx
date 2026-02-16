@@ -63,7 +63,7 @@ const cityRoutesSchema = z.discriminatedUnion("cityRoutesEnabled", [
     topRoutes: z.string().optional(),
     topRoutesSeeAllLink: z.string().optional(),
     topRoutesSeeAll: z.string().optional(),
-    citycards: z
+    cityCards: z
       .array(
         z.object({
           id: z.string().optional(),
@@ -451,7 +451,7 @@ function LanguageFields({
 
   const cityCards = useFieldArray({
     control,
-    name: `cityRoutes.${selectedLanguage}.citycards` as any,
+    name: `cityRoutes.${selectedLanguage}.cityCards` as any,
   });
 
   const routeCards = useFieldArray({
@@ -485,7 +485,7 @@ function LanguageFields({
           !routeCards.fields.length
         ) {
           // Initialize arrays if they don't exist
-          setValue(`cityRoutes.${selectedLanguage}.citycards` as any, []);
+          setValue(`cityRoutes.${selectedLanguage}.cityCards` as any, []);
           setValue(`cityRoutes.${selectedLanguage}.routeCards` as any, []);
         }
       }
@@ -669,7 +669,7 @@ function LanguageFields({
                                   topRoutes: "",
                                   topRoutesSeeAllLink: "",
                                   topRoutesSeeAll: "",
-                                  citycards: [],
+                                  cityCards: [],
                                   routeCards: [],
                                 },
                                 { shouldValidate: true },
@@ -864,7 +864,7 @@ function LanguageFields({
                                 </div>
                                 <Controller
                                   name={
-                                    `cityRoutes.${selectedLanguage}.citycards.${idx}.src` as any
+                                    `cityRoutes.${selectedLanguage}.cityCards.${idx}.src` as any
                                   }
                                   control={control}
                                   render={({ field }) => (
@@ -880,7 +880,7 @@ function LanguageFields({
                                   <InputGroup>
                                     <InputGroupInput
                                       {...register(
-                                        `cityRoutes.${selectedLanguage}.citycards.${idx}.alt` as any,
+                                        `cityRoutes.${selectedLanguage}.cityCards.${idx}.alt` as any,
                                       )}
                                       placeholder="A picture of Dubai buildings"
                                     />
@@ -891,7 +891,7 @@ function LanguageFields({
                                   <InputGroup>
                                     <InputGroupInput
                                       {...register(
-                                        `cityRoutes.${selectedLanguage}.citycards.${idx}.title` as any,
+                                        `cityRoutes.${selectedLanguage}.cityCards.${idx}.title` as any,
                                       )}
                                       placeholder="Dubai"
                                     />
@@ -901,7 +901,7 @@ function LanguageFields({
                                   <FieldLabel>Description</FieldLabel>
                                   <Textarea
                                     {...register(
-                                      `cityRoutes.${selectedLanguage}.citycards.${idx}.description` as any,
+                                      `cityRoutes.${selectedLanguage}.cityCards.${idx}.description` as any,
                                     )}
                                     placeholder="26 routes to/from this city"
                                   />
