@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, type Socket } from "socket.io-client";
+import { tokenManager } from "@/services/tokenManager";
 import { useUserStore } from "@/stores/useAuthStore";
 import { env } from "@/utils/env";
 
@@ -21,7 +22,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    if (user?.accessToken) {
+    const token = tokenManager.getAccessToken();
+    if (user && token) {
       const socketUrl = env?.VITE_API_SOCKET_URL;
 
       const socket = io(socketUrl, {
@@ -36,7 +38,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         setIsConnected(true);
         socket.emit(
           "registerUser",
-          JSON.stringify({ token: user.accessToken }),
+          JSON.stringify({ token: tokenManager.getAccessToken() }),
         );
       });
 
@@ -63,7 +65,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         setIsConnected(false);
       };
     }
-  }, [user?.accessToken]);
+  }, [user]);
 
   return (
     <SocketContext.Provider value={{ socket: socketRef.current, isConnected }}>

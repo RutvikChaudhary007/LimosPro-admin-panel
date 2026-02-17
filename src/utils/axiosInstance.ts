@@ -1,112 +1,46 @@
-import axios from "axios";
+import axios, { type AxiosInstance } from "axios";
 import { USER_SERVICE_URL } from "@/lib/api-endpoints";
+import { attachAuthToken, handleAuthError } from "@/services/authInterceptor";
+import { tokenManager } from "@/services/tokenManager";
 
-const adminAxiosInstance = axios.create({
+const adminAxiosInstance: AxiosInstance = axios.create({
   baseURL: USER_SERVICE_URL,
+  withCredentials: false,
 });
 
-adminAxiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  // console.log("config:",config)
-  return config;
-});
-
-// Refresh token handling with request replay
-let isRefreshing = false;
-let refreshPromise = null as Promise<string> | null;
-const subscribers: Array<(token: string) => void> = [];
-
-function onRefreshed(token: string) {
-  subscribers.forEach((cb) => {
-    cb(token);
-  });
-  subscribers.length = 0;
-}
-
-function addSubscriber(callback: (token: string) => void) {
-  subscribers.push(callback);
-}
-
-async function refreshAccessToken(): Promise<string> {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) throw new Error("No refresh token");
-
-  const url = `${USER_SERVICE_URL}/refresh-token`;
-  const { data } = await axios.post(url, { refreshToken });
-  const newAccessToken = data?.data?.accessToken || data?.accessToken;
-  const newRefreshToken = data?.data?.refreshToken || data?.refreshToken;
-  if (!newAccessToken) throw new Error("No access token in refresh response");
-
-  localStorage.setItem("accessToken", newAccessToken);
-  if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
-  adminAxiosInstance.defaults.headers.Authorization = `Bearer ${newAccessToken}`;
-  return newAccessToken as string;
-}
+adminAxiosInstance.interceptors.request.use(
+  (config) => attachAuthToken(config),
+  (err) => Promise.reject(err),
+);
 
 adminAxiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error?.config as
-      | { _retry?: boolean; headers?: Record<string, string> }
-      | undefined;
-    const status = error?.response?.status;
-    const expired = ["JWT token has expired", "jwt expired"].includes(
-      error?.response?.data?.message,
-    );
-    // Relaxed check
-    if (error?.response?.data?.message === "Invalid JWT token") {
-      localStorage.clear();
-      window.location.href = "/auth/login";
+    try {
+      const result = await handleAuthError(error, (config) =>
+        adminAxiosInstance.request(config),
+      );
+      return result;
+    } catch {
       return Promise.reject(error);
     }
-
-    if (
-      originalRequest &&
-      !originalRequest._retry &&
-      status === 401 &&
-      expired
-    ) {
-      originalRequest._retry = true;
-
-      try {
-        if (!isRefreshing) {
-          isRefreshing = true;
-          refreshPromise = refreshAccessToken();
-          const newToken = await refreshPromise;
-          isRefreshing = false;
-          onRefreshed(newToken);
-        } else if (refreshPromise) {
-          const newToken = await refreshPromise;
-          onRefreshed(newToken);
-        }
-
-        return new Promise((resolve) => {
-          addSubscriber((token: string) => {
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            resolve(adminAxiosInstance(originalRequest));
-          });
-        });
-      } catch (refreshErr) {
-        isRefreshing = false;
-        refreshPromise = null;
-        const Email = localStorage.getItem("Email");
-        const remember = localStorage.getItem("remember");
-        localStorage.clear();
-        if (Email && remember === "true") {
-          localStorage.setItem("Email", Email);
-          localStorage.setItem("remember", "true");
-        }
-        return Promise.reject(refreshErr);
-      }
-    }
-
-    return Promise.reject(error);
   },
 );
+
+// Redirect to login when refresh fails (e.g. refresh token expired)
+tokenManager.onRefreshFailed(() => {
+  const email =
+    typeof window !== "undefined" ? localStorage.getItem("Email") : null;
+  const remember =
+    typeof window !== "undefined" ? localStorage.getItem("remember") : null;
+  if (typeof window !== "undefined") {
+    localStorage.clear();
+    if (email && remember === "true") {
+      localStorage.setItem("Email", email);
+      localStorage.setItem("remember", "true");
+    }
+    window.location.href = "/auth/login";
+  }
+});
 
 export default adminAxiosInstance;

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { useSocket } from "@/context/SocketContext";
 import { constant } from "@/lib/constant";
+import { tokenManager } from "@/services/tokenManager";
 import { useUserStore } from "@/stores/useAuthStore";
 
 export function PartnerBookingNotification() {
@@ -90,22 +91,24 @@ export function PartnerBookingNotification() {
   }, [socket, user, requestData, navigate]);
 
   const handleAccept = () => {
-    if (!socket || !requestData || !user?.accessToken) return;
+    const token = tokenManager.getAccessToken();
+    if (!socket || !requestData || !token) return;
     setIsProcessing(true);
     socket.emit("partnerAcceptAssignment", {
       bookingId: requestData.bookingId,
       assignmentId: requestData.assignmentId,
-      token: user.accessToken,
+      token,
     });
   };
 
   const handleReject = () => {
-    if (!socket || !requestData || !user?.accessToken) return;
+    const token = tokenManager.getAccessToken();
+    if (!socket || !requestData || !token) return;
     setIsProcessing(true);
     socket.emit("partnerRejectAssignment", {
       bookingId: requestData.bookingId,
       assignmentId: requestData.assignmentId,
-      token: user.accessToken,
+      token,
     });
   };
 

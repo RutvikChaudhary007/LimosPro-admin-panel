@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { tokenManager } from "@/services/tokenManager";
 
 const ADMIN_PANEL_ALLOWED_ROLES = [
   "Super Admin",
@@ -30,11 +31,13 @@ export const useAuth = () => {
       );
       if (!isAllowed) {
         console.warn(`Access denied for roles: ${userRoles.join(", ")}`);
+        tokenManager.clear();
         localStorage.clear();
         navigate("/unauthorized");
       }
     } catch (error) {
       console.error("Error parsing user data:", error);
+      tokenManager.clear();
       localStorage.clear();
       navigate("/login");
     }

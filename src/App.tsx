@@ -6,6 +6,7 @@ import "./App.css";
 import { toast } from "sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { SocketProvider } from "@/context/SocketContext";
+import { AuthBootstrap } from "@/services/AuthBootstrap";
 import { renderRoutes } from "./routes/renderRoutes";
 import { envValidationError } from "./utils/env";
 
@@ -55,6 +56,7 @@ function App() {
       <TooltipProvider>
         <Sonner position="top-right" richColors />
         <BrowserRouter>
+          <AuthBootstrap />
           <QueryClientProvider client={queryClient}>
             <SocketProvider>{renderRoutes()}</SocketProvider>
           </QueryClientProvider>

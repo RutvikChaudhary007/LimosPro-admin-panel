@@ -39,6 +39,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import { tokenManager } from "@/services/tokenManager";
 import { useUserStore } from "@/stores/useAuthStore";
 import { generatePageTitle } from "@/utils/seo";
 
@@ -192,6 +193,7 @@ export default function AccountSettings() {
             : "Failed to delete account.",
       });
 
+      tokenManager.clear();
       localStorage.clear();
       setUser(null);
       setIsDeleteDialogOpen(false);

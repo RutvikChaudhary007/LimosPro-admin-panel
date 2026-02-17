@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { constant } from "@/lib/constant";
+import { tokenManager } from "@/services/tokenManager";
 import { useUserStore } from "@/stores/useAuthStore";
 import { Button } from "../../ui/button";
 import { useNotifications } from "./notifications-context";
@@ -114,6 +115,7 @@ export function NavUser() {
         <DropdownMenuItem
           className="text-base-danger"
           onClick={() => {
+            tokenManager.clear();
             localStorage.clear();
             navigate(constant.ROUTING_URLS.ADMIN_LOGIN);
           }}

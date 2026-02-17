@@ -37,6 +37,17 @@ export const useUserStore = create<UserStore>()(
     }),
     {
       name: "user-store",
+      partialize: (state) => ({
+        ...state,
+        // Do not persist accessToken/refreshToken (kept in tokenManager / sessionStorage only)
+        user: state.user
+          ? {
+              ...state.user,
+              accessToken: undefined,
+              refreshToken: undefined,
+            }
+          : null,
+      }),
     },
   ),
 );

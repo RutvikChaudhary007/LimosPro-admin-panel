@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { tokenManager } from "@/services/tokenManager";
 
 export const usePermission = () => {
   const permissions = useMemo(() => {
@@ -83,7 +84,7 @@ export const usePermission = () => {
 
   const isLoggedIn =
     (!!user || !!localStorage.getItem("user")) &&
-    !!localStorage.getItem("accessToken");
+    !!tokenManager.getAccessToken();
 
   return {
     hasPermission,

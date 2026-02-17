@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { tokenManager } from "@/services/tokenManager";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -26,10 +27,11 @@ export const login = async (data: { email: string; password: string }) => {
       "Content-Type": "application/json",
     },
   });
-  if (response) {
-    localStorage.setItem("accessToken", response?.data?.data?.accessToken);
-    localStorage.setItem("refreshToken", response?.data?.data?.refreshToken);
-    const roles = response?.data?.data?.roles;
+  if (response?.data?.data) {
+    const access = response.data.data.accessToken;
+    const refresh = response.data.data.refreshToken;
+    if (access && refresh) tokenManager.setTokens(access, refresh);
+    const roles = response.data.data.roles;
     const primaryRole = Array.isArray(roles) ? roles[0] : roles;
     if (primaryRole) {
       localStorage.setItem("role", primaryRole);
