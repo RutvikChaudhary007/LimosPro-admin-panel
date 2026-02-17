@@ -3,22 +3,29 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginForm, type LoginFormValues } from "@/components/login-form";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { type AuthUser, useAuthContext } from "@/context/AuthContext";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { user, isAuthLoading, login } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if user is already logged in (must not navigate during render)
+  // Redirect to dashboard only after auth has finished loading and user exists
   useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role && constant.ADMIN_ELIGIBLE_ROLES.includes(role)) {
+    if (isAuthLoading) return;
+    if (!user) return;
+    const roles = user.roles ?? [];
+    const hasAdminRole = constant.ADMIN_ELIGIBLE_ROLES.some((r) =>
+      roles.includes(r),
+    );
+    if (hasAdminRole) {
       navigate(constant.ROUTING_URLS.DASHBOARD);
     }
-  }, [navigate]);
+  }, [isAuthLoading, user, navigate]);
 
   const loginMutation = queries.useLoginMutation();
   const onSubmit = async (data: LoginFormValues) => {
@@ -27,21 +34,25 @@ export default function LoginPage() {
     setSuccess(false);
     try {
       const response = await loginMutation.mutateAsync(data);
-      if (response?.status === true) {
+      if (response?.status === true && response?.data) {
+        login(response.data as AuthUser);
         setSuccess(response.status);
         navigate(constant.ROUTING_URLS.DASHBOARD);
       }
       console.log("response:", response);
-    } catch (error) {
-      // Error handling is done in onError callback
-      if (error instanceof Error) {
-        setError(error.message);
-        // console.error('Login error:', error?.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
       }
     } finally {
       setLoading(false);
     }
   };
+
+  if (isAuthLoading) {
+    return null;
+  }
+
   return (
     <div className="grid min-h-[calc(100svh-var(--auth-header-height))] lg:grid-cols-2">
       <div className="bg-base-background-light flex flex-1 items-center justify-center">

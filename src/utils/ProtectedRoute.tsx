@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuthContext } from "@/context/AuthContext";
 import { usePermission } from "@/hooks/usePermission";
 import { constant } from "@/lib/constant";
 import { hasDynamicAccess } from "./Helper";
@@ -13,12 +14,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   action = "view",
 }) => {
   const location = useLocation();
+  const { user, isAuthLoading } = useAuthContext();
   const { hasPermission, permissions, role, isLoggedIn } = usePermission();
 
   const userRole = role;
   const userPermissions = permissions || [];
 
-  if (!isLoggedIn) {
+  if (isAuthLoading) {
+    return null;
+  }
+
+  if (!user || !isLoggedIn) {
     return <Navigate to={constant.ROUTING_URLS.ADMIN_LOGIN} replace />;
   }
 

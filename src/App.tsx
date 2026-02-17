@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import "./App.css";
 import { toast } from "sonner";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { AuthProvider } from "@/context/AuthContext";
 import { SocketProvider } from "@/context/SocketContext";
 import { AuthBootstrap } from "@/services/AuthBootstrap";
 import { renderRoutes } from "./routes/renderRoutes";
@@ -56,10 +57,12 @@ function App() {
       <TooltipProvider>
         <Sonner position="top-right" richColors />
         <BrowserRouter>
-          <AuthBootstrap />
-          <QueryClientProvider client={queryClient}>
-            <SocketProvider>{renderRoutes()}</SocketProvider>
-          </QueryClientProvider>
+          <AuthProvider>
+            <AuthBootstrap />
+            <QueryClientProvider client={queryClient}>
+              <SocketProvider>{renderRoutes()}</SocketProvider>
+            </QueryClientProvider>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ErrorBoundary>

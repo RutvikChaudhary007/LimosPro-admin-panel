@@ -16,14 +16,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuthContext } from "@/context/AuthContext";
 import { constant } from "@/lib/constant";
-import { tokenManager } from "@/services/tokenManager";
 import { useUserStore } from "@/stores/useAuthStore";
 import { Button } from "../../ui/button";
 import { useNotifications } from "./notifications-context";
 
 export function NavUser() {
   const { user } = useUserStore();
+  const { logout } = useAuthContext();
   const navigate = useNavigate();
   const { setIsDrawerOpen } = useNotifications();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -115,8 +116,7 @@ export function NavUser() {
         <DropdownMenuItem
           className="text-base-danger"
           onClick={() => {
-            tokenManager.clear();
-            localStorage.clear();
+            logout();
             navigate(constant.ROUTING_URLS.ADMIN_LOGIN);
           }}
         >

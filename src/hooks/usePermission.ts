@@ -1,24 +1,19 @@
 import { useMemo } from "react";
+import { useAuthContext } from "@/context/AuthContext";
 import { tokenManager } from "@/services/tokenManager";
 
 export const usePermission = () => {
+  const { user } = useAuthContext();
+
   const permissions = useMemo(() => {
+    if (!user) return [];
     try {
       const permStr = localStorage.getItem("permissions");
       return permStr ? JSON.parse(permStr) : [];
     } catch {
       return [];
     }
-  }, []);
-
-  const user = useMemo(() => {
-    try {
-      const userStr = localStorage.getItem("user");
-      return userStr ? JSON.parse(userStr) : null;
-    } catch {
-      return null;
-    }
-  }, []);
+  }, [user]);
 
   /**
    * Check if user has a specific permission with optional action
@@ -82,9 +77,7 @@ export const usePermission = () => {
   const canImport = (permissionName: string) =>
     hasPermission(permissionName, "import");
 
-  const isLoggedIn =
-    (!!user || !!localStorage.getItem("user")) &&
-    !!tokenManager.getAccessToken();
+  const isLoggedIn = !!user && !!tokenManager.getAccessToken();
 
   return {
     hasPermission,
