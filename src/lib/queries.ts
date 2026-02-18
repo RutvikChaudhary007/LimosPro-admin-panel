@@ -431,6 +431,7 @@ const useEditPartnerMutation = () => {
     onSuccess: (response, variables) => {
       console.log(variables, response);
       queryClient.invalidateQueries({ queryKey: ["partners"] });
+      queryClient.invalidateQueries({ queryKey: ["partnerById"] });
       // userPermissions are automatically stored in localStorage by the login API
 
       navigate(constant.ROUTING_URLS.PARTNER);
