@@ -95,26 +95,31 @@ const ViewFleetPage = () => {
                 <FieldSeparator className="col-span-full" />
 
                 <Label className="font-montserrat font-semibold capitalize">
-                  Base Fair:
+                  Brand:
                 </Label>
-                <Label>{data?.servicePricings?.[0]?.basePrice}</Label>
+                <Label>{data?.brand}</Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
-                  Min Fair:
+                  vehicle Type:
                 </Label>
-                <Label> {data?.servicePricings?.[0]?.minimumFare}</Label>
+                <Label> {data?.vehicleType}</Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
-                  Min Hour:
+                  model:
                 </Label>
-                <Label>{data?.servicePricings?.[0]?.minHours}</Label>
+                <Label>{data?.model}</Label>
+
+                <Label className="font-montserrat font-semibold capitalize">
+                  color:
+                </Label>
+                <Label>{data?.color}</Label>
 
                 <FieldSeparator className="col-span-full" />
 
                 <Label className="font-montserrat font-semibold capitalize">
-                  Price per hour:
+                  Plate Number:
                 </Label>
-                <Label>{data?.servicePricings?.[0]?.ratePerHour}</Label>
+                <Label>{data?.plateNumber}</Label>
               </div>
             </CardContent>
           </CardBody>
