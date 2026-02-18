@@ -26,9 +26,13 @@ import { exportToCsv } from "@/utils/export";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
-  { label: "Accepted", value: "accepted" },
+  { label: "Booked", value: "booked" },
+  { label: "Assigned", value: "assigned" },
+  { label: "En Route", value: "enRoute" },
+  { label: "On Location", value: "onLocation" },
+  { label: "Trip Started", value: "tripStarted" },
+  { label: "Created", value: "created" },
   { label: "Completed", value: "completed" },
-  { label: "Pending", value: "pending" },
   { label: "Cancelled", value: "cancelled" },
 ];
 
