@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import type {
   ApiResponse,
   BlogPost,
@@ -115,7 +116,7 @@ export const blogService = {
  */
 export const useFetchAllBlogPosts = () =>
   useQuery({
-    queryKey: ["blogPosts"],
+    queryKey: queryKeys.blog.lists(),
     queryFn: () => blogService.getAll(),
     refetchOnWindowFocus: false,
     retry: false,
@@ -281,7 +282,7 @@ export const getPageContentBlockTab = async () => {
  */
 export const useFetchPageContentBlockTab = () =>
   useQuery({
-    queryKey: ["ContentTab"],
+    queryKey: queryKeys.contentBlock.tabs(),
     queryFn: () => getPageContentBlockTab(),
     refetchOnWindowFocus: false,
     retry: false,
@@ -311,7 +312,7 @@ export const getAllContentBlock = async (data?: TPara) => {
  */
 export const useFetchAllContentBlock = (Data: TPara) =>
   useQuery({
-    queryKey: ["ContentBlocks", { Data }],
+    queryKey: queryKeys.contentBlock.listParams(Data),
     queryFn: () => getAllContentBlock(Data),
     refetchOnWindowFocus: false,
     retry: false,
@@ -333,7 +334,7 @@ export const getSingleContentBlock = async (id: string) => {
  */
 export const useFetchContentBlockById = (id: string) =>
   useQuery({
-    queryKey: ["contentBlockById", { id }],
+    queryKey: queryKeys.contentBlock.detail(id),
     queryFn: () => getSingleContentBlock(id),
     refetchOnWindowFocus: false,
     retry: false,

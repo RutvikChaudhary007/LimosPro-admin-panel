@@ -43,55 +43,77 @@ const getFormSchema = (isEdit: boolean) =>
   z.object({
     firstName: z
       .string()
-      .refine((value) => value.trim() !== "", {
-        message: "First name cannot be empty or just whitespace.",
-      })
-      .min(3, { message: "First name must be at least 3 characters" }),
+      .min(1, { message: "First name is required" })
+      .refine((value) => value.trim().length >= 3, {
+        message: "First name must be at least 3 characters",
+      }),
     lastName: z
       .string()
-      .refine((value) => value.trim() !== "", {
-        message: "Last name cannot be empty or just whitespace.",
-      })
-      .min(3, { message: "Last name must be at least 3 characters" }),
+      .min(1, { message: "Last name is required" })
+      .refine((value) => value.trim().length >= 3, {
+        message: "Last name must be at least 3 characters",
+      }),
     businessLocation: z.object({
       latitude: z.number().nullable(),
       longitude: z.number().nullable(),
     }),
     businessAddress: z
       .string()
-      .trim()
-      .min(3, { message: "Business Address must be at least 3 characters" }),
+      .min(1, { message: "Business address is required" })
+      .transform((v) => v.trim())
+      .refine((value) => value.length >= 3, {
+        message: "Business address must be at least 3 characters",
+      }),
     companyName: z
       .string()
-      .min(3, { message: "Company name must be at least 3 characters" }),
-    email: z.email(),
+      .min(1, { message: "Company name is required" })
+      .refine((value) => value.trim().length >= 3, {
+        message: "Company name must be at least 3 characters",
+      }),
+    email: z
+      .string()
+      .min(1, { message: "Email is required" })
+      .email({ message: "Please enter a valid email address" }),
     businessContactNumber: z
       .string()
-      .min(1, { message: "Phone is required" })
-      .regex(/^[+]?[(]?\d+[)]?[-\s.]?[(]?\d+[)]?[-\s.]?\d+[-\s.]?\d+$/, {
-        message: "Invalid phone number format",
-      })
+      .min(1, { message: "Business contact number is required" })
       .refine(
         (phone) => {
-          // Remove all non-digit characters and check length
           const digitsOnly = phone.replaceAll(/\D/g, "");
           return digitsOnly.length >= 10 && digitsOnly.length <= 15;
         },
-        { message: "Phone number must have 10-15 digits" },
+        { message: "Phone number must be 10–15 digits" },
+      )
+      .refine(
+        (phone) =>
+          /^[+]?[(]?\d+[)]?[-\s.]?[(]?\d+[)]?[-\s.]?\d+[-\s.]?\d+$/.test(
+            phone.replace(/\s/g, ""),
+          ),
+        {
+          message: "Please enter a valid phone number (e.g. +1 234 567 8900)",
+        },
       ),
-    entityType: z.string().min(1, { message: "Entity Type is required" }),
+    entityType: z.string().min(1, { message: "Please select an entity type" }),
     isChauffer: z.boolean(),
-    taxId: z.string().min(2, { message: "Tax id is required." }),
-    businessEmail: z.email(),
+    taxId: z
+      .string()
+      .min(1, { message: "Tax ID is required" })
+      .refine((value) => value.trim().length >= 2, {
+        message: "Tax ID must be at least 2 characters",
+      }),
+    businessEmail: z
+      .string()
+      .min(1, { message: "Business email is required" })
+      .email({ message: "Please enter a valid business email address" }),
     commissionRate: z
       .string()
-      .refine((value) => value.trim() !== "", {
-        message: "Commission rate cannot be empty or just whitespace.",
-      })
+      .min(1, { message: "Commission rate is required" })
       .refine((value) => !Number.isNaN(Number(value)), {
-        message: "Commission rate must be a valid number.",
+        message: "Commission rate must be a number",
       })
-      .refine((n) => Number(n) >= 0, { message: "Must be non‑negative" }),
+      .refine((value) => Number(value) >= 0, {
+        message: "Commission rate must be 0 or greater",
+      }),
     password: isEdit
       ? z.union([z.string().length(0), passwordValidation]).optional()
       : passwordValidation,
@@ -109,29 +131,23 @@ const getFormSchema = (isEdit: boolean) =>
               // For new file uploads, validate length
               return files.length >= 1;
             },
-            {
-              message: "Select at least 1 file",
-            },
+            { message: "Please upload at least one document" },
           )
           .refine((files) => files.length <= 4, {
-            message: "You can upload up to 4 files",
+            message: "You can upload up to 4 files only",
           })
           .refine(
             (files) => {
-              // Only check size for actual File objects, not for existing document objects
               const fileObjects = files.filter((f) => f instanceof File);
               return (
                 fileObjects.length === 0 ||
                 fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
               );
             },
-            {
-              message: `Max size ${maxSize / (1024 * 1024)}MB`,
-            },
+            { message: `Each file must be ${maxSize}MB or less` },
           )
           .refine(
             (files) => {
-              // Only check mime types for actual File objects, not for existing document objects
               const fileObjects = files.filter((f) => f instanceof File);
               return (
                 fileObjects.length === 0 ||
@@ -145,9 +161,7 @@ const getFormSchema = (isEdit: boolean) =>
                 )
               );
             },
-            {
-              message: "Invalid file types detected",
-            },
+            { message: "Allowed file types: PDF and images only" },
           ),
     status: z.string().optional(),
   });
@@ -441,7 +455,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="companyName"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Company Name
                 </FieldLabel>
@@ -482,7 +496,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="firstName"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   First Name
                 </FieldLabel>
@@ -520,7 +534,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="lastName"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Last Name
                 </FieldLabel>
@@ -559,7 +573,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                 <Field>
                   <FieldLabel
                     htmlFor="password"
-                    className="text-base-black gap-0"
+                    className="gap-0 text-base-black"
                   >
                     Password
                   </FieldLabel>
@@ -601,7 +615,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               )}
 
               <Field>
-                <FieldLabel htmlFor="email" className="text-base-black gap-0">
+                <FieldLabel htmlFor="email" className="gap-0 text-base-black">
                   Email Address
                 </FieldLabel>
 
@@ -638,7 +652,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="businessContactNumber"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Phone
                 </FieldLabel>
@@ -683,7 +697,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="businessAddress"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Company Location
                 </FieldLabel>
@@ -722,7 +736,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="entityType"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Entity Type
                 </FieldLabel>
@@ -758,7 +772,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="taxId" className="text-base-black gap-0">
+                <FieldLabel htmlFor="taxId" className="gap-0 text-base-black">
                   Tax ID
                 </FieldLabel>
 
@@ -795,7 +809,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="commissionRate"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Commission Rate
                 </FieldLabel>
@@ -836,7 +850,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="status" className="text-base-black gap-0">
+                <FieldLabel htmlFor="status" className="gap-0 text-base-black">
                   Status
                 </FieldLabel>
 
@@ -872,7 +886,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field>
                 <FieldLabel
                   htmlFor="businessEmail"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Business Email
                 </FieldLabel>
@@ -913,7 +927,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               <Field className="self-center">
                 <FieldLabel
                   htmlFor="isChauffer"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Chauffeur
                 </FieldLabel>

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -51,7 +52,7 @@ export const getAllPayments = async ({ limit, page, status }: PaymentArg) => {
  */
 export const useFetchAllPayments = ({ page, limit, status }: PaymentArg) =>
   useQuery({
-    queryKey: ["Payments", { limit }, { page }, { status }],
+    queryKey: queryKeys.payment.listParams(limit, page, status),
     queryFn: () => getAllPayments({ limit, page, status }),
     refetchOnWindowFocus: false,
     retry: false,
@@ -73,7 +74,7 @@ export const getPaymentById = async ({ id }: { id: string }) => {
  */
 export const useFetchPaymentById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["PaymentById", { id }],
+    queryKey: queryKeys.payment.detail(id),
     queryFn: () => getPaymentById({ id }),
     refetchOnWindowFocus: false,
     retry: false,
@@ -107,7 +108,7 @@ export const getAllRefund = async ({ limit, page }: RefundArg) => {
  */
 export const useFetchAllRefund = ({ page, limit }: RefundArg) =>
   useQuery({
-    queryKey: ["Refunds", { limit }, { page }],
+    queryKey: queryKeys.refund.listParams(limit, page),
     queryFn: () => getAllRefund({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,

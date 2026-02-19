@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
-import { API_ENDPOINTS } from "../../lib/api-endpoints";
 
 export const getAllDestinationPageContent = async (params?: any) => {
   const response = await axiosInstance.get(
@@ -14,7 +15,7 @@ export const getAllDestinationPageContent = async (params?: any) => {
 
 export const useFetchAllDestinationPageContent = (params?: any) =>
   useQuery({
-    queryKey: ["destinationPageContent", params],
+    queryKey: queryKeys.destinationPageContent.listParams(params),
     queryFn: () => getAllDestinationPageContent(params),
     refetchOnWindowFocus: false,
     retry: false,
@@ -29,7 +30,7 @@ export const getDestinationPageContentById = async (id: string) => {
 
 export const useFetchDestinationPageContentById = (id: string) =>
   useQuery({
-    queryKey: ["destinationPageContent", id],
+    queryKey: queryKeys.destinationPageContent.detail(id),
     queryFn: () => getDestinationPageContentById(id),
     enabled: !!id,
     refetchOnWindowFocus: false,

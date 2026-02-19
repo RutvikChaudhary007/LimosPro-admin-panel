@@ -6,6 +6,7 @@ import React, { useMemo, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Link, useNavigate } from "react-router-dom";
 import { constant } from "@/lib/constant";
+import { PermissionGate } from "../permissions";
 import { getChauffeurAvailablility } from "../table/column";
 import { DataTable } from "../table/data-table";
 import { Button } from "../ui/button";
@@ -95,28 +96,35 @@ function TableAndPieChart({
             <CardHeader>
               <CardTitle>Chauffeurs Availability</CardTitle>
               <CardAction className="flex gap-2">
-                <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
-                  <Button
-                    variant="outlinePrimary"
-                    size="xl"
-                    spacing="lg"
-                    tooltip="Add New"
-                    className="hover:bg-base-primary hover:text-base-white transition-all"
-                  >
-                    <Plus />
-                  </Button>
-                </Link>
-                <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
-                  <Button
-                    variant="outlineBlack"
-                    size="xl"
-                    spacing="lg"
-                    tooltip="View All"
-                    className="hover:bg-base-black hover:text-base-white transition-all"
-                  >
-                    <Eye />
-                  </Button>
-                </Link>
+                <PermissionGate
+                  permission="managePartnerChauffeurs"
+                  action="create"
+                >
+                  <Link to={constant.ROUTING_URLS.CREATE_CHAUFFEUR}>
+                    <Button
+                      variant="outlinePrimary"
+                      size="xl"
+                      spacing="lg"
+                      tooltip="Add New"
+                      className="hover:bg-base-primary hover:text-base-white transition-all"
+                    >
+                      <Plus />
+                    </Button>
+                  </Link>
+                </PermissionGate>
+                <PermissionGate permission="manageChauffeurs" action="view">
+                  <Link to={constant.ROUTING_URLS.CHAUFFEUR}>
+                    <Button
+                      variant="outlineBlack"
+                      size="xl"
+                      spacing="lg"
+                      tooltip="View All"
+                      className="hover:bg-base-black hover:text-base-white transition-all"
+                    >
+                      <Eye />
+                    </Button>
+                  </Link>
+                </PermissionGate>
               </CardAction>
             </CardHeader>
             <CardContent className="max-h-60 scroll-area">

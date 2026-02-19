@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -116,11 +117,10 @@ export const useFetchAllBookings = ({
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
-    queryKey: ["bookings", DateRange, page, limit, status],
+    queryKey: queryKeys.booking.listParams(DateRange, page, limit, status),
     queryFn: () => getAllBookings(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 0,
     ...queryOptions,
   });
 
@@ -142,7 +142,7 @@ export const getBookingById = async (id?: string) => {
  */
 export const useFetchBookingById = ({ id }: { id?: string }) =>
   useQuery({
-    queryKey: ["bookingById", id],
+    queryKey: queryKeys.booking.detail(id),
     queryFn: () => getBookingById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -195,7 +195,7 @@ export const getBookingHistory = async (
  */
 export const useFetchBookingHistory = ({ bookingId }: { bookingId?: string }) =>
   useQuery<BookingHistoryResponse>({
-    queryKey: ["bookingHistory", bookingId],
+    queryKey: queryKeys.booking.history(bookingId),
     queryFn: () => getBookingHistory(bookingId),
     refetchOnWindowFocus: false,
     retry: false,
@@ -220,7 +220,7 @@ export const getBookingNotes = async (
  */
 export const useFetchBookingNotes = ({ bookingId }: { bookingId?: string }) =>
   useQuery<BookingNotesResponse>({
-    queryKey: ["bookingNotes", bookingId],
+    queryKey: queryKeys.booking.notes(bookingId),
     queryFn: () => getBookingNotes(bookingId),
     refetchOnWindowFocus: false,
     retry: false,
@@ -251,7 +251,7 @@ export const useCreateBookingNote = () => {
       createBookingNote(payload),
     onSuccess: (_data, payload) => {
       queryClient.invalidateQueries({
-        queryKey: ["bookingNotes", payload.bookingId],
+        queryKey: queryKeys.booking.notes(payload.bookingId),
       });
     },
   });
@@ -297,8 +297,10 @@ export const useUpdateBookingStatus = () => {
   return useMutation({
     mutationFn: updateBookingStatus,
     onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ["bookingById", id] });
-      queryClient.invalidateQueries({ queryKey: ["bookingHistory", id] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.booking.detail(id) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.booking.history(id),
+      });
     },
   });
 };

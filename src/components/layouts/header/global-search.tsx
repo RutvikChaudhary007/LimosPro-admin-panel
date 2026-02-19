@@ -16,7 +16,20 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { useDebounce } from "@/hooks/useDebounce";
+import { usePermission } from "@/hooks/usePermission";
 import { constant } from "@/lib/constant";
+
+/** Map search result type to sidebar permission (view). Must match app-sidebar.tsx */
+const TYPE_PERMISSION: Record<string, string | string[]> = {
+  Booking: "manageBookings",
+  Chauffeur: ["manageChauffeurs", "managePartnerChauffeurs"],
+  Fleet: "manageFleets",
+  Customer: "manageUsers",
+  Partner: "managePartners",
+  Staff: "manageStaffMembers",
+  "Regional Admin": "manageRegionAdmins",
+  Payment: "managePayments",
+};
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   Booking: <FileText className="size-5" />,
@@ -33,8 +46,51 @@ const TYPE_ICONS: Record<string, React.ReactNode> = {
   Payment: <FileText className="size-5" />,
 };
 
+/** Build redirect path for a search result. Returns "" if route is invalid or user should not navigate. */
+function getRedirectPath(
+  type: string,
+  item: { id?: string; type?: string; subType?: string },
+  hasPermission: (name: string | string[], action?: string) => boolean,
+): string {
+  const id = item.id != null ? String(item.id).trim() : "";
+  const perm = TYPE_PERMISSION[type];
+  if (perm && !hasPermission(perm, "view")) return "";
+
+  switch (type) {
+    case "Booking":
+      return id ? constant.ROUTING_URLS.VIEW_BOOKING.replace(":id", id) : "";
+    case "Chauffeur":
+      return id ? constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(":id", id) : "";
+    case "Fleet":
+      return id ? constant.ROUTING_URLS.VIEW_FLEET.replace(":id", id) : "";
+    case "Customer":
+      return id ? constant.ROUTING_URLS.VIEW_USERS.replace(":id", id) : "";
+    case "Partner":
+      // Backend now returns Partner.id for both Company and User Profile; view page uses partner id
+      return id
+        ? constant.ROUTING_URLS.VIEW_PARTNER.replace(":id", id)
+        : constant.ROUTING_URLS.PARTNER;
+    case "Staff":
+      return constant.ROUTING_URLS.STAFF_MEMBERS;
+    case "Regional Admin":
+      return constant.ROUTING_URLS.REGION_ADMIN;
+    case "Payment":
+      return id ? constant.ROUTING_URLS.VIEW_PAYMENTS.replace(":id", id) : "";
+    default: {
+      const listRoutes: Record<string, string> = {
+        News: constant.ROUTING_URLS.NEWS,
+        Blog: constant.ROUTING_URLS.BLOG_POSTS,
+        FAQ: constant.ROUTING_URLS.FAQ,
+        Testimonial: constant.ROUTING_URLS.TESTIMONIALS,
+      };
+      return listRoutes[type] || "";
+    }
+  }
+}
+
 export function GlobalSearch() {
   const navigate = useNavigate();
+  const { hasPermission } = usePermission();
   const [query, setQuery] = useState("");
   const [show, setShow] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -139,76 +195,14 @@ export function GlobalSearch() {
                     >
                       {groups[type].map((item: any, idx: number) => (
                         <CommandItem
-                          key={item.id || idx}
-                          value={item.id || `${type}-${idx}`}
+                          key={item.id ?? `${type}-${idx}`}
+                          value={String(item.id ?? `${type}-${idx}`)}
                           onSelect={() => {
-                            // Navigation logic based on entity type
-                            const id = item.id;
-                            let path = "";
-
-                            switch (type) {
-                              case "Booking":
-                                path =
-                                  constant.ROUTING_URLS.VIEW_BOOKING.replace(
-                                    ":id",
-                                    id,
-                                  );
-                                break;
-                              case "Chauffeur":
-                                path =
-                                  constant.ROUTING_URLS.VIEW_CHAUFFEUR.replace(
-                                    ":id",
-                                    id,
-                                  );
-                                break;
-                              case "Fleet":
-                                path = constant.ROUTING_URLS.VIEW_FLEET.replace(
-                                  ":id",
-                                  id,
-                                );
-                                break;
-                              case "Customer":
-                                path = constant.ROUTING_URLS.VIEW_USERS.replace(
-                                  ":id",
-                                  id,
-                                );
-                                break;
-                              case "Partner":
-                                path =
-                                  constant.ROUTING_URLS.VIEW_PARTNER.replace(
-                                    ":id",
-                                    id,
-                                  );
-                                break;
-                              case "Staff":
-                                // No view page, navigate to list
-                                path = constant.ROUTING_URLS.STAFF_MEMBERS;
-                                break;
-                              case "Regional Admin":
-                                // No view page, navigate to list
-                                path = constant.ROUTING_URLS.REGION_ADMIN;
-                                break;
-                              case "Payment":
-                                path =
-                                  constant.ROUTING_URLS.VIEW_PAYMENTS.replace(
-                                    ":id",
-                                    id,
-                                  );
-                                break;
-                              default: {
-                                // For other types, navigate to their list pages
-                                const listRoutes: Record<string, string> = {
-                                  News: constant.ROUTING_URLS.NEWS,
-                                  Blog: constant.ROUTING_URLS.BLOG_POSTS,
-                                  FAQ: constant.ROUTING_URLS.FAQ,
-                                  Testimonial:
-                                    constant.ROUTING_URLS.TESTIMONIALS,
-                                };
-                                path = listRoutes[type] || "";
-                                break;
-                              }
-                            }
-
+                            const path = getRedirectPath(
+                              type,
+                              item,
+                              hasPermission,
+                            );
                             if (path) {
                               navigate(path);
                               setShow(false);

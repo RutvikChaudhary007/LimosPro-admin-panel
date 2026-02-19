@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -108,13 +109,12 @@ export const useGetAllNotifications = (
   filters?: IGetNotificationsFilters,
 ) => {
   return useQuery({
-    queryKey: [
-      "notifications",
+    queryKey: queryKeys.notification.listParams(
       userId,
       limit,
       skip,
       filters ? JSON.stringify(filters) : "",
-    ],
+    ),
     queryFn: () => getAllNotifications(userId, limit, skip, filters),
     enabled: enabled && !!userId,
     staleTime: 1000 * 60 * 5,
@@ -144,7 +144,7 @@ export const useGetNotificationById = (
   enabled: boolean = true,
 ) => {
   return useQuery({
-    queryKey: ["notification", notificationId],
+    queryKey: queryKeys.notification.detail(notificationId),
     queryFn: () => getNotificationById(notificationId),
     enabled: enabled && !!notificationId,
     staleTime: 1000 * 60 * 5,
@@ -182,7 +182,9 @@ export const useCreateNotification = () => {
     mutationFn: (payload: ICreateNotificationPayload) =>
       createNotification(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notification.lists(),
+      });
     },
   });
 };
@@ -224,7 +226,9 @@ export const useUpdateNotification = () => {
       payload: IUpdateNotificationPayload;
     }) => updateNotification(notificationId, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notification.lists(),
+      });
     },
   });
 };
@@ -254,7 +258,9 @@ export const useMarkNotificationAsRead = () => {
     mutationFn: (notificationId: string) =>
       markNotificationAsRead(notificationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notification.lists(),
+      });
     },
   });
 };
@@ -286,7 +292,9 @@ export const useMarkAllNotificationsAsRead = () => {
   return useMutation({
     mutationFn: (userId: string) => markAllNotificationsAsRead(userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notification.lists(),
+      });
     },
   });
 };
@@ -318,7 +326,9 @@ export const useDeleteNotification = () => {
   return useMutation({
     mutationFn: (notificationId: string) => deleteNotification(notificationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notification.lists(),
+      });
     },
   });
 };
@@ -348,7 +358,9 @@ export const useBulkDeleteNotification = () => {
     mutationFn: (notificationIds: string[]) =>
       bulkDeleteNotifications(notificationIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notification.lists(),
+      });
     },
   });
 };

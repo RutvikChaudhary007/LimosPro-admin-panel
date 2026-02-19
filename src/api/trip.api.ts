@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -59,7 +60,7 @@ export const useFetchAllTrips = ({
   limit?: number;
 }) =>
   useQuery({
-    queryKey: ["Trips", tripStatus, page, limit],
+    queryKey: queryKeys.trip.listParams(tripStatus, page, limit),
     queryFn: () => getAllTrips(tripStatus, page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -83,7 +84,7 @@ export const getTripById = async (id: string) => {
  */
 export const useFetchTripById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["TripById", id],
+    queryKey: queryKeys.trip.detail(id),
     queryFn: () => getTripById(id),
     refetchOnWindowFocus: false,
     retry: false,

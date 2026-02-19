@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -49,9 +50,13 @@ export const globalSearch = async (search: string, signal?: AbortSignal) => {
       if (Array.isArray(items) && items.length > 0) {
         const typeName = typeMapping[key] || key;
         items.forEach((item: any) => {
+          const { type: backendType, ...rest } = item;
           results.push({
-            ...item,
+            ...rest,
             type: typeName,
+            ...(key === "partners" && backendType
+              ? { subType: backendType }
+              : {}),
           });
         });
       }
@@ -81,7 +86,7 @@ export const useFetchGlobalSearch = ({
   enabled?: boolean;
 }) =>
   useQuery({
-    queryKey: ["globalSearch", search],
+    queryKey: queryKeys.globalSearch.search(search),
     queryFn: ({ signal }) => globalSearch(search, signal),
     refetchOnWindowFocus: false,
     retry: false,

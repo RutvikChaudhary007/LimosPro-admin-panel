@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -76,7 +77,12 @@ export const useFetchAllPartner = ({
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["partners", DateRange, page, limit, status],
+    queryKey: queryKeys.siteSetting.partnerLists(
+      DateRange,
+      page,
+      limit,
+      status,
+    ),
     queryFn: () => getAllPartner(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
@@ -99,7 +105,7 @@ export const getPartnerById = async (id: string) => {
  */
 export const useFetchPartnerById = ({ id }: { id: string | undefined }) =>
   useQuery({
-    queryKey: ["partnerById", id],
+    queryKey: queryKeys.siteSetting.partnerDetail(id as string),
     queryFn: () =>
       id
         ? getPartnerById(id)
@@ -222,7 +228,7 @@ export const getSiteSettingsUI = async () => {
  */
 export const useFetchSiteSettingsUI = () =>
   useQuery({
-    queryKey: ["siteSettingsUI"],
+    queryKey: queryKeys.siteSetting.ui(),
     queryFn: () => getSiteSettingsUI(),
     refetchOnWindowFocus: false,
     retry: false,
@@ -255,7 +261,7 @@ export const useUpdateSiteSettingsUIMutation = () => {
   return useMutation({
     mutationFn: updateSiteSettingsUI,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["siteSettingsUI"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.siteSetting.ui() });
     },
   });
 };

@@ -1,6 +1,7 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -68,7 +69,7 @@ export const useFetchAllServicePricings = ({
   limit?: number;
 }) =>
   useQuery({
-    queryKey: ["ServicePricings", DateRange, page, limit],
+    queryKey: queryKeys.servicePricing.listParams(DateRange, page, limit),
     queryFn: () => getAllServicePricings(DateRange, page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -89,7 +90,7 @@ export const getServicePricingById = async (id: string) => {
  */
 export const useFetchServicePricingById = ({ id }: { id: string }) =>
   useSuspenseQuery({
-    queryKey: ["ServicePricingById", id],
+    queryKey: queryKeys.servicePricing.detail(id),
     queryFn: () => getServicePricingById(id),
     refetchOnWindowFocus: false,
     retry: false,

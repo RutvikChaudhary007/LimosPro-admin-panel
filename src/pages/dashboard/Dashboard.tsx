@@ -7,6 +7,7 @@ import TableAndPieChart, {
 } from "@/components/dashboard/TableAndPieChart";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ChartAreaInteractive } from "@/components/layouts/shared/chart-area-interactive";
+import { PermissionGate } from "@/components/permissions";
 import { Spinner } from "@/components/Spinner";
 import { getDashboardColumns } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
@@ -200,19 +201,21 @@ export default function Dashboard() {
                 <CardBody>
                   <CardHeader>
                     <CardTitle>Total Bookings</CardTitle>
-                    <CardAction>
-                      <Link to={constant.ROUTING_URLS.BOOKING}>
-                        <Button
-                          variant="outlineBlack"
-                          size="xl"
-                          spacing="lg"
-                          tooltip="View All"
-                          className="hover:bg-base-black hover:text-base-white transition-all"
-                        >
-                          <Eye />
-                        </Button>
-                      </Link>
-                    </CardAction>
+                    <PermissionGate permission="manageBookings" action="view">
+                      <CardAction>
+                        <Link to={constant.ROUTING_URLS.BOOKING}>
+                          <Button
+                            variant="outlineBlack"
+                            size="xl"
+                            spacing="lg"
+                            tooltip="View All"
+                            className="hover:bg-base-black hover:text-base-white transition-all"
+                          >
+                            <Eye />
+                          </Button>
+                        </Link>
+                      </CardAction>
+                    </PermissionGate>
                   </CardHeader>
                   <CardContent className="max-h-[180px] overflow-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
                     <DataTable

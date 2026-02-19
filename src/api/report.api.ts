@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -49,10 +50,9 @@ export const useFetchAllReports = (
   enabled: boolean,
 ) =>
   useQuery({
-    queryKey: ["Reports", { limit }, { page }],
+    queryKey: queryKeys.report.listParams(limit, page),
     queryFn: () => getAllReports({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 0,
     enabled,
   });

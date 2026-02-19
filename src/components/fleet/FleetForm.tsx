@@ -1,21 +1,16 @@
 // @ts-nocheck
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrand4chan,
   IconCalendar,
-  IconClock,
   IconCreditCard,
-  IconCurrencyDollar,
-  IconFlag,
   IconPackage,
   IconPalette,
-  IconRuler,
-  IconTimeDuration0,
   IconUsers,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { Form, FormMessage } from "@/components/ui/form";
 import { useUserStore } from "@/stores/useAuthStore";
@@ -32,7 +27,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Checkbox } from "../ui/checkbox";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 import {
   InputGroup,
@@ -40,7 +34,6 @@ import {
   InputGroupInput,
 } from "../ui/input-group";
 import { SelectDropDown } from "../ui/select";
-import { Textarea } from "../ui/textarea";
 import FilesUpload from "../ui/upload-files";
 
 const maxSize = 10 * 1024 * 1024;
@@ -51,12 +44,12 @@ const formSchema = z.object({
   // name: z.string().refine(value => value.trim() !== "", {
   //     message: "Fleet name cannot be empty or just whitespace.",
   // }).min(3, { message: "Fleet name must be at least 3 characters" }),
-  description: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Description  cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Description  must be at least 3 characters" }),
+  // description: z
+  //   .string()
+  //   .refine((value) => value.trim() !== "", {
+  //     message: "Description  cannot be empty or just whitespace.",
+  //   })
+  //   .min(3, { message: "Description  must be at least 3 characters" }),
   plateNumber: z
     .string()
     .refine((value) => value.trim() !== "", {
@@ -69,18 +62,8 @@ const formSchema = z.object({
       message: "Brand cannot be empty or just whitespace.",
     })
     .min(3, { message: "Brand must be at least 3 characters" }),
-  regionId: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Partner id cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Partner id must be at least 3 characters" }),
-  partnerId: z
-    .string()
-    .refine((value) => value.trim() !== "", {
-      message: "Partner id cannot be empty or just whitespace.",
-    })
-    .min(3, { message: "Partner id must be at least 3 characters" }),
+  regionId: z.string().optional(),
+  partnerId: z.string().optional(),
   model: z
     .string()
     .refine((value) => value.trim() !== "", {
@@ -94,50 +77,53 @@ const formSchema = z.object({
     })
     .min(3, { message: "Color must be at least 3 characters" }),
   capacity: z
-    .string()
-    .min(1, { message: "Capacity  is required" })
-    .regex(/^\d+$/, { message: "Must be number" })
+    .union([z.string(), z.number()])
+    .refine((v) => v !== "" && v !== undefined && v !== null, {
+      message: "Capacity is required",
+    })
     .transform((v) => Number(v))
-    .refine((n) => n >= 0, { message: "Must be non‑negative" }),
+    .refine((n) => !Number.isNaN(n) && n >= 0, {
+      message: "Capacity must be a non-negative number",
+    }),
   vehicleType: z
     .string()
     .refine((value) => value.trim() !== "", {
       message: "Vehicle type  cannot be empty or just whitespace.",
     })
     .min(3, { message: "Vehicle type must be at least 3 characters" }),
-  bagsCapacity: z.string().refine((value) => value.trim() !== "", {
-    message: "Bags capacity  cannot be empty or just whitespace.",
-  }),
+  bagsCapacity: z
+    .union([z.string(), z.number()])
+    .transform((v) => String(v ?? ""))
+    .refine((value) => value.trim() !== "", {
+      message: "Bags capacity cannot be empty.",
+    }),
   vehicleImages: z
-    .custom<FileList>()
-    .check((ctx) => {
-      const list = ctx.value;
-      if (list.length < 1) {
-        ctx.issues.push({
-          code: "custom",
-          message: "Select at least 1 file",
-          input: list,
-        });
-      }
-      //   console.log("list:")
-      if (list.length > 4) {
-        ctx.issues.push({
-          code: "custom",
-          message: "You can upload up to 4 files",
-          input: list,
-        });
-      }
+    .union([
+      z.custom<FileList>(),
+      z.array(z.instanceof(File)),
+      z.array(z.any()),
+    ])
+    .optional()
+    .transform((v) => {
+      if (v === undefined || v === null) return [];
+      if (v instanceof FileList) return Array.from(v);
+      return Array.isArray(v) ? v : [];
     })
-    .transform((list) => Array.from(list))
-    .refine((files) => files.every((f) => f.size <= maxSize), {
-      message: `Max size ${maxSize / (1024 * 1024)}MB`,
+    .refine((arr) => arr.length <= 4, {
+      message: "You can upload up to 4 files",
+    })
+    .refine((arr) => arr.every((f) => f instanceof File && f.size <= maxSize), {
+      message: `Max file size ${maxSize / (1024 * 1024)}MB`,
     })
     .refine(
-      (files) => files.every((f) => ALLOWED_MIME_TYPES.includes(f.type)),
-      {
-        message: "Invalid file types detected",
-      },
+      (arr) =>
+        arr.length === 0 ||
+        arr.every(
+          (f) => f instanceof File && ALLOWED_MIME_TYPES.includes(f.type),
+        ),
+      { message: "Only JPEG and PNG images are allowed" },
     ),
+  documents: z.array(z.any()).optional(),
   status: z.string().optional(),
 });
 
@@ -158,7 +144,7 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
   styledLog(data, "transform data:", "alert");
   const base = {
     regionId: data?.servicePricings?.[0]?.region?.id || "",
-    description: data?.servicePricings?.[0]?.description || "",
+    // description: data?.servicePricings?.[0]?.description || "",
     partnerId: data?.partnerId,
     plateNumber: data?.plateNumber,
     brand: data?.brand,
@@ -180,7 +166,7 @@ const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
 
 const defaultFleetFormValues: TFleetForm = {
   regionId: "",
-  description: "",
+  // description: "",
   partnerId: "",
   plateNumber: "",
   brand: "",
@@ -211,7 +197,7 @@ const FleetForm = ({
   const years = Array.from({ length: 200 }, (_, i) => 1900 + i);
 
   const form = useForm<TFleetForm>({
-    // resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || defaultFleetFormValues,
   });
 
@@ -278,8 +264,37 @@ const FleetForm = ({
   // const fileCount = documents?.length || 0;
 
   const handleFormSubmit = async (data: TFleetForm) => {
-    // console.log("description:", typeof data?.year);
-    // console.log("description:",)
+    // Only admins must select region and partner; partners use their own context
+    if (!isPartner) {
+      if (!data.regionId?.trim()) {
+        form.setError("regionId", {
+          type: "manual",
+          message: "Region is required",
+        });
+        return;
+      }
+      if (!data.partnerId?.trim()) {
+        form.setError("partnerId", {
+          type: "manual",
+          message: "Partner is required",
+        });
+        return;
+      }
+    }
+
+    // Require at least one vehicle image when creating (edit can keep existing images)
+    const vehicleFiles = data?.vehicleImages ?? [];
+    const hasNewImages =
+      Array.isArray(vehicleFiles) &&
+      vehicleFiles.some((f) => f instanceof File);
+    if (!initialData && !hasNewImages) {
+      form.setError("vehicleImages", {
+        type: "manual",
+        message: "Select at least 1 vehicle image",
+      });
+      return;
+    }
+
     const formData = new FormData();
 
     formData.append("partnerId", data?.partnerId);
@@ -289,7 +304,7 @@ const FleetForm = ({
     formData.append("model", data?.model);
     formData.append("capacity", data?.capacity);
     formData.append("color", data?.color);
-    formData.append("description", data?.description);
+    // formData.append("description", data?.description);
     formData.append("vehicleType", data?.vehicleType);
     formData.append("plateNumber", data?.plateNumber);
     formData.append("year", String(data?.year));
@@ -321,7 +336,7 @@ const FleetForm = ({
               <Field>
                 <FieldLabel
                   htmlFor="regionId"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Region
                 </FieldLabel>
@@ -335,6 +350,10 @@ const FleetForm = ({
                     ) : (
                       <SelectDropDown
                         placeholder="Select Region"
+                        disabled={
+                          isPartner ||
+                          isFieldDisabled(disabledFields, "regionId")
+                        }
                         items={
                           RegionData?.regions?.map((r) => ({
                             label: r.regionName, // dynamic label
@@ -360,7 +379,7 @@ const FleetForm = ({
               <Field>
                 <FieldLabel
                   htmlFor="partnerId"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Partner
                 </FieldLabel>
@@ -400,10 +419,10 @@ const FleetForm = ({
                 )}
               </Field>
 
-              <Field>
+              {/* <Field>
                 <FieldLabel
                   htmlFor="description"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Description
                 </FieldLabel>
@@ -430,12 +449,12 @@ const FleetForm = ({
                     {form.formState.errors.description.message}
                   </FormMessage>
                 )}
-              </Field>
+              </Field> */}
 
               <Field>
                 <FieldLabel
                   htmlFor="bagsCapacity"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Bags
                 </FieldLabel>
@@ -474,7 +493,7 @@ const FleetForm = ({
               <Field>
                 <FieldLabel
                   htmlFor="capacity"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Capacity
                 </FieldLabel>
@@ -511,7 +530,7 @@ const FleetForm = ({
               <Field>
                 <FieldLabel
                   htmlFor="plateNumber"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Plate Number
                 </FieldLabel>
@@ -550,7 +569,7 @@ const FleetForm = ({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="brand" className="text-base-black gap-0">
+                <FieldLabel htmlFor="brand" className="gap-0 text-base-black">
                   Brand
                 </FieldLabel>
 
@@ -583,7 +602,7 @@ const FleetForm = ({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="model" className="text-base-black gap-0">
+                <FieldLabel htmlFor="model" className="gap-0 text-base-black">
                   Model
                 </FieldLabel>
 
@@ -616,7 +635,7 @@ const FleetForm = ({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="color" className="text-base-black gap-0">
+                <FieldLabel htmlFor="color" className="gap-0 text-base-black">
                   Color
                 </FieldLabel>
 
@@ -649,7 +668,7 @@ const FleetForm = ({
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="year" className="text-base-black gap-0">
+                <FieldLabel htmlFor="year" className="gap-0 text-base-black">
                   Year
                 </FieldLabel>
 
@@ -681,7 +700,7 @@ const FleetForm = ({
               <Field>
                 <FieldLabel
                   htmlFor="vehicleType"
-                  className="text-base-black gap-0"
+                  className="gap-0 text-base-black"
                 >
                   Vehicle Type
                 </FieldLabel>

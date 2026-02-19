@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TFaqForm } from "@/components/faq/FaqForm";
 import { ADMIN_SERVICE_URL, API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import {
   default as adminAxiosInstance,
   default as axiosInstance,
@@ -51,7 +52,7 @@ export const useFetchAllFAQs = ({
   limit: number;
 }) => {
   return useQuery({
-    queryKey: ["faqs", page, limit],
+    queryKey: queryKeys.faq.listParams(page, limit),
     queryFn: () => getAllFAQs(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -80,7 +81,7 @@ export const getCmsFaqContent = async () => {
  */
 export const useFetchCmsFaqContent = () => {
   return useQuery({
-    queryKey: ["cms-faqs-content"],
+    queryKey: queryKeys.cmsFaq.content(),
     queryFn: () => getCmsFaqContent(),
     refetchOnWindowFocus: false,
     retry: false,
@@ -123,7 +124,7 @@ export const useFetchAllCmsFAQs = ({
   limit: number;
 }) => {
   return useQuery({
-    queryKey: ["cms-faqs", page, limit],
+    queryKey: queryKeys.cmsFaq.listParams(page, limit),
     queryFn: () => getAllCmsFAQs(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -145,7 +146,7 @@ export const getFAQById = async (id: string) => {
  */
 export const useFetchFAQById = (id: string) => {
   return useQuery({
-    queryKey: ["faqById", { id }],
+    queryKey: queryKeys.faq.detail(id),
     queryFn: () => getFAQById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -250,7 +251,7 @@ export const useFetchAllNews = ({
   limit: number;
 }) => {
   return useQuery({
-    queryKey: ["news", page, limit],
+    queryKey: queryKeys.news.listParams(page, limit),
     queryFn: () => getNews(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -272,7 +273,7 @@ export const getNewsById = async (id: string) => {
  */
 export const useFetchNewsById = (id: string) => {
   return useQuery({
-    queryKey: ["newsById", { id }],
+    queryKey: queryKeys.news.detail(id),
     queryFn: () => getNewsById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -377,7 +378,7 @@ export const useFetchAllTestimonials = ({
   limit: number;
 }) =>
   useQuery({
-    queryKey: ["testimonials", page, limit],
+    queryKey: queryKeys.testimonial.listParams(page, limit),
     queryFn: () => getAllTestimonials(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -398,7 +399,7 @@ export const getTestimonialById = async (id: string) => {
  */
 export const useFetchTestimonialById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["testimonialById", id],
+    queryKey: queryKeys.testimonial.detail(id),
     queryFn: () => getTestimonialById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -499,7 +500,7 @@ export const useFetchAllTags = ({
   page?: number;
 }) =>
   useQuery({
-    queryKey: ["tags", params, page],
+    queryKey: queryKeys.tag.listParams(params, page),
     queryFn: () => getAllTags(params, page),
     refetchOnWindowFocus: false,
     retry: false,
@@ -518,7 +519,7 @@ export const getTagById = async (id: string) => {
  */
 export const useFetchTagById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["tagById", id],
+    queryKey: queryKeys.tag.detail(id),
     queryFn: () => getTagById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -600,7 +601,7 @@ export const useFetchAllMetaKeywords = ({
   page?: number;
 }) =>
   useQuery({
-    queryKey: ["metaKeywords", params, page],
+    queryKey: queryKeys.metaKeyword.listParams(params, page),
     queryFn: () => getAllMetaKeywords(params, page),
     refetchOnWindowFocus: false,
     retry: false,
@@ -621,7 +622,7 @@ export const getMetaKeywordById = async (id: string) => {
  */
 export const useFetchMetaKeywordById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["metaKeywordById", id],
+    queryKey: queryKeys.metaKeyword.detail(id),
     queryFn: () => getMetaKeywordById(id),
     refetchOnWindowFocus: false,
     retry: false,

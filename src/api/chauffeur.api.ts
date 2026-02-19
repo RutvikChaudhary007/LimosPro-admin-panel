@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TChauffeurForm } from "@/components/chauffeur/ChauffeurForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -77,7 +78,7 @@ export const useFetchAllChauffeur = ({
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["chauffeurs", DateRange, page, limit, status],
+    queryKey: queryKeys.chauffeur.listParams(DateRange, page, limit, status),
     queryFn: () => getAllChauffeur(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
@@ -98,7 +99,7 @@ export const getChauffeurById = async (id: string) => {
  */
 export const useFetchChauffeurById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["chauffeurById", id],
+    queryKey: queryKeys.chauffeur.detail(id),
     queryFn: () => getChauffeurById(id),
     refetchOnWindowFocus: false,
     retry: false,

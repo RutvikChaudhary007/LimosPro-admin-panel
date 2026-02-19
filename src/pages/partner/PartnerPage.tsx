@@ -27,6 +27,7 @@ import { toastPromise } from "@/hooks/use-toast";
 import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
+import { queryKeys } from "@/lib/queryKeys";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import type { IPartner } from "@/types/partner/partner.type";
 import { generatePageTitle } from "@/utils/seo";
@@ -143,7 +144,12 @@ function PartnerPage() {
   useEffect(() => {
     if (FetchData?.pagination?.hasNextPage === true) {
       queryClient.prefetchQuery({
-        queryKey: ["Partner", { startDate, endDate }, newPage + 1, perPage],
+        queryKey: queryKeys.partner.listParams(
+          { startDate, endDate },
+          newPage + 1,
+          perPage,
+          selectedStatus,
+        ),
         queryFn: () =>
           getAllPartner(
             { startDate, endDate },

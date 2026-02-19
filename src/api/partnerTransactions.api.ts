@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 const PARTNER_TRANSACTIONS_ENDPOINT = API_ENDPOINTS.PARTNER_TRANSACTIONS;
@@ -25,7 +26,7 @@ export const manualPartnerPayout = async (payload: {
 
 export const useFetchPartnerTransactions = ({ page = 1, limit = 10 }) =>
   useQuery({
-    queryKey: ["partner-transactions", page, limit],
+    queryKey: queryKeys.partnerTransaction.lists(page, limit),
     queryFn: () => getPartnerTransactions(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -38,7 +39,9 @@ export const useManualPartnerPayoutMutation = () => {
   return useMutation({
     mutationFn: manualPartnerPayout,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["partner-transactions"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.partnerTransaction.all,
+      });
     },
   });
 };

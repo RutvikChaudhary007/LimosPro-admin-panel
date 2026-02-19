@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TIpWhiteListForm } from "@/components/ipWhiteList/IpWhiteListForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import {
   default as adminAxiosInstance,
   default as axiosInstance,
@@ -55,7 +56,7 @@ export const useFetchAllContactRequest = ({
   limit: number;
 }) =>
   useQuery({
-    queryKey: ["contactRequest", page, limit],
+    queryKey: queryKeys.contact.lists(page, limit),
     queryFn: () => getAllContactRequest(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -76,7 +77,7 @@ export const getContactRequestById = async (id: string) => {
  */
 export const useFetchContactRequestById = ({ id }: { id: string }) =>
   useQuery({
-    queryKey: ["contactRequestById", id],
+    queryKey: queryKeys.contact.detail(id),
     queryFn: () => getContactRequestById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -109,7 +110,7 @@ export const useReplyContactMutation = () => {
   return useMutation({
     mutationFn: replyToContactRequest,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["contactRequest"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.contact.lists() });
     },
   });
 };
@@ -147,7 +148,7 @@ export const useFetchAllIPWhiteLists = ({
   limit: number;
 }) => {
   return useQuery({
-    queryKey: ["ipWhiteLists", page, limit],
+    queryKey: queryKeys.ipWhiteList.listParams(page, limit),
     queryFn: () => getAllIPWhiteLists(page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -176,7 +177,7 @@ export const getIPWhiteListById = async (id: string) => {
  */
 export const useFetchIPWhiteListById = (id: string) => {
   return useQuery({
-    queryKey: ["ipWhiteListById", { id }],
+    queryKey: queryKeys.ipWhiteList.detail(id),
     queryFn: () => getIPWhiteListById(id),
     refetchOnWindowFocus: false,
     retry: false,

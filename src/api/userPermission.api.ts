@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 // Types
@@ -62,7 +63,7 @@ export const getUserPermissions = async (userId: string) => {
  */
 export const useFetchUserPermissions = (userId: string) =>
   useQuery({
-    queryKey: ["userPermissions", userId],
+    queryKey: queryKeys.userPermission.all(userId),
     queryFn: () => getUserPermissions(userId),
     enabled: !!userId,
     refetchOnWindowFocus: false,
@@ -90,7 +91,7 @@ export const getUserAllPermissions = async () => {
  */
 export const useFetchUserAllPermissions = () =>
   useQuery({
-    queryKey: ["permissions"],
+    queryKey: queryKeys.userPermission.permissions(),
     queryFn: () => getUserAllPermissions(),
     refetchOnWindowFocus: false,
     retry: false,
@@ -125,7 +126,7 @@ export const useSyncUserPermissions = () => {
     mutationFn: syncUserPermissions,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["userPermissions", variables.userId],
+        queryKey: queryKeys.userPermission.all(variables.userId),
       });
     },
   });
@@ -162,7 +163,7 @@ export const useUpdatePermissionActions = () => {
     mutationFn: updatePermissionActions,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["userPermissions", variables.userId],
+        queryKey: queryKeys.userPermission.all(variables.userId),
       });
     },
   });
@@ -194,7 +195,7 @@ export const useAssignPermissionToUser = () => {
     mutationFn: assignPermissionToUser,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["userPermissions", variables.userId],
+        queryKey: queryKeys.userPermission.all(variables.userId),
       });
     },
   });
@@ -226,7 +227,7 @@ export const useRemovePermissionFromUser = () => {
     mutationFn: removePermissionFromUser,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["userPermissions", variables.userId],
+        queryKey: queryKeys.userPermission.all(variables.userId),
       });
     },
   });

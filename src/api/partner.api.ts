@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -77,7 +78,7 @@ export const useFetchAllPartner = ({
   status?: string;
 }) =>
   useQuery({
-    queryKey: ["partners", DateRange, page, limit, status],
+    queryKey: queryKeys.partner.listParams(DateRange, page, limit, status),
     queryFn: () => getAllPartner(DateRange, page, limit, status),
     refetchOnWindowFocus: false,
     retry: false,
@@ -100,7 +101,7 @@ export const getPartnerById = async (id: string) => {
  */
 export const useFetchPartnerById = ({ id }: { id: string | undefined }) =>
   useQuery({
-    queryKey: ["partnerById", id],
+    queryKey: queryKeys.partner.detail(id),
     queryFn: () =>
       id
         ? getPartnerById(id)

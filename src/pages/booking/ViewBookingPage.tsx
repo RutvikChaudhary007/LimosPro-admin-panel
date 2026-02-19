@@ -41,6 +41,7 @@ import { useSocket } from "@/context/SocketContext";
 import { toastPromise } from "@/hooks/use-toast";
 import { usePermission } from "@/hooks/usePermission";
 import { constant } from "@/lib/constant";
+import { queryKeys } from "@/lib/queryKeys";
 import { env } from "@/utils/env";
 import { formatFieldValue } from "@/utils/formatters";
 import { geoDecoding } from "@/utils/googleMaps";
@@ -60,7 +61,7 @@ const ViewBookingPage = () => {
   }>({ pickUpAddress: "", dropOffAddress: "" });
   const { data, isFetching, isError, refetch } = useFetchBookingById({ id });
   const { data: passengerUser } = useQuery({
-    queryKey: ["bookingPassengerUser", data?.userId],
+    queryKey: queryKeys.bookingPassengerUser.detail(data?.userId),
     queryFn: () => getUserById(data?.userId),
     enabled: !!data?.userId && !data?.thirdPartyUser,
     refetchOnWindowFocus: false,

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import { tokenManager } from "@/services/tokenManager";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -79,7 +80,7 @@ export const getAllPermissions = async (data?: TPara) => {
  */
 export const useFetchAllPermissions = (Data: TPara, options?: any) =>
   useQuery({
-    queryKey: ["Permissions", Data],
+    queryKey: queryKeys.auth.permissions(Data),
     queryFn: () => getAllPermissions(Data),
     refetchOnWindowFocus: false,
     retry: false,
@@ -109,7 +110,7 @@ export const getAllStaffRoles = async () => {
  */
 export const useFetchAllStaffRoles = () =>
   useQuery({
-    queryKey: ["Roles"],
+    queryKey: queryKeys.auth.roles(),
     queryFn: () => getAllStaffRoles(),
     refetchOnWindowFocus: false,
     retry: false,
@@ -164,15 +165,12 @@ export const useFetchDashboard = ({
   page?: number;
 }) =>
   useQuery({
-    queryKey: [
-      "Dashboard",
+    queryKey: queryKeys.auth.dashboard(
       DateRange?.startDate?.toISOString(),
       DateRange?.endDate?.toISOString(),
       page,
-    ],
+    ),
     queryFn: () => getDashboard(DateRange, page),
     refetchOnWindowFocus: false,
     retry: false,
-    staleTime: 0,
-    gcTime: 0,
   });

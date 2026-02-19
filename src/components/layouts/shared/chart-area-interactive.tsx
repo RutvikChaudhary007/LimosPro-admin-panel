@@ -18,7 +18,7 @@ export function ChartAreaInteractive({ data = [] }: TProps) {
     datasets: [
       {
         label: "Total Revenue",
-        data: data.map((item) => item.revenue),
+        data: data.map((item) => parseFloat(item.revenue.toString())),
         sign: "$",
       },
     ],

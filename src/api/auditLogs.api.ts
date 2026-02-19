@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 export type AuditLogItem = {
@@ -70,7 +71,7 @@ export const useFetchAuditLogs = (
   } = { queryOptions: {} },
 ) =>
   useQuery({
-    queryKey: ["auditLogs", page, limit],
+    queryKey: queryKeys.auditLog.listParams(page, limit),
     queryFn: () => getAuditLogs({ page, limit }),
     refetchOnWindowFocus: false,
     retry: false,
@@ -89,11 +90,11 @@ export const useFetchAuditLogById = ({
   id,
   queryOptions,
 }: {
-  id?: string;
+  id?: string | undefined;
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
-    queryKey: ["auditLog", id],
+    queryKey: queryKeys.auditLog.detail(id ?? ""),
     queryFn: () => getAuditLogById(id),
     refetchOnWindowFocus: false,
     retry: false,

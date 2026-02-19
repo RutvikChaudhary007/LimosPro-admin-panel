@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { MultiLangPageTemplateFormData } from "@/components/pagebuilder/PageBuilderBusinessForm";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import type { PageTemplateQueryParams } from "@/types/content";
 import axiosInstance from "@/utils/axiosInstance";
-import { API_ENDPOINTS } from "../../lib/api-endpoints";
 
 export const getAllBusinessPageLayouts = async (
   params?: PageTemplateQueryParams,
@@ -20,7 +21,7 @@ export const useFetchAllBusinessPageLayouts = (
   params?: PageTemplateQueryParams,
 ) =>
   useQuery({
-    queryKey: ["businessPageLayouts", params],
+    queryKey: queryKeys.businessPageLayout.lists(params),
     queryFn: () => getAllBusinessPageLayouts(params),
     refetchOnWindowFocus: false,
     retry: false,
@@ -35,7 +36,7 @@ export const getBusinessPageLayoutById = async (id: string) => {
 
 export const useFetchBusinessPageLayoutById = (id: string) =>
   useQuery({
-    queryKey: ["businessPageLayout", id],
+    queryKey: queryKeys.businessPageLayout.detail(id),
     queryFn: () => getBusinessPageLayoutById(id),
     enabled: !!id,
     refetchOnWindowFocus: false,
@@ -57,7 +58,9 @@ export const useCreateBusinessPageLayout = () => {
   return useMutation({
     mutationFn: createBusinessPageLayout,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["businessPageLayouts"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.businessPageLayout.all,
+      });
     },
   });
 };
@@ -81,9 +84,11 @@ export const useUpdateBusinessPageLayout = () => {
   return useMutation({
     mutationFn: updateBusinessPageLayout,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["businessPageLayouts"] });
       queryClient.invalidateQueries({
-        queryKey: ["businessPageLayout", variables.id],
+        queryKey: queryKeys.businessPageLayout.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.businessPageLayout.detail(variables.id),
       });
     },
   });
@@ -101,7 +106,9 @@ export const useDeleteBusinessPageLayout = () => {
   return useMutation({
     mutationFn: deleteBusinessPageLayout,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["businessPageLayouts"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.businessPageLayout.all,
+      });
     },
   });
 };

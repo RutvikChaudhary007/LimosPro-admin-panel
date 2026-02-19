@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PermissionAction } from "@/api/userPermission.api";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 export interface RegionPermission {
@@ -30,7 +31,7 @@ export const getRegionPermissions = async (regionId: string) => {
  */
 export const useFetchRegionPermissions = (regionId: string) =>
   useQuery({
-    queryKey: ["regionPermissions", regionId],
+    queryKey: queryKeys.regionPermission.all(regionId),
     queryFn: () => getRegionPermissions(regionId),
     enabled: !!regionId,
     refetchOnWindowFocus: false,
@@ -67,7 +68,7 @@ export const useAssignPermissionToRegion = () => {
     mutationFn: assignPermissionToRegion,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["regionPermissions", variables.regionId],
+        queryKey: queryKeys.regionPermission.all(variables.regionId),
       });
     },
   });
@@ -104,7 +105,7 @@ export const useUpdateRegionPermissionActions = () => {
     mutationFn: updateRegionPermissionActions,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["regionPermissions", variables.regionId],
+        queryKey: queryKeys.regionPermission.all(variables.regionId),
       });
     },
   });
@@ -138,7 +139,7 @@ export const useRemovePermissionFromRegion = () => {
     mutationFn: removePermissionFromRegion,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["regionPermissions", variables.regionId],
+        queryKey: queryKeys.regionPermission.all(variables.regionId),
       });
     },
   });
@@ -158,10 +159,27 @@ export const syncRegionPermissionsToUsers = async (regionId: string) => {
 };
 
 /**
- * Hook to sync region permissions to users
+ * Hook to sync region permissions to users.
+ * On success, invalidates:
+ * - Regional admin list (so the table refetches)
+ * - Region permissions (so the permission manager refetches)
+ * - All user permission queries (so each regional admin row's PermissionIndicator refetches and shows updated count)
  */
 export const useSyncRegionPermissionsToUsers = (regionId: string) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => syncRegionPermissionsToUsers(regionId),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.regionalAdmin.all,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.regionPermission.all(regionId),
+      });
+      // Invalidate all user permission caches so Regional Admin list rows (PermissionIndicator) refetch updated permissions
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.userPermission.allPrefix,
+      });
+    },
   });
 };

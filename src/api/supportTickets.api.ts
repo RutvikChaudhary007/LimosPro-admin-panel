@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 type SupportTicketsResponse = {
@@ -72,7 +73,7 @@ export const useFetchAllSupportTickets = ({
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
-    queryKey: ["supportTickets", page, limit, status, type],
+    queryKey: queryKeys.supportTicket.listParams(page, limit, status, type),
     queryFn: () => getAllSupportTickets({ page, limit, status, type }),
     refetchOnWindowFocus: false,
     retry: false,
@@ -91,11 +92,11 @@ export const useFetchSupportTicketById = ({
   id,
   queryOptions,
 }: {
-  id?: string;
+  id?: string | undefined;
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
-    queryKey: ["supportTicketById", id],
+    queryKey: queryKeys.supportTicket.detail(id ?? ""),
     queryFn: () => getSupportTicketById(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -152,7 +153,9 @@ export const useReplySupportTicketMutation = () => {
   return useMutation({
     mutationFn: replySupportTicket,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supportTicketById"] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.supportTicket.lists(),
+      });
     },
   });
 };

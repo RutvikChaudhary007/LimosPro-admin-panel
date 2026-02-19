@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 export interface ChauffeurPageData {
@@ -56,14 +57,14 @@ export const updateChauffeurPage = async ({
 
 export const useFetchAllChauffeurPages = (params: any = {}) => {
   return useQuery({
-    queryKey: ["chauffeurPages", params],
+    queryKey: queryKeys.chauffeurPage.lists(params),
     queryFn: () => fetchAllChauffeurPages(params),
   });
 };
 
 export const useFetchChauffeurPageById = (id: string) => {
   return useQuery({
-    queryKey: ["chauffeurPage", id],
+    queryKey: queryKeys.chauffeurPage.detail(id),
     queryFn: () => fetchChauffeurPageById(id),
     enabled: !!id,
   });
@@ -74,7 +75,7 @@ export const useCreateChauffeurPage = () => {
   return useMutation({
     mutationFn: createChauffeurPage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["chauffeurPages"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.chauffeurPage.all });
     },
   });
 };
@@ -84,8 +85,10 @@ export const useUpdateChauffeurPage = () => {
   return useMutation({
     mutationFn: updateChauffeurPage,
     onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ["chauffeurPages"] });
-      queryClient.invalidateQueries({ queryKey: ["chauffeurPage", data.id] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.chauffeurPage.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.chauffeurPage.detail(data.id),
+      });
     },
   });
 };

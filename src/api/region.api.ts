@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TRegion } from "@/components/regionManagement/region/RegionForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -50,7 +51,7 @@ export const getAllRegions = async (data?: TPara) => {
  */
 export const useFetchAllRegions = (Data: TPara) =>
   useQuery({
-    queryKey: ["Regions", { Data }],
+    queryKey: queryKeys.region.listParams(Data),
     queryFn: () => getAllRegions(Data),
     refetchOnWindowFocus: false,
     retry: false,
@@ -72,7 +73,7 @@ export const getSingleRegions = async (id: string) => {
  */
 export const useFetchRegionById = (id: string) =>
   useQuery({
-    queryKey: ["RegionById", { id }],
+    queryKey: queryKeys.region.detail(id),
     queryFn: () => getSingleRegions(id),
     refetchOnWindowFocus: false,
     retry: false,
@@ -189,7 +190,7 @@ export const getAllRegionAdmins = async (data?: TPara) => {
  */
 export const useFetchAllRegionAdmins = (Data: TPara) =>
   useQuery({
-    queryKey: ["RegionAdmins", Data],
+    queryKey: queryKeys.regionalAdmin.listParams(Data),
     queryFn: () => getAllRegionAdmins(Data),
     refetchOnWindowFocus: false,
     retry: false,
@@ -211,7 +212,7 @@ export const getSingleRegionAdmin = async (id: string) => {
  */
 export const useFetchRegionAdminById = (id: string) =>
   useQuery({
-    queryKey: ["RegionAdminById", { id }],
+    queryKey: queryKeys.regionalAdmin.detail(id),
     queryFn: () => getSingleRegionAdmin(id),
     refetchOnWindowFocus: false,
     retry: false,

@@ -1,6 +1,7 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -68,7 +69,7 @@ export const useFetchAllFleets = ({
   limit?: number;
 }) =>
   useQuery({
-    queryKey: ["Fleets", DateRange, page, limit],
+    queryKey: queryKeys.vehicle.listParams(DateRange, page, limit),
     queryFn: () => getAllFleets(DateRange, page, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -89,7 +90,7 @@ export const getFleetById = async (id: string) => {
  */
 export const useFetchFleetById = ({ id }: { id: string }) =>
   useSuspenseQuery({
-    queryKey: ["FleetById", id],
+    queryKey: queryKeys.vehicle.detail(id),
     queryFn: () => getFleetById(id),
     refetchOnWindowFocus: false,
     retry: false,

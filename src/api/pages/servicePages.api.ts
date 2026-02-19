@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
-import { API_ENDPOINTS } from "../../lib/api-endpoints";
 
 export const getAllServicePageContent = async (params?: any) => {
   const response = await axiosInstance.get(
@@ -14,7 +15,7 @@ export const getAllServicePageContent = async (params?: any) => {
 
 export const useFetchAllServicePageContent = (params?: any) =>
   useQuery({
-    queryKey: ["servicePageContent", params],
+    queryKey: queryKeys.servicePageContent.listParams(params),
     queryFn: () => getAllServicePageContent(params),
     refetchOnWindowFocus: false,
     retry: false,
@@ -29,7 +30,7 @@ export const getServicePageContentById = async (id: string) => {
 
 export const useFetchServicePageContentById = (id: string) =>
   useQuery({
-    queryKey: ["servicePageContent", id],
+    queryKey: queryKeys.servicePageContent.detail(id),
     queryFn: () => getServicePageContentById(id),
     enabled: !!id,
     refetchOnWindowFocus: false,

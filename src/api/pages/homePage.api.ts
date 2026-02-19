@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 export interface HomePageData {
@@ -53,14 +54,14 @@ export const updateHomePage = async ({
 
 export const useFetchAllHomePages = (params: any = {}) => {
   return useQuery({
-    queryKey: ["homePages", params],
+    queryKey: queryKeys.homePage.lists(params),
     queryFn: () => fetchAllHomePages(params),
   });
 };
 
 export const useFetchHomePageById = (id: string) => {
   return useQuery({
-    queryKey: ["homePage", id],
+    queryKey: queryKeys.homePage.detail(id),
     queryFn: () => fetchHomePageById(id),
     enabled: !!id,
   });
@@ -71,7 +72,7 @@ export const useCreateHomePage = () => {
   return useMutation({
     mutationFn: createHomePage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["homePages"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.homePage.all });
     },
   });
 };
@@ -81,8 +82,10 @@ export const useUpdateHomePage = () => {
   return useMutation({
     mutationFn: updateHomePage,
     onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ["homePages"] });
-      queryClient.invalidateQueries({ queryKey: ["homePage", data.id] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.homePage.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.homePage.detail(data.id),
+      });
     },
   });
 };

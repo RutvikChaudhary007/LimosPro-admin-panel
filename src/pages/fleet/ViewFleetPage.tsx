@@ -64,7 +64,7 @@ const ViewFleetPage = () => {
                         <img
                           src={img?.url || "/fleet/fleetimg.svg"}
                           alt={`vehicle-${index + 1}`}
-                          className="w-full h-full object-cover"
+                          className="object-cover w-full h-full"
                         />
                       </div>
                     ),
@@ -75,48 +75,48 @@ const ViewFleetPage = () => {
             <FieldSeparator />
             <CardContent>
               <div className="grid grid-cols-[max-content_1fr] gap-4 items-center">
-                <Label className="font-montserrat font-semibold capitalize">
+                {/* <Label className="font-semibold capitalize font-montserrat">
                   Description:
                 </Label>
                 <Label> {data?.description}</Label>
 
-                <FieldSeparator className="col-span-full" />
+                <FieldSeparator className="col-span-full" /> */}
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   Bags:
                 </Label>
                 <Label> {data?.bagsCapacity}</Label>
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   Capacity:
                 </Label>
                 <Label> {data?.capacity}</Label>
 
                 <FieldSeparator className="col-span-full" />
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   Brand:
                 </Label>
                 <Label>{data?.brand}</Label>
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   vehicle Type:
                 </Label>
                 <Label> {data?.vehicleType}</Label>
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   model:
                 </Label>
                 <Label>{data?.model}</Label>
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   color:
                 </Label>
                 <Label>{data?.color}</Label>
 
                 <FieldSeparator className="col-span-full" />
 
-                <Label className="font-montserrat font-semibold capitalize">
+                <Label className="font-semibold capitalize font-montserrat">
                   Plate Number:
                 </Label>
                 <Label>{data?.plateNumber}</Label>

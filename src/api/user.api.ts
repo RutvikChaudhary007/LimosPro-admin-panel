@@ -1,6 +1,7 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import type { IUserFormData } from "@/types/user.type";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -75,7 +76,7 @@ export const useFetchAllUsers = ({
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
-    queryKey: ["users", DateRange, page, status, limit],
+    queryKey: queryKeys.user.listParams(DateRange, page, status, limit),
     queryFn: () => getAllUsers(DateRange, page, status, limit),
     refetchOnWindowFocus: false,
     retry: false,
@@ -99,7 +100,7 @@ export const getUserById = async (id?: string) => {
  */
 export const useFetchUserById = ({ id }: { id?: string }) =>
   useSuspenseQuery({
-    queryKey: ["userById", id],
+    queryKey: queryKeys.user.detail(id),
     queryFn: () => getUserById(id),
     refetchOnWindowFocus: false,
     retry: false,

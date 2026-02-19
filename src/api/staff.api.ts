@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import type { TCrewMemberForm } from "@/components/crewMember/crewMemberForm";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -47,7 +48,7 @@ export const getAllCrewMember = async ({ limit, page }: TArg) => {
  */
 export const useFetchAllCrewMember = ({ page, limit }: TArg) =>
   useQuery({
-    queryKey: ["crewMember", { limit }, { page }],
+    queryKey: queryKeys.crewMember.listParams(limit, page),
     queryFn: () => getAllCrewMember({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,
@@ -150,7 +151,7 @@ export const getAllStaffMember = async ({ limit, page }: TStaffArg) => {
  */
 export const useFetchAllStaffMember = ({ page, limit }: TStaffArg) =>
   useQuery({
-    queryKey: ["staffMember", limit, page],
+    queryKey: queryKeys.staffMember.listParams(limit, page),
     queryFn: () => getAllStaffMember({ limit, page }),
     refetchOnWindowFocus: false,
     retry: false,
@@ -179,7 +180,7 @@ export const getStaffMemberById = async ({ id }: TStaffArg) => {
  */
 export const useFetchOneStaffMember = ({ id }: TStaffArg) =>
   useQuery({
-    queryKey: ["staffMemberById", { id }],
+    queryKey: queryKeys.staffMember.detail(id!),
     queryFn: () => getStaffMemberById({ id }),
     refetchOnWindowFocus: false,
     retry: false,

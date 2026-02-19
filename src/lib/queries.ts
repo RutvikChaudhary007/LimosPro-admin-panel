@@ -2,7 +2,6 @@ import {
   type QueryObserverResult,
   type RefetchOptions,
   useMutation,
-  useQueryClient,
 } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
@@ -88,6 +87,7 @@ import {
   deleteServicePricing,
   editServicePricingById,
 } from "@/api/servicePricing.api";
+import { useInvalidateModule } from "@/hooks/useInvalidateModule";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import type { IUserFormData } from "@/types/user.type";
@@ -167,12 +167,12 @@ const useLoginMutation = () => {
  */
 
 const useCreatefleetMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: createFleet,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      invalidate.vehicle();
       navigate(constant.ROUTING_URLS.FLEETS);
       return res;
     },
@@ -199,12 +199,12 @@ const useCreatefleetMutation = () => {
 };
 
 const useEditfleetMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: editFleetById,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      invalidate.vehicle();
       navigate(constant.ROUTING_URLS.FLEETS);
       return res;
     },
@@ -231,11 +231,11 @@ const useEditfleetMutation = () => {
 };
 
 const useDeletefleetMutation = (refetch: TRefetch) => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteFleet,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      invalidate.vehicle();
       refetch();
     },
     onError: (err: unknown) => {
@@ -261,11 +261,11 @@ const useDeletefleetMutation = (refetch: TRefetch) => {
 };
 
 const useBulkDeletefleetMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteFleet,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["Fleets"] });
+      invalidate.vehicle();
       return res;
     },
     onError: (err: unknown) => {
@@ -297,12 +297,12 @@ const useBulkDeletefleetMutation = () => {
  */
 
 const useCreateServicePricingMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: createServicePricing,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      invalidate.servicePricing();
       navigate(constant.ROUTING_URLS.SERVICE_PRICING);
       return res;
     },
@@ -323,12 +323,12 @@ const useCreateServicePricingMutation = () => {
 };
 
 const useEditServicePricingMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: editServicePricingById,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      invalidate.servicePricing();
       navigate(constant.ROUTING_URLS.SERVICE_PRICING);
       return res;
     },
@@ -349,11 +349,11 @@ const useEditServicePricingMutation = () => {
 };
 
 const useDeleteServicePricingMutation = (refetch: TRefetch) => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteServicePricing,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      invalidate.servicePricing();
       refetch();
     },
     onError: (err: unknown) => {
@@ -373,11 +373,11 @@ const useDeleteServicePricingMutation = (refetch: TRefetch) => {
 };
 
 const useBulkDeleteServicePricingMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteServicePricing,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["ServicePricings"] });
+      invalidate.servicePricing();
       return res;
     },
     onError: (err: unknown) => {
@@ -404,15 +404,12 @@ const useBulkDeleteServicePricingMutation = () => {
 
 const useCreatePartnerMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: createPartner,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["partners"] });
-      // userPermissions are automatically stored in localStorage by the login API
-
+    onSuccess: (response) => {
+      invalidate.partner();
       navigate(constant.ROUTING_URLS.PARTNER);
       return response;
     },
@@ -424,18 +421,17 @@ const useCreatePartnerMutation = () => {
 
 const useEditPartnerMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: editPartner,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["partners"] });
-      queryClient.invalidateQueries({ queryKey: ["partnerById"] });
-      // userPermissions are automatically stored in localStorage by the login API
-
+    onSuccess: (_response, variables) => {
+      invalidate.partner(
+        typeof variables === "object" && variables && "id" in variables
+          ? (variables as { id: string }).id
+          : undefined,
+      );
       navigate(constant.ROUTING_URLS.PARTNER);
-      // Navigate to dashboard
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);
@@ -444,11 +440,11 @@ const useEditPartnerMutation = () => {
 };
 
 const useDeletePartnerMutation = (refetch: TRefetch) => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deletePartner,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["partners"] });
+      invalidate.partner();
       refetch();
       // setData((prev) =>
       //   prev.filter((row) => row.id !== response.id))
@@ -469,11 +465,11 @@ const useDeletePartnerMutation = (refetch: TRefetch) => {
 };
 
 const useBulkDeletePartnerMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeletePartner,
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["partners"] });
+      invalidate.partner();
       return res;
     },
     onError: (err: unknown) => {
@@ -499,12 +495,12 @@ const useBulkDeletePartnerMutation = () => {
 
 const useUpdateUserMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: IUserFormData }) =>
       updateUser(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+    onSuccess: (_data, variables) => {
+      invalidate.user(variables.id);
       navigate(constant.ROUTING_URLS.USERS);
     },
     onError: (err: unknown) => {
@@ -514,11 +510,11 @@ const useUpdateUserMutation = () => {
 };
 
 const useDeleteUserMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      invalidate.user();
       return data;
     },
     onError: (err: unknown) => {
@@ -528,11 +524,11 @@ const useDeleteUserMutation = () => {
 };
 
 const useBulkDeleteUserMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteUser,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      invalidate.user();
       return data;
     },
     onError: (err: unknown) => {
@@ -548,14 +544,12 @@ const useBulkDeleteUserMutation = () => {
  */
 
 const useCreateChauffeurMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: createChauffeur,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
-      // userPermissions are automatically stored in localStorage by the login API
+    onSuccess: () => {
+      invalidate.chauffeur();
       navigate(constant.ROUTING_URLS.CHAUFFEUR);
       // Navigate to dashboard
     },
@@ -566,14 +560,12 @@ const useCreateChauffeurMutation = () => {
 };
 
 const useEditChauffeurMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   const navigate = useNavigate();
   return useMutation({
     mutationFn: editChauffeur,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
-      // userPermissions are automatically stored in localStorage by the login API
+    onSuccess: (_response, variables) => {
+      invalidate.chauffeur(variables?.id);
       navigate(constant.ROUTING_URLS.CHAUFFEUR);
       // Navigate to dashboard
     },
@@ -584,12 +576,13 @@ const useEditChauffeurMutation = () => {
 };
 
 const useDeleteChauffeurMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteChauffeur,
     onSuccess: (response, variables) => {
-      console.log("variables:", variables);
-      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
+      invalidate.chauffeur(
+        typeof variables === "string" ? variables : undefined,
+      );
       return response;
     },
     onError: (err: unknown) => {
@@ -599,12 +592,11 @@ const useDeleteChauffeurMutation = () => {
 };
 
 const useBulkDeleteChauffeurMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteChauffeur,
-    onSuccess: (response, variables) => {
-      console.log("variables:", variables);
-      queryClient.invalidateQueries({ queryKey: ["chauffeurs"] });
+    onSuccess: (response) => {
+      invalidate.chauffeur();
       return response;
     },
     onError: (err: unknown) => {
@@ -621,13 +613,11 @@ const useBulkDeleteChauffeurMutation = () => {
 
 const useCreateCrewMemberMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createCrewMember,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
-      // userPermissions are automatically stored in localStorage by the login API
+    onSuccess: () => {
+      invalidate.crewMember();
       navigate(constant.ROUTING_URLS.CREW_MEMBERS);
       // Navigate to dashboard
     },
@@ -639,11 +629,11 @@ const useCreateCrewMemberMutation = () => {
 
 const useUpdateCrewMemberMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editCrewMember,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
+    onSuccess: (data, variables) => {
+      invalidate.crewMember(variables?.id);
       navigate(constant.ROUTING_URLS.CREW_MEMBERS);
       return data;
     },
@@ -654,11 +644,11 @@ const useUpdateCrewMemberMutation = () => {
 };
 
 const useDeleteCrewMemberMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteCrewMember,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
+      invalidate.crewMember();
       return data;
     },
     onError: (err: unknown) => {
@@ -668,11 +658,11 @@ const useDeleteCrewMemberMutation = () => {
 };
 
 const useBulkDeleteCrewMemberMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteCrewMember,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["crewMember"] });
+      invalidate.crewMember();
       return data;
     },
     onError: (err: unknown) => {
@@ -689,13 +679,11 @@ const useBulkDeleteCrewMemberMutation = () => {
 
 const useCreateStaffMemberMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createStaffMember,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
-      // userPermissions are automatically stored in localStorage by the login API
+    onSuccess: () => {
+      invalidate.staffMember();
       navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
       // Navigate to dashboard
     },
@@ -707,13 +695,11 @@ const useCreateStaffMemberMutation = () => {
 
 const useUpdateStaffMemberMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editStaffMember,
-    onSuccess: (response, variables) => {
-      console.log(variables, response);
-      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
-      // userPermissions are automatically stored in localStorage by the login API
+    onSuccess: (_response, variables) => {
+      invalidate.staffMember(variables?.id);
       navigate(constant.ROUTING_URLS.STAFF_MEMBERS);
       // Navigate to dashboard
     },
@@ -724,11 +710,11 @@ const useUpdateStaffMemberMutation = () => {
 };
 
 const useDeleteStaffMemberMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteStaffMember,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
+      invalidate.staffMember();
       return data;
     },
     onError: (err: unknown) => {
@@ -738,11 +724,11 @@ const useDeleteStaffMemberMutation = () => {
 };
 
 const useBulkDeleteStaffMemberMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteStaffMember,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["staffMember"] });
+      invalidate.staffMember();
       return data;
     },
     onError: (err: unknown) => {
@@ -775,11 +761,11 @@ const useSyncStaffPermissionsMutation = () => {
 
 const useCreateTestimonialMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createTestimonial,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+      invalidate.testimonial();
       navigate(constant.ROUTING_URLS.TESTIMONIALS);
       return data;
     },
@@ -791,11 +777,11 @@ const useCreateTestimonialMutation = () => {
 
 const useEditTestimonialMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editTestimonial,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+    onSuccess: (data, variables) => {
+      invalidate.testimonial(variables?.id);
       navigate(constant.ROUTING_URLS.TESTIMONIALS);
       return data;
     },
@@ -811,11 +797,11 @@ const useEditTestimonialMutation = () => {
  * ###################################################
  */
 const useDeleteTestimonialMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteTestimonial,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+      invalidate.testimonial();
       return data;
     },
     onError: (err: unknown) => {
@@ -830,11 +816,11 @@ const useDeleteTestimonialMutation = () => {
  * ###################################################
  */
 const useBulkDeleteTestimonialMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteTestimonial,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["testimonials"] });
+      invalidate.testimonial();
       return data;
     },
     onError: (err: unknown) => {
@@ -851,11 +837,11 @@ const useBulkDeleteTestimonialMutation = () => {
 
 const useCreateNewsMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createNews,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      invalidate.news();
       navigate(constant.ROUTING_URLS.NEWS);
       return data;
     },
@@ -867,11 +853,11 @@ const useCreateNewsMutation = () => {
 
 const useEditNewsMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editNewsById,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+    onSuccess: (data, variables) => {
+      invalidate.news(variables?.id);
       navigate(constant.ROUTING_URLS.NEWS);
       return data;
     },
@@ -882,11 +868,11 @@ const useEditNewsMutation = () => {
 };
 
 const useDeleteNewsMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteNewsById,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      invalidate.news();
       return data;
     },
     onError: (err: unknown) => {
@@ -896,11 +882,11 @@ const useDeleteNewsMutation = () => {
 };
 
 const useBulkDeleteNewsMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteNewsById,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["news"] });
+      invalidate.news();
       return data;
     },
     onError: (err: unknown) => {
@@ -916,12 +902,11 @@ const useBulkDeleteNewsMutation = () => {
  */
 
 const useCreateFaqMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createFAQ,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["faqs"] });
-      // navigate(constant.ROUTING_URLS.FAQ); // Removed navigate usage
+      invalidate.faq();
       return data;
     },
     onError: (err: unknown) => {
@@ -931,12 +916,11 @@ const useCreateFaqMutation = () => {
 };
 
 const useEditFaqMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editFAQById,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["faqs"] });
-      // navigate(constant.ROUTING_URLS.FAQ); // Removed navigate usage
+    onSuccess: (data, variables) => {
+      invalidate.faq(variables?.id);
       return data;
     },
     onError: (err: unknown) => {
@@ -946,11 +930,11 @@ const useEditFaqMutation = () => {
 };
 
 const useDeleteFaqMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteFAQById,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      invalidate.faq();
       return data;
     },
     onError: (err: unknown) => {
@@ -960,11 +944,11 @@ const useDeleteFaqMutation = () => {
 };
 
 const useBulkDeleteFaqMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteFAQById,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["faqs"] });
+      invalidate.faq();
       return data;
     },
     onError: (err: unknown) => {
@@ -981,11 +965,11 @@ const useBulkDeleteFaqMutation = () => {
 
 const useCreateIPWhiteListMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createIPWhiteList,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
+      invalidate.ipWhiteList();
       navigate(constant.ROUTING_URLS.IP_WHITE_LIST);
       return data;
     },
@@ -997,11 +981,11 @@ const useCreateIPWhiteListMutation = () => {
 
 const useEditIPWhiteListMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editIPWhiteListById,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
+    onSuccess: (data, variables) => {
+      invalidate.ipWhiteList(variables?.id);
       navigate(constant.ROUTING_URLS.IP_WHITE_LIST);
       return data;
     },
@@ -1012,11 +996,11 @@ const useEditIPWhiteListMutation = () => {
 };
 
 const useDeleteIPWhiteListMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteIPWhiteListById,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
+      invalidate.ipWhiteList();
       return data;
     },
     onError: (err: unknown) => {
@@ -1026,11 +1010,11 @@ const useDeleteIPWhiteListMutation = () => {
 };
 
 const useBulkDeleteIPWhiteListMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteIPWhiteListById,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ipWhiteList"] });
+      invalidate.ipWhiteList();
       return data;
     },
     onError: (err: unknown) => {
@@ -1047,11 +1031,11 @@ const useBulkDeleteIPWhiteListMutation = () => {
  */
 
 const useBulkDeleteTripsMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteTrips,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["Trips"] });
+      invalidate.trip();
       return data;
     },
     onError: (err: unknown) => {
@@ -1069,15 +1053,13 @@ const useBulkDeleteTripsMutation = () => {
 
 const useCreateRegionMutation = () => {
   const navigate = useNavigate();
-  const clientQuery = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: createRegion,
 
     onSuccess: (data) => {
-      ["Regions", "notifications"].forEach((key) =>
-        clientQuery.invalidateQueries({ queryKey: [key] }),
-      );
+      invalidate.region();
       navigate(constant.ROUTING_URLS.REGION);
       return data;
     },
@@ -1096,15 +1078,13 @@ const useCreateRegionMutation = () => {
 
 const useEditRegionMutation = () => {
   const navigate = useNavigate();
-  const clientQuery = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: editRegion,
 
-    onSuccess: (data) => {
-      ["Regions", "notifications"].forEach((key) =>
-        clientQuery.invalidateQueries({ queryKey: [key] }),
-      );
+    onSuccess: (data, variables) => {
+      invalidate.region(variables?.id);
       navigate(constant.ROUTING_URLS.REGION);
       return data;
     },
@@ -1122,15 +1102,13 @@ const useEditRegionMutation = () => {
 };
 
 const useDeleteRegionMutation = () => {
-  const clientQuery = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: deleteRegion,
 
     onSuccess: (data) => {
-      ["Regions", "notifications"].forEach((key) =>
-        clientQuery.invalidateQueries({ queryKey: [key] }),
-      );
+      invalidate.region();
       return data;
     },
 
@@ -1147,15 +1125,13 @@ const useDeleteRegionMutation = () => {
 };
 
 const useBulkDeleteRegionsMutation = () => {
-  const clientQuery = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: bulkDeleteRegions,
 
     onSuccess: (data) => {
-      ["Regions", "notifications"].forEach((key) =>
-        clientQuery.invalidateQueries({ queryKey: [key] }),
-      );
+      invalidate.region();
       return data;
     },
 
@@ -1180,12 +1156,12 @@ const useBulkDeleteRegionsMutation = () => {
 
 const useCreateRegionAdminMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: createRegionAdmin,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["RegionAdmins"] });
+      invalidate.regionalAdmin();
       navigate(constant.ROUTING_URLS.REGION_ADMIN);
       return data;
     },
@@ -1197,15 +1173,12 @@ const useCreateRegionAdminMutation = () => {
 
 const useEditRegionAdminMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: editRegionAdmin,
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["RegionAdmins"] });
-      queryClient.invalidateQueries({
-        queryKey: ["RegionAdminById", { id: variables.id }],
-      });
+      invalidate.regionalAdmin(variables?.id);
       navigate(constant.ROUTING_URLS.REGION_ADMIN);
       return data;
     },
@@ -1216,14 +1189,12 @@ const useEditRegionAdminMutation = () => {
 };
 
 const useDeleteRegionAdminMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: deleteRegionAdmin,
     onSuccess: (data) => {
-      ["RegionAdmins"].forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: [key] });
-      });
+      invalidate.regionalAdmin();
       return data;
     },
     onError: (err: unknown) => {
@@ -1233,14 +1204,12 @@ const useDeleteRegionAdminMutation = () => {
 };
 
 const useBulkDeleteRegionAdminsMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: bulkDeleteRegionAdmins,
     onSuccess: (data) => {
-      ["RegionAdmins"].forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: [key] });
-      });
+      invalidate.regionalAdmin();
       return data;
     },
     onError: (err: unknown) => {
@@ -1258,11 +1227,11 @@ const useBulkDeleteRegionAdminsMutation = () => {
 
 const useCreateContentBlockMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createContentBlock,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ContentBlocks"] });
+      invalidate.contentBlock();
       navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
       return data;
     },
@@ -1274,11 +1243,11 @@ const useCreateContentBlockMutation = () => {
 
 const useEditContentBlockMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: editContentBlock,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ContentBlocks"] });
+    onSuccess: (data, variables) => {
+      invalidate.contentBlock(variables?.id);
       navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
       return data;
     },
@@ -1289,11 +1258,11 @@ const useEditContentBlockMutation = () => {
 };
 
 const useDeleteContentBlockMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteContentBlock,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["ContentBlocks"] });
+      invalidate.contentBlock();
       return data;
     },
     onError: (err: unknown) => {
@@ -1310,11 +1279,11 @@ const useDeleteContentBlockMutation = () => {
  */
 const useCreateBlogPostMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: (data: FormData) => blogService.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogPosts"] });
+      invalidate.blog();
       navigate(constant.ROUTING_URLS.BLOG_POSTS);
     },
   });
@@ -1322,12 +1291,12 @@ const useCreateBlogPostMutation = () => {
 
 const useUpdateBlogPostMutation = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: FormData }) =>
       blogService.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogPosts"] });
+    onSuccess: (_data, variables) => {
+      invalidate.blog(variables?.id);
       navigate(constant.ROUTING_URLS.BLOG_POSTS);
     },
   });
@@ -1340,12 +1309,12 @@ const useUpdateBlogPostMutation = () => {
  * @returns
  */
 const useRefundPaymentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: refundPayment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["Payments"] });
-      queryClient.invalidateQueries({ queryKey: ["Refunds"] });
+      invalidate.payment();
+      invalidate.refund();
     },
   });
 };
@@ -1358,11 +1327,11 @@ const useRefundPaymentMutation = () => {
  */
 
 const useCreateServicePageContentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createServicePageContent,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["servicePageContent"] });
+      invalidate.servicePageContent();
       return data;
     },
     onError: (err: unknown) => {
@@ -1372,24 +1341,21 @@ const useCreateServicePageContentMutation = () => {
 };
 
 const useEditServicePageContentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: updateServicePageContent,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["servicePageContent"] });
-      queryClient.invalidateQueries({
-        queryKey: ["servicePageContent", variables.id],
-      });
+      invalidate.servicePageContent(variables?.id);
     },
   });
 };
 
 const useDeleteServicePageContentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteServicePageContent,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["servicePageContent"] });
+      invalidate.servicePageContent();
     },
   });
 };
@@ -1402,11 +1368,11 @@ const useDeleteServicePageContentMutation = () => {
  */
 
 const useCreateDestinationPageContentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createDestinationPageContent,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["destinationPageContent"] });
+      invalidate.destinationPageContent();
       return data;
     },
     onError: (err: unknown) => {
@@ -1416,125 +1382,122 @@ const useCreateDestinationPageContentMutation = () => {
 };
 
 const useEditDestinationPageContentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: updateDestinationPageContent,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["destinationPageContent"] });
-      queryClient.invalidateQueries({
-        queryKey: ["destinationPageContent", variables.id],
-      });
+      invalidate.destinationPageContent(variables?.id);
     },
   });
 };
 
 const useDeleteDestinationPageContentMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteDestinationPageContent,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["destinationPageContent"] });
+      invalidate.destinationPageContent();
     },
   });
 };
 
 // Tags mutations
 const useCreateTagMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createTag,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
+      invalidate.tag();
     },
   });
 };
 
 const useEditTagMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: unknown }) =>
       updateTag(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    onSuccess: (_data, variables) => {
+      invalidate.tag(variables?.id);
     },
   });
 };
 
 const useDeleteTagMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteTag,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
+      invalidate.tag();
     },
   });
 };
 
 const useBulkDeleteTagsMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteTags,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tags"] });
+      invalidate.tag();
     },
   });
 };
 
 // Meta Keywords mutations
 const useCreateMetaKeywordMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: createMetaKeyword,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+      invalidate.metaKeyword();
     },
   });
 };
 
 const useEditMetaKeywordMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: unknown }) =>
       updateMetaKeyword(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+    onSuccess: (_data, variables) => {
+      invalidate.metaKeyword(variables?.id);
     },
   });
 };
 
 const useDeleteMetaKeywordMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: deleteMetaKeyword,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+      invalidate.metaKeyword();
     },
   });
 };
 
 const useBulkDeleteMetaKeywordsMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: bulkDeleteMetaKeywords,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["metaKeywords"] });
+      invalidate.metaKeyword();
     },
   });
 };
 
 // Media mutations
 const useUploadMediaMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: (data: any) => mediaService.upload(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["media"] });
+      invalidate.media();
     },
   });
 };
 
 const useUploadMultipleMediaMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: ({
       files,
@@ -1546,28 +1509,28 @@ const useUploadMultipleMediaMutation = () => {
       folder?: string;
     }) => mediaService.uploadMultiple(files, category, folder),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["media"] });
+      invalidate.media();
     },
   });
 };
 
 const useUpdateMediaMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
       mediaService.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["media"] });
+    onSuccess: (_data, variables) => {
+      invalidate.media(variables?.id);
     },
   });
 };
 
 const useDeleteMediaMutation = () => {
-  const queryClient = useQueryClient();
+  const { invalidate } = useInvalidateModule();
   return useMutation({
     mutationFn: (id: string) => mediaService.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["media"] });
+      invalidate.media();
     },
   });
 };
