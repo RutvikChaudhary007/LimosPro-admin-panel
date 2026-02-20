@@ -257,9 +257,9 @@ const defaultFormValues: TServicePricingForm = {
   status: "",
   pricingLevel: "",
   description: "",
-  peakHours: "",
-  surgeMultiplier: "",
-  minimumDistance: "",
+  // peakHours: "",
+  // surgeMultiplier: "",
+  // minimumDistance: "",
 };
 
 function ServicePricingForm({

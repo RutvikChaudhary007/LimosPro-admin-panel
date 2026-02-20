@@ -28,6 +28,73 @@ import { geoDecoding } from "@/utils/googleMaps";
 
 const libraries = ["places", "geocoding"];
 
+const DocJsx = ({
+  documentsLength,
+  data,
+}: {
+  documentsLength: number;
+  data: {
+    documents: [
+      {
+        fileUrl: string;
+      },
+    ];
+  };
+}) => {
+  // console.log(documentsLength)
+  return [0, 1, 2, 3].map((i) => (
+    <div key={i} className="flex items-center gap-6">
+      <Label className="font-montserrat font-semibold w-full max-w-max">
+        Document {i + 1}:
+      </Label>
+      <div
+        className={cn(
+          "bg-base-white w-full flex items-center space-x-5",
+          (i > documentsLength || documentsLength === 0) &&
+            "opacity-50 cursor-no-drop",
+        )}
+      >
+        <Badge variant="black">
+          {i <= documentsLength ? "Submitted" : "Pending"}
+        </Badge>
+
+        <Link
+          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : ""}
+          // to={doc?.fileUrl ?? "#"}
+          rel="noreferrer"
+          target="_blank"
+        >
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="View File"
+            className={`${(i > documentsLength || documentsLength === 0) && "opacity-50 cursor-no-drop"}`}
+          >
+            <IconFileInfo />
+          </Button>
+        </Link>
+        <Link
+          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : ""}
+          // to={doc?.fileUrl ?? "#"}
+          download={i <= documentsLength ? data?.documents[i - 1] : ""}
+          target="_blank"
+        >
+          <Button
+            variant="outlineNavBtnBlack"
+            size="xl"
+            spacing="lg"
+            tooltip="Download File"
+            className={`${(i > documentsLength || documentsLength === 0) && "opacity-50 cursor-no-drop"}`}
+          >
+            <IconFileDownload />
+          </Button>
+        </Link>
+      </div>
+    </div>
+  ));
+};
+
 const ViewChauffeurPage = () => {
   const { id } = useParams();
   const [googleMapsApiKey] = useState<string | null>(
@@ -77,54 +144,6 @@ const ViewChauffeurPage = () => {
   // if (error) return (<h1>{error.message}</h1>);
   const documentsLength = data?.documents?.length || 0;
   // const docJsx = [];
-  const docJsx = [0, 1, 2, 3].map((i) => (
-    <div key={i} className="flex items-center gap-6">
-      <Label className="font-montserrat font-semibold w-full max-w-max">
-        Document {i + 1}:
-      </Label>
-      <div
-        className={cn(
-          "bg-base-white w-full flex items-center space-x-5",
-          i > documentsLength && "opacity-50 cursor-no-drop",
-        )}
-      >
-        <Badge variant="black">
-          {i <= documentsLength ? "Submitted" : "Pending"}
-        </Badge>
-
-        <Link
-          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
-          // to={doc?.fileUrl ?? "#"}
-          rel="noreferrer"
-          target="_blank"
-        >
-          <Button
-            variant="outlineNavBtnBlack"
-            size="xl"
-            spacing="lg"
-            tooltip="View File"
-          >
-            <IconFileInfo />
-          </Button>
-        </Link>
-        <Link
-          to={i <= documentsLength ? data?.documents[i - 1]?.fileUrl : "#"}
-          // to={doc?.fileUrl ?? "#"}
-          download={i <= documentsLength ? data?.documents[i - 1] : "#"}
-          target="_blank"
-        >
-          <Button
-            variant="outlineNavBtnBlack"
-            size="xl"
-            spacing="lg"
-            tooltip="Download File"
-          >
-            <IconFileDownload />
-          </Button>
-        </Link>
-      </div>
-    </div>
-  ));
 
   if (isError) return <ErrorCard refetch={refetch} />;
   if (!isFetching && (!data || !data.id)) {
@@ -226,7 +245,8 @@ const ViewChauffeurPage = () => {
                 <h6 className="font-montserrat font-bold text-base-black text-sm mt-4">
                   Documents
                 </h6>
-                {docJsx}
+                {/* {docJsx} */}
+                <DocJsx documentsLength={documentsLength} data={data} />
               </div>
             </CardContent>
           </CardBody>
