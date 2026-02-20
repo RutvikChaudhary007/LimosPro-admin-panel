@@ -329,6 +329,7 @@ const useEditServicePricingMutation = () => {
     mutationFn: editServicePricingById,
     onSuccess: (res) => {
       invalidate.servicePricing();
+      invalidate.servicePricing(res?.data?.id);
       navigate(constant.ROUTING_URLS.SERVICE_PRICING);
       return res;
     },
