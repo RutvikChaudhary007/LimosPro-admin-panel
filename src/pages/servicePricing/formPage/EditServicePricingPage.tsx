@@ -24,7 +24,9 @@ const EditServicePricingPage = () => {
   });
   const editServicePricingMutation = queries.useEditServicePricingMutation();
 
-  const handleEditServicePricing = async (formData: FormData) => {
+  const handleEditServicePricing = async (
+    formData: Record<string, unknown>,
+  ) => {
     await toastPromise(
       editServicePricingMutation.mutateAsync({ id: id!, data: formData }),
       {

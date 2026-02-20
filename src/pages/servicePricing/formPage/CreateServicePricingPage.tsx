@@ -16,7 +16,7 @@ const CreateServicePricingPage = () => {
   const createServicePricingMutation =
     queries.useCreateServicePricingMutation();
 
-  const handleCreateServicePricing = async (data: FormData) => {
+  const handleCreateServicePricing = async (data: Record<string, unknown>) => {
     await toastPromise(createServicePricingMutation.mutateAsync(data), {
       loading: "Creating service pricing...",
       success: "Service pricing created successfully!",

@@ -230,9 +230,9 @@ const transformInitialData = (
     status: data?.status || "",
     pricingLevel: data?.pricingLevel || "",
     description: data?.description || "",
-    peakHours: data?.metadata?.peakHours || "",
-    surgeMultiplier: data?.metadata?.surgeMultiplier?.toString() || "",
-    minimumDistance: data?.metadata?.minimumDistance?.toString() || "",
+    peakHours: data?.metadata?.peakHours,
+    surgeMultiplier: data?.metadata?.surgeMultiplier?.toString(),
+    minimumDistance: data?.metadata?.minimumDistance?.toString(),
     ...zonePricing,
   };
 };
@@ -329,35 +329,30 @@ function ServicePricingForm({
   const { isSubmitting } = form.formState;
 
   const handleFormSubmit = async (data: TServicePricingForm) => {
-    const formData = new FormData();
+    const {
+      peakHours,
+      surgeMultiplier,
+      minimumDistance,
+      metadata: _unusedMetadata,
+      ...payload
+    } = data as TServicePricingForm & { metadata?: Record<string, unknown> };
 
-    // if (data?.zonePricingEnabled) {
-    //   if (data?.zonePricings && data?.zonePricings?.length > 0) {
-    //     formData.append("zonePricings", JSON.stringify(data?.zonePricings));
-    //   } else {
-    //     formData.append("zonePricings", null);
-    //   }
-    // }
-    // Build metadata object
-    const metadata: any = {};
-    if (data.peakHours) {
-      metadata.peakHours = data.peakHours;
-      delete data.peakHours;
-    }
-    if (data.surgeMultiplier) {
-      metadata.surgeMultiplier = Number(data.surgeMultiplier);
-      delete data.surgeMultiplier;
-    }
-    if (data.minimumDistance) {
-      metadata.minimumDistance = Number(data.minimumDistance);
-      delete data.minimumDistance;
-    }
-    data.metadata = metadata;
-    // if (Object.keys(metadata).length > 0) {
-    //   formData.append("metadata", JSON.stringify(metadata));
-    // }
+    const metadata: Record<string, unknown> = {};
 
-    await onSubmit(data);
+    if (typeof peakHours === "string" && peakHours.trim() !== "") {
+      metadata.peakHours = peakHours.trim();
+    }
+    if (surgeMultiplier !== undefined && surgeMultiplier !== null) {
+      metadata.surgeMultiplier = Number(surgeMultiplier);
+    }
+    if (minimumDistance !== undefined && minimumDistance !== null) {
+      metadata.minimumDistance = Number(minimumDistance);
+    }
+
+    const finalPayload =
+      Object.keys(metadata).length > 0 ? { ...payload, metadata } : payload;
+
+    await onSubmit(finalPayload as any);
   };
 
   return (

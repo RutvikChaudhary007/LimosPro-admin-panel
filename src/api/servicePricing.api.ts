@@ -103,7 +103,7 @@ export const useFetchServicePricingById = ({ id }: { id: string }) =>
 /**
  * Create a new service pricing
  */
-export const createServicePricing = async (data: FormData) => {
+export const createServicePricing = async (data: Record<string, unknown>) => {
   const response = await axiosInstance.post(
     API_ENDPOINTS.CREATE_SERVICE_PRICING,
     data,
@@ -129,7 +129,7 @@ export const editServicePricingById = async ({
   data,
 }: {
   id: string;
-  data: FormData;
+  data: Record<string, unknown>;
 }) => {
   const response = await axiosInstance.put(
     API_ENDPOINTS.EDIT_SERVICE_PRICING_BY_ID.replace(":id", id),

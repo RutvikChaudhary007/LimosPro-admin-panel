@@ -49,7 +49,7 @@ export interface IServicePricingFormProps {
   isRegionFetching?: boolean;
   vehicleData?: { vehicles: TVehicle[] };
   RegionData?: { regions: TRegion[] };
-  onSubmit: (data: FormData) => Promise<void>;
+  onSubmit: (data: Record<string, unknown>) => Promise<void>;
   disabledFields?: string[];
   type: string;
 }
