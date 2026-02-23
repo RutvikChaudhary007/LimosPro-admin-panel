@@ -162,6 +162,7 @@ const TinyEditorRHF = ({
         onBlur={handleBlur}
         init={{
           height: 600,
+          entity_encoding: "raw",
           menubar: false,
           plugins: [
             "advlist",
@@ -304,24 +305,24 @@ const TinyEditorRHF = ({
           // Default font settings
           content_style: `
             @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
-            
-            body { 
-              font-family: Arial, Helvetica, sans-serif, "Noto Color Emoji"; 
-              font-size: 14px; 
+
+            body {
+              font-family: Arial, Helvetica, sans-serif, "Noto Color Emoji";
+              font-size: 14px;
               line-height: 1.6;
             }
-            h1, h2, h3, h4, h5, h6 { 
-              font-family: 'Times New Roman', Times, serif, "Noto Color Emoji"; 
+            h1, h2, h3, h4, h5, h6 {
+              font-family: 'Times New Roman', Times, serif, "Noto Color Emoji";
             }
-            
+
             /* Emoji styling */
             .emoji {
-              font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", 
+              font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji",
                           "Segoe UI Symbol", "Android Emoji", "Twemoji Mozilla", sans-serif;
               font-size: 1.2em;
               vertical-align: middle;
             }
-            
+
             /* Video preview styling */
             .mce-preview-object {
               border: 1px solid #666;
@@ -331,11 +332,11 @@ const TinyEditorRHF = ({
               border-radius: 4px;
               position: relative;
             }
-            
+
             .mce-preview-object iframe {
               display: block;
             }
-            
+
             .mce-preview-object .mce-shim {
               position: absolute;
               top: 0;
@@ -346,7 +347,7 @@ const TinyEditorRHF = ({
               background-size: 50px 50px;
               cursor: pointer;
             }
-            
+
             /* Code sample styling */
             pre {
               background: #f4f4f4;
@@ -364,7 +365,7 @@ const TinyEditorRHF = ({
               display: block;
               word-wrap: break-word;
             }
-            
+
             code {
               background: #f4f4f4;
               border-radius: 3px;
