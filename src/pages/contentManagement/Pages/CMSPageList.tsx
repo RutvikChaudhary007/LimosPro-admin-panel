@@ -3,6 +3,8 @@
 import { Edit2, FileText, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFetchAllCountryPages } from "@/api/pages/countryPage.api";
+import { useFetchAllRoutePages } from "@/api/pages/routesPage.api";
 import { useFetchAllServicePageContent } from "@/api/pages/servicePages.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +38,29 @@ const categoryConfig = [
   { name: "Business", label: "Business & Diplomats", key: "business" },
   { name: "Home", label: "Home", key: "home" },
   { name: "Chauffeur", label: "Chauffeur", key: "chauffeur" },
+  {
+    name: "City-to-City Routes",
+    label: "City-to-City Routes",
+    key: "cityroutes",
+  },
+  { name: "Countries", label: "Countries", key: "countries" },
+  { name: "Cities", label: "Cities", key: "cities" },
+  { name: "Country Detail", label: "Country Detail", key: "country" },
 ];
+
+function getRouteCategoryKey(slug: string): string {
+  if (slug === "city-routes") return "cityroutes";
+  if (slug === "global-availability") return "countries";
+  if (slug === "cities") return "cities";
+  return "cityroutes";
+}
+
+function getRouteCategoryLabel(slug: string): string {
+  if (slug === "city-routes") return "City-to-City Routes";
+  if (slug === "global-availability") return "Countries";
+  if (slug === "cities") return "Cities";
+  return "City-to-City Routes";
+}
 
 export default function CMSPageList() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -45,22 +69,71 @@ export default function CMSPageList() {
 
   const {
     data: servicePageContent,
-    isLoading,
-    isError,
+    isLoading: isLoadingService,
+    isError: isErrorService,
   } = useFetchAllServicePageContent();
 
+  const { data: routesResponse, isLoading: isLoadingRoutes } =
+    useFetchAllRoutePages({ limit: 100 });
+  const { data: countryResponse, isLoading: isLoadingCountry } =
+    useFetchAllCountryPages({ limit: 100 });
+
   const resolvedPageContent = useMemo(
-    () => (isError || !servicePageContent ? null : servicePageContent),
-    [isError, servicePageContent],
+    () => (isErrorService || !servicePageContent ? null : servicePageContent),
+    [isErrorService, servicePageContent],
+  );
+
+  const routePages = useMemo(
+    () =>
+      Array.isArray(routesResponse?.routePages)
+        ? routesResponse.routePages
+        : [],
+    [routesResponse],
+  );
+  const countryPages = useMemo(
+    () => (Array.isArray(countryResponse?.items) ? countryResponse.items : []),
+    [countryResponse],
   );
 
   const categoriesData = useMemo(() => {
     const counts = resolvedPageContent?.counts ?? {};
+    const cityRoutesCount = routePages.filter(
+      (p: any) => getRouteCategoryKey(p.slug) === "cityroutes",
+    ).length;
+    const countriesCount = routePages.filter(
+      (p: any) => getRouteCategoryKey(p.slug) === "countries",
+    ).length;
+    const citiesCount = routePages.filter(
+      (p: any) => getRouteCategoryKey(p.slug) === "cities",
+    ).length;
+    const countOverrides: Record<string, number> = {
+      cityroutes: cityRoutesCount,
+      countries: countriesCount,
+      cities: citiesCount,
+      country: countryPages.length,
+    };
+    const fromService = [
+      "services",
+      "destination",
+      "business",
+      "home",
+      "chauffeur",
+    ].reduce(
+      (sum, key) =>
+        sum + ((resolvedPageContent?.data as any)?.[key]?.length ?? 0),
+      0,
+    );
+    const totalCount = fromService + routePages.length + countryPages.length;
     return categoryConfig.map((category) => ({
       ...category,
-      count: counts[category.key as keyof typeof counts] ?? 0,
+      count:
+        category.key === "total"
+          ? totalCount
+          : (countOverrides[category.key] ??
+            counts[category.key as keyof typeof counts] ??
+            0),
     }));
-  }, [resolvedPageContent]);
+  }, [resolvedPageContent, routePages, countryPages]);
 
   const pagesData = useMemo(() => {
     const data = resolvedPageContent?.data ?? {};
@@ -74,7 +147,14 @@ export default function CMSPageList() {
     const formatUpdatedAt = (updatedAt?: string) =>
       updatedAt ? new Date(updatedAt).toLocaleDateString() : "N/A";
 
-    return [
+    const serviceCategoryKeys: Record<string, string> = {
+      services: "services",
+      destination: "destinations",
+      business: "business",
+      home: "home",
+      chauffeur: "chauffeur",
+    };
+    const fromService = [
       { key: "services", category: "Services" },
       { key: "destination", category: "Destinations" },
       { key: "business", category: "Business" },
@@ -82,18 +162,44 @@ export default function CMSPageList() {
       { key: "chauffeur", category: "Chauffeur" },
     ].flatMap(
       ({ key, category }) =>
-        (data as Record<string, any[]>)[key]?.map((page) => ({
+        (data as Record<string, any[]>)[key]?.map((page: any) => ({
           id: page.id,
           title: page.pageName,
           description: buildDescription(page),
           lastUpdated: formatUpdatedAt(page.updatedAt),
           category,
+          categoryKey: serviceCategoryKeys[key] ?? key,
         })) ?? [],
     );
-  }, [resolvedPageContent]);
 
+    const fromRoutes = routePages.map((page: any) => {
+      const categoryKey = getRouteCategoryKey(page.slug);
+      const categoryLabel = getRouteCategoryLabel(page.slug);
+      return {
+        id: page.id,
+        title: page.pageName,
+        description: page.slug ? `/${page.slug}` : "",
+        lastUpdated: formatUpdatedAt(page.updatedAt),
+        category: categoryLabel,
+        categoryKey,
+      };
+    });
+
+    const fromCountry = countryPages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName,
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "Country Detail",
+      categoryKey: "country",
+    }));
+
+    return [...fromService, ...fromRoutes, ...fromCountry];
+  }, [resolvedPageContent, routePages, countryPages]);
+
+  const isLoading = isLoadingService || isLoadingRoutes || isLoadingCountry;
   const showLoadingState = isLoading && pagesData.length === 0;
-  const showErrorState = isError && pagesData.length === 0;
+  const showErrorState = isErrorService && pagesData.length === 0;
   // Filter Pages based on selected category and search query
   const filteredPages = pagesData.filter((page) => {
     const matchesCategory =
@@ -126,7 +232,17 @@ export default function CMSPageList() {
                 icon: <Plus />,
                 link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT.replace(
                   ":category",
-                  selectedCategory.toLowerCase(),
+                  (() => {
+                    const m: Record<string, string> = {
+                      "City-to-City Routes": "cityroutes",
+                      Countries: "countries",
+                      Cities: "cities",
+                      "Country Detail": "country",
+                    };
+                    return (
+                      m[selectedCategory] ?? selectedCategory.toLowerCase()
+                    );
+                  })(),
                 ),
               }
         }
@@ -252,7 +368,8 @@ export default function CMSPageList() {
                             navigate(
                               constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(
                                 ":category",
-                                page.category.toLowerCase(),
+                                (page as any).categoryKey ??
+                                  page.category.toLowerCase(),
                               ).replace(":id", page.id.toString()),
                             )
                           }

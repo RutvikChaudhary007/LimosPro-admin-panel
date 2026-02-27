@@ -282,6 +282,24 @@ export const API_ENDPOINTS: Record<string, any> = {
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/home/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/home/${id}`,
   },
+  ROUTES_PAGE: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/routes`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/routes/${id}`,
+    GET_BY_SLUG: (slug: string) =>
+      `${ADMIN_SERVICE_URL}/pages/routes/slug/${slug}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/routes`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/routes/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/routes/${id}`,
+  },
+  COUNTRY_PAGE: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/country`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/country/${id}`,
+    GET_BY_SLUG: (slug: string) =>
+      `${ADMIN_SERVICE_URL}/pages/country/slug/${slug}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/country`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country/${id}`,
+  },
   USER_PERMISSIONS: {
     GET_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId`,
     SYNC_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId/sync`,

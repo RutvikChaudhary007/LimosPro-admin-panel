@@ -323,6 +323,18 @@ export const queryKeys = {
     detail: (id: string) => ["chauffeurPage", "detail", id] as const,
   },
 
+  routesPage: {
+    all: ["routesPage"] as const,
+    lists: (params?: unknown) => ["routesPage", "list", params] as const,
+    detail: (id: string) => ["routesPage", "detail", id] as const,
+  },
+
+  countryPage: {
+    all: ["countryPage"] as const,
+    lists: (params?: unknown) => ["countryPage", "list", params] as const,
+    detail: (id: string) => ["countryPage", "detail", id] as const,
+  },
+
   businessPageLayout: {
     all: ["businessPageLayout"] as const,
     lists: (params?: unknown) =>
