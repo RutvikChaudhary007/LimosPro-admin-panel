@@ -51,7 +51,7 @@ const sectionEntrySchema = z.object({
 const citiesPageFormSchema = z.object({
   pageName: z.string().min(1, "Page name is required"),
   slug: z.string().min(1, "Slug is required"),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean().optional().default(true),
   defaultLanguage: z.string().default("en"),
   availableLanguages: z.array(z.string()).default(["en"]),
   seo: z
@@ -129,7 +129,7 @@ export default function CitiesPageForm({
   );
 
   const form = useForm<CitiesPageFormData>({
-    resolver: zodResolver(citiesPageFormSchema),
+    resolver: zodResolver(citiesPageFormSchema) as any,
     defaultValues,
   });
 
