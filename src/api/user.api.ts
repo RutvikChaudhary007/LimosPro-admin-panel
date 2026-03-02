@@ -26,6 +26,7 @@ export const getAllUsers = async (
   page?: number,
   status?: string,
   limit?: number,
+  role?: string,
 ) => {
   const params: Record<string, unknown> = {};
 
@@ -43,7 +44,7 @@ export const getAllUsers = async (
   if (page) params.page = page;
   if (status) params.status = status;
   if (limit) params.limit = limit;
-
+  if (role) params.role = role;
   try {
     const response = await axiosInstance.get(API_ENDPOINTS.GET_ALL_USERS, {
       params,
@@ -66,18 +67,20 @@ export const useFetchAllUsers = ({
   DateRange,
   page,
   status,
+  role,
   limit,
   queryOptions,
 }: {
   DateRange: DateRange;
   page?: number;
   status?: string;
+  role?: string;
   limit?: number;
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
-    queryKey: queryKeys.user.listParams(DateRange, page, status, limit),
-    queryFn: () => getAllUsers(DateRange, page, status, limit),
+    queryKey: queryKeys.user.listParams(DateRange, page, status, limit, role),
+    queryFn: () => getAllUsers(DateRange, page, status, limit, role),
     refetchOnWindowFocus: false,
     retry: false,
     ...queryOptions,

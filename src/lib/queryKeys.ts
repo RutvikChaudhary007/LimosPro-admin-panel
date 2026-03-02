@@ -89,6 +89,7 @@ export const queryKeys = {
       page?: number,
       status?: string,
       limit?: number,
+      role?: string,
     ) => ["user", "list", dateRange, page, status, limit] as const,
     detail: (id: string | undefined) => ["user", "detail", id] as const,
   },

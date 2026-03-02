@@ -202,6 +202,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
     const { data: usersData, isFetching: userIsFetching } = useFetchAllUsers({
       DateRange: { startDate: undefined, endDate: undefined },
       limit: 100,
+      role: "SEO Agent",
       queryOptions: {
         staleTime: 0,
         gcTime: 0,
@@ -703,7 +704,9 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                       {userIsFetching ? (
                         <div className="w-full rounded h-14 skeleton"></div>
                       ) : usersData?.users?.some((user: User) =>
-                          (user.roles || []).includes("SEO Agent"),
+                          (user?.roles || user?.roleName || []).includes(
+                            "SEO Agent",
+                          ),
                         ) || initialData?.blogAuthor ? (
                         <Controller
                           name="authorId"
@@ -719,7 +722,11 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                                 }[] =
                                   usersData?.users
                                     ?.filter((user: User) =>
-                                      (user.roles || []).includes("SEO Agent"),
+                                      (
+                                        user.roles ||
+                                        user?.roleName ||
+                                        []
+                                      ).includes("SEO Agent"),
                                     )
                                     .map((user: User) => ({
                                       label: `${user.firstName} ${user.lastName}`,
