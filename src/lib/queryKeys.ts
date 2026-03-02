@@ -90,7 +90,7 @@ export const queryKeys = {
       status?: string,
       limit?: number,
       role?: string,
-    ) => ["user", "list", dateRange, page, status, limit] as const,
+    ) => ["user", "list", dateRange, page, status, limit, role] as const,
     detail: (id: string | undefined) => ["user", "detail", id] as const,
   },
 
