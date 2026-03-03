@@ -87,7 +87,7 @@ const getEmptyLanguageContent = () => ({
   sections: [] as Array<z.infer<typeof sectionEntrySchema>>,
 });
 
-const getEmptySeo = (): z.infer<typeof seoSchema> => ({
+const getEmptySeo = () => ({
   metaTitle: "",
   metaDescription: "",
   metaKeywords: [] as string[],
@@ -116,8 +116,8 @@ function normalizeInitialData(data: any): CountryDetailFormData {
   }
 
   const contentRecord: CountryDetailFormData["content"] = {};
-  let seoRecord: NonNullable<CountryDetailFormData["seo"]> = getEmptySeo();
-  let jsonLdRecord: NonNullable<CountryDetailFormData["jsonLd"]> = [];
+  let seoRecord: CountryDetailFormData["seo"] = getEmptySeo();
+  let jsonLdRecord: CountryDetailFormData["jsonLd"] = [];
   const defaultLanguageContent =
     data.content?.[defaultLanguage] ?? getEmptyLanguageContent();
 
@@ -152,23 +152,21 @@ function normalizeInitialData(data: any): CountryDetailFormData {
       maybeRecord &&
       typeof maybeRecord === "object" &&
       !Array.isArray(maybeRecord)
-        ? (maybeRecord as z.infer<typeof seoSchema>)
-        : (data.seo as z.infer<typeof seoSchema>);
+        ? maybeRecord
+        : data.seo;
   } else {
     seoRecord = getEmptySeo();
   }
 
   if (Array.isArray(data.jsonLd)) {
-    jsonLdRecord = data.jsonLd as z.infer<typeof jsonLdSchema>;
+    jsonLdRecord = data.jsonLd;
   } else if (
     data.jsonLd &&
     typeof data.jsonLd === "object" &&
     !Array.isArray(data.jsonLd)
   ) {
     const maybeRecord = data.jsonLd[defaultLanguage] || data.jsonLd.en;
-    jsonLdRecord = Array.isArray(maybeRecord)
-      ? (maybeRecord as z.infer<typeof jsonLdSchema>)
-      : [];
+    jsonLdRecord = Array.isArray(maybeRecord) ? maybeRecord : [];
   } else {
     jsonLdRecord = [];
   }

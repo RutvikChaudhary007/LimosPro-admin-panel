@@ -2,9 +2,9 @@ import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  useFetchCountryPageById,
-  useUpdateCountryPage,
-} from "@/api/pages/countryPage.api";
+  useFetchCountryDetailPageById,
+  useUpdateCountryDetailPage,
+} from "@/api/pages/countryDetailPage.api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import CountryDetailForm from "@/components/contentManagement/country/CountryDetailForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -16,23 +16,23 @@ export default function EditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data, isFetching, isError, refetch } = useFetchCountryPageById(
+  const { data, isFetching, isError, refetch } = useFetchCountryDetailPageById(
     id ?? "",
   );
-  const updateMutation = useUpdateCountryPage();
+  const updateMutation = useUpdateCountryDetailPage();
 
   const handleSubmit = (formData: FormData) => {
     if (!id) return;
     toastPromise(updateMutation.mutateAsync({ id, data: formData }), {
-      loading: "Updating country page...",
+      loading: "Updating country detail page...",
       success: () => {
         navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-        return "Country page updated successfully!";
+        return "Country detail page updated successfully!";
       },
       error: (e) =>
         e instanceof AxiosError
-          ? e.response?.data?.message || "Failed to update country page"
-          : "Failed to update country page",
+          ? e.response?.data?.message || "Failed to update country detail page"
+          : "Failed to update country detail page",
     });
   };
 

@@ -41,12 +41,12 @@ const categories = {
     edit: lazy(() => import("./routesPage/EditPage")),
   },
   cities: {
-    create: lazy(() => import("./routesPage/CreatePage")),
-    edit: lazy(() => import("./routesPage/EditPage")),
+    create: lazy(() => import("./citiesHubPage/CreatePage")),
+    edit: lazy(() => import("./citiesHubPage/EditPage")),
   },
   country: {
-    create: lazy(() => import("./countryPage/CreatePage")),
-    edit: lazy(() => import("./countryPage/EditPage")),
+    create: lazy(() => import("./countryDetailsPage/CreatePage")),
+    edit: lazy(() => import("./countryDetailsPage/EditPage")),
   },
 };
 

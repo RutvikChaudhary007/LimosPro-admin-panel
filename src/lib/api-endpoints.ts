@@ -300,6 +300,13 @@ export const API_ENDPOINTS: Record<string, any> = {
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country/${id}`,
   },
+  CITIES_HUB_PAGE: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/cities-hub/pages/all`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/cities-hub`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,
+  },
   USER_PERMISSIONS: {
     GET_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId`,
     SYNC_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId/sync`,
@@ -317,4 +324,16 @@ export const API_ENDPOINTS: Record<string, any> = {
   },
   PARTNER_ASSIGN_CHAUFFEUR: (id: string) =>
     `${BOOKING_SERVICE_URL}/booking/${id}/auto-dispatch-partner`,
+
+  // Country Detail Page
+  COUNTRY_DETAIL_PAGE: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/country-detail`,
+    GET_BY_ID: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/country-detail/${id}`,
+    GET_BY_SLUG: (slug: string) =>
+      `${ADMIN_SERVICE_URL}/pages/country-detail/slug/${slug}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/country-detail`,
+    UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country-detail/${id}`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country-detail/${id}`,
+  },
 };

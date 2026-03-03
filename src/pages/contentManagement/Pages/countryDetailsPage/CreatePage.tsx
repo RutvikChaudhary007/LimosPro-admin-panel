@@ -1,7 +1,7 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useCreateCountryPage } from "@/api/pages/countryPage.api";
+import { useCreateCountryDetailPage } from "@/api/pages/countryDetailPage.api";
 import CountryDetailForm from "@/components/contentManagement/country/CountryDetailForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { toastPromise } from "@/hooks/use-toast";
@@ -9,19 +9,19 @@ import { constant } from "@/lib/constant";
 
 export default function CreatePage() {
   const navigate = useNavigate();
-  const createMutation = useCreateCountryPage();
+  const createMutation = useCreateCountryDetailPage();
 
   const handleSubmit = (formData: FormData) => {
     toastPromise(createMutation.mutateAsync(formData), {
-      loading: "Creating country page...",
+      loading: "Creating country detail page...",
       success: () => {
         navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-        return "Country page created successfully!";
+        return "Country detail page created successfully!";
       },
       error: (e) =>
         e instanceof AxiosError
-          ? e.response?.data?.message || "Failed to create country page"
-          : "Failed to create country page",
+          ? e.response?.data?.message || "Failed to create country detail page"
+          : "Failed to create country detail page",
     });
   };
 
