@@ -52,19 +52,21 @@ export const blogService = {
 
       if (response.data?.data?.pagination && response?.data?.data?.posts) {
         return {
-          data: response.data?.data?.posts,
-          pagination: response.data?.data?.pagination,
+          data: response.data.data.posts,
+          pagination: response.data.data.pagination,
+          stats: response.data.data.stats,
         };
       }
 
       return {
-        data: response.data?.data || [],
-        pagination: response.data?.data?.pagination || {
+        data: response.data?.data?.posts ?? response.data?.data ?? [],
+        pagination: response.data?.data?.pagination ?? {
           page: 1,
           limit: 10,
           total: 0,
           totalPages: 0,
         },
+        stats: response.data?.data?.stats,
       };
     } catch (error) {
       console.error("❌ Blog API Error:", error);

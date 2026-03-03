@@ -156,6 +156,12 @@ export interface MediaLibrary {
 }
 
 // API Response Types
+export interface BlogStats {
+  published: number;
+  draft: number;
+  archived: number;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   pagination: {
@@ -164,6 +170,7 @@ export interface PaginatedResponse<T> {
     total: number;
     totalPages: number;
   };
+  stats?: BlogStats;
 }
 
 export interface ApiResponse<T> {

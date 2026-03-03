@@ -41,6 +41,8 @@ import { constant } from "@/lib/constant";
 import type { BlogPost, BlogQueryParams } from "@/types/content";
 import { generatePageTitle } from "@/utils/seo";
 
+const defaultStats = { published: 0, draft: 0, archived: 0 };
+
 const fetchBlogPosts = async ({ ...rest }) => {
   console.log(rest);
   const {
@@ -50,6 +52,7 @@ const fetchBlogPosts = async ({ ...rest }) => {
     setBlogPosts,
     pagination,
     setPagination,
+    setStats,
   } = rest;
   try {
     setLoading(true);
@@ -64,7 +67,10 @@ const fetchBlogPosts = async ({ ...rest }) => {
 
     const response = await blogService.getAll(params);
     setBlogPosts(response.data || []);
-    setPagination(response.pagination);
+    setPagination(
+      response.pagination ?? { page: 1, limit: 10, total: 0, totalPages: 0 },
+    );
+    setStats?.(response.stats ?? defaultStats);
   } catch (error) {
     console.error("❌ Error fetching blog posts:", error);
 
@@ -102,6 +108,7 @@ const fetchBlogPosts = async ({ ...rest }) => {
     });
 
     setBlogPosts([]); // Set empty array to show the "no posts" state
+    setStats?.(defaultStats);
   } finally {
     setLoading(false);
   }
@@ -126,6 +133,11 @@ const BlogPostsPage: React.FC = () => {
     total: 0,
     totalPages: 0,
   });
+  const [stats, setStats] = useState<{
+    published: number;
+    draft: number;
+    archived: number;
+  }>({ published: 0, draft: 0, archived: 0 });
 
   useEffect(() => {
     fetchBlogPosts({
@@ -135,6 +147,7 @@ const BlogPostsPage: React.FC = () => {
       setBlogPosts,
       pagination: { ...pagination, page: 1 },
       setPagination,
+      setStats,
     });
   }, [searchTerm, statusFilter]);
 
@@ -178,6 +191,7 @@ const BlogPostsPage: React.FC = () => {
           setBlogPosts,
           pagination: newPagination,
           setPagination,
+          setStats,
         });
       } catch (error) {
         console.error("Error deleting blog post:", error);
@@ -191,6 +205,8 @@ const BlogPostsPage: React.FC = () => {
   const totalPages = pagination.totalPages;
   const currentItems = blogPosts;
   const calculatedTotalPages = Math.max(1, totalPages);
+
+  console.log(blogPosts);
 
   // Unified handler for page and page size changes
   // Handle page change
@@ -221,6 +237,7 @@ const BlogPostsPage: React.FC = () => {
       setBlogPosts,
       pagination: newPagination,
       setPagination,
+      setStats,
     });
   };
 
@@ -267,10 +284,7 @@ const BlogPostsPage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {
-                    blogPosts.filter((post) => post.status === "published")
-                      .length
-                  }
+                  {stats?.published ?? 0}
                 </div>
               </CardContent>
             </CardBody>
@@ -283,7 +297,7 @@ const BlogPostsPage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-yellow-600">
-                  {blogPosts.filter((post) => post.status === "draft").length}
+                  {stats?.draft ?? 0}
                 </div>
               </CardContent>
             </CardBody>
@@ -295,12 +309,7 @@ const BlogPostsPage: React.FC = () => {
                 <CardTitle className="text-sm font-medium">Archive</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {
-                    blogPosts.filter((post) => post.status === "archived")
-                      .length
-                  }
-                </div>
+                <div className="text-2xl font-bold">{stats?.archived ?? 0}</div>
               </CardContent>
             </CardBody>
           </Card>
