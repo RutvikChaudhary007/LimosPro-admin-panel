@@ -1,12 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Controller,
-  FormProvider,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
 import LanguageSelector from "@/components/language/LanguageSelector";
@@ -213,11 +208,44 @@ export default function CitiesHubForm({
 
   const availableLanguages = watch("availableLanguages") || ["en"];
 
-  // Field Arrays for selected language
-  const cityItems = useFieldArray({
-    control,
-    name: `content.${selectedLanguage}.cities` as any,
-  });
+  const contentByLanguage =
+    useWatch({
+      control,
+      name: "content",
+    }) || {};
+  const cityItems = Array.isArray(contentByLanguage?.[selectedLanguage]?.cities)
+    ? contentByLanguage[selectedLanguage].cities
+    : [];
+
+  const addCityItem = () => {
+    const path = `content.${selectedLanguage}.cities` as any;
+    const current = getValues(path) || [];
+    setValue(
+      path,
+      [
+        ...current,
+        {
+          name: "",
+          slug: "",
+          country: "",
+          countrySlug: "",
+          countryCode: "",
+          faqs: [],
+        },
+      ],
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const removeCityItem = (index: number) => {
+    const path = `content.${selectedLanguage}.cities` as any;
+    const current = getValues(path) || [];
+    setValue(
+      path,
+      current.filter((_: any, idx: number) => idx !== index),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
 
   const onHandleSubmit = (data: CitiesHubFormData) => {
     console.log("onHandleSubmit called with data:", data);
@@ -384,24 +412,15 @@ export default function CitiesHubForm({
                             <Button
                               type="button"
                               size="sm"
-                              onClick={() =>
-                                cityItems.append({
-                                  name: "",
-                                  slug: "",
-                                  country: "",
-                                  countrySlug: "",
-                                  countryCode: "",
-                                  faqs: [],
-                                })
-                              }
+                              onClick={addCityItem}
                             >
                               Add City
                             </Button>
                           </div>
                           <div className="space-y-4">
-                            {cityItems.fields.map((field, index) => (
+                            {cityItems.map((_: any, index: number) => (
                               <Card
-                                key={field.id}
+                                key={`${selectedLanguage}-city-${index}`}
                                 className="border border-muted"
                               >
                                 <CardContent className="p-4 space-y-3">
@@ -413,7 +432,7 @@ export default function CitiesHubForm({
                                       type="button"
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => cityItems.remove(index)}
+                                      onClick={() => removeCityItem(index)}
                                     >
                                       <Trash2 className="w-4 h-4 text-red-500" />
                                     </Button>
@@ -478,7 +497,7 @@ export default function CitiesHubForm({
                                 </CardContent>
                               </Card>
                             ))}
-                            {cityItems.fields.length === 0 && (
+                            {cityItems.length === 0 && (
                               <div className="py-8 text-center text-gray-500 border border-dashed rounded">
                                 No cities added. Click "Add City" to create one.
                               </div>

@@ -223,7 +223,8 @@ export default function CountryDetailForm({
       control: form.control,
       name: "content",
     }) || {};
-  const sectionsPath = `content.${selectedLanguage}.sections` as any;
+  const getSectionsPath = (lang: LanguageCode = selectedLanguage) =>
+    `content.${lang}.sections` as any;
   const sections: Array<z.infer<typeof sectionEntrySchema>> = Array.isArray(
     contentByLanguage?.[selectedLanguage]?.sections,
   )
@@ -231,6 +232,7 @@ export default function CountryDetailForm({
     : [];
 
   const addTextSection = () => {
+    const sectionsPath = getSectionsPath();
     const currentSections = getValues(sectionsPath) || [];
     setValue(
       sectionsPath,
@@ -240,6 +242,7 @@ export default function CountryDetailForm({
   };
 
   const addCtaSection = () => {
+    const sectionsPath = getSectionsPath();
     const currentSections = getValues(sectionsPath) || [];
     setValue(
       sectionsPath,
@@ -257,6 +260,7 @@ export default function CountryDetailForm({
   };
 
   const removeSectionAt = (index: number) => {
+    const sectionsPath = getSectionsPath();
     const currentSections = getValues(sectionsPath) || [];
     setValue(
       sectionsPath,
@@ -270,10 +274,28 @@ export default function CountryDetailForm({
   const handleLanguageChange = (lang: LanguageCode) => {
     setSelectedLanguage(lang);
     const currentData = getValues();
-    if (!currentData.content?.[lang]) {
+    const languageContent = currentData.content?.[lang];
+    if (!languageContent) {
       setValue(`content.${lang}` as any, getEmptyLanguageContent(), {
         shouldDirty: true,
       });
+    } else if (
+      !Array.isArray(languageContent.sections) ||
+      !languageContent.intro
+    ) {
+      setValue(
+        `content.${lang}` as any,
+        {
+          intro: {
+            ...getEmptyIntro(),
+            ...(languageContent.intro || {}),
+          },
+          sections: Array.isArray(languageContent.sections)
+            ? languageContent.sections.map((section: any) => ({ ...section }))
+            : [],
+        },
+        { shouldDirty: true },
+      );
     }
     if (!availableLanguages.includes(lang)) {
       setValue("availableLanguages", [...availableLanguages, lang], {
