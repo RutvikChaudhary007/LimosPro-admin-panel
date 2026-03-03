@@ -882,6 +882,7 @@ export default function HomeForm({
                                     iconAlt: "",
                                     label: "",
                                     value: "",
+                                    link: "",
                                   })
                                 }
                               >
@@ -987,6 +988,17 @@ export default function HomeForm({
                                           <InputGroupInput
                                             {...register(
                                               `content.${selectedLanguage}.GlobalCoverage.stats.${index}.value` as any,
+                                            )}
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <Field>
+                                        <FieldLabel>Link</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            placeholder="/destinations or /routes"
+                                            {...register(
+                                              `content.${selectedLanguage}.GlobalCoverage.stats.${index}.link` as any,
                                             )}
                                           />
                                         </InputGroup>
