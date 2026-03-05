@@ -301,7 +301,9 @@ export const API_ENDPOINTS: Record<string, any> = {
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country/${id}`,
   },
   CITIES_HUB_PAGE: {
-    GET_ALL: `${ADMIN_SERVICE_URL}/pages/cities-hub/pages/all`,
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/cities-hub`,
+    GET_BY_SLUG: (slug: string) =>
+      `${ADMIN_SERVICE_URL}/pages/cities-hub/slug/${slug}`,
     GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,
     CREATE: `${ADMIN_SERVICE_URL}/pages/cities-hub`,
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,

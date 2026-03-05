@@ -3,8 +3,10 @@
 import { Edit2, FileText, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useFetchAllCountryPages } from "@/api/pages/countryPage.api";
-// import { useFetchAllRoutePages } from "@/api/pages/routesPage.api";
+import { useFetchAllCitiesHubPages } from "@/api/pages/citiesHubPage.api";
+import { useFetchAllCountryDetailPages } from "@/api/pages/countryDetailPage.api";
+import { useFetchAllCountryPages } from "@/api/pages/countryPage.api";
+import { useFetchAllRoutePages } from "@/api/pages/routesPage.api";
 import { useFetchAllServicePageContent } from "@/api/pages/servicePages.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -48,19 +50,12 @@ const categoryConfig = [
   { name: "Country Detail", label: "Country Detail", key: "country" },
 ];
 
-// function getRouteCategoryKey(slug: string): string {
-//   if (slug === "city-routes") return "cityroutes";
-//   if (slug === "global-availability") return "countries";
-//   if (slug === "cities") return "cities";
-//   return "cityroutes";
-// }
-
-// function getRouteCategoryLabel(slug: string): string {
-//   if (slug === "city-routes") return "City-to-City Routes";
-//   if (slug === "global-availability") return "Countries";
-//   if (slug === "cities") return "Cities";
-//   return "City-to-City Routes";
-// }
+function getRouteCategoryKey(slug: string): string {
+  if (slug === "city-routes") return "cityroutes";
+  if (slug === "global-availability") return "countries";
+  if (slug === "cities") return "cities";
+  return "cityroutes";
+}
 
 export default function CMSPageList() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -73,77 +68,132 @@ export default function CMSPageList() {
     isError,
   } = useFetchAllServicePageContent();
 
-  // const { data: routesResponse, isLoading: isLoadingRoutes } =
-  //   useFetchAllRoutePages({ limit: 100 });
-  // const { data: countryResponse, isLoading: isLoadingCountry } =
-  //   useFetchAllCountryPages({ limit: 100 });
+  const { data: routesResponse, isLoading: isLoadingRoutes } =
+    useFetchAllRoutePages({ limit: 100 });
+  const { data: countryResponse, isLoading: isLoadingCountry } =
+    useFetchAllCountryPages({ limit: 100 });
+  const { data: citiesHubResponse, isLoading: isLoadingCitiesHub } =
+    useFetchAllCitiesHubPages({ limit: 100 });
+  const { data: countryDetailsResponse, isLoading: isLoadingCountryDetails } =
+    useFetchAllCountryDetailPages({ limit: 100 });
 
   // const resolvedPageContent = useMemo(
   //   () => (isErrorService || !servicePageContent ? null : servicePageContent),
   //   [isErrorService, servicePageContent],
   // );
 
-  // const routePages = useMemo(
-  //   () =>
-  //     Array.isArray(routesResponse?.routePages)
-  //       ? routesResponse.routePages
-  //       : [],
-  //   [routesResponse],
-  // );
-  // const countryPages = useMemo(
-  //   () => (Array.isArray(countryResponse?.items) ? countryResponse.items : []),
-  //   [countryResponse],
-  // );
+  const routePages = useMemo(
+    () =>
+      Array.isArray(routesResponse?.routePages)
+        ? routesResponse.routePages
+        : [],
+    [routesResponse],
+  );
+  const countryPages = useMemo(
+    () => (Array.isArray(countryResponse?.items) ? countryResponse.items : []),
+    [countryResponse],
+  );
+  const citiesHubPages = useMemo(
+    () =>
+      Array.isArray(citiesHubResponse?.pages) ? citiesHubResponse.pages : [],
+    [citiesHubResponse],
+  );
+
+  const countryDetailsPages = useMemo(
+    () =>
+      Array.isArray(countryDetailsResponse?.items)
+        ? countryDetailsResponse.items
+        : [],
+    [countryDetailsResponse],
+  );
 
   const resolvedPageContent = useMemo(
     () => (isError || !servicePageContent ? null : servicePageContent),
     [isError, servicePageContent],
   );
 
-  const categoriesData = useMemo(
-    () => {
-      const counts = resolvedPageContent?.counts ?? {};
-      // const cityRoutesCount = routePages.filter(
-      //   (p: any) => getRouteCategoryKey(p.slug) === "cityroutes",
-      // ).length;
-      // const countriesCount = routePages.filter(
-      //   (p: any) => getRouteCategoryKey(p.slug) === "countries",
-      // ).length;
-      // const citiesCount = routePages.filter(
-      //   (p: any) => getRouteCategoryKey(p.slug) === "cities",
-      // ).length;
-      // const countOverrides: Record<string, number> = {
-      //   cityroutes: cityRoutesCount,
-      //   countries: countriesCount,
-      //   cities: citiesCount,
-      //   country: countryPages.length,
-      // };
-      // const fromService = [
-      //   "services",
-      //   "destination",
-      //   "business",
-      //   "home",
-      //   "chauffeur",
-      // ].reduce(
-      //   (sum, key) =>
-      //     sum + ((resolvedPageContent?.data as any)?.[key]?.length ?? 0),
-      //   0,
-      // );
-      // const totalCount = fromService + routePages.length + countryPages.length;
-      return categoryConfig.map((category) => ({
-        ...category,
-        count: counts[category.key as keyof typeof counts] ?? 0,
-        // count:
-        //   category.key === "total"
-        //     ? totalCount
-        //     : (countOverrides[category.key] ??
-        //       counts[category.key as keyof typeof counts] ??
-        //       0),
-      }));
-    },
-    [resolvedPageContent],
-    // [resolvedPageContent, routePages, countryPages]
-  );
+  const categoriesData = useMemo(() => {
+    const getTotalFromPagination = (response: any, fallback: number) => {
+      if (typeof response?.pagination?.totalItems === "number") {
+        return response.pagination.totalItems;
+      }
+      if (typeof response?.totalItems === "number") return response.totalItems;
+      return fallback;
+    };
+
+    const serviceData = resolvedPageContent?.data ?? {};
+    const serviceCount = Array.isArray(serviceData.services)
+      ? serviceData.services.length
+      : 0;
+    const destinationCount = Array.isArray(serviceData.destination)
+      ? serviceData.destination.length
+      : 0;
+    const businessCount = Array.isArray(serviceData.business)
+      ? serviceData.business.length
+      : 0;
+    const homeCount = Array.isArray(serviceData.home)
+      ? serviceData.home.length
+      : 0;
+    const chauffeurCount = Array.isArray(serviceData.chauffeur)
+      ? serviceData.chauffeur.length
+      : 0;
+
+    const cityRoutesCount = routePages.filter(
+      (p: any) => getRouteCategoryKey(p.slug) === "cityroutes",
+    ).length;
+    const citiesCount = routePages.filter(
+      (p: any) => getRouteCategoryKey(p.slug) === "cities",
+    ).length;
+    const countriesCountFromCountryApi = getTotalFromPagination(
+      countryResponse,
+      countryPages.length,
+    );
+    const citiesCountFromCitiesHubApi = getTotalFromPagination(
+      citiesHubResponse,
+      citiesHubPages.length,
+    );
+    const countryDetailCount = getTotalFromPagination(
+      countryDetailsResponse,
+      countryDetailsPages.length,
+    );
+    const totalCount =
+      serviceCount +
+      destinationCount +
+      businessCount +
+      homeCount +
+      chauffeurCount +
+      cityRoutesCount +
+      countriesCountFromCountryApi +
+      (citiesCount + citiesCountFromCitiesHubApi) +
+      countryDetailCount;
+
+    const computedCounts: Record<string, number> = {
+      total: totalCount,
+      service: serviceCount,
+      destination: destinationCount,
+      business: businessCount,
+      home: homeCount,
+      chauffeur: chauffeurCount,
+      cityroutes: cityRoutesCount,
+      countries: countriesCountFromCountryApi,
+      cities: citiesCount + citiesCountFromCitiesHubApi,
+      country: countryDetailCount,
+    };
+
+    return categoryConfig.map((category) => ({
+      ...category,
+      count: computedCounts[category.key] ?? 0,
+    }));
+  }, [
+    resolvedPageContent,
+    routePages,
+    countryResponse,
+    countryPages.length,
+    citiesHubResponse,
+    citiesHubPages.length,
+    countryDetailsResponse,
+    countryDetailsPages.length,
+  ]);
 
   //   const cityRoutesCount = routePages.filter(
   //     (p: any) => getRouteCategoryKey(p.slug) === "cityroutes",
@@ -212,7 +262,13 @@ export default function CMSPageList() {
     );
   }, [resolvedPageContent]);
 
-  const showLoadingState = isLoading && pagesData.length === 0;
+  const showLoadingState =
+    (isLoading ||
+      isLoadingRoutes ||
+      isLoadingCountry ||
+      isLoadingCitiesHub ||
+      isLoadingCountryDetails) &&
+    pagesData.length === 0;
   const showErrorState = isError && pagesData.length === 0;
   // Filter Pages based on selected category and search query
   const filteredPages = pagesData.filter((page) => {
@@ -307,9 +363,7 @@ export default function CMSPageList() {
                           : "outline"
                       }
                     >
-                      {category.name === "All"
-                        ? pagesData.length
-                        : category.count}
+                      {category.count}
                     </Badge>
                   </div>
                 ))}

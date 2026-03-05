@@ -9,6 +9,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { z } from "zod";
+import { useFetchAllMetaKeywords } from "@/api";
 import LanguageSelector from "@/components/language/LanguageSelector";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,8 @@ import { jsonToFormData } from "@/utils/formData.utils";
 import { uid } from "@/utils/pagebuilder.utils";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
+import { SEOSection } from "../shared/SEOSection";
+import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
 
 const countryEntrySchema = z.object({
   id: z.string().optional(),
@@ -86,23 +89,20 @@ const countriesPageFormSchema = z.object({
   isActive: z.boolean().optional().default(true),
   defaultLanguage: z.string().default(DEFAULT_LANGUAGE),
   availableLanguages: z.array(z.string()).default([DEFAULT_LANGUAGE]),
-  seo: z
-    .object({
-      title: z.string().optional(),
-      description: z.string().optional(),
-      keywords: z.array(z.string()).optional(),
-    })
-    .optional(),
+  seo: seoSchema.optional(),
   content: z.record(z.string(), languageContentSchema),
-  jsonLd: z.array(z.object({ type: z.string(), data: z.any() })).optional(),
+  jsonLd: jsonLdSchema.optional(),
 });
 
 export type CountriesPageFormData = z.infer<typeof countriesPageFormSchema>;
 
 const getEmptySeo = () => ({
-  title: "",
-  description: "",
-  keywords: [] as string[],
+  metaTitle: "",
+  metaDescription: "",
+  metaKeywords: [] as string[],
+  canonicalUrl: "",
+  openGraph: {},
+  twitter: {},
 });
 const getEmptyIntro = () => ({ title: "", description: "" });
 const getEmptyLanguageContent = () => ({
@@ -110,6 +110,23 @@ const getEmptyLanguageContent = () => ({
   sections: [] as Array<z.infer<typeof sectionEntrySchema>>,
   countries: [] as Array<z.infer<typeof countryEntrySchema>>,
 });
+const normalizeSeo = (seo: any) => {
+  if (!seo || typeof seo !== "object") return getEmptySeo();
+  if ("metaTitle" in seo || "metaDescription" in seo || "metaKeywords" in seo) {
+    return {
+      ...getEmptySeo(),
+      ...seo,
+      openGraph: seo.openGraph || {},
+      twitter: seo.twitter || {},
+    };
+  }
+  return {
+    ...getEmptySeo(),
+    metaTitle: seo.title ?? "",
+    metaDescription: seo.description ?? "",
+    metaKeywords: Array.isArray(seo.keywords) ? seo.keywords : [],
+  };
+};
 
 function normalizeInitialData(data: any): CountriesPageFormData {
   if (!data) {
@@ -146,7 +163,7 @@ function normalizeInitialData(data: any): CountriesPageFormData {
     isActive: data.isActive ?? true,
     defaultLanguage,
     availableLanguages,
-    seo: data.seo ?? getEmptySeo(),
+    seo: normalizeSeo(data.seo),
     content,
     jsonLd: Array.isArray(data.jsonLd) ? data.jsonLd : [],
   };
@@ -165,6 +182,10 @@ export default function CountriesPageForm({
 }: CountriesPageFormProps) {
   const [selectedLanguage, setSelectedLanguage] =
     useState<LanguageCode>(DEFAULT_LANGUAGE);
+  const [activeTab, setActiveTab] = useState<"general" | "seo" | "jsonld">(
+    "general",
+  );
+  const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
   const defaultValues = useMemo(
     () => normalizeInitialData(initialData),
     [initialData],
@@ -260,6 +281,12 @@ export default function CountriesPageForm({
         shouldDirty: true,
       });
     }
+    if (
+      lang !== DEFAULT_LANGUAGE &&
+      (activeTab === "seo" || activeTab === "jsonld")
+    ) {
+      setActiveTab("general");
+    }
   };
 
   const handleSyncSlug = () => {
@@ -295,331 +322,354 @@ export default function CountriesPageForm({
                 availableLanguages={LANGUAGE_CODES}
               />
 
-              <Card>
-                <CardBody>
-                  <CardHeader>
-                    <CardTitle>Page Details</CardTitle>
-                    <CardAction>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Active</span>
-                        <Controller
-                          name="isActive"
-                          control={form.control}
-                          render={({ field }) => (
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          )}
-                        />
-                      </div>
-                    </CardAction>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Field>
-                        <FieldLabel htmlFor="pageName">
-                          Page Name <span className="text-red-500">*</span>
-                        </FieldLabel>
-                        <InputGroup>
-                          <InputGroupInput
-                            id="pageName"
-                            placeholder="e.g. Global Availability"
-                            {...form.register("pageName")}
-                          />
-                        </InputGroup>
-                        {form.formState.errors.pageName && (
-                          <FormMessage>
-                            {form.formState.errors.pageName.message}
-                          </FormMessage>
-                        )}
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="slug">
-                          Slug <span className="text-red-500">*</span>
-                        </FieldLabel>
-                        <InputGroup>
-                          <InputGroupInput
-                            id="slug"
-                            placeholder="e.g. global-availability"
-                            {...form.register("slug")}
-                          />
-                          <InputGroupAddon>
-                            <Link2 className="w-4 h-4" />
-                          </InputGroupAddon>
-                          <InputGroupAddon align="inline-end">
-                            <InputGroupButton
-                              onClick={handleSyncSlug}
-                              size="icon-sm"
-                              tooltip="Regenerate slug from title"
-                            >
-                              <RefreshCw className="w-4 h-4" />
-                            </InputGroupButton>
-                          </InputGroupAddon>
-                        </InputGroup>
-                        {form.formState.errors.slug && (
-                          <FormMessage>
-                            {form.formState.errors.slug.message}
-                          </FormMessage>
-                        )}
-                      </Field>
-                    </div>
-                  </CardContent>
-                </CardBody>
-              </Card>
-
-              <Card>
-                <CardBody>
-                  <CardHeader>
-                    <CardTitle>SEO</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <Field>
-                      <FieldLabel>Meta Title</FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
-                          {...form.register("seo.title")}
-                          placeholder="Page title for search engines"
-                        />
-                      </InputGroup>
-                    </Field>
-                    <Field>
-                      <FieldLabel>Meta Description</FieldLabel>
-                      <Textarea
-                        {...form.register("seo.description")}
-                        placeholder="Brief summary for search results"
-                      />
-                    </Field>
-                  </CardContent>
-                </CardBody>
-              </Card>
-
-              <div className="space-y-6" key={selectedLanguage}>
-                <Card>
-                  <CardBody>
-                    <CardHeader>
-                      <CardTitle>
-                        Intro Section ({selectedLanguage.toUpperCase()})
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <Field>
-                        <FieldLabel>Intro Title</FieldLabel>
-                        <InputGroup>
-                          <InputGroupInput
-                            {...form.register(
-                              `content.${selectedLanguage}.intro.title` as any,
-                            )}
-                            placeholder="Intro heading"
-                          />
-                        </InputGroup>
-                      </Field>
-                      <Field>
-                        <FieldLabel>Intro Description</FieldLabel>
-                        <Textarea
-                          {...form.register(
-                            `content.${selectedLanguage}.intro.description` as any,
-                          )}
-                          placeholder="Intro text"
-                        />
-                      </Field>
-                    </CardContent>
-                  </CardBody>
-                </Card>
-
-                <Card>
-                  <CardBody>
-                    <CardHeader>
-                      <CardTitle>
-                        Content Sections ({selectedLanguage.toUpperCase()})
-                      </CardTitle>
-                      <CardAction>
-                        <Button
-                          type="button"
-                          variant="outlinePrimary"
-                          size="sm"
-                          onClick={addSection}
-                        >
-                          <Plus className="w-4 h-4 mr-1" /> Add Section
-                        </Button>
-                      </CardAction>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {sections.map((_: any, index: number) => (
-                        <Card
-                          key={`${selectedLanguage}-section-${index}`}
-                          className="border-dashed"
-                        >
-                          <CardContent className="p-4 space-y-3">
-                            <div className="flex justify-between">
-                              <span className="text-xs font-bold uppercase text-gray-400">
-                                Section #{index + 1}
-                              </span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeSection(index)}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                              </Button>
-                            </div>
-                            <Field>
-                              <FieldLabel>Type</FieldLabel>
-                              <select
-                                className="w-full border rounded px-3 py-2"
-                                {...form.register(
-                                  `content.${selectedLanguage}.sections.${index}.type` as any,
-                                )}
-                              >
-                                <option value="text">Text</option>
-                                <option value="cta">CTA</option>
-                                <option value="benefits">Benefits</option>
-                              </select>
-                            </Field>
-                            <Field>
-                              <FieldLabel>Title</FieldLabel>
-                              <InputGroup>
-                                <InputGroupInput
-                                  {...form.register(
-                                    `content.${selectedLanguage}.sections.${index}.title` as any,
-                                  )}
-                                />
-                              </InputGroup>
-                            </Field>
-                            <Field>
-                              <FieldLabel>Content</FieldLabel>
-                              <Textarea
-                                {...form.register(
-                                  `content.${selectedLanguage}.sections.${index}.content` as any,
-                                )}
-                              />
-                            </Field>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </CardContent>
-                  </CardBody>
-                </Card>
-
-                <Card>
-                  <CardBody>
-                    <CardHeader>
-                      <CardTitle>
-                        Countries List ({selectedLanguage.toUpperCase()})
-                      </CardTitle>
-                      <CardAction>
-                        <Button
-                          type="button"
-                          variant="outlinePrimary"
-                          size="sm"
-                          onClick={addCountry}
-                        >
-                          <Plus className="w-4 h-4 mr-1" /> Add Country
-                        </Button>
-                      </CardAction>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {countries.map((_: any, index: number) => (
-                        <Card
-                          key={`${selectedLanguage}-country-${index}`}
-                          className="border-dashed"
-                        >
-                          <CardContent className="p-4 space-y-3">
-                            <div className="flex justify-between">
-                              <span className="text-xs font-bold uppercase text-gray-400">
-                                Country #{index + 1}
-                              </span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => removeCountry(index)}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                              </Button>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <Field>
-                                <FieldLabel>Country Name</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...form.register(
-                                      `content.${selectedLanguage}.countries.${index}.name` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>Slug</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...form.register(
-                                      `content.${selectedLanguage}.countries.${index}.slug` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>Code</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...form.register(
-                                      `content.${selectedLanguage}.countries.${index}.code` as any,
-                                    )}
-                                    placeholder="e.g. us, uk"
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel>City Count</FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...form.register(
-                                      `content.${selectedLanguage}.countries.${index}.cityCount` as any,
-                                    )}
-                                  />
-                                </InputGroup>
-                              </Field>
-                            </div>
-                            <div className="border-t pt-3 mt-3">
-                              <FieldLabel className="mb-2 block">
-                                SEO ({selectedLanguage})
-                              </FieldLabel>
-                              <Field>
-                                <FieldLabel className="text-xs">
-                                  SEO Title ({selectedLanguage})
-                                </FieldLabel>
-                                <InputGroup>
-                                  <InputGroupInput
-                                    {...form.register(
-                                      `content.${selectedLanguage}.countries.${index}.seo.title.${selectedLanguage}` as any,
-                                    )}
-                                    placeholder="Country page meta title"
-                                  />
-                                </InputGroup>
-                              </Field>
-                              <Field>
-                                <FieldLabel className="text-xs">
-                                  SEO Description ({selectedLanguage})
-                                </FieldLabel>
-                                <Textarea
-                                  {...form.register(
-                                    `content.${selectedLanguage}.countries.${index}.seo.description.${selectedLanguage}` as any,
-                                  )}
-                                  placeholder="Country page meta description"
-                                />
-                              </Field>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </CardContent>
-                  </CardBody>
-                </Card>
+              <div className="flex gap-8">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  spacing="sm"
+                  className={`capitalize border-b-2 rounded-none transition ${
+                    activeTab === "general"
+                      ? "border-base-black font-semibold text-primary"
+                      : "border-transparent text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("general")}
+                >
+                  General ({selectedLanguage.toUpperCase()})
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  spacing="sm"
+                  disabled={selectedLanguage !== DEFAULT_LANGUAGE}
+                  className={`capitalize border-b-2 rounded-none transition ${
+                    activeTab === "seo"
+                      ? "border-base-black font-semibold text-primary"
+                      : "border-transparent text-gray-500"
+                  } ${selectedLanguage !== DEFAULT_LANGUAGE ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={() => setActiveTab("seo")}
+                >
+                  SEO (Shared)
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  spacing="sm"
+                  disabled={selectedLanguage !== DEFAULT_LANGUAGE}
+                  className={`capitalize border-b-2 rounded-none transition ${
+                    activeTab === "jsonld"
+                      ? "border-base-black font-semibold text-primary"
+                      : "border-transparent text-gray-500"
+                  } ${selectedLanguage !== DEFAULT_LANGUAGE ? "opacity-50 cursor-not-allowed" : ""}`}
+                  onClick={() => setActiveTab("jsonld")}
+                >
+                  JSON-LD (Shared)
+                </Button>
               </div>
 
-              <JSONLDSection form={form} />
+              {activeTab === "general" && (
+                <div className="space-y-6" key={selectedLanguage}>
+                  <Card>
+                    <CardBody>
+                      <CardHeader>
+                        <CardTitle>Page Details</CardTitle>
+                        <CardAction>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Active</span>
+                            <Controller
+                              name="isActive"
+                              control={form.control}
+                              render={({ field }) => (
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              )}
+                            />
+                          </div>
+                        </CardAction>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Field>
+                            <FieldLabel htmlFor="pageName">
+                              Page Name <span className="text-red-500">*</span>
+                            </FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                id="pageName"
+                                placeholder="e.g. Global Availability"
+                                {...form.register("pageName")}
+                              />
+                            </InputGroup>
+                            {form.formState.errors.pageName && (
+                              <FormMessage>
+                                {form.formState.errors.pageName.message}
+                              </FormMessage>
+                            )}
+                          </Field>
+                          <Field>
+                            <FieldLabel htmlFor="slug">
+                              Slug <span className="text-red-500">*</span>
+                            </FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                id="slug"
+                                placeholder="e.g. global-availability"
+                                {...form.register("slug")}
+                              />
+                              <InputGroupAddon>
+                                <Link2 className="w-4 h-4" />
+                              </InputGroupAddon>
+                              <InputGroupAddon align="inline-end">
+                                <InputGroupButton
+                                  onClick={handleSyncSlug}
+                                  size="icon-sm"
+                                  tooltip="Regenerate slug from title"
+                                >
+                                  <RefreshCw className="w-4 h-4" />
+                                </InputGroupButton>
+                              </InputGroupAddon>
+                            </InputGroup>
+                            {form.formState.errors.slug && (
+                              <FormMessage>
+                                {form.formState.errors.slug.message}
+                              </FormMessage>
+                            )}
+                          </Field>
+                        </div>
+                      </CardContent>
+                    </CardBody>
+                  </Card>
+
+                  <Card>
+                    <CardBody>
+                      <CardHeader>
+                        <CardTitle>
+                          Intro Section ({selectedLanguage.toUpperCase()})
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <Field>
+                          <FieldLabel>Intro Title</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...form.register(
+                                `content.${selectedLanguage}.intro.title` as any,
+                              )}
+                              placeholder="Intro heading"
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel>Intro Description</FieldLabel>
+                          <Textarea
+                            {...form.register(
+                              `content.${selectedLanguage}.intro.description` as any,
+                            )}
+                            placeholder="Intro text"
+                          />
+                        </Field>
+                      </CardContent>
+                    </CardBody>
+                  </Card>
+
+                  <Card>
+                    <CardBody>
+                      <CardHeader>
+                        <CardTitle>
+                          Content Sections ({selectedLanguage.toUpperCase()})
+                        </CardTitle>
+                        <CardAction>
+                          <Button
+                            type="button"
+                            variant="outlinePrimary"
+                            size="sm"
+                            onClick={addSection}
+                          >
+                            <Plus className="w-4 h-4 mr-1" /> Add Section
+                          </Button>
+                        </CardAction>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {sections.map((_: any, index: number) => (
+                          <Card
+                            key={`${selectedLanguage}-section-${index}`}
+                            className="border-dashed"
+                          >
+                            <CardContent className="p-4 space-y-3">
+                              <div className="flex justify-between">
+                                <span className="text-xs font-bold uppercase text-gray-400">
+                                  Section #{index + 1}
+                                </span>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeSection(index)}
+                                >
+                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                </Button>
+                              </div>
+                              <Field>
+                                <FieldLabel>Type</FieldLabel>
+                                <select
+                                  className="w-full border rounded px-3 py-2"
+                                  {...form.register(
+                                    `content.${selectedLanguage}.sections.${index}.type` as any,
+                                  )}
+                                >
+                                  <option value="text">Text</option>
+                                  <option value="cta">CTA</option>
+                                  <option value="benefits">Benefits</option>
+                                </select>
+                              </Field>
+                              <Field>
+                                <FieldLabel>Title</FieldLabel>
+                                <InputGroup>
+                                  <InputGroupInput
+                                    {...form.register(
+                                      `content.${selectedLanguage}.sections.${index}.title` as any,
+                                    )}
+                                  />
+                                </InputGroup>
+                              </Field>
+                              <Field>
+                                <FieldLabel>Content</FieldLabel>
+                                <Textarea
+                                  {...form.register(
+                                    `content.${selectedLanguage}.sections.${index}.content` as any,
+                                  )}
+                                />
+                              </Field>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </CardContent>
+                    </CardBody>
+                  </Card>
+
+                  <Card>
+                    <CardBody>
+                      <CardHeader>
+                        <CardTitle>
+                          Countries List ({selectedLanguage.toUpperCase()})
+                        </CardTitle>
+                        <CardAction>
+                          <Button
+                            type="button"
+                            variant="outlinePrimary"
+                            size="sm"
+                            onClick={addCountry}
+                          >
+                            <Plus className="w-4 h-4 mr-1" /> Add Country
+                          </Button>
+                        </CardAction>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {countries.map((_: any, index: number) => (
+                          <Card
+                            key={`${selectedLanguage}-country-${index}`}
+                            className="border-dashed"
+                          >
+                            <CardContent className="p-4 space-y-3">
+                              <div className="flex justify-between">
+                                <span className="text-xs font-bold uppercase text-gray-400">
+                                  Country #{index + 1}
+                                </span>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeCountry(index)}
+                                >
+                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                </Button>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <Field>
+                                  <FieldLabel>Country Name</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...form.register(
+                                        `content.${selectedLanguage}.countries.${index}.name` as any,
+                                      )}
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>Slug</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...form.register(
+                                        `content.${selectedLanguage}.countries.${index}.slug` as any,
+                                      )}
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>Code</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...form.register(
+                                        `content.${selectedLanguage}.countries.${index}.code` as any,
+                                      )}
+                                      placeholder="e.g. us, uk"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>City Count</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...form.register(
+                                        `content.${selectedLanguage}.countries.${index}.cityCount` as any,
+                                      )}
+                                    />
+                                  </InputGroup>
+                                </Field>
+                              </div>
+                              <div className="border-t pt-3 mt-3">
+                                <FieldLabel className="mb-2 block">
+                                  SEO ({selectedLanguage})
+                                </FieldLabel>
+                                <Field>
+                                  <FieldLabel className="text-xs">
+                                    SEO Title ({selectedLanguage})
+                                  </FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...form.register(
+                                        `content.${selectedLanguage}.countries.${index}.seo.title.${selectedLanguage}` as any,
+                                      )}
+                                      placeholder="Country page meta title"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel className="text-xs">
+                                    SEO Description ({selectedLanguage})
+                                  </FieldLabel>
+                                  <Textarea
+                                    {...form.register(
+                                      `content.${selectedLanguage}.countries.${index}.seo.description.${selectedLanguage}` as any,
+                                    )}
+                                    placeholder="Country page meta description"
+                                  />
+                                </Field>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </CardContent>
+                    </CardBody>
+                  </Card>
+                </div>
+              )}
+
+              {activeTab === "seo" && (
+                <SEOSection form={form} metaKeywordsData={metaKeywordsData} />
+              )}
+              {activeTab === "jsonld" && <JSONLDSection form={form} />}
             </CardContent>
           </CardBody>
         </Card>
