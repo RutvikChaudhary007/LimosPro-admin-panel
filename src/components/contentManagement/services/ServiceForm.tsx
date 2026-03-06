@@ -13,7 +13,6 @@ import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
 import { FeaturesAddonInput } from "@/components/common/FeaturesAddonInput";
 import LanguageSelector from "@/components/language/LanguageSelector";
-// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -48,8 +47,44 @@ import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
 
-const imageSchema = z.union([z.string(), z.instanceof(File)]);
+// Image schema - supports string, File, or object with src/alt
+const imageSchema = z.union([
+  z.string(),
+  z.instanceof(File),
+  z
+    .object({
+      src: z.string().optional(),
+      alt: z.string().optional(),
+    })
+    .optional(),
+]);
 
+// Stat schema for globalCoverage
+const statSchema = z.object({
+  id: z.string().optional(),
+  icon: imageSchema.optional(),
+  iconAlt: z.string().optional(),
+  label: z.string().optional(),
+  value: z.string().optional(),
+  link: z.string().optional(),
+});
+
+// Global coverage schema
+const globalCoverageSchema = z.object({
+  eyebrow: z.string().optional(),
+  title: z.string().optional(),
+  description1: z.string().optional(),
+  description2: z.string().optional(),
+  image: z
+    .object({
+      src: imageSchema.optional(),
+      alt: z.string().optional(),
+    })
+    .optional(),
+  stats: z.array(statSchema).optional(),
+});
+
+// City routes schema - single object with optional fields for better compatibility
 const cityRoutesSchema = z.discriminatedUnion("cityRoutesEnabled", [
   z.object({
     cityRoutesEnabled: z.literal(true),
@@ -91,8 +126,8 @@ const cityRoutesSchema = z.discriminatedUnion("cityRoutesEnabled", [
   }),
 ]);
 
-// Language-specific schemas for Service
-const serviceItemSchema = z.object({
+// Services section schema
+const servicesSectionSchema = z.object({
   service: z.string().optional(),
   subservice: z.string().optional(),
   infoCards: z
@@ -183,47 +218,50 @@ const downloadSchema = z.object({
     .optional(),
 });
 
-// Shared schemas are imported from ../shared/sharedSchemas.tsimageLeft
-
-const multiLangServiceSchema = z.object({
-  isActive: z.boolean().default(true),
-  pageName: z.string().min(1, "Page name is required"),
-  slug: z.string().min(1, "Slug is required"),
-  defaultLanguage: z.string(),
-  availableLanguages: z.array(z.string()),
-  services: z.record(z.string(), serviceItemSchema),
-  cityRoutes: z.record(z.string(), cityRoutesSchema),
-  premiumFleet: z.record(z.string(), premiumFleetSchema),
-  whyUs: z.record(z.string(), whyUsSchema),
-  serviceInGlobalCities: z.record(
-    z.string(),
-    z.object({
-      imageCardWithTextOnSide: imageCardWithTextSideSchema,
-    }),
-  ),
-  LongDistanceCarService: z.record(
-    // Add this
-    z.string(),
-    z.object({
-      imageCardWithTextOnSide: imageCardWithTextSideSchema,
-    }),
-  ),
-  // airportService: z.record(
-  //   z.string(),
-  //   z.object({
-  //     imageCardWithTextOnSide: imageCardWithTextSideSchema,
-  //   }),
-  // ),
-  // shuttleBooking: z.record(
-  //   z.string(),
-  //   z.object({
-  //     imageCardWithTextOnSide: imageCardWithTextSideSchema,
-  //   }),
-  // ),
-  faq: z.record(
-    z.string(),
-    z.object({
-      heading: z.string(),
+// Content schema for a single language - with defaults for safe initialization
+const contentSchema = z.object({
+  services: servicesSectionSchema.default({
+    service: "",
+    subservice: "",
+    infoCards: [],
+  }),
+  premiumFleet: premiumFleetSchema.default({
+    p1: "",
+    p2: "",
+    h2: "",
+    priceCards: [],
+  }),
+  cityRoutes: cityRoutesSchema.default({ cityRoutesEnabled: false }),
+  useCase: servicesSectionSchema.default({
+    service: "",
+    subservice: "",
+    infoCards: [],
+  }),
+  whyUs: whyUsSchema.default({ p: "", h2: "", featureList: [] }),
+  globalCoverage: globalCoverageSchema.default({
+    eyebrow: "",
+    title: "",
+    description1: "",
+    description2: "",
+    stats: [],
+  }),
+  serviceInGlobalCities: z
+    .object({
+      imageCardWithTextOnSide: imageCardWithTextSideSchema.default({
+        imageLeft: false,
+      }),
+    })
+    .default({ imageCardWithTextOnSide: { imageLeft: false } }),
+  LongDistanceCarService: z
+    .object({
+      imageCardWithTextOnSide: imageCardWithTextSideSchema.default({
+        imageLeft: true,
+      }),
+    })
+    .default({ imageCardWithTextOnSide: { imageLeft: true } }),
+  faq: z
+    .object({
+      heading: z.string().optional(),
       faqCards: z
         .array(
           z.object({
@@ -233,9 +271,19 @@ const multiLangServiceSchema = z.object({
           }),
         )
         .optional(),
-    }),
-  ),
-  download: z.record(z.string(), downloadSchema),
+    })
+    .default({ heading: "", faqCards: [] }),
+  download: downloadSchema.default({ h2: "", p: "" }),
+});
+
+// Main schema with content wrapper
+const multiLangServiceSchema = z.object({
+  isActive: z.boolean().default(true),
+  pageName: z.string().min(1, "Page name is required"),
+  slug: z.string().min(1, "Slug is required"),
+  defaultLanguage: z.string(),
+  availableLanguages: z.array(z.string()),
+  content: z.record(z.string(), contentSchema),
   seo: seoSchema,
   jsonLd: jsonLdSchema,
 });
@@ -247,17 +295,26 @@ interface ServiceFormProps {
   onSubmit: (data: ServiceFormData) => void;
   type: string;
 }
+
 /**
- * Get empty language content for the service form
- * @returns {getEmptyLanguageContent} - The empty language content
+ * Get empty content for a single language
  */
 const getEmptyLanguageContent = () => ({
   services: { service: "", subservice: "", infoCards: [] },
   cityRoutes: {
     cityRoutesEnabled: false,
   },
+  useCase: { service: "", subservice: "", infoCards: [] },
   premiumFleet: { p1: "", p2: "", h2: "", priceCards: [] },
   whyUs: { heroSectionText: undefined, p: "", h2: "", featureList: [] },
+  globalCoverage: {
+    eyebrow: "",
+    title: "",
+    description1: "",
+    description2: "",
+    image: undefined,
+    stats: [],
+  },
   serviceInGlobalCities: {
     imageCardWithTextOnSide: {
       imageLeft: false,
@@ -269,7 +326,6 @@ const getEmptyLanguageContent = () => ({
     },
   },
   LongDistanceCarService: {
-    // Add this
     imageCardWithTextOnSide: {
       imageLeft: true,
       src: "",
@@ -279,26 +335,6 @@ const getEmptyLanguageContent = () => ({
       description: "",
     },
   },
-  // airportService: {
-  //   imageCardWithTextOnSide: {
-  //     imageLeft: true,
-  //     src: "",
-  //     alt: "",
-  //     t1: "",
-  //     t2: "",
-  //     description: "",
-  //   },
-  // },
-  // shuttleBooking: {
-  //   imageCardWithTextOnSide: {
-  //     imageLeft: true,
-  //     src: "",
-  //     alt: "",
-  //     t1: "",
-  //     t2: "",
-  //     description: "",
-  //   },
-  // },
   faq: { heading: "", faqCards: [] },
   download: {
     h2: "",
@@ -309,8 +345,6 @@ const getEmptyLanguageContent = () => ({
     image: undefined,
     list: undefined,
   },
-  // seo: { metaTitle: "", metaDescription: "", metaKeywords: [], canonicalUrl: "", openGraph: undefined, twitter: undefined },
-  // jsonLd: [],
 });
 
 const getEmptySeo = () => ({
@@ -321,6 +355,7 @@ const getEmptySeo = () => ({
   openGraph: {},
   twitter: {},
 });
+
 const getEmptyJsonLd = () => [];
 
 const normalizeServiceData = (data: any): ServiceFormData => {
@@ -331,34 +366,123 @@ const normalizeServiceData = (data: any): ServiceFormData => {
       slug: "",
       defaultLanguage: "en",
       availableLanguages: ["en"],
-      services: { en: getEmptyLanguageContent().services },
-      cityRoutes: { en: getEmptyLanguageContent().cityRoutes },
-      premiumFleet: { en: getEmptyLanguageContent().premiumFleet },
-      whyUs: { en: getEmptyLanguageContent().whyUs },
-      serviceInGlobalCities: {
-        en: getEmptyLanguageContent().serviceInGlobalCities,
+      content: {
+        en: getEmptyLanguageContent(),
       },
-      LongDistanceCarService: {
-        en: getEmptyLanguageContent().LongDistanceCarService,
-      },
-      faq: { en: getEmptyLanguageContent().faq },
-      download: { en: getEmptyLanguageContent().download },
       seo: getEmptySeo(),
       jsonLd: getEmptyJsonLd(),
     };
 
-  // If already in multi-language format, ensure ALL available languages are present in all records
+  // If already in new format with content wrapper
+  if (data.content && typeof data.content === "object") {
+    const languages = data.availableLanguages || ["en"];
+    const content: Record<string, any> = {};
+
+    languages.forEach((lang: string) => {
+      if (data.content[lang]) {
+        content[lang] = {
+          ...getEmptyLanguageContent(),
+          ...data.content[lang],
+        };
+        // Ensure cityRoutesEnabled is always explicitly set
+        if (
+          content[lang].cityRoutes &&
+          typeof content[lang].cityRoutes.cityRoutesEnabled !== "boolean"
+        ) {
+          content[lang].cityRoutes.cityRoutesEnabled = false;
+        }
+      } else {
+        content[lang] = getEmptyLanguageContent();
+      }
+    });
+
+    // Extract Shared SEO/JSON-LD
+    let sharedSeo = data.seo;
+    let sharedJsonLd = data.jsonLd;
+
+    if (
+      sharedSeo &&
+      (sharedSeo.en ||
+        sharedSeo[DEFAULT_LANGUAGE] ||
+        Object.keys(sharedSeo).length > 0)
+    ) {
+      if (!sharedSeo.metaTitle && !sharedSeo.metaDescription) {
+        sharedSeo =
+          sharedSeo[DEFAULT_LANGUAGE] ||
+          sharedSeo.en ||
+          Object.values(sharedSeo)[0] ||
+          getEmptySeo();
+      }
+    } else {
+      sharedSeo = getEmptySeo();
+    }
+
+    if (
+      sharedJsonLd &&
+      !Array.isArray(sharedJsonLd) &&
+      (sharedJsonLd.en || sharedJsonLd[DEFAULT_LANGUAGE])
+    ) {
+      sharedJsonLd =
+        sharedJsonLd[DEFAULT_LANGUAGE] ||
+        sharedJsonLd.en ||
+        Object.values(sharedJsonLd)[0] ||
+        getEmptyJsonLd();
+    } else if (!sharedJsonLd) {
+      sharedJsonLd = getEmptyJsonLd();
+    }
+
+    return {
+      isActive: typeof data.isActive === "boolean" ? data.isActive : true,
+      pageName: data.pageName || "",
+      slug: data.slug || "",
+      defaultLanguage: data.defaultLanguage || "en",
+      availableLanguages: languages,
+      content,
+      seo: sharedSeo,
+      jsonLd: sharedJsonLd,
+    };
+  }
+
+  // Old format - convert to new format with content wrapper
   const languages = data.availableLanguages || ["en"];
+  const content: Record<string, any> = {};
+
   const sections = [
     "services",
     "cityRoutes",
+    "useCase",
     "premiumFleet",
     "whyUs",
+    "globalCoverage",
     "serviceInGlobalCities",
     "LongDistanceCarService",
     "faq",
     "download",
   ] as const;
+
+  languages.forEach((lang: string) => {
+    content[lang] = getEmptyLanguageContent();
+
+    sections.forEach((section) => {
+      // Check for data in section[lang] OR section (if it's old format and lang is en)
+      let sectionData = data[section]?.[lang];
+      if (!sectionData && lang === "en" && data[section] && !data[section].en) {
+        sectionData = data[section];
+      }
+
+      if (sectionData) {
+        content[lang][section] = sectionData;
+      }
+    });
+
+    // Ensure cityRoutesEnabled is always explicitly set for old format conversion
+    if (
+      content[lang].cityRoutes &&
+      typeof content[lang].cityRoutes.cityRoutesEnabled !== "boolean"
+    ) {
+      content[lang].cityRoutes.cityRoutesEnabled = false;
+    }
+  });
 
   // Extract Shared SEO/JSON-LD
   let sharedSeo = data.seo;
@@ -395,43 +519,16 @@ const normalizeServiceData = (data: any): ServiceFormData => {
     sharedJsonLd = getEmptyJsonLd();
   }
 
-  const normalized: ServiceFormData = {
+  return {
     isActive: typeof data.isActive === "boolean" ? data.isActive : true,
     pageName: data.pageName || "",
     slug: data.slug || "",
     defaultLanguage: data.defaultLanguage || "en",
     availableLanguages: languages,
-    services: {},
-    cityRoutes: {},
-    premiumFleet: {},
-    whyUs: {},
-    serviceInGlobalCities: {},
-    LongDistanceCarService: {},
-    faq: {},
-    download: {},
+    content,
     seo: sharedSeo,
     jsonLd: sharedJsonLd,
   };
-
-  languages.forEach((lang: string) => {
-    sections.forEach((section) => {
-      // Check for data in section[lang] OR section (if it's old format and lang is en)
-      let sectionData = data[section]?.[lang];
-      if (!sectionData && lang === "en" && data[section] && !data[section].en) {
-        sectionData = data[section];
-      }
-
-      if (sectionData) {
-        (normalized[section] as any)[lang] = sectionData;
-      } else {
-        (normalized[section] as any)[lang] = (getEmptyLanguageContent() as any)[
-          section
-        ];
-      }
-    });
-  });
-
-  return normalized;
 };
 
 interface LanguageFieldsProps {
@@ -451,33 +548,45 @@ function LanguageFields({
 
   const cityCards = useFieldArray({
     control,
-    name: `cityRoutes.${selectedLanguage}.cityCards` as any,
+    name: `content.${selectedLanguage}.cityRoutes.cityCards` as any,
   });
 
   const routeCards = useFieldArray({
     control,
-    name: `cityRoutes.${selectedLanguage}.routeCards` as any,
+    name: `content.${selectedLanguage}.cityRoutes.routeCards` as any,
   });
 
   const infoCards = useFieldArray({
     control,
-    name: `services.${selectedLanguage}.infoCards` as any,
+    name: `content.${selectedLanguage}.services.infoCards` as any,
   });
+
+  const useCaseInfoCards = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.useCase.infoCards` as any,
+  });
+
   const priceCards = useFieldArray({
     control,
-    name: `premiumFleet.${selectedLanguage}.priceCards` as any,
+    name: `content.${selectedLanguage}.premiumFleet.priceCards` as any,
   });
+
   const faqCards = useFieldArray({
     control,
-    name: `faq.${selectedLanguage}.faqCards` as any,
+    name: `content.${selectedLanguage}.faq.faqCards` as any,
+  });
+
+  const globalCoverageStats = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.globalCoverage.stats` as any,
   });
 
   // Add this effect to reinitialize arrays when enabling
   useEffect(() => {
     const subscription = watch((value: any, { name }: { name: string }) => {
-      if (name === `cityRoutes.${selectedLanguage}.cityRoutesEnabled`) {
+      if (name === `content.${selectedLanguage}.cityRoutes.cityRoutesEnabled`) {
         const isEnabled =
-          value?.cityRoutes?.[selectedLanguage]?.cityRoutesEnabled;
+          value?.content?.[selectedLanguage]?.cityRoutes?.cityRoutesEnabled;
 
         if (
           isEnabled &&
@@ -485,14 +594,21 @@ function LanguageFields({
           !routeCards.fields.length
         ) {
           // Initialize arrays if they don't exist
-          setValue(`cityRoutes.${selectedLanguage}.cityCards` as any, []);
-          setValue(`cityRoutes.${selectedLanguage}.routeCards` as any, []);
+          setValue(
+            `content.${selectedLanguage}.cityRoutes.cityCards` as any,
+            [],
+          );
+          setValue(
+            `content.${selectedLanguage}.cityRoutes.routeCards` as any,
+            [],
+          );
         }
       }
     });
 
     return () => subscription.unsubscribe();
   }, [watch, selectedLanguage]);
+
   return (
     <div className="space-y-8">
       {activeTab === "general" && (
@@ -510,7 +626,7 @@ function LanguageFields({
                     <InputGroup>
                       <InputGroupInput
                         {...register(
-                          `services.${selectedLanguage}.service` as any,
+                          `content.${selectedLanguage}.services.service` as any,
                         )}
                         placeholder="e.g. Services"
                       />
@@ -521,7 +637,7 @@ function LanguageFields({
                     <InputGroup>
                       <InputGroupInput
                         {...register(
-                          `services.${selectedLanguage}.subservice` as any,
+                          `content.${selectedLanguage}.services.subservice` as any,
                         )}
                         placeholder="e.g. Airport Transfers"
                       />
@@ -567,7 +683,7 @@ function LanguageFields({
                         </div>
                         <Controller
                           name={
-                            `services.${selectedLanguage}.infoCards.${index}.src` as any
+                            `content.${selectedLanguage}.services.infoCards.${index}.src` as any
                           }
                           control={control}
                           render={({ field }) => (
@@ -583,7 +699,7 @@ function LanguageFields({
                           <InputGroup>
                             <InputGroupInput
                               {...register(
-                                `services.${selectedLanguage}.infoCards.${index}.alt` as any,
+                                `content.${selectedLanguage}.services.infoCards.${index}.alt` as any,
                               )}
                             />
                           </InputGroup>
@@ -593,7 +709,7 @@ function LanguageFields({
                           <InputGroup>
                             <InputGroupInput
                               {...register(
-                                `services.${selectedLanguage}.infoCards.${index}.title` as any,
+                                `content.${selectedLanguage}.services.infoCards.${index}.title` as any,
                               )}
                             />
                           </InputGroup>
@@ -603,7 +719,7 @@ function LanguageFields({
                           <InputGroup>
                             <InputGroupInput
                               {...register(
-                                `services.${selectedLanguage}.infoCards.${index}.description` as any,
+                                `content.${selectedLanguage}.services.infoCards.${index}.description` as any,
                               )}
                             />
                           </InputGroup>
@@ -617,7 +733,6 @@ function LanguageFields({
           </Card>
 
           {/* City Routes */}
-
           <Card>
             <CardBody>
               <CardHeader>
@@ -630,7 +745,7 @@ function LanguageFields({
                     <Controller
                       control={control}
                       name={
-                        `cityRoutes.${selectedLanguage}.cityRoutesEnabled` as any
+                        `content.${selectedLanguage}.cityRoutes.cityRoutesEnabled` as any
                       }
                       render={({ field }) => (
                         <Checkbox
@@ -643,11 +758,11 @@ function LanguageFields({
                             if (!isEnabled) {
                               // When disabled, set to false and clear all data
                               setValue(
-                                `cityRoutes.${selectedLanguage}` as any,
+                                `content.${selectedLanguage}.cityRoutes` as any,
                                 {
                                   cityRoutesEnabled: false,
                                 },
-                                { shouldValidate: true },
+                                { shouldValidate: true, shouldDirty: true },
                               );
 
                               // Clear field arrays
@@ -656,7 +771,7 @@ function LanguageFields({
                             } else {
                               // When enabled, initialize with full structure
                               setValue(
-                                `cityRoutes.${selectedLanguage}` as any,
+                                `content.${selectedLanguage}.cityRoutes` as any,
                                 {
                                   cityRoutesEnabled: true,
                                   headingTop: "",
@@ -672,7 +787,7 @@ function LanguageFields({
                                   cityCards: [],
                                   routeCards: [],
                                 },
-                                { shouldValidate: true },
+                                { shouldValidate: true, shouldDirty: true },
                               );
                             }
 
@@ -695,7 +810,7 @@ function LanguageFields({
 
                 {/* Show City Routes Content Only When Enabled */}
                 {watch(
-                  `cityRoutes.${selectedLanguage}.cityRoutesEnabled` as any,
+                  `content.${selectedLanguage}.cityRoutes.cityRoutesEnabled` as any,
                 ) === true && (
                   <>
                     <Separator />
@@ -705,7 +820,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.headingTop` as any,
+                              `content.${selectedLanguage}.cityRoutes.headingTop` as any,
                             )}
                             placeholder="Luxury Travel"
                           />
@@ -716,7 +831,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.headingBottom` as any,
+                              `content.${selectedLanguage}.cityRoutes.headingBottom` as any,
                             )}
                             placeholder="Major Cities & Airports"
                           />
@@ -726,7 +841,7 @@ function LanguageFields({
                         <FieldLabel>Description 1</FieldLabel>
                         <Controller
                           name={
-                            `cityRoutes.${selectedLanguage}.description1` as any
+                            `content.${selectedLanguage}.cityRoutes.description1` as any
                           }
                           control={control}
                           render={({ field }) => (
@@ -741,7 +856,7 @@ function LanguageFields({
                         <FieldLabel>Description 2</FieldLabel>
                         <Controller
                           name={
-                            `cityRoutes.${selectedLanguage}.description2` as any
+                            `content.${selectedLanguage}.cityRoutes.description2` as any
                           }
                           control={control}
                           render={({ field }) => (
@@ -757,7 +872,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.topCities` as any,
+                              `content.${selectedLanguage}.cityRoutes.topCities` as any,
                             )}
                             placeholder="Top Cities"
                           />
@@ -768,7 +883,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.seeAll` as any,
+                              `content.${selectedLanguage}.cityRoutes.seeAll` as any,
                             )}
                             placeholder="See All"
                           />
@@ -779,7 +894,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.seeAllLink` as any,
+                              `content.${selectedLanguage}.cityRoutes.seeAllLink` as any,
                             )}
                             placeholder="/city-to-city"
                           />
@@ -790,7 +905,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.topRoutes` as any,
+                              `content.${selectedLanguage}.cityRoutes.topRoutes` as any,
                             )}
                             placeholder="Top City-to-City Routes"
                           />
@@ -801,7 +916,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.topRoutesSeeAll` as any,
+                              `content.${selectedLanguage}.cityRoutes.topRoutesSeeAll` as any,
                             )}
                             placeholder="See All"
                           />
@@ -812,7 +927,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `cityRoutes.${selectedLanguage}.topRoutesSeeAllLink` as any,
+                              `content.${selectedLanguage}.cityRoutes.topRoutesSeeAllLink` as any,
                             )}
                             placeholder="/city-to-city"
                           />
@@ -864,7 +979,7 @@ function LanguageFields({
                                 </div>
                                 <Controller
                                   name={
-                                    `cityRoutes.${selectedLanguage}.cityCards.${idx}.src` as any
+                                    `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.src` as any
                                   }
                                   control={control}
                                   render={({ field }) => (
@@ -880,7 +995,7 @@ function LanguageFields({
                                   <InputGroup>
                                     <InputGroupInput
                                       {...register(
-                                        `cityRoutes.${selectedLanguage}.cityCards.${idx}.alt` as any,
+                                        `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.alt` as any,
                                       )}
                                       placeholder="A picture of Dubai buildings"
                                     />
@@ -891,7 +1006,7 @@ function LanguageFields({
                                   <InputGroup>
                                     <InputGroupInput
                                       {...register(
-                                        `cityRoutes.${selectedLanguage}.cityCards.${idx}.title` as any,
+                                        `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.title` as any,
                                       )}
                                       placeholder="Dubai"
                                     />
@@ -901,7 +1016,7 @@ function LanguageFields({
                                   <FieldLabel>Description</FieldLabel>
                                   <Textarea
                                     {...register(
-                                      `cityRoutes.${selectedLanguage}.cityCards.${idx}.description` as any,
+                                      `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.description` as any,
                                     )}
                                     placeholder="26 routes to/from this city"
                                   />
@@ -965,7 +1080,7 @@ function LanguageFields({
                                     <InputGroup>
                                       <InputGroupInput
                                         {...register(
-                                          `cityRoutes.${selectedLanguage}.routeCards.${idx}.from` as any,
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.from` as any,
                                         )}
                                         placeholder="New York"
                                       />
@@ -976,7 +1091,7 @@ function LanguageFields({
                                     <InputGroup>
                                       <InputGroupInput
                                         {...register(
-                                          `cityRoutes.${selectedLanguage}.routeCards.${idx}.to` as any,
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.to` as any,
                                         )}
                                         placeholder="Philadelphia"
                                       />
@@ -987,7 +1102,7 @@ function LanguageFields({
                                     <InputGroup>
                                       <InputGroupInput
                                         {...register(
-                                          `cityRoutes.${selectedLanguage}.routeCards.${idx}.time` as any,
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.time` as any,
                                         )}
                                         placeholder="1h 50m"
                                       />
@@ -998,7 +1113,7 @@ function LanguageFields({
                                     <InputGroup>
                                       <InputGroupInput
                                         {...register(
-                                          `cityRoutes.${selectedLanguage}.routeCards.${idx}.distance` as any,
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.distance` as any,
                                         )}
                                         placeholder="59 mi"
                                       />
@@ -1021,6 +1136,125 @@ function LanguageFields({
             </CardBody>
           </Card>
 
+          {/* Use Case Section */}
+          <Card>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>Use Case & InfoCards</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Field>
+                    <FieldLabel>Service</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        {...register(
+                          `content.${selectedLanguage}.useCase.service` as any,
+                        )}
+                        placeholder="e.g. Use Case"
+                      />
+                    </InputGroup>
+                  </Field>
+                  <Field>
+                    <FieldLabel>Subservice</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        {...register(
+                          `content.${selectedLanguage}.useCase.subservice` as any,
+                        )}
+                        placeholder="e.g. Business Travel"
+                      />
+                    </InputGroup>
+                  </Field>
+                </div>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">Info Cards</h3>
+                  <Button
+                    type="button"
+                    onClick={() =>
+                      useCaseInfoCards.append({
+                        id: uid(),
+                        src: "",
+                        alt: "",
+                        title: "",
+                        description: "",
+                      })
+                    }
+                    variant="outlinePrimary"
+                    size="sm"
+                  >
+                    Add Info Card
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {useCaseInfoCards.fields.map((field, index) => (
+                    <Card key={field.id} className="border-dashed">
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-xs font-bold text-gray-400 uppercase">
+                            Card #{index + 1}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => useCaseInfoCards.remove(index)}
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </div>
+                        <Controller
+                          name={
+                            `content.${selectedLanguage}.useCase.infoCards.${index}.src` as any
+                          }
+                          control={control}
+                          render={({ field }) => (
+                            <UploadWithUrl
+                              value={field.value}
+                              onChange={field.onChange}
+                              title="Image"
+                            />
+                          )}
+                        />
+                        <Field>
+                          <FieldLabel>Alt Text</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.useCase.infoCards.${index}.alt` as any,
+                              )}
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel>Title</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.useCase.infoCards.${index}.title` as any,
+                              )}
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel>Description</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.useCase.infoCards.${index}.description` as any,
+                              )}
+                            />
+                          </InputGroup>
+                        </Field>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </CardBody>
+          </Card>
+
           {/* Premium Fleet */}
           <Card>
             <CardBody>
@@ -1034,7 +1268,7 @@ function LanguageFields({
                     <InputGroup>
                       <InputGroupInput
                         {...register(
-                          `premiumFleet.${selectedLanguage}.p1` as any,
+                          `content.${selectedLanguage}.premiumFleet.p1` as any,
                         )}
                       />
                     </InputGroup>
@@ -1044,14 +1278,14 @@ function LanguageFields({
                     <InputGroup>
                       <InputGroupInput
                         {...register(
-                          `premiumFleet.${selectedLanguage}.h2` as any,
+                          `content.${selectedLanguage}.premiumFleet.h2` as any,
                         )}
                       />
                     </InputGroup>
                   </Field>
                 </div>
                 <Controller
-                  name={`premiumFleet.${selectedLanguage}.p2` as any}
+                  name={`content.${selectedLanguage}.premiumFleet.p2` as any}
                   control={control}
                   render={({ field }) => (
                     <Field>
@@ -1106,7 +1340,7 @@ function LanguageFields({
                         </div>
                         <Controller
                           name={
-                            `premiumFleet.${selectedLanguage}.priceCards.${index}.src` as any
+                            `content.${selectedLanguage}.premiumFleet.priceCards.${index}.src` as any
                           }
                           control={control}
                           render={({ field }) => (
@@ -1123,7 +1357,7 @@ function LanguageFields({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `premiumFleet.${selectedLanguage}.priceCards.${index}.alt` as any,
+                                  `content.${selectedLanguage}.premiumFleet.priceCards.${index}.alt` as any,
                                 )}
                               />
                             </InputGroup>
@@ -1133,7 +1367,7 @@ function LanguageFields({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `premiumFleet.${selectedLanguage}.priceCards.${index}.priceInfo` as any,
+                                  `content.${selectedLanguage}.premiumFleet.priceCards.${index}.priceInfo` as any,
                                 )}
                               />
                             </InputGroup>
@@ -1143,7 +1377,7 @@ function LanguageFields({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `premiumFleet.${selectedLanguage}.priceCards.${index}.rating` as any,
+                                  `content.${selectedLanguage}.premiumFleet.priceCards.${index}.rating` as any,
                                 )}
                               />
                             </InputGroup>
@@ -1153,7 +1387,7 @@ function LanguageFields({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `premiumFleet.${selectedLanguage}.priceCards.${index}.CarInfo` as any,
+                                  `content.${selectedLanguage}.premiumFleet.priceCards.${index}.CarInfo` as any,
                                 )}
                               />
                             </InputGroup>
@@ -1163,7 +1397,7 @@ function LanguageFields({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `premiumFleet.${selectedLanguage}.priceCards.${index}.buttonText` as any,
+                                  `content.${selectedLanguage}.premiumFleet.priceCards.${index}.buttonText` as any,
                                 )}
                               />
                             </InputGroup>
@@ -1173,7 +1407,7 @@ function LanguageFields({
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `premiumFleet.${selectedLanguage}.priceCards.${index}.buttonLink` as any,
+                                  `content.${selectedLanguage}.premiumFleet.priceCards.${index}.buttonLink` as any,
                                 )}
                               />
                             </InputGroup>
@@ -1183,7 +1417,7 @@ function LanguageFields({
                           <FieldLabel>Features</FieldLabel>
                           <Controller
                             name={
-                              `premiumFleet.${selectedLanguage}.priceCards.${index}.features` as any
+                              `content.${selectedLanguage}.premiumFleet.priceCards.${index}.features` as any
                             }
                             control={control}
                             render={({ field }) => (
@@ -1210,7 +1444,9 @@ function LanguageFields({
               </CardHeader>
               <CardContent className="space-y-4">
                 <Controller
-                  name={`whyUs.${selectedLanguage}.heroSectionText.src` as any}
+                  name={
+                    `content.${selectedLanguage}.whyUs.heroSectionText.src` as any
+                  }
                   control={control}
                   render={({ field }) => (
                     <UploadWithUrl
@@ -1225,7 +1461,7 @@ function LanguageFields({
                   <InputGroup>
                     <InputGroupInput
                       {...register(
-                        `whyUs.${selectedLanguage}.heroSectionText.alt` as any,
+                        `content.${selectedLanguage}.whyUs.heroSectionText.alt` as any,
                       )}
                     />
                   </InputGroup>
@@ -1234,20 +1470,24 @@ function LanguageFields({
                   <FieldLabel>Heading (H2)</FieldLabel>
                   <InputGroup>
                     <InputGroupInput
-                      {...register(`whyUs.${selectedLanguage}.h2` as any)}
+                      {...register(
+                        `content.${selectedLanguage}.whyUs.h2` as any,
+                      )}
                     />
                   </InputGroup>
                 </Field>
                 <Field>
                   <FieldLabel>Paragraph</FieldLabel>
                   <Textarea
-                    {...register(`whyUs.${selectedLanguage}.p` as any)}
+                    {...register(`content.${selectedLanguage}.whyUs.p` as any)}
                   />
                 </Field>
                 <Field>
                   <FieldLabel>Feature List (One per line)</FieldLabel>
                   <Controller
-                    name={`whyUs.${selectedLanguage}.featureList` as any}
+                    name={
+                      `content.${selectedLanguage}.whyUs.featureList` as any
+                    }
                     control={control}
                     render={({ field }) => (
                       <FeaturesAddonInput
@@ -1261,14 +1501,185 @@ function LanguageFields({
             </CardBody>
           </Card>
 
+          {/* Global Coverage Section */}
+          <Card>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>Global Coverage</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <Field>
+                    <FieldLabel>Eyebrow</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        {...register(
+                          `content.${selectedLanguage}.globalCoverage.eyebrow` as any,
+                        )}
+                        placeholder="e.g. Worldwide Service"
+                      />
+                    </InputGroup>
+                  </Field>
+                  <Field>
+                    <FieldLabel>Title</FieldLabel>
+                    <InputGroup>
+                      <InputGroupInput
+                        {...register(
+                          `content.${selectedLanguage}.globalCoverage.title` as any,
+                        )}
+                        placeholder="e.g. Global Coverage"
+                      />
+                    </InputGroup>
+                  </Field>
+                </div>
+                <Field>
+                  <FieldLabel>Description 1</FieldLabel>
+                  <Textarea
+                    {...register(
+                      `content.${selectedLanguage}.globalCoverage.description1` as any,
+                    )}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>Description 2</FieldLabel>
+                  <Textarea
+                    {...register(
+                      `content.${selectedLanguage}.globalCoverage.description2` as any,
+                    )}
+                  />
+                </Field>
+                <Controller
+                  name={
+                    `content.${selectedLanguage}.globalCoverage.image.src` as any
+                  }
+                  control={control}
+                  render={({ field }) => (
+                    <UploadWithUrl
+                      value={field.value}
+                      onChange={field.onChange}
+                      title="Global Coverage Image"
+                    />
+                  )}
+                />
+                <Field>
+                  <FieldLabel>Image Alt Text</FieldLabel>
+                  <InputGroup>
+                    <InputGroupInput
+                      {...register(
+                        `content.${selectedLanguage}.globalCoverage.image.alt` as any,
+                      )}
+                    />
+                  </InputGroup>
+                </Field>
+                <Separator />
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">Stats</h3>
+                  <Button
+                    type="button"
+                    onClick={() =>
+                      globalCoverageStats.append({
+                        id: uid(),
+                        icon: "",
+                        iconAlt: "",
+                        label: "",
+                        value: "",
+                        link: "",
+                      })
+                    }
+                    variant="outlinePrimary"
+                    size="sm"
+                  >
+                    Add Stat
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {globalCoverageStats.fields.map((field, index) => (
+                    <Card key={field.id} className="border-dashed">
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-xs font-bold text-gray-400 uppercase">
+                            Stat #{index + 1}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => globalCoverageStats.remove(index)}
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </div>
+                        <Controller
+                          name={
+                            `content.${selectedLanguage}.globalCoverage.stats.${index}.icon` as any
+                          }
+                          control={control}
+                          render={({ field }) => (
+                            <UploadWithUrl
+                              value={field.value}
+                              onChange={field.onChange}
+                              title="Icon"
+                            />
+                          )}
+                        />
+                        <Field>
+                          <FieldLabel>Icon Alt Text</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.globalCoverage.stats.${index}.iconAlt` as any,
+                              )}
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel>Label</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.globalCoverage.stats.${index}.label` as any,
+                              )}
+                              placeholder="e.g. Cities"
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel>Value</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.globalCoverage.stats.${index}.value` as any,
+                              )}
+                              placeholder="e.g. 500+"
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel>Link (Optional)</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...register(
+                                `content.${selectedLanguage}.globalCoverage.stats.${index}.link` as any,
+                              )}
+                              placeholder="e.g. /destinations"
+                            />
+                          </InputGroup>
+                        </Field>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </CardBody>
+          </Card>
+
           {/* Image Cards Sections */}
           {[
-            { id: "serviceInGlobalCities", label: "Service In Global Cities" },
             {
               id: "LongDistanceCarService",
               label: "Long Distance Car Service",
             },
-            // { id: "shuttleBooking", label: "Shuttle Booking" },
+            { id: "Airport", label: "Shuttle booking" },
           ].map((section) => (
             <Card key={section.id}>
               <CardBody>
@@ -1278,7 +1689,7 @@ function LanguageFields({
                 <CardContent className="space-y-4">
                   <Controller
                     name={
-                      `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.src` as any
+                      `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.src` as any
                     }
                     control={control}
                     render={({ field }) => (
@@ -1295,7 +1706,7 @@ function LanguageFields({
                       <InputGroup>
                         <InputGroupInput
                           {...register(
-                            `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.alt` as any,
+                            `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.alt` as any,
                           )}
                         />
                       </InputGroup>
@@ -1305,7 +1716,7 @@ function LanguageFields({
                       <InputGroup>
                         <InputGroupInput
                           {...register(
-                            `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.t1` as any,
+                            `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.t1` as any,
                           )}
                         />
                       </InputGroup>
@@ -1315,7 +1726,7 @@ function LanguageFields({
                       <InputGroup>
                         <InputGroupInput
                           {...register(
-                            `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.t2` as any,
+                            `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.t2` as any,
                           )}
                         />
                       </InputGroup>
@@ -1323,7 +1734,7 @@ function LanguageFields({
                   </div>
                   <Controller
                     name={
-                      `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.description` as any
+                      `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.description` as any
                     }
                     control={control}
                     render={({ field }) => (
@@ -1340,11 +1751,11 @@ function LanguageFields({
                     <Checkbox
                       id={`${section.id}-left-${selectedLanguage}`}
                       checked={watch(
-                        `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.imageLeft` as any,
+                        `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.imageLeft` as any,
                       )}
                       onCheckedChange={(v) =>
                         setValue(
-                          `${section.id}.${selectedLanguage}.imageCardWithTextOnSide.imageLeft` as any,
+                          `content.${selectedLanguage}.${section.id}.imageCardWithTextOnSide.imageLeft` as any,
                           v === true,
                         )
                       }
@@ -1384,7 +1795,9 @@ function LanguageFields({
                   <FieldLabel>FAQ Section Heading</FieldLabel>
                   <InputGroup>
                     <InputGroupInput
-                      {...register(`faq.${selectedLanguage}.heading` as any)}
+                      {...register(
+                        `content.${selectedLanguage}.faq.heading` as any,
+                      )}
                       placeholder="The Most Asked Questions"
                     />
                   </InputGroup>
@@ -1412,7 +1825,7 @@ function LanguageFields({
                         <InputGroup>
                           <InputGroupInput
                             {...register(
-                              `faq.${selectedLanguage}.faqCards.${index}.question` as any,
+                              `content.${selectedLanguage}.faq.faqCards.${index}.question` as any,
                             )}
                           />
                         </InputGroup>
@@ -1421,7 +1834,7 @@ function LanguageFields({
                         <FieldLabel>Answer</FieldLabel>
                         <Textarea
                           {...register(
-                            `faq.${selectedLanguage}.faqCards.${index}.answer` as any,
+                            `content.${selectedLanguage}.faq.faqCards.${index}.answer` as any,
                           )}
                         />
                       </Field>
@@ -1444,7 +1857,9 @@ function LanguageFields({
                     <FieldLabel>Heading (H2)</FieldLabel>
                     <InputGroup>
                       <InputGroupInput
-                        {...register(`download.${selectedLanguage}.h2` as any)}
+                        {...register(
+                          `content.${selectedLanguage}.download.h2` as any,
+                        )}
                       />
                     </InputGroup>
                   </Field>
@@ -1452,14 +1867,16 @@ function LanguageFields({
                     <FieldLabel>Description</FieldLabel>
                     <InputGroup>
                       <InputGroupInput
-                        {...register(`download.${selectedLanguage}.p` as any)}
+                        {...register(
+                          `content.${selectedLanguage}.download.p` as any,
+                        )}
                       />
                     </InputGroup>
                   </Field>
                   <Field>
                     <FieldLabel>Features</FieldLabel>
                     <Controller
-                      name={`download.${selectedLanguage}.list` as any}
+                      name={`content.${selectedLanguage}.download.list` as any}
                       control={control}
                       render={({ field }) => (
                         <FeaturesAddonInput
@@ -1474,7 +1891,9 @@ function LanguageFields({
                   <Card className="p-2">
                     <CardTitle className="mb-2 text-xs">Qr Code</CardTitle>
                     <Controller
-                      name={`download.${selectedLanguage}.qr.src` as any}
+                      name={
+                        `content.${selectedLanguage}.download.qr.src` as any
+                      }
                       control={control}
                       render={({ field }) => (
                         <UploadWithUrl
@@ -1489,7 +1908,7 @@ function LanguageFields({
                       <InputGroup className="mt-2">
                         <InputGroupInput
                           {...register(
-                            `download.${selectedLanguage}.appStore.alt` as any,
+                            `content.${selectedLanguage}.download.qr.alt` as any,
                           )}
                           placeholder="Alt text"
                         />
@@ -1499,7 +1918,9 @@ function LanguageFields({
                   <Card className="p-2">
                     <CardTitle className="mb-2 text-xs">App Store</CardTitle>
                     <Controller
-                      name={`download.${selectedLanguage}.appStore.src` as any}
+                      name={
+                        `content.${selectedLanguage}.download.appStore.src` as any
+                      }
                       control={control}
                       render={({ field }) => (
                         <UploadWithUrl
@@ -1514,7 +1935,7 @@ function LanguageFields({
                       <InputGroup className="mt-2">
                         <InputGroupInput
                           {...register(
-                            `download.${selectedLanguage}.appStore.alt` as any,
+                            `content.${selectedLanguage}.download.appStore.alt` as any,
                           )}
                           placeholder="Alt text"
                         />
@@ -1525,7 +1946,7 @@ function LanguageFields({
                       <InputGroup className="mt-2">
                         <InputGroupInput
                           {...register(
-                            `download.${selectedLanguage}.appStore.link` as any,
+                            `content.${selectedLanguage}.download.appStore.link` as any,
                           )}
                           placeholder="Link"
                         />
@@ -1535,7 +1956,9 @@ function LanguageFields({
                   <Card className="p-2">
                     <CardTitle className="mb-2 text-xs">Play Store</CardTitle>
                     <Controller
-                      name={`download.${selectedLanguage}.playStore.src` as any}
+                      name={
+                        `content.${selectedLanguage}.download.playStore.src` as any
+                      }
                       control={control}
                       render={({ field }) => (
                         <UploadWithUrl
@@ -1550,7 +1973,7 @@ function LanguageFields({
                       <InputGroup className="mt-2">
                         <InputGroupInput
                           {...register(
-                            `download.${selectedLanguage}.playStore.alt` as any,
+                            `content.${selectedLanguage}.download.playStore.alt` as any,
                           )}
                           placeholder="Alt text"
                         />
@@ -1561,7 +1984,7 @@ function LanguageFields({
                       <InputGroup className="mt-2">
                         <InputGroupInput
                           {...register(
-                            `download.${selectedLanguage}.playStore.link` as any,
+                            `content.${selectedLanguage}.download.playStore.link` as any,
                           )}
                           placeholder="Link"
                         />
@@ -1571,7 +1994,9 @@ function LanguageFields({
                   <Card className="p-2">
                     <CardTitle className="mb-2 text-xs">Main Image</CardTitle>
                     <Controller
-                      name={`download.${selectedLanguage}.image.src` as any}
+                      name={
+                        `content.${selectedLanguage}.download.image.src` as any
+                      }
                       control={control}
                       render={({ field }) => (
                         <UploadWithUrl
@@ -1586,7 +2011,7 @@ function LanguageFields({
                       <InputGroup className="mt-2">
                         <InputGroupInput
                           {...register(
-                            `download.${selectedLanguage}.image.fig` as any,
+                            `content.${selectedLanguage}.download.image.fig` as any,
                           )}
                           placeholder="Fig Caption"
                         />
@@ -1601,19 +2026,10 @@ function LanguageFields({
       )}
 
       {activeTab === "seo" && (
-        <SEOSection
-          form={form}
-          // selectedLanguage={selectedLanguage}
-          metaKeywordsData={metaKeywordsData}
-        />
+        <SEOSection form={form} metaKeywordsData={metaKeywordsData} />
       )}
 
-      {activeTab === "jsonld" && (
-        <JSONLDSection
-          form={form}
-          // selectedLanguage={selectedLanguage}
-        />
-      )}
+      {activeTab === "jsonld" && <JSONLDSection form={form} />}
     </div>
   );
 }
@@ -1641,31 +2057,18 @@ export default function ServiceForm({
   });
 
   const { handleSubmit, watch, setValue, getValues } = form;
-  // const formData = watch();
   const availableLanguages = watch("availableLanguages") || ["en"];
 
   const handleLanguageChange = (lang: LanguageCode) => {
     setSelectedLanguage(lang);
 
     const currentData = getValues();
-    const sections = [
-      "services",
-      "premiumFleet",
-      "whyUs",
-      "serviceInGlobalCities",
-      "airportService",
-      "shuttleBooking",
-      "faq",
-      "download",
-    ];
+    const content = currentData.content || {};
 
-    sections.forEach((section) => {
-      const sectionData = currentData[section as keyof ServiceFormData];
-      if (!sectionData || !(sectionData as any)[lang]) {
-        const emptyContent = getEmptyLanguageContent();
-        setValue(`${section}.${lang}` as any, (emptyContent as any)[section]);
-      }
-    });
+    // Initialize content for new language if not exists
+    if (!content[lang]) {
+      setValue(`content.${lang}`, getEmptyLanguageContent());
+    }
 
     if (!availableLanguages.includes(lang)) {
       setValue("availableLanguages", [...availableLanguages, lang]);
@@ -1681,11 +2084,11 @@ export default function ServiceForm({
     const submissionData = structuredClone(data);
 
     // Remove empty placeholder price cards so DB only stores meaningful cards.
-    Object.keys(submissionData.premiumFleet || {}).forEach((lang) => {
-      const cards = submissionData.premiumFleet?.[lang]?.priceCards;
+    Object.keys(submissionData.content || {}).forEach((lang) => {
+      const cards = submissionData.content?.[lang]?.premiumFleet?.priceCards;
       if (!Array.isArray(cards)) return;
 
-      submissionData.premiumFleet[lang].priceCards = cards.filter(
+      submissionData.content[lang].premiumFleet.priceCards = cards.filter(
         (card: any) => {
           const hasSrc =
             card?.src instanceof File ||
