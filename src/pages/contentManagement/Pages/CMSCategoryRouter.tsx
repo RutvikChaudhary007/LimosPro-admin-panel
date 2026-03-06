@@ -44,6 +44,10 @@ const categories = {
     create: lazy(() => import("./citiesHubPage/CreatePage")),
     edit: lazy(() => import("./citiesHubPage/EditPage")),
   },
+  diplomats: {
+    create: lazy(() => import("./cityDiplomatsHubPage/CreatePage")),
+    edit: lazy(() => import("./cityDiplomatsHubPage/EditPage")),
+  },
   country: {
     create: lazy(() => import("./countryDetailsPage/CreatePage")),
     edit: lazy(() => import("./countryDetailsPage/EditPage")),

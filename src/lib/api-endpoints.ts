@@ -309,6 +309,16 @@ export const API_ENDPOINTS: Record<string, any> = {
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/cities-hub/${id}`,
   },
+  CITY_DIPLOMATS_HUB_PAGE: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/pages/cities-diplomats-hub`,
+    GET_BY_ID: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/cities-diplomats-hub/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/cities-diplomats-hub`,
+    UPDATE: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/cities-diplomats-hub/${id}`,
+    DELETE: (id: string) =>
+      `${ADMIN_SERVICE_URL}/pages/cities-diplomats-hub/${id}`,
+  },
   USER_PERMISSIONS: {
     GET_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId`,
     SYNC_USER_PERMISSIONS: `${ADMIN_SERVICE_URL}/user-permissions/:userId/sync`,

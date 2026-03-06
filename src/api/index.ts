@@ -33,6 +33,8 @@ export * from "./globalSearch.api";
 export * from "./notification.api";
 // Pages & Page Layout Module
 export * from "./pages/businessPageLayout.api";
+export * from "./pages/citiesHubPage.api";
+export * from "./pages/cityDiplomatsHubPage.api";
 // Partner Module
 export * from "./partner.api";
 // Partner Transactions Module

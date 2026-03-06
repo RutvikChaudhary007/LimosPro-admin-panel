@@ -323,6 +323,12 @@ export const queryKeys = {
     lists: (params?: unknown) => ["citiesHubPage", "list", params] as const,
     detail: (id: string) => ["citiesHubPage", "detail", id] as const,
   },
+  cityDiplomatsHubPage: {
+    all: ["cityDiplomatsHubPage"] as const,
+    lists: (params?: unknown) =>
+      ["cityDiplomatsHubPage", "list", params] as const,
+    detail: (id: string) => ["cityDiplomatsHubPage", "detail", id] as const,
+  },
   countryDetailPage: {
     all: ["countryDetailPage"] as const,
     lists: (params?: unknown) => ["countryDetailPage", "list", params] as const,
