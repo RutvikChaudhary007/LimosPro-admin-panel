@@ -4,6 +4,7 @@ import { Edit2, FileText, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFetchAllCitiesHubPages } from "@/api/pages/citiesHubPage.api";
+import { useFetchAllCityDiplomatsHubPages } from "@/api/pages/cityDiplomatsHubPage.api";
 import { useFetchAllCountryDetailPages } from "@/api/pages/countryDetailPage.api";
 import { useFetchAllCountryPages } from "@/api/pages/countryPage.api";
 import { useFetchAllRoutePages } from "@/api/pages/routesPage.api";
@@ -47,6 +48,11 @@ const categoryConfig = [
   },
   { name: "Countries", label: "Countries", key: "countries" },
   { name: "Cities", label: "Cities", key: "cities" },
+  {
+    name: "Business & Diplomats Hub",
+    label: "Business & Diplomats Hub Page",
+    key: "diplomats",
+  },
   { name: "Country Detail", label: "Country Detail", key: "country" },
 ];
 
@@ -74,6 +80,10 @@ export default function CMSPageList() {
     useFetchAllCountryPages({ limit: 100 });
   const { data: citiesHubResponse, isLoading: isLoadingCitiesHub } =
     useFetchAllCitiesHubPages({ limit: 100 });
+  const {
+    data: cityDiplomatsHubResponse,
+    isLoading: isLoadingCityDiplomatsHub,
+  } = useFetchAllCityDiplomatsHubPages({ limit: 100 });
   const { data: countryDetailsResponse, isLoading: isLoadingCountryDetails } =
     useFetchAllCountryDetailPages({ limit: 100 });
 
@@ -98,7 +108,14 @@ export default function CMSPageList() {
       Array.isArray(citiesHubResponse?.pages) ? citiesHubResponse.pages : [],
     [citiesHubResponse],
   );
-
+  const cityDiplomatsHubPages = useMemo(
+    () =>
+      Array.isArray(cityDiplomatsHubResponse?.items)
+        ? cityDiplomatsHubResponse.items
+        : [],
+    [cityDiplomatsHubResponse],
+  );
+  console.log("cityDiplomatsHubPages=>", cityDiplomatsHubPages);
   const countryDetailsPages = useMemo(
     () =>
       Array.isArray(countryDetailsResponse?.items)
@@ -156,6 +173,10 @@ export default function CMSPageList() {
       countryDetailsResponse,
       countryDetailsPages.length,
     );
+    const diplomatsCount = getTotalFromPagination(
+      cityDiplomatsHubResponse,
+      cityDiplomatsHubPages.length,
+    );
     const totalCount =
       serviceCount +
       destinationCount +
@@ -165,7 +186,8 @@ export default function CMSPageList() {
       cityRoutesCount +
       countriesCountFromCountryApi +
       (citiesCount + citiesCountFromCitiesHubApi) +
-      countryDetailCount;
+      countryDetailCount +
+      diplomatsCount;
 
     const computedCounts: Record<string, number> = {
       total: totalCount,
@@ -177,6 +199,7 @@ export default function CMSPageList() {
       cityroutes: cityRoutesCount,
       countries: countriesCountFromCountryApi,
       cities: citiesCount + citiesCountFromCitiesHubApi,
+      diplomats: diplomatsCount,
       country: countryDetailCount,
     };
 
@@ -191,6 +214,8 @@ export default function CMSPageList() {
     countryPages.length,
     citiesHubResponse,
     citiesHubPages.length,
+    cityDiplomatsHubResponse,
+    cityDiplomatsHubPages.length,
     countryDetailsResponse,
     countryDetailsPages.length,
   ]);
@@ -267,6 +292,7 @@ export default function CMSPageList() {
       isLoadingRoutes ||
       isLoadingCountry ||
       isLoadingCitiesHub ||
+      isLoadingCityDiplomatsHub ||
       isLoadingCountryDetails) &&
     pagesData.length === 0;
   const showErrorState = isError && pagesData.length === 0;
@@ -310,6 +336,8 @@ export default function CMSPageList() {
                       Countries: "countries",
 
                       Cities: "cities",
+
+                      Diplomats: "diplomats",
 
                       "Country Detail": "country",
                     };
