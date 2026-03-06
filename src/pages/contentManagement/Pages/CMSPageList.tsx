@@ -269,7 +269,7 @@ export default function CMSPageList() {
     const formatUpdatedAt = (updatedAt?: string) =>
       updatedAt ? new Date(updatedAt).toLocaleDateString() : "N/A";
 
-    return [
+    const servicePages = [
       { key: "services", category: "Services" },
       { key: "destination", category: "Destinations" },
       { key: "business", category: "Business" },
@@ -285,7 +285,70 @@ export default function CMSPageList() {
           category,
         })) ?? [],
     );
-  }, [resolvedPageContent]);
+
+    // Add cityDiplomatsHubPages
+    const diplomatsPages = cityDiplomatsHubPages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName || "City Diplomats Hub",
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "Business & Diplomats Hub",
+    }));
+
+    // Add citiesHubPages
+    const citiesPages = citiesHubPages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName || "Cities Hub",
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "Cities",
+    }));
+
+    // Add routePages
+    const cityRoutesPages = routePages
+      .filter((p: any) => getRouteCategoryKey(p.slug) === "cityroutes")
+      .map((page: any) => ({
+        id: page.id,
+        title: page.pageName || page.slug || "Route",
+        description: page.slug ? `/${page.slug}` : "",
+        lastUpdated: formatUpdatedAt(page.updatedAt),
+        category: "City-to-City Routes",
+      }));
+
+    // Add countryPages
+    const countriesPages = countryPages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName || page.name || "Country",
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "Countries",
+    }));
+
+    // Add countryDetailsPages
+    const countryDetailPagesList = countryDetailsPages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName || page.name || "Country Detail",
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "Country Detail",
+    }));
+
+    return [
+      ...servicePages,
+      ...diplomatsPages,
+      ...citiesPages,
+      ...cityRoutesPages,
+      ...countriesPages,
+      ...countryDetailPagesList,
+    ];
+  }, [
+    resolvedPageContent,
+    cityDiplomatsHubPages,
+    citiesHubPages,
+    routePages,
+    countryPages,
+    countryDetailsPages,
+  ]);
 
   const showLoadingState =
     (isLoading ||
