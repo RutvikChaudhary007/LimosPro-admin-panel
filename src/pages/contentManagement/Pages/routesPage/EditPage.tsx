@@ -2,6 +2,10 @@ import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  useFetchCountryPageById,
+  useUpdateCountryPage,
+} from "@/api/pages/countryPage.api";
+import {
   useFetchRoutePageById,
   useUpdateRoutePage,
 } from "@/api/pages/routesPage.api";
@@ -18,27 +22,51 @@ export default function EditPage() {
   const { id, category } = useParams<{ id: string; category: string }>();
   const navigate = useNavigate();
 
-  const { data, isFetching, isError, refetch } = useFetchRoutePageById(
-    id ?? "",
-  );
-  const updateMutation = useUpdateRoutePage();
+  const categoryLower = category?.toLowerCase() ?? "";
+
+  // Fetch data based on category - both hooks are called but only one will have data
+  const routePageQuery = useFetchRoutePageById(id ?? "");
+  const countryPageQuery = useFetchCountryPageById(id ?? "");
+
+  const routeUpdateMutation = useUpdateRoutePage();
+  const countryUpdateMutation = useUpdateCountryPage();
+
+  // Select correct data and mutation based on category
+  const isCountriesCategory = categoryLower === "countries";
+  const data = isCountriesCategory
+    ? countryPageQuery.data
+    : routePageQuery.data;
+  const isFetching = isCountriesCategory
+    ? countryPageQuery.isFetching
+    : routePageQuery.isFetching;
+  const isError = isCountriesCategory
+    ? countryPageQuery.isError
+    : routePageQuery.isError;
+  const refetch = isCountriesCategory
+    ? countryPageQuery.refetch
+    : routePageQuery.refetch;
+  const updateMutation = isCountriesCategory
+    ? countryUpdateMutation
+    : routeUpdateMutation;
 
   const handleSubmit = (formData: FormData) => {
     if (!id) return;
-    toastPromise(updateMutation.mutateAsync({ id, data: formData }), {
-      loading: "Updating page...",
-      success: () => {
-        navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
-        return "Page updated successfully!";
+    toastPromise(
+      updateMutation.mutateAsync({ id, data: formData }) as Promise<unknown>,
+      {
+        loading: "Updating page...",
+        success: () => {
+          navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+          return "Page updated successfully!";
+        },
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.message || "Failed to update page"
+            : "Failed to update page",
       },
-      error: (e) =>
-        e instanceof AxiosError
-          ? e.response?.data?.message || "Failed to update page"
-          : "Failed to update page",
-    });
+    );
   };
 
-  const categoryLower = category?.toLowerCase() ?? "";
   const title =
     categoryLower === "cityroutes"
       ? "Edit City-to-City Routes Page"

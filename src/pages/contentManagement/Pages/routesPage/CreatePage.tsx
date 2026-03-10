@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useCreateCountryPage } from "@/api/pages/countryPage.api";
 import { useCreateRoutePage } from "@/api/pages/routesPage.api";
 import CitiesPageForm from "@/components/contentManagement/routes/CitiesPageForm";
 import CityRoutesForm from "@/components/contentManagement/routes/CityRoutesForm";
@@ -12,7 +13,13 @@ import { constant } from "@/lib/constant";
 export default function CreatePage() {
   const navigate = useNavigate();
   const { category } = useParams<{ category: string }>();
-  const createMutation = useCreateRoutePage();
+  const categoryLower = category?.toLowerCase() ?? "";
+
+  // Use correct API based on category
+  const routeCreateMutation = useCreateRoutePage();
+  const countryCreateMutation = useCreateCountryPage();
+  const createMutation =
+    categoryLower === "countries" ? countryCreateMutation : routeCreateMutation;
 
   const handleSubmit = (formData: FormData) => {
     toastPromise(createMutation.mutateAsync(formData), {
@@ -27,8 +34,6 @@ export default function CreatePage() {
           : "Failed to create page",
     });
   };
-
-  const categoryLower = category?.toLowerCase() ?? "";
   const title =
     categoryLower === "cityroutes"
       ? "Create City-to-City Routes Page"

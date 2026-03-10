@@ -518,14 +518,29 @@ export default function CMSPageList() {
                           variant="ghost"
                           size="sm"
                           className="gap-2 text-primary hover:text-primary/90 hover:bg-primary/5"
-                          onClick={() =>
+                          onClick={() => {
+                            const categoryMapping: Record<string, string> = {
+                              Services: "services",
+                              Destinations: "destinations",
+                              Business: "business",
+                              Home: "home",
+                              Chauffeur: "chauffeur",
+                              "City-to-City Routes": "cityroutes",
+                              Countries: "countries",
+                              Cities: "cities",
+                              "Business & Diplomats Hub": "diplomats",
+                              "Country Detail": "country",
+                            };
+                            const routeCategory =
+                              categoryMapping[page.category] ??
+                              page.category.toLowerCase();
                             navigate(
                               constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(
                                 ":category",
-                                page.category.toLowerCase(),
+                                routeCategory,
                               ).replace(":id", page.id.toString()),
-                            )
-                          }
+                            );
+                          }}
                         >
                           <Edit2 className="h-4 w-4" />
                           Edit
