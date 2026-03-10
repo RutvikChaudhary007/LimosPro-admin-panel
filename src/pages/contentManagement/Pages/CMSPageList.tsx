@@ -26,7 +26,6 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { useSticky } from "@/hooks/useSticky";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
 
@@ -115,7 +114,7 @@ export default function CMSPageList() {
         : [],
     [cityDiplomatsHubResponse],
   );
-  console.log("cityDiplomatsHubPages=>", cityDiplomatsHubPages);
+  // console.log("cityDiplomatsHubPages=>", cityDiplomatsHubPages);
   const countryDetailsPages = useMemo(
     () =>
       Array.isArray(countryDetailsResponse?.items)
@@ -370,14 +369,6 @@ export default function CMSPageList() {
     return matchesCategory && matchesSearch;
   });
 
-  // Sticky hook
-  const { stickyRef, sentinelRef } = useSticky(
-    100,
-    1024,
-    selectedCategory,
-    searchQuery,
-  );
-
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
       <PageHeader
@@ -417,8 +408,7 @@ export default function CMSPageList() {
       <div className="grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-4 gap-6">
         {/* Categories Sidebar */}
         <div className="lg:col-span-2 xl:col-span-1">
-          <div ref={sentinelRef} className="h-px"></div>
-          <Card ref={stickyRef} className="h-fit">
+          <Card className="h-fit sticky top-24 z-10">
             <CardBody>
               <CardHeader className="space-y-2">
                 <CardTitle>Page Categories</CardTitle>
