@@ -32,6 +32,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
+import type { TInquiry } from "@/types/inquiry.type";
 import type { IEditPartnerRes, IPartner } from "@/types/partner/partner.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
 import ManageRefund from "../manageRefund/ManageRefund";
@@ -2624,6 +2625,147 @@ export function getContactRequest(
             >
               <Reply />
             </Button>
+          </PermissionGate>
+        </div>
+      ),
+      enableSorting: false,
+    },
+  ];
+}
+
+export function getInquiryColumns(
+  onView: (id: string) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<TInquiry>[] {
+  return [
+    {
+      id: "select",
+      header: ({ table }) => <SelectHeaderCheckbox table={table} />,
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "contactName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Contact Name" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Email" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "phone",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Phone" />
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Type" />
+      ),
+      cell: ({ row }) => (
+        <Badge variant="outline" className="capitalize">
+          {row.original.type.replace(/([A-Z])/g, " $1")}
+        </Badge>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => (
+        <Badge
+          variant={getStatusVariant(row?.original?.status ?? "") as any}
+          className="capitalize"
+        >
+          {row.original.status}
+        </Badge>
+      ),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Date" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {row.original.createdAt
+            ? format(new Date(row.original.createdAt), "dd MMM yyyy")
+            : "N/A"}
+        </span>
+      ),
+      enableSorting: false,
+    },
+    {
+      id: "action",
+      header: ({ column }) => (
+        <div className="flex justify-end items-center">
+          <DataTableColumnHeader column={column} title="Action" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="text-right flex gap-2 items-center justify-end">
+          <PermissionGate permission="manageInquiries" action="view">
+            <Button
+              onClick={() => onView(row.original.id)}
+              variant="outlineNavBtnBlack"
+              size="xl"
+              spacing="lg"
+              tooltip="View Details"
+            >
+              <Eye />
+            </Button>
+          </PermissionGate>
+          <PermissionGate permission="manageInquiries" action="delete">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outlineNavBtnDestructive"
+                  size="xl"
+                  spacing="lg"
+                  tooltip="Delete"
+                >
+                  <Trash2 />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-full sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Delete Inquiry</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to delete this inquiry? This action
+                    cannot be undone.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outlinePrimary">Cancel</Button>
+                  </DialogClose>
+                  <Button
+                    onClick={() => onDelete(row.original.id)}
+                    variant="destructive"
+                  >
+                    Confirm Delete
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </PermissionGate>
         </div>
       ),

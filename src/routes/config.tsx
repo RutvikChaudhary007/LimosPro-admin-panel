@@ -180,6 +180,8 @@ const ContactRequestsPage = lazy(
   () => import("../pages/contactRequests/ContactRequestsPage"),
 );
 
+const InquiriesPage = lazy(() => import("../pages/inquiries/InquiriesPage"));
+
 // Support Tickets
 
 const SupportTicketsPage = lazy(
@@ -718,6 +720,24 @@ export const routesConfig = [
         path: constant.ROUTING_URLS.CONTACT_REQUESTS,
 
         element: ContactRequestsPage,
+      },
+    ],
+  },
+
+  {
+    layout: "protected",
+
+    module: "inquiries",
+
+    permission: "manageInquiries",
+
+    action: "view",
+
+    routes: [
+      {
+        path: constant.ROUTING_URLS.INQUIRIES,
+
+        element: InquiriesPage,
       },
     ],
   },

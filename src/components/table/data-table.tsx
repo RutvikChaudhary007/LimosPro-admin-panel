@@ -27,6 +27,7 @@ interface DataTableProps<TData, TValue> {
   onGlobalFilterChange?: (value: string) => void;
   onTableReady?: (table: TanstackTable<TData>) => void;
   emptyMessage?: string;
+  manualFiltering?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -38,24 +39,25 @@ export function DataTable<TData, TValue>({
   onGlobalFilterChange,
   onTableReady,
   emptyMessage = "No results.",
+  manualFiltering = false,
 }: DataTableProps<TData, TValue>) {
   const safeRowSelection = rowSelection ?? {};
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: onGlobalFilterChange
-      ? getFilteredRowModel()
-      : undefined,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       rowSelection: safeRowSelection,
-      globalFilter: globalFilter,
+      globalFilter: globalFilter || "",
     },
     onRowSelectionChange: onRowSelectionChange ?? (() => {}),
     onGlobalFilterChange: onGlobalFilterChange,
     enableRowSelection: true,
     enableMultiRowSelection: true,
     getRowId: (row: TData) => (row as any).id || "",
+    // Use manualFiltering from props
+    manualFiltering,
   });
 
   useEffect(() => {

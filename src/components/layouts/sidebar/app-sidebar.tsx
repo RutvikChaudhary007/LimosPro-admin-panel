@@ -233,6 +233,13 @@ const data: {
       action: "view",
     },
     {
+      title: "Inquiries",
+      url: constant.ROUTING_URLS.INQUIRIES,
+      icon: IconTicket,
+      permission: "manageInquiries",
+      action: "view",
+    },
+    {
       title: "Testimonials",
       url: constant.ROUTING_URLS.TESTIMONIALS,
       icon: IconStar,

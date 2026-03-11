@@ -348,4 +348,12 @@ export const API_ENDPOINTS: Record<string, any> = {
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country-detail/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/country-detail/${id}`,
   },
+  INQUIRIES: {
+    GET_ALL: `${ADMIN_SERVICE_URL}/inquiries`,
+    GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/inquiries/${id}`,
+    UPDATE_STATUS: (id: string) =>
+      `${ADMIN_SERVICE_URL}/inquiries/${id}/status`,
+    DELETE: (id: string) => `${ADMIN_SERVICE_URL}/inquiries/${id}`,
+    BULK_DELETE: `${ADMIN_SERVICE_URL}/inquiries/bulk-delete`,
+  },
 };

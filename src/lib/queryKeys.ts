@@ -37,7 +37,8 @@ export const queryKeys = {
       page?: number,
       limit?: number,
       status?: string,
-    ) => ["chauffeur", "list", dateRange, page, limit, status] as const,
+      search?: string,
+    ) => ["chauffeur", "list", dateRange, page, limit, status, search] as const,
     detail: (id: string) => ["chauffeur", "detail", id] as const,
   },
 
@@ -377,6 +378,28 @@ export const queryKeys = {
     content: () => ["cmsFaq", "content"] as const,
     listParams: (page?: number, limit?: number) =>
       ["cmsFaq", "list", page, limit] as const,
+  },
+  inquiry: {
+    all: ["inquiry"] as const,
+    lists: (
+      page?: number,
+      limit?: number,
+      status?: string,
+      type?: string,
+      dateRange?: { startDate?: string; endDate?: string },
+      search?: string,
+    ) =>
+      [
+        "inquiry",
+        "list",
+        page,
+        limit,
+        status,
+        type,
+        dateRange,
+        search,
+      ] as const,
+    detail: (id: string) => ["inquiry", "detail", id] as const,
   },
 } as const;
 

@@ -166,6 +166,8 @@ export const constant = {
 
     CONTACT_REQUESTS: "/contact-requests",
 
+    INQUIRIES: "/inquiries",
+
     // Testimonial URLS
 
     TESTIMONIALS: "/testimonials",

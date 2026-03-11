@@ -25,6 +25,15 @@ export const usePermission = () => {
     permissionName: string | string[],
     action?: string,
   ): boolean => {
+    // Super Admin bypass
+    if (
+      (user?.roles || []).some(
+        (role: string) => role.toLowerCase() === "super admin",
+      )
+    ) {
+      return true;
+    }
+
     const names = Array.isArray(permissionName)
       ? permissionName
       : [permissionName];
