@@ -50,7 +50,9 @@ export const queryKeys = {
       page?: number,
       limit?: number,
       status?: string,
-    ) => ["partner", "list", dateRange, page, limit, status] as const,
+      partnerType?: string,
+    ) =>
+      ["partner", "list", dateRange, page, limit, status, partnerType] as const,
     detail: (id: string | undefined) => ["partner", "detail", id] as const,
     partnerReport: (
       startDate: unknown,

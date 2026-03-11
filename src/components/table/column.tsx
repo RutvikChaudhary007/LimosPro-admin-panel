@@ -31,9 +31,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { TChauffeur } from "@/types/chauffeur/chauffeur.type";
 import type { TInquiry } from "@/types/inquiry.type";
 import type { IEditPartnerRes, IPartner } from "@/types/partner/partner.type";
+import { PartnerType } from "@/types/partner/partner.type";
 import { formatDate as notificationDateFormat } from "../layouts/header/notifications-context";
 import ManageRefund from "../manageRefund/ManageRefund";
 import {
@@ -50,11 +57,12 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { DataTableColumnHeader } from "./DataTableColumnHeader";
 
 // Header checkbox component - NOT memoized to ensure it always re-renders with latest state
@@ -573,6 +581,8 @@ export function getPartner(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
   onDelete: (id: string) => void,
+  onStatusChange?: (id: string, status: string) => void,
+  onCommissionChange?: (id: string, commission: number) => void,
 ): ColumnDef<IPartner | IEditPartnerRes>[] {
   return [
     {
@@ -668,9 +678,40 @@ export function getPartner(
           />
         </div>
       ),
-      cell: ({ row }) => (
-        <div className="w-30 text-center">{row.original.commissionRate}</div>
-      ),
+      cell: ({ row }) => {
+        const partner = row.original;
+        const isIndividual = partner.partnerType === PartnerType.INDIVIDUAL;
+
+        if (isIndividual) {
+          return (
+            <div className="w-30 text-center">{partner.commissionRate}</div>
+          );
+        }
+
+        return (
+          <div className="flex justify-center">
+            <Input
+              type="number"
+              defaultValue={partner.commissionRate}
+              className="w-20 h-8 text-center"
+              onBlur={(e) => {
+                const val = parseFloat(e.target.value);
+                if (!isNaN(val) && val !== partner.commissionRate) {
+                  onCommissionChange?.(partner.id ?? "", val);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const val = parseFloat((e.target as HTMLInputElement).value);
+                  if (!isNaN(val) && val !== partner.commissionRate) {
+                    onCommissionChange?.(partner.id ?? "", val);
+                  }
+                }
+              }}
+            />
+          </div>
+        );
+      },
       enableSorting: false,
     },
     {
@@ -682,18 +723,59 @@ export function getPartner(
       enableSorting: false,
     },
     {
+      accessorKey: "partnerType",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Partner Type" />
+      ),
+      cell: ({ row }) => {
+        const type = row.original.partnerType;
+        if (!type) return "Individual";
+        // Convert camelCase to Title Case with spaces
+        return type
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase());
+      },
+      enableSorting: false,
+    },
+    {
       accessorKey: "status",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
-      cell: ({ row }) => (
-        <Badge
-          variant={getStatusVariant(row?.original?.status ?? "")}
-          className="capitalize"
-        >
-          {row.original.status}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const partner = row.original;
+        const status = partner.status ?? "pending";
+        const isIndividual = partner.partnerType === PartnerType.INDIVIDUAL;
+
+        if (isIndividual) {
+          return (
+            <Badge variant={getStatusVariant(status)} className="capitalize">
+              {status}
+            </Badge>
+          );
+        }
+
+        return (
+          <Select
+            defaultValue={status}
+            onValueChange={(value) => onStatusChange?.(partner.id ?? "", value)}
+          >
+            <SelectTrigger className="w-[110px] h-8 p-0 border-none bg-transparent hover:bg-transparent shadow-none focus:ring-0">
+              <Badge
+                variant={getStatusVariant(status)}
+                className="capitalize cursor-pointer w-full justify-between"
+              >
+                <SelectValue>{status}</SelectValue>
+              </Badge>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+        );
+      },
       enableSorting: false,
     },
     {

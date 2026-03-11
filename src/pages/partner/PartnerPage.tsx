@@ -6,7 +6,11 @@ import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { getAllPartner, useFetchAllPartner } from "@/api";
+import {
+  getAllPartner,
+  useFetchAllPartner,
+  useUpdatePartnerStatusMutation,
+} from "@/api";
 import BulkDeleteBtn from "@/components/bulkDeleteBtn/BulkDeleteBtn";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -30,6 +34,7 @@ import queries from "@/lib/queries";
 import { queryKeys } from "@/lib/queryKeys";
 import type { TBlkDelRes } from "@/types/global/BulkDeleteResponse.type";
 import type { IPartner } from "@/types/partner/partner.type";
+import { PartnerType } from "@/types/partner/partner.type";
 import { generatePageTitle } from "@/utils/seo";
 
 const showStatus = [
@@ -46,11 +51,19 @@ const showTime = [
   { label: "Yearly", value: "yearly" },
 ];
 
+const showPartnerType = [
+  { label: "Corporate", value: PartnerType.CORPORATE },
+  { label: "Hotel", value: PartnerType.HOTEL },
+  { label: "Travel Agent", value: PartnerType.TRAVEL_AGENT },
+  { label: "Individual", value: PartnerType.INDIVIDUAL },
+];
+
 function PartnerPage() {
   const navigate = useNavigate();
   const [perPage, setperPage] = useState<number>(10);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
+  const [selectedPartnerType, setSelectedPartnerType] = useState("");
   // --- Time range helper ---
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
@@ -138,6 +151,7 @@ function PartnerPage() {
     page: newPage,
     limit: perPage,
     status: selectedStatus,
+    partnerType: selectedPartnerType,
   });
   const [tableRef, setTableRef] = useState<Table<IPartner> | null>(null);
   const queryClient = useQueryClient();
@@ -149,6 +163,7 @@ function PartnerPage() {
           newPage + 1,
           perPage,
           selectedStatus,
+          selectedPartnerType,
         ),
         queryFn: () =>
           getAllPartner(
@@ -156,6 +171,7 @@ function PartnerPage() {
             newPage + 1,
             perPage,
             selectedStatus,
+            selectedPartnerType,
           ),
       });
     }
@@ -166,6 +182,7 @@ function PartnerPage() {
     startDate,
     endDate,
     selectedStatus,
+    selectedPartnerType,
     perPage,
   ]);
 
@@ -193,14 +210,8 @@ function PartnerPage() {
   };
 
   const deletePartnerMutation = queries.useDeletePartnerMutation(refetch);
-  const bulkDeletePartnerMutation = queries.useBulkDeletePartnerMutation();
-  const handleEdit = (id: string) => {
-    navigate(constant.ROUTING_URLS.EDIT_PARTNER.replace(":id", id));
-  };
   const handleDelete = async (id: string) => {
     try {
-      // Remove remember field before sending to API
-      // await loginMutation.mutateAsync(loginData);
       toastPromise(deletePartnerMutation.mutateAsync(id), {
         loading: "Deleting Partner...",
         success: "Yeah! Partner deleted successfully!",
@@ -210,7 +221,6 @@ function PartnerPage() {
             : "Opps! Failed to delete Partner",
       });
     } catch (error) {
-      // Error handling is done in onError callback
       console.error("Partner delete error:", error);
       if (error instanceof Error) {
         toast.error(error.message);
@@ -219,7 +229,53 @@ function PartnerPage() {
       }
     }
   };
-  const columns = getPartner(handleView, handleEdit, handleDelete);
+
+  const bulkDeletePartnerMutation = queries.useBulkDeletePartnerMutation();
+  const handleEdit = (id: string) => {
+    navigate(constant.ROUTING_URLS.EDIT_PARTNER.replace(":id", id));
+  };
+  const updateStatusMutation = useUpdatePartnerStatusMutation(refetch);
+
+  const handleStatusChange = async (id: string, status: string) => {
+    try {
+      await toastPromise(updateStatusMutation.mutateAsync({ id, status }), {
+        loading: "Updating Status...",
+        success: "Yeah! Partner status updated successfully!",
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! Failed to update status",
+      });
+    } catch (error) {
+      console.error("Status update error:", error);
+    }
+  };
+
+  const handleCommissionChange = async (id: string, commissionRate: number) => {
+    try {
+      await toastPromise(
+        updateStatusMutation.mutateAsync({ id, commissionRate }),
+        {
+          loading: "Updating Commission...",
+          success: "Yeah! Partner commission updated successfully!",
+          error: (e) =>
+            e instanceof AxiosError
+              ? e.response?.data?.data?.error || e.response?.data?.message
+              : "Opps! Failed to update commission",
+        },
+      );
+    } catch (error) {
+      console.error("Commission update error:", error);
+    }
+  };
+
+  const columns = getPartner(
+    handleView,
+    handleEdit,
+    handleDelete,
+    handleStatusChange,
+    handleCommissionChange,
+  );
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   useEffect(() => {
@@ -277,12 +333,19 @@ function PartnerPage() {
               value={selectedTime}
               setSelectedItem={setSelectedTime}
             />
+            <SelectDropDown
+              placeholder={"Select Partner Type"}
+              items={showPartnerType}
+              value={selectedPartnerType}
+              setSelectedItem={setSelectedPartnerType}
+            />
           </div>
           <div className="w-full max-w-fit flex flex-wrap items-center justify-end gap-4">
             <Button
               onClick={() => {
                 setSelectedStatus("");
                 setSelectedTime("");
+                setSelectedPartnerType("");
                 setSearchValue("");
               }}
               type="button"

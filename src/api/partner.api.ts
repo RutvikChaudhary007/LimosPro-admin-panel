@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import { queryKeys } from "@/lib/queryKeys";
@@ -25,6 +25,7 @@ export const getAllPartner = async (
   page?: number,
   limit?: number,
   status?: string,
+  partnerType?: string,
 ) => {
   const params: Record<string, unknown> = {};
   if (DateRange?.startDate || DateRange?.endDate) {
@@ -49,6 +50,9 @@ export const getAllPartner = async (
   if (status) {
     params.status = status;
   }
+  if (partnerType) {
+    params.partnerType = partnerType;
+  }
   try {
     const response = await axiosInstance.get(
       `${API_ENDPOINTS.GET_ALL_PARTNER}`,
@@ -71,15 +75,23 @@ export const useFetchAllPartner = ({
   page,
   limit,
   status,
+  partnerType,
 }: {
   DateRange?: { startDate: Date | undefined; endDate: Date | undefined };
   page?: number;
   limit?: number;
   status?: string;
+  partnerType?: string;
 }) =>
   useQuery({
-    queryKey: queryKeys.partner.listParams(DateRange, page, limit, status),
-    queryFn: () => getAllPartner(DateRange, page, limit, status),
+    queryKey: queryKeys.partner.listParams(
+      DateRange,
+      page,
+      limit,
+      status,
+      partnerType,
+    ),
+    queryFn: () => getAllPartner(DateRange, page, limit, status, partnerType),
     refetchOnWindowFocus: false,
     retry: false,
     staleTime: 1000 * 60 * 5,
@@ -206,3 +218,33 @@ export const bulkDeletePartner = async (ids: string[]) => {
 
   return response.data;
 };
+
+/**
+ * Update partner status and commission
+ */
+export const updatePartnerStatus = async ({
+  id,
+  status,
+  commissionRate,
+}: {
+  id: string;
+  status?: string;
+  commissionRate?: number;
+}) => {
+  const response = await axiosInstance.patch(
+    API_ENDPOINTS.UPDATE_PARTNER_COMMISSION_AND_STATUS(id),
+    { status, commissionRate },
+  );
+  return response.data;
+};
+
+/**
+ * Hook to update partner status and commission
+ */
+export const useUpdatePartnerStatusMutation = (refetch: () => void) =>
+  useMutation({
+    mutationFn: updatePartnerStatus,
+    onSuccess: () => {
+      refetch();
+    },
+  });

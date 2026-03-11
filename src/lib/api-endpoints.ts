@@ -23,6 +23,8 @@ export const API_ENDPOINTS: Record<string, any> = {
   UPDATE_PARTNER: `${ADMIN_SERVICE_URL}/partner/:id`,
   DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partner/:id`,
   BULK_DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partners/bulk-delete`,
+  UPDATE_PARTNER_COMMISSION_AND_STATUS: (id: string) =>
+    `${ADMIN_SERVICE_URL}/partner/${id}/commission-status`,
 
   // Fleets
   GET_ALL_FLEETS: `${ADMIN_SERVICE_URL}/vehicles`,
