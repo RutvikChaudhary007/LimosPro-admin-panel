@@ -218,6 +218,22 @@ const downloadSchema = z.object({
     .optional(),
 });
 
+const topRouteSchema = z.discriminatedUnion("isRoutes", [
+  z.object({
+    isRoutes: z.literal(true),
+    title: z.string(),
+    seeAllLink: z.string(),
+    label: z.array(
+      z.object({
+        name: z.string(),
+        values: z.array(z.string()),
+      }),
+    ),
+  }),
+  z.object({
+    isRoutes: z.literal(false),
+  }),
+]);
 // Content schema for a single language - with defaults for safe initialization
 const contentSchema = z.object({
   services: servicesSectionSchema.default({
@@ -232,6 +248,7 @@ const contentSchema = z.object({
     priceCards: [],
   }),
   cityRoutes: cityRoutesSchema.default({ cityRoutesEnabled: false }),
+  topRoutes: topRouteSchema.default({ isRoutes: false }),
   useCase: servicesSectionSchema.default({
     service: "",
     subservice: "",
@@ -303,6 +320,9 @@ const getEmptyLanguageContent = () => ({
   services: { service: "", subservice: "", infoCards: [] },
   cityRoutes: {
     cityRoutesEnabled: false,
+  },
+  topRoutes: {
+    isRoutes: false as const,
   },
   useCase: { service: "", subservice: "", infoCards: [] },
   premiumFleet: { p1: "", p2: "", h2: "", priceCards: [] },
@@ -546,6 +566,11 @@ function LanguageFields({
 }: LanguageFieldsProps) {
   const { control, register, watch, setValue } = form;
 
+  const routeDetailsLabelCards = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.topRoutes.label` as any,
+  });
+
   const cityCards = useFieldArray({
     control,
     name: `content.${selectedLanguage}.cityRoutes.cityCards` as any,
@@ -602,6 +627,15 @@ function LanguageFields({
             `content.${selectedLanguage}.cityRoutes.routeCards` as any,
             [],
           );
+        }
+      }
+      if (name === `content.${selectedLanguage}.topRoutes.isRoutes`) {
+        const isRouteEnabled =
+          value?.content?.[selectedLanguage]?.topRoutes?.isRoutes;
+
+        if (isRouteEnabled && !routeDetailsLabelCards.fields.length) {
+          // Initialize arrays if they don't exist
+          setValue(`content.${selectedLanguage}.topRoutes.label` as any, []);
         }
       }
     });
@@ -728,6 +762,194 @@ function LanguageFields({
                     </Card>
                   ))}
                 </div>
+              </CardContent>
+            </CardBody>
+          </Card>
+
+          {/* Routes Details */}
+          <Card>
+            <CardBody>
+              <CardHeader>
+                <CardTitle>Routes Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Checkbox Toggle */}
+                <Field>
+                  <div className="flex items-center gap-2">
+                    <Controller
+                      control={control}
+                      name={
+                        `content.${selectedLanguage}.topRoutes.isRoutes` as any
+                      }
+                      render={({ field }) => (
+                        <Checkbox
+                          id={`RoutesDeatilsToggle-${selectedLanguage}`}
+                          className="w-4 max-w-4"
+                          checked={field.value === true}
+                          onCheckedChange={(val) => {
+                            const isEnabled = val === true;
+
+                            if (!isEnabled) {
+                              // When disabled, set to false and clear all data
+                              setValue(
+                                `content.${selectedLanguage}.topRoutes` as any,
+                                {
+                                  isRoutes: false,
+                                },
+                                { shouldValidate: true, shouldDirty: true },
+                              );
+
+                              // Clear field arrays
+                              routeDetailsLabelCards.replace([]);
+                            } else {
+                              // When enabled, initialize with full structure
+                              setValue(
+                                `content.${selectedLanguage}.topRoutes` as any,
+                                {
+                                  isRoutes: true,
+                                  title: "",
+                                  seeAllLink: "",
+                                  label: [
+                                    {
+                                      name: "",
+                                      values: [],
+                                    },
+                                  ],
+                                },
+                                { shouldValidate: true, shouldDirty: true },
+                              );
+                            }
+
+                            field.onChange(isEnabled);
+                          }}
+                        />
+                      )}
+                    />
+                    <FieldLabel
+                      htmlFor={`RoutesDeatilsToggle-${selectedLanguage}`}
+                      className="gap-0 mb-0 cursor-pointer text-base-black"
+                    >
+                      Enable Top Routes Section
+                    </FieldLabel>
+                  </div>
+                  <FieldDescription>
+                    Toggle to show/hide Top routes content on this page
+                  </FieldDescription>
+                </Field>
+
+                {/* Show Top Routes Content Only When Enabled */}
+                {watch(
+                  `content.${selectedLanguage}.topRoutes.isRoutes` as any,
+                ) === true && (
+                  <>
+                    <Separator />
+                    <div className="grid grid-cols-2 gap-4">
+                      <Field>
+                        <FieldLabel>Title</FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            {...register(
+                              `content.${selectedLanguage}.topRoutes.title` as any,
+                            )}
+                            placeholder="Airport Transfer"
+                          />
+                        </InputGroup>
+                      </Field>
+
+                      <Field>
+                        <FieldLabel>SeeAll Link</FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            {...register(
+                              `content.${selectedLanguage}.topRoutes.seeAllLink` as any,
+                            )}
+                            placeholder="https://example.com"
+                          />
+                        </InputGroup>
+                      </Field>
+                    </div>
+
+                    <Separator />
+
+                    {/* Top Routes */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <h4 className="font-bold">Routes Cards</h4>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outlinePrimary"
+                          onClick={() =>
+                            routeDetailsLabelCards.append({
+                              id: uid(),
+                              name: "",
+                              values: [],
+                            })
+                          }
+                        >
+                          <Plus className="w-4 h-4 mr-1" />
+                          Add Route Details
+                        </Button>
+                      </div>
+                      {routeDetailsLabelCards.fields.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {routeDetailsLabelCards.fields.map((field, idx) => (
+                            <Card key={field.id} className="border-dashed">
+                              <CardContent className="p-4 space-y-3">
+                                <div className="flex justify-between">
+                                  <span className="text-xs font-bold text-gray-400 uppercase">
+                                    Route #{idx + 1}
+                                  </span>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() =>
+                                      routeDetailsLabelCards.remove(idx)
+                                    }
+                                  >
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                </div>
+                                <Field>
+                                  <FieldLabel>Route Name</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.topRoutes.label.${idx}.name` as any,
+                                      )}
+                                      placeholder="Dubai"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>Label Values</FieldLabel>
+                                  <Controller
+                                    name={
+                                      `content.${selectedLanguage}.topRoutes.label.${idx}.values` as any
+                                    }
+                                    control={control}
+                                    render={({ field }) => (
+                                      <FeaturesAddonInput
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                      />
+                                    )}
+                                  />
+                                </Field>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center text-gray-500 border border-dashed rounded">
+                          No route details added. Click "Add Route Details" to
+                          create one.
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </CardContent>
             </CardBody>
           </Card>
