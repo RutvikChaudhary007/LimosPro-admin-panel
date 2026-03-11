@@ -52,6 +52,10 @@ const categories = {
     create: lazy(() => import("./countryDetailsPage/CreatePage")),
     edit: lazy(() => import("./countryDetailsPage/EditPage")),
   },
+  routedetails: {
+    create: lazy(() => import("./routesDetailPage/CreatePage")),
+    edit: lazy(() => import("./routesDetailPage/EditPage")),
+  },
 };
 
 export default function CMSCategoryRouter({
