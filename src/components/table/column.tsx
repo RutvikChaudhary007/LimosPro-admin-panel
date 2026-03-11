@@ -696,14 +696,14 @@ export function getPartner(
               className="w-20 h-8 text-center"
               onBlur={(e) => {
                 const val = parseFloat(e.target.value);
-                if (!isNaN(val) && val !== partner.commissionRate) {
+                if (!isNaN(val) && val !== Number(partner.commissionRate)) {
                   onCommissionChange?.(partner.id ?? "", val);
                 }
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   const val = parseFloat((e.target as HTMLInputElement).value);
-                  if (!isNaN(val) && val !== partner.commissionRate) {
+                  if (!isNaN(val) && val !== Number(partner.commissionRate)) {
                     onCommissionChange?.(partner.id ?? "", val);
                   }
                 }
@@ -760,10 +760,10 @@ export function getPartner(
             defaultValue={status}
             onValueChange={(value) => onStatusChange?.(partner.id ?? "", value)}
           >
-            <SelectTrigger className="w-[110px] h-8 p-0 border-none bg-transparent hover:bg-transparent shadow-none focus:ring-0">
+            <SelectTrigger className="w-fit h-8 p-0 border-none bg-transparent hover:bg-transparent shadow-none focus:ring-0 flex items-center gap-1">
               <Badge
                 variant={getStatusVariant(status)}
-                className="capitalize cursor-pointer w-full justify-between"
+                className="capitalize cursor-pointer flex items-center gap-1"
               >
                 <SelectValue>{status}</SelectValue>
               </Badge>
