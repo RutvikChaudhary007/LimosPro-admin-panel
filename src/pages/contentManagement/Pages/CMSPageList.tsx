@@ -7,6 +7,7 @@ import { useFetchAllCitiesHubPages } from "@/api/pages/citiesHubPage.api";
 import { useFetchAllCityDiplomatsHubPages } from "@/api/pages/cityDiplomatsHubPage.api";
 import { useFetchAllCountryDetailPages } from "@/api/pages/countryDetailPage.api";
 import { useFetchAllCountryPages } from "@/api/pages/countryPage.api";
+import { useFetchAllRouteDetailsPages } from "@/api/pages/routeDetailPage.api";
 import { useFetchAllRoutePages } from "@/api/pages/routesPage.api";
 import { useFetchAllServicePageContent } from "@/api/pages/servicePages.api";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -60,6 +61,7 @@ function getRouteCategoryKey(slug: string): string {
   if (slug === "city-routes") return "cityroutes";
   if (slug === "global-availability") return "countries";
   if (slug === "cities") return "cities";
+  if (slug === "Route Details") return "routedetails";
   return "cityroutes";
 }
 
@@ -74,6 +76,9 @@ export default function CMSPageList() {
     isError,
   } = useFetchAllServicePageContent();
 
+  const { data: routeDetailsResponse, isLoading: isLoadingRouteDetails } =
+    useFetchAllRouteDetailsPages({ limit: 100 });
+  // console.log("routeDetailsResponse:=>", routeDetailsResponse);
   const { data: routesResponse, isLoading: isLoadingRoutes } =
     useFetchAllRoutePages({ limit: 100 });
   const { data: countryResponse, isLoading: isLoadingCountry } =
@@ -122,6 +127,13 @@ export default function CMSPageList() {
         ? countryDetailsResponse.items
         : [],
     [countryDetailsResponse],
+  );
+  const routeDetailsPages = useMemo(
+    () =>
+      Array.isArray(routeDetailsResponse?.items)
+        ? routeDetailsResponse.items
+        : [],
+    [routeDetailsResponse],
   );
 
   const resolvedPageContent = useMemo(
@@ -177,6 +189,11 @@ export default function CMSPageList() {
       cityDiplomatsHubResponse,
       cityDiplomatsHubPages.length,
     );
+
+    const routeDetailsCount = getTotalFromPagination(
+      routeDetailsResponse,
+      routeDetailsPages.length,
+    );
     const totalCount =
       serviceCount +
       destinationCount +
@@ -187,7 +204,8 @@ export default function CMSPageList() {
       countriesCountFromCountryApi +
       (citiesCount + citiesCountFromCitiesHubApi) +
       countryDetailCount +
-      diplomatsCount;
+      diplomatsCount +
+      routeDetailsCount;
 
     const computedCounts: Record<string, number> = {
       total: totalCount,
@@ -201,6 +219,7 @@ export default function CMSPageList() {
       cities: citiesCount + citiesCountFromCitiesHubApi,
       diplomats: diplomatsCount,
       country: countryDetailCount,
+      routedetails: routeDetailsCount,
     };
 
     return categoryConfig.map((category) => ({
@@ -218,6 +237,8 @@ export default function CMSPageList() {
     cityDiplomatsHubPages.length,
     countryDetailsResponse,
     countryDetailsPages.length,
+    routeDetailsResponse,
+    routeDetailsPages.length,
   ]);
 
   //   const cityRoutesCount = routePages.filter(
@@ -333,6 +354,15 @@ export default function CMSPageList() {
       category: "Country Detail",
     }));
 
+    // Add routeDetailsPages
+    const routeDetailsPagesList = routeDetailsPages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName || page.name || "Route Details",
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "routedetails",
+    }));
+
     return [
       ...servicePages,
       ...diplomatsPages,
@@ -340,6 +370,7 @@ export default function CMSPageList() {
       ...cityRoutesPages,
       ...countriesPages,
       ...countryDetailPagesList,
+      ...routeDetailsPagesList,
     ];
   }, [
     resolvedPageContent,
@@ -348,6 +379,7 @@ export default function CMSPageList() {
     routePages,
     countryPages,
     countryDetailsPages,
+    routeDetailsPages,
   ]);
 
   const showLoadingState =
@@ -356,7 +388,8 @@ export default function CMSPageList() {
       isLoadingCountry ||
       isLoadingCitiesHub ||
       isLoadingCityDiplomatsHub ||
-      isLoadingCountryDetails) &&
+      isLoadingCountryDetails ||
+      isLoadingRouteDetails) &&
     pagesData.length === 0;
   const showErrorState = isError && pagesData.length === 0;
   // Filter Pages based on selected category and search query
@@ -531,6 +564,7 @@ export default function CMSPageList() {
                               Cities: "cities",
                               "Business & Diplomats Hub": "diplomats",
                               "Country Detail": "country",
+                              "Route Details": "routedetails",
                             };
                             const routeCategory =
                               categoryMapping[page.category] ??

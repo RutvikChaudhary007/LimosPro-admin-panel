@@ -35,6 +35,8 @@ export * from "./notification.api";
 export * from "./pages/businessPageLayout.api";
 export * from "./pages/citiesHubPage.api";
 export * from "./pages/cityDiplomatsHubPage.api";
+// Route Details Module
+export * from "./pages/routeDetailPage.api";
 // Partner Module
 export * from "./partner.api";
 // Partner Transactions Module

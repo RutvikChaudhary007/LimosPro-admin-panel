@@ -26,7 +26,7 @@ export default function CreatePage() {
             label: "Content Management",
             path: constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES,
           },
-          { label: "Create Route Detail" },
+          { label: "Create Route Details" },
         ]}
         backAction={{
           variant: "outlinePrimary",

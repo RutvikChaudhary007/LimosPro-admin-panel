@@ -9,6 +9,7 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { z } from "zod";
+import { useFetchAllMetaKeywords } from "@/api";
 import LanguageSelector from "@/components/language/LanguageSelector";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +38,7 @@ import {
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
 import { JSONLDSection } from "../shared/JSONLDSection";
+import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema } from "../shared/sharedSchemas";
 
 // Route type options
@@ -354,7 +356,7 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                 />
               </InputGroup>
             </Field>
-            <Field>
+            {/*<Field>
               <FieldLabel>Show Booking Widget</FieldLabel>
               <div className="flex items-center space-x-2 pt-2">
                 <Controller
@@ -375,7 +377,7 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                   Display booking widget on hero
                 </label>
               </div>
-            </Field>
+            </Field>*/}
           </CardContent>
         </CardBody>
       </Card>
@@ -1011,6 +1013,7 @@ export default function RouteDetailsForm({
     formState: { errors },
   } = form;
 
+  const { data: metaKeywordsData } = useFetchAllMetaKeywords({});
   // Debug: Log validation errors
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
@@ -1235,41 +1238,11 @@ export default function RouteDetailsForm({
                 )}
 
                 {activeTab === "seo" && selectedLanguage === "en" && (
-                  <Card>
-                    <CardBody>
-                      <CardHeader>
-                        <CardTitle>SEO Settings</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <Field>
-                          <FieldLabel>Meta Title</FieldLabel>
-                          <InputGroup>
-                            <InputGroupInput
-                              {...register("seo.metaTitle")}
-                              placeholder="e.g., Manchester to Liverpool Car Service | LimosPro"
-                            />
-                          </InputGroup>
-                        </Field>
-                        <Field>
-                          <FieldLabel>Meta Description</FieldLabel>
-                          <Textarea
-                            {...register("seo.metaDescription")}
-                            placeholder="e.g., Book a luxury chauffeur service from Manchester to Liverpool."
-                            rows={3}
-                          />
-                        </Field>
-                        <Field>
-                          <FieldLabel>Canonical URL</FieldLabel>
-                          <InputGroup>
-                            <InputGroupInput
-                              {...register("seo.canonicalUrl")}
-                              placeholder="e.g., https://limospro.com/city-to-city/manchester-liverpool"
-                            />
-                          </InputGroup>
-                        </Field>
-                      </CardContent>
-                    </CardBody>
-                  </Card>
+                  <SEOSection
+                    form={form}
+                    // selectedLanguage is removed/undefined for shared SEO
+                    metaKeywordsData={metaKeywordsData}
+                  />
                 )}
 
                 {activeTab === "jsonld" && selectedLanguage === "en" && (
