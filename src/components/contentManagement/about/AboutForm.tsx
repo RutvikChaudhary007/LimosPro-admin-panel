@@ -30,7 +30,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -360,7 +360,7 @@ function LanguageFields({
                   name={`hero.${selectedLanguage}.src` as any}
                   control={control}
                   render={({ field }) => (
-                    <UploadWithUrl
+                    <UploadWithUrlV2
                       value={field.value}
                       onChange={field.onChange}
                       title="Hero Image"
@@ -510,7 +510,7 @@ function LanguageFields({
                           }
                           control={control}
                           render={({ field }) => (
-                            <UploadWithUrl
+                            <UploadWithUrlV2
                               value={field.value}
                               onChange={field.onChange}
                               title="Card Image"

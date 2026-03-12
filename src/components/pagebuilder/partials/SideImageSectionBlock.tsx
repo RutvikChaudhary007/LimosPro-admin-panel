@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import type { SideImageSectionBlockProps } from "@/types/pagebuilder.types";
 
 export function SideImageSectionBlock({
@@ -31,7 +31,7 @@ export function SideImageSectionBlock({
         name={`content.${selectedLanguage}.${blockIndex}.src` as any}
         control={control}
         render={({ field }) => (
-          <UploadWithUrl
+          <UploadWithUrlV2
             value={field.value}
             onChange={field.onChange}
             title="Image"

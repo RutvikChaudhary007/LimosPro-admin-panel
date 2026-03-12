@@ -25,7 +25,7 @@ import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -428,7 +428,7 @@ export default function ChauffeurForm({
                             }
                             control={control}
                             render={({ field }) => (
-                              <UploadWithUrl
+                              <UploadWithUrlV2
                                 value={field.value}
                                 onChange={field.onChange}
                                 title="Hero Image"
@@ -579,7 +579,7 @@ export default function ChauffeurForm({
                                         }
                                         control={control}
                                         render={({ field }) => (
-                                          <UploadWithUrl
+                                          <UploadWithUrlV2
                                             value={field.value}
                                             onChange={field.onChange}
                                             title="Card Image"
@@ -676,7 +676,7 @@ export default function ChauffeurForm({
                                         }
                                         control={control}
                                         render={({ field }) => (
-                                          <UploadWithUrl
+                                          <UploadWithUrlV2
                                             value={field.value}
                                             onChange={field.onChange}
                                             title="Card Image"
@@ -741,7 +741,7 @@ export default function ChauffeurForm({
                               }
                               control={control}
                               render={({ field }) => (
-                                <UploadWithUrl
+                                <UploadWithUrlV2
                                   value={field.value}
                                   onChange={field.onChange}
                                   title="Image"

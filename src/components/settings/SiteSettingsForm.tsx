@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 
 const defaultValues = {
   siteName: "Luxury Chauffeur Service",
@@ -488,7 +488,7 @@ const SiteSettingsForm = () => {
               </CardHeader>
               <CardContent className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 <div className="rounded border border-base-gray/40 bg-base-white p-4 shadow-sm">
-                  <UploadWithUrl
+                  <UploadWithUrlV2
                     title="Header Logo"
                     multiple={false}
                     value={values.headerLogoUrl}
@@ -496,7 +496,7 @@ const SiteSettingsForm = () => {
                   />
                 </div>
                 <div className="rounded border border-base-gray/40 bg-base-white p-4 shadow-sm">
-                  <UploadWithUrl
+                  <UploadWithUrlV2
                     title="Footer Logo"
                     multiple={false}
                     value={values.footerLogoUrl}
@@ -504,7 +504,7 @@ const SiteSettingsForm = () => {
                   />
                 </div>
                 <div className="rounded border border-base-gray/40 bg-base-white p-4 shadow-sm">
-                  <UploadWithUrl
+                  <UploadWithUrlV2
                     title="Favicon"
                     multiple={false}
                     value={values.faviconUrl}

@@ -1,7 +1,7 @@
 import FilesUpload from "@/components/ui/upload-files";
 import ImagesUpload from "@/components/ui/upload-images";
 import InlineFileUpload from "@/components/ui/upload-inline-file";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 
 function FileUploadPage() {
   return (
@@ -9,7 +9,7 @@ function FileUploadPage() {
       <FilesUpload maxSize={100} accept={"*"} />
       <ImagesUpload />
       <InlineFileUpload multiple={true} accept={"*"} />
-      <UploadWithUrl multiple={true} />
+      <UploadWithUrlV2 multiple={true} />
     </div>
   );
 }

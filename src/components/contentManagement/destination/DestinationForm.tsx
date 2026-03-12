@@ -34,7 +34,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea"; // Added import
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -514,7 +514,7 @@ function LanguageFields({
                             }
                             control={control}
                             render={({ field }) => (
-                              <UploadWithUrl
+                              <UploadWithUrlV2
                                 value={field.value}
                                 onChange={field.onChange}
                                 title="Image"
@@ -597,7 +597,7 @@ function LanguageFields({
                       }
                       control={control}
                       render={({ field }) => (
-                        <UploadWithUrl
+                        <UploadWithUrlV2
                           value={field.value}
                           onChange={field.onChange}
                           title="Image"
@@ -760,7 +760,7 @@ function LanguageFields({
                             }
                             control={control}
                             render={({ field }) => (
-                              <UploadWithUrl
+                              <UploadWithUrlV2
                                 value={field.value}
                                 onChange={field.onChange}
                                 title="Image"

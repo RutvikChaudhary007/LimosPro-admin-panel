@@ -32,7 +32,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
+// import UploadWithUrl from "@/components/ui/upload-with-url";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -737,7 +738,7 @@ export default function HomeForm({
                                       }
                                       control={control}
                                       render={({ field }) => (
-                                        <UploadWithUrl
+                                        <UploadWithUrlV2
                                           value={field.value}
                                           onChange={field.onChange}
                                           title="Image"
@@ -852,7 +853,7 @@ export default function HomeForm({
                             }
                             control={control}
                             render={({ field }) => (
-                              <UploadWithUrl
+                              <UploadWithUrlV2
                                 value={field.value}
                                 onChange={field.onChange}
                                 title="Cover Image"
@@ -1104,7 +1105,7 @@ export default function HomeForm({
                                       }
                                       control={control}
                                       render={({ field }) => (
-                                        <UploadWithUrl
+                                        <UploadWithUrlV2
                                           value={field.value}
                                           onChange={field.onChange}
                                           title="Card Image"
@@ -1292,7 +1293,7 @@ export default function HomeForm({
                                       }
                                       control={control}
                                       render={({ field }) => (
-                                        <UploadWithUrl
+                                        <UploadWithUrlV2
                                           value={field.value}
                                           onChange={field.onChange}
                                           title="Image"
@@ -1542,7 +1543,7 @@ export default function HomeForm({
                                         }
                                         control={control}
                                         render={({ field }) => (
-                                          <UploadWithUrl
+                                          <UploadWithUrlV2
                                             value={field.value}
                                             onChange={field.onChange}
                                             title="Icon"
@@ -1632,7 +1633,7 @@ export default function HomeForm({
                                     }
                                     control={control}
                                     render={({ field }) => (
-                                      <UploadWithUrl
+                                      <UploadWithUrlV2
                                         value={field.value}
                                         onChange={field.onChange}
                                         title="Image"
@@ -1777,7 +1778,7 @@ export default function HomeForm({
                                 }
                                 control={control}
                                 render={({ field }) => (
-                                  <UploadWithUrl
+                                  <UploadWithUrlV2
                                     value={field.value}
                                     onChange={field.onChange}
                                     title="Main Image"
@@ -1842,7 +1843,7 @@ export default function HomeForm({
                                           }
                                           control={control}
                                           render={({ field }) => (
-                                            <UploadWithUrl
+                                            <UploadWithUrlV2
                                               value={field.value}
                                               onChange={field.onChange}
                                               title="Gallery Image"
@@ -1975,7 +1976,7 @@ export default function HomeForm({
                                   }
                                   control={control}
                                   render={({ field }) => (
-                                    <UploadWithUrl
+                                    <UploadWithUrlV2
                                       value={field.value}
                                       onChange={field.onChange}
                                       title="Main Image"
@@ -2003,7 +2004,7 @@ export default function HomeForm({
                                   }
                                   control={control}
                                   render={({ field }) => (
-                                    <UploadWithUrl
+                                    <UploadWithUrlV2
                                       value={field.value}
                                       onChange={field.onChange}
                                       title="QR Image"
@@ -2052,7 +2053,7 @@ export default function HomeForm({
                                         }
                                         control={control}
                                         render={({ field }) => (
-                                          <UploadWithUrl
+                                          <UploadWithUrlV2
                                             value={field.value}
                                             onChange={field.onChange}
                                             title="Store Icon"
@@ -2157,7 +2158,7 @@ export default function HomeForm({
                               }
                               control={control}
                               render={({ field }) => (
-                                <UploadWithUrl
+                                <UploadWithUrlV2
                                   value={field.value}
                                   onChange={field.onChange}
                                   title="Main Image"
@@ -2265,7 +2266,7 @@ export default function HomeForm({
                                       }
                                       control={control}
                                       render={({ field }) => (
-                                        <UploadWithUrl
+                                        <UploadWithUrlV2
                                           value={field.value}
                                           onChange={field.onChange}
                                           title="Avatar"

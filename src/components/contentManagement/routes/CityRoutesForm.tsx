@@ -30,7 +30,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -479,7 +479,7 @@ export default function CityRoutesForm({
                           }
                           control={form.control}
                           render={({ field }) => (
-                            <UploadWithUrl
+                            <UploadWithUrlV2
                               value={field.value}
                               onChange={field.onChange}
                               title="Intro Image"
