@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import type { InquiryStatus } from "@/types/inquiry.type";
@@ -62,8 +67,8 @@ export const useFetchAllInquiries = ({
       getAllInquiries(page, limit, status, type, dateRange, search),
     refetchOnWindowFocus: false,
     retry: false,
-    // staleTime: 1000 * 1200,
-    placeholderData: (previousData) => previousData,
+    staleTime: 1000 * 1,
+    placeholderData: keepPreviousData,
   });
 
 /**

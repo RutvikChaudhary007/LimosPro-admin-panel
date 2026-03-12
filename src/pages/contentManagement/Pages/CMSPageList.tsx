@@ -53,6 +53,7 @@ const categoryConfig = [
     key: "diplomats",
   },
   { name: "Country Detail", label: "Country Detail", key: "country" },
+  { name: "routedetails", label: "Route Details", key: "routedetails" },
 ];
 
 function getRouteCategoryKey(slug: string): string {
