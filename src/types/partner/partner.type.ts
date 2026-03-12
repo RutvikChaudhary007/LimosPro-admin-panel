@@ -37,6 +37,7 @@ export interface IPartner extends Partial<TPartner> {
   status?: string;
   taxId: string;
   partnerType?: PartnerType;
+  partnerData?: any;
 }
 
 export interface IEditPartnerRes extends IPartner {

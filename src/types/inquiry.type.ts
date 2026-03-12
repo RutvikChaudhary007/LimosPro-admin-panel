@@ -15,24 +15,10 @@ export type EventPlannerData = {
   city?: string;
   country?: string;
   rolePosition: string;
-  eventType:
-    | "Corporate Event"
-    | "Conference"
-    | "Wedding"
-    | "Sports Event"
-    | "Festival";
-  estimatedGuests: number;
-  vehicleNeeds: {
-    sedans?: number;
-    suvs?: number;
-    vans?: number;
-    minibuses?: number;
-    motorCoaches?: number;
-  };
-  eventLocation: {
-    city: string;
-    venue?: string;
-  };
+  eventType: string;
+  estimatedGuests: string | number;
+  vehicleNeeds: string[];
+  eventLocation: string;
   eventDate: string;
   message?: string;
 };
@@ -43,16 +29,8 @@ export type DiplomaticInquiryData = {
   city: string;
   country: string;
   titlePosition: string;
-  serviceType:
-    | "Airport Transfers"
-    | "Hourly Chauffeur"
-    | "Diplomatic Delegation Transport"
-    | "VIP Transportation";
-  securityRequirements: (
-    | "Standard Chauffeur"
-    | "Enhanced Security Chauffeur"
-    | "Police Escort"
-  )[];
+  serviceType: string[];
+  securityRequirements: string;
   primaryCitiesNeeded: string;
   specialProtocolRequirements?: string;
 };

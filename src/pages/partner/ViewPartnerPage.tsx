@@ -202,6 +202,75 @@ const ViewPartnerPage = () => {
                       ))}
                   </div>
                 </div>
+
+                {data?.partnerData &&
+                  Object.keys(data.partnerData).length > 0 && (
+                    <>
+                      <FieldSeparator />
+                      <div className="w-full mb-4 mt-4">
+                        <h6 className="font-montserrat font-bold text-base-black text-sm mb-4">
+                          Additional Information
+                        </h6>
+                        <div className="grid grid-cols-[max-content_1fr] gap-4 items-center">
+                          {Object.entries(data.partnerData)
+                            .filter(
+                              ([key]) =>
+                                ![
+                                  "contactPerson",
+                                  "interests",
+                                  "password",
+                                ].includes(key),
+                            )
+                            .map(([key, val]) => (
+                              <React.Fragment key={key}>
+                                <Label className="font-montserrat font-semibold capitalize whitespace-nowrap">
+                                  {key.replace(/([A-Z])/g, " $1")}:
+                                </Label>
+                                <Label className="break-all text-sm font-medium">
+                                  {String(val || "N/A")}
+                                </Label>
+                              </React.Fragment>
+                            ))}
+
+                          {data.partnerData.contactPerson && (
+                            <React.Fragment>
+                              <Label className="font-montserrat font-semibold capitalize whitespace-nowrap">
+                                Contact Person:
+                              </Label>
+                              <Label className="break-all text-sm font-medium">
+                                {data.partnerData.contactPerson.fullName ||
+                                  "N/A"}
+                                {data.partnerData.contactPerson.jobTitle
+                                  ? ` (${data.partnerData.contactPerson.jobTitle})`
+                                  : ""}
+                                {data.partnerData.contactPerson.role
+                                  ? ` (${data.partnerData.contactPerson.role})`
+                                  : ""}
+                              </Label>
+                            </React.Fragment>
+                          )}
+
+                          {Array.isArray(data.partnerData.interests) &&
+                            data.partnerData.interests.length > 0 && (
+                              <React.Fragment>
+                                <Label className="font-montserrat font-semibold capitalize whitespace-nowrap self-start mt-1">
+                                  Interests:
+                                </Label>
+                                <div className="flex flex-wrap gap-2">
+                                  {data.partnerData.interests.map(
+                                    (interest: string) => (
+                                      <Badge key={interest} variant="secondary">
+                                        {interest}
+                                      </Badge>
+                                    ),
+                                  )}
+                                </div>
+                              </React.Fragment>
+                            )}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 <FieldSeparator />
                 <div className="space-y-4">
                   <h6 className="font-montserrat font-bold text-base-black text-sm mt-4">

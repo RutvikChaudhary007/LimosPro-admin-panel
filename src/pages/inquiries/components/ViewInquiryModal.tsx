@@ -79,27 +79,45 @@ export const ViewInquiryModal = ({
           <DetailItem label="Estimated Guests" value={data.estimatedGuests} />
           <DetailItem
             label="Event Date"
-            value={format(new Date(data.eventDate), "dd MMM yyyy")}
+            value={
+              data.eventDate
+                ? format(new Date(data.eventDate), "dd MMM yyyy")
+                : "N/A"
+            }
           />
           <DetailItem label="Role/Position" value={data.rolePosition} />
-          <div className="col-span-2">
+          <div className="col-span-1">
             <DetailItem
-              label="Event Location"
-              value={`${data.eventLocation.venue || ""}, ${data.eventLocation.city}`}
+              label="Event Venue/Location"
+              value={
+                data.eventLocation
+                  ? typeof data.eventLocation === "object"
+                    ? `${(data.eventLocation as any).venue ? String((data.eventLocation as any).venue) : ""} ${(data.eventLocation as any).city ? String((data.eventLocation as any).city) : ""}`.trim() ||
+                      JSON.stringify(data.eventLocation)
+                    : String(data.eventLocation)
+                  : "N/A"
+              }
+            />
+          </div>
+          <div className="col-span-1">
+            <DetailItem
+              label="Site City/Country"
+              value={String(`${data.city || ""} ${data.country || ""}`).trim()}
             />
           </div>
           <div className="col-span-2">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Vehicle Needs
+              Vehicle Requirements
             </span>
             <div className="flex flex-wrap gap-2 mt-1">
-              {Object.entries(data.vehicleNeeds).map(
-                ([key, val]) =>
-                  val && (
-                    <Badge key={key} variant="secondary" className="capitalize">
-                      {key}: {val}
-                    </Badge>
-                  ),
+              {Array.isArray(data.vehicleNeeds) ? (
+                data.vehicleNeeds.map((v) => (
+                  <Badge key={v} variant="secondary">
+                    {v}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm">N/A</span>
               )}
             </div>
           </div>
@@ -120,7 +138,22 @@ export const ViewInquiryModal = ({
             label="Country Represented"
             value={data.countryRepresented}
           />
-          <DetailItem label="Service Type" value={data.serviceType} />
+          <div className="col-span-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Service Type
+            </span>
+            <div className="flex flex-wrap gap-2 mt-1">
+              {Array.isArray(data.serviceType) ? (
+                data.serviceType.map((s) => (
+                  <Badge key={s} variant="secondary">
+                    {s}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm">{data.serviceType || "N/A"}</span>
+              )}
+            </div>
+          </div>
           <DetailItem label="Title/Position" value={data.titlePosition} />
           <DetailItem label="Primary Cities" value={data.primaryCitiesNeeded} />
           <div className="col-span-2">
@@ -134,11 +167,20 @@ export const ViewInquiryModal = ({
               Security Requirements
             </span>
             <div className="flex flex-wrap gap-2 mt-1">
-              {data.securityRequirements.map((req) => (
-                <Badge key={req} variant="secondary">
-                  {req}
-                </Badge>
-              ))}
+              {Array.isArray(data.securityRequirements) ? (
+                data.securityRequirements.map((req) => (
+                  <Badge key={req} variant="secondary">
+                    {req}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm">
+                  {typeof data.securityRequirements === "object" &&
+                  data.securityRequirements
+                    ? JSON.stringify(data.securityRequirements)
+                    : data.securityRequirements || "N/A"}
+                </span>
+              )}
             </div>
           </div>
           {data.specialProtocolRequirements && (
@@ -159,60 +201,67 @@ export const ViewInquiryModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex justify-between items-start pr-8">
-            <div>
-              <DialogTitle className="text-2xl font-bold">
-                {inquiry.contactName}
-              </DialogTitle>
-              <p className="text-muted-foreground">{inquiry.companyName}</p>
-            </div>
-            <div className="flex flex-col items-end gap-2">
-              <Badge className="capitalize">{inquiry.status}</Badge>
-              <Select
-                disabled={isUpdating}
-                onValueChange={(value) =>
-                  handleStatusChange(value as InquiryStatus)
-                }
-                defaultValue={inquiry.status}
-              >
-                <SelectTrigger className="w-[140px] h-8 text-xs">
-                  <SelectValue placeholder="Update Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.values(InquiryStatus).map((status) => (
-                    <SelectItem
-                      key={status}
-                      value={status}
-                      className="capitalize text-xs"
-                    >
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </DialogHeader>
+        {!inquiry ? (
+          <div className="p-4 text-center">Loading inquiry details...</div>
+        ) : (
+          <>
+            <DialogHeader>
+              <div className="flex justify-between items-start pr-8">
+                <div>
+                  <DialogTitle className="text-2xl font-bold">
+                    {inquiry.contactName}
+                  </DialogTitle>
+                  <p className="text-muted-foreground">{inquiry.companyName}</p>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <Badge className="capitalize">{inquiry.status}</Badge>
+                  <Select
+                    disabled={isUpdating}
+                    onValueChange={(value) =>
+                      handleStatusChange(value as InquiryStatus)
+                    }
+                    defaultValue={inquiry.status}
+                  >
+                    <SelectTrigger className="w-[140px] h-8 text-xs">
+                      <SelectValue placeholder="Update Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(InquiryStatus).map((status) => (
+                        <SelectItem
+                          key={status}
+                          value={status}
+                          className="capitalize text-xs"
+                        >
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </DialogHeader>
 
-        <div className="space-y-8 mt-4">
-          <section>
-            <h3 className="text-lg font-bold border-b pb-2 mb-4">
-              Contact Information
-            </h3>
-            <div className="grid grid-cols-2 gap-6">
-              <DetailItem label="Email" value={inquiry.email} />
-              <DetailItem label="Phone" value={inquiry.phone} />
-            </div>
-          </section>
+            <div className="space-y-8 mt-4">
+              <section>
+                <h3 className="text-lg font-bold border-b pb-2 mb-4">
+                  Contact Information
+                </h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <DetailItem label="Email" value={inquiry.email} />
+                  <DetailItem label="Phone" value={inquiry.phone} />
+                </div>
+              </section>
 
-          <section>
-            <h3 className="text-lg font-bold border-b pb-2 mb-4">
-              Inquiry Details ({inquiry.type.replace(/([A-Z])/g, " $1")})
-            </h3>
-            {renderDetails()}
-          </section>
-        </div>
+              <section>
+                <h3 className="text-lg font-bold border-b pb-2 mb-4">
+                  Inquiry Details (
+                  {(inquiry?.type || "").replace(/([A-Z])/g, " $1")})
+                </h3>
+                {renderDetails()}
+              </section>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
