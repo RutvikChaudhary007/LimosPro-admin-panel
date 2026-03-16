@@ -10,6 +10,7 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
+import { FeaturesAddonInput } from "@/components/common/FeaturesAddonInput";
 import LanguageSelector from "@/components/language/LanguageSelector";
 import { Button } from "@/components/ui/button";
 import {
@@ -115,11 +116,35 @@ const fleetCapacitySchema = z.object({
 // Schema for fleet item
 const fleetItemSchema = z.object({
   name: z.string().optional(),
-  images: z.array(z.string()).optional(),
+  images: z
+    .union([
+      z.array(z.string()),
+      z.string().transform((val) =>
+        val
+          ? val
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
+      ),
+    ])
+    .optional(),
   alt: z.string().optional(),
   description: z.string().optional(),
   capacity: fleetCapacitySchema.optional(),
-  features: z.array(z.string()).optional(),
+  features: z
+    .union([
+      z.array(z.string()),
+      z.string().transform((val) =>
+        val
+          ? val
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
+      ),
+    ])
+    .optional(),
 });
 
 // Schema for premium fleets
@@ -844,15 +869,28 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                       </InputGroup>
                     </Field>
                     <Field>
-                      <FieldLabel>Images (comma-separated URLs)</FieldLabel>
-                      <InputGroup>
+                      <FieldLabel>Images URLs</FieldLabel>
+                      <Controller
+                        name={
+                          `content.${language}.premiumFleets.fleets.${index}.images` as any
+                        }
+                        control={control}
+                        render={({ field }) => (
+                          <FeaturesAddonInput
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="e.g., https://cdn.limospro.com/vehicles/business-1.jpg"
+                          />
+                        )}
+                      />
+                      {/*<InputGroup>
                         <InputGroupInput
                           {...register(
                             `content.${language}.premiumFleets.fleets.${index}.images` as any,
                           )}
                           placeholder="e.g., https://cdn.limospro.com/vehicles/business-1.jpg, https://cdn.limospro.com/vehicles/business-2.jpg"
                         />
-                      </InputGroup>
+                      </InputGroup>*/}
                     </Field>
                   </div>
                   <Field>
@@ -892,13 +930,19 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                     </Field>
                   </div>
                   <Field>
-                    <FieldLabel>Features (comma-separated)</FieldLabel>
-                    <Textarea
-                      {...register(
-                        `content.${language}.premiumFleets.fleets.${index}.features` as any,
+                    <FieldLabel>Features</FieldLabel>
+                    <Controller
+                      name={
+                        `content.${language}.premiumFleets.fleets.${index}.features` as any
+                      }
+                      control={control}
+                      render={({ field }) => (
+                        <FeaturesAddonInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="e.g., Professional chauffeur"
+                        />
                       )}
-                      placeholder="e.g., Professional chauffeur, Air conditioning, Comfortable seating"
-                      rows={2}
                     />
                   </Field>
                 </CardContent>
