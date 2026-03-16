@@ -1,16 +1,32 @@
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCreateRoutePage } from "@/api/pages/routesPage.api";
 import RouteDetailsForm from "@/components/contentManagement/routeDetail/RouteDetailsForm";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 
 export default function CreatePage() {
+  const navigate = useNavigate();
+  const createRouteDetails = useCreateRoutePage();
   const handleCreateRouteDetail = (data: any) => {
     // data is FormData, so we need to append to it, not spread it
     data.append("pageName", "Route");
     data.append("category", "route");
 
     try {
-      console.log("Creating route detail:", data);
+      toastPromise(createRouteDetails.mutateAsync(data), {
+        loading: "Creating Route Details page...",
+        success: () => {
+          navigate(constant.ROUTING_URLS.CONTENT_MANAGEMENT_ALL_PAGES);
+          return "Route Details page creaetd successfully";
+        },
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.message
+            : "Failed to create route details page",
+      });
     } catch (error) {
       console.error("Create route detail error:", error);
     }
