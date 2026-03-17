@@ -12,7 +12,7 @@ import {
 import { Field, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import type { PremiumFleetSectionBlockProps } from "@/types/pagebuilder.types";
 
 export function PremiumFleetSectionBlock({
@@ -138,7 +138,7 @@ export function PremiumFleetSectionBlock({
                             }
                             control={control}
                             render={({ field }) => (
-                              <UploadWithUrl
+                              <UploadWithUrlV2
                                 value={field.value}
                                 onChange={field.onChange}
                                 title="Image"

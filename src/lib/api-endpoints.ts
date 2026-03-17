@@ -178,6 +178,7 @@ export const API_ENDPOINTS: Record<string, any> = {
     GET_BY_CATEGORY: (category: string) =>
       `${BOOKING_SERVICE_URL}/media/category/${category}`,
     UPLOAD: `${BOOKING_SERVICE_URL}/media/upload`,
+    UPLOAD_IMAGES: `${ADMIN_SERVICE_URL}/images/upload`,
     UPLOAD_MULTIPLE: `${BOOKING_SERVICE_URL}/media/upload/multiple`,
     UPDATE: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,
     DELETE: (id: string) => `${BOOKING_SERVICE_URL}/media/media/${id}`,

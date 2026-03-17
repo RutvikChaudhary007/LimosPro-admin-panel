@@ -15,7 +15,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import UploadWithUrl from "@/components/ui/upload-with-url";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 
 interface SEOSectionProps {
   form: UseFormReturn<any>;
@@ -197,7 +197,7 @@ export const SEOSection: React.FC<SEOSectionProps> = ({
               name={`${seoPath}.openGraph.ogImage`}
               control={control}
               render={({ field }) => (
-                <UploadWithUrl
+                <UploadWithUrlV2
                   value={field.value}
                   onChange={field.onChange}
                   title="Open Graph Image"
@@ -262,7 +262,7 @@ export const SEOSection: React.FC<SEOSectionProps> = ({
               name={`${seoPath}.twitter.twitterImage`}
               control={control}
               render={({ field }) => (
-                <UploadWithUrl
+                <UploadWithUrlV2
                   value={field.value}
                   onChange={field.onChange}
                   title="Twitter Image"

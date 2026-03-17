@@ -35,7 +35,7 @@ import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 import * as z from "zod";
 import { Form, FormMessage } from "../ui/form";
-import UploadWithUrl from "../ui/upload-with-url";
+import UploadWithUrlV2 from "../ui/upload-with-url-v2";
 
 const imageSchema = z.union([z.string(), z.instanceof(File)]);
 
@@ -814,7 +814,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                       control={form.control}
                       name="featuredImage"
                       render={({ field }) => (
-                        <UploadWithUrl
+                        <UploadWithUrlV2
                           title="Upload Featured Image"
                           multiple={false}
                           onChange={field.onChange}
@@ -837,7 +837,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                       control={form.control}
                       name="images"
                       render={({ field }) => (
-                        <UploadWithUrl
+                        <UploadWithUrlV2
                           title="Upload Blog Images"
                           multiple={true}
                           onChange={field.onChange}
@@ -1046,7 +1046,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
                       control={form.control}
                       name="ogImage"
                       render={({ field }) => (
-                        <UploadWithUrl
+                        <UploadWithUrlV2
                           title="Open Graph Images"
                           multiple={false}
                           onChange={field.onChange}
