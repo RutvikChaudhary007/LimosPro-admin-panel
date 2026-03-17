@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -725,6 +726,8 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                           {...register(
                             `content.${language}.sections.${index}.type` as any,
                           )}
+                          value="imageText"
+                          disabled={true}
                           placeholder="e.g., imageText"
                         />
                       </InputGroup>
@@ -755,18 +758,23 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                     </Field>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel>Image URL</FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
-                          {...register(
-                            `content.${language}.sections.${index}.image` as any,
-                          )}
-                          placeholder="e.g., https://cdn.limospro.com/routes/driver.jpg"
-                        />
-                      </InputGroup>
+                    <Field className="col-span-full">
+                      {/*<FieldLabel>Image URL</FieldLabel>*/}
+                      <Controller
+                        name={
+                          `content.${language}.sections.${index}.image` as any
+                        }
+                        control={control}
+                        render={({ field }) => (
+                          <UploadWithUrlV2
+                            value={field.value}
+                            onChange={field.onChange}
+                            title="Image"
+                          />
+                        )}
+                      />
                     </Field>
-                    <Field>
+                    <Field className="col-span-full">
                       <FieldLabel>Alt Text</FieldLabel>
                       <InputGroup>
                         <InputGroupInput
@@ -863,7 +871,7 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field>
+                    <Field className="col-span-full">
                       <FieldLabel>Name</FieldLabel>
                       <InputGroup>
                         <InputGroupInput
@@ -874,18 +882,20 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                         />
                       </InputGroup>
                     </Field>
-                    <Field>
-                      <FieldLabel>Images URLs</FieldLabel>
+                    <Field className="col-span-full">
+                      {/*<FieldLabel>Images URLs</FieldLabel>*/}
                       <Controller
                         name={
                           `content.${language}.premiumFleets.fleets.${index}.images` as any
                         }
                         control={control}
                         render={({ field }) => (
-                          <FeaturesAddonInput
+                          <UploadWithUrlV2
                             value={field.value}
                             onChange={field.onChange}
-                            placeholder="e.g., https://cdn.limospro.com/vehicles/business-1.jpg"
+                            multiple={true}
+                            maxSize={4}
+                            title="Images URLs"
                           />
                         )}
                       />
