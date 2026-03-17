@@ -36,7 +36,9 @@ const fetchRoutePageBySlug = async (slug: string) => {
   return data?.data ?? data;
 };
 
-export const createRoutePage = async (payload: FormData | RoutesPageData) => {
+export const createRouteDetailsPage = async (
+  payload: FormData | RoutesPageData,
+) => {
   const { data } = await axiosInstance.post(
     API_ENDPOINTS.ROUTEDETAILS.CREATE,
     payload,
@@ -95,12 +97,14 @@ export const useFetchRoutePageBySlug = (slug: string) => {
   });
 };
 
-export const useCreateRoutePage = () => {
+export const useCreateRouteDetailsPage = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createRoutePage,
+    mutationFn: createRouteDetailsPage,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.routesPage.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.routeDetailsPage.all,
+      });
     },
   });
 };
