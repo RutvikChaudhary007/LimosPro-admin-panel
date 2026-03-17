@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash2 } from "lucide-react";
+import { Link2, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
@@ -22,7 +22,12 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -38,6 +43,7 @@ import {
   type LanguageCode,
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema } from "../shared/sharedSchemas";
@@ -1114,6 +1120,15 @@ export default function RouteDetailsForm({
     }
   };
 
+  const handleSyncSlug = () => {
+    const currentTitle = form.getValues("pageName");
+    if (currentTitle) {
+      form.setValue("slug", generateSlug(currentTitle), {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+  };
   return (
     <FormProvider {...form}>
       <form
@@ -1151,6 +1166,18 @@ export default function RouteDetailsForm({
                         {...register("slug")}
                         placeholder="e.g., heathrow-to-london"
                       />
+                      <InputGroupAddon>
+                        <Link2 className="w-4 h-4" />
+                      </InputGroupAddon>
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          onClick={handleSyncSlug}
+                          size="icon-sm"
+                          tooltip="Regenerate slug from title"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                        </InputGroupButton>
+                      </InputGroupAddon>
                     </InputGroup>
                     {errors.slug && (
                       <p className="text-red-500 text-sm mt-1">

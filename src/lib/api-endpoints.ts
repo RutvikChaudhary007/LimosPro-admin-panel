@@ -361,6 +361,7 @@ export const API_ENDPOINTS: Record<string, any> = {
   ROUTEDETAILS: {
     GET_ALL: `${ADMIN_SERVICE_URL}/pages/route-detail`,
     GET_BY_ID: (id: string) => `${ADMIN_SERVICE_URL}/pages/route-detail/${id}`,
+    CREATE: `${ADMIN_SERVICE_URL}/pages/route-detail`,
     UPDATE: (id: string) => `${ADMIN_SERVICE_URL}/pages/route-detail/${id}`,
     DELETE: (id: string) => `${ADMIN_SERVICE_URL}/pages/route-detail/${id}`,
     BULK_DELETE: `${ADMIN_SERVICE_URL}/pages/route-detail/bulk-delete`,

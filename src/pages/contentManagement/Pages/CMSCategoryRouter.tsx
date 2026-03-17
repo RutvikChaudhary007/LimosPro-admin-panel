@@ -1,9 +1,16 @@
 import { lazy, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { Spinner } from "@/components/Spinner";
+import type { CMSCategoryKey } from "./cmsCategories";
 
 // Lazy load all category pages
-const categories = {
+const categoryComponents: Record<
+  CMSCategoryKey,
+  {
+    create: React.LazyExoticComponent<React.ComponentType>;
+    edit: React.LazyExoticComponent<React.ComponentType>;
+  }
+> = {
   business: {
     create: lazy(() => import("./businessPages/CreatePage")),
     edit: lazy(() => import("./businessPages/EditPage")),
@@ -65,9 +72,11 @@ export default function CMSCategoryRouter({
 }) {
   const { category } = useParams<{ category: string }>();
 
+  // Category from URL is always lowercase and URL-safe
   const selectedCategory =
-    (category?.toLowerCase() as keyof typeof categories) || "business";
-  const categoryConfig = categories[selectedCategory] || categories.business;
+    (category?.toLowerCase() as CMSCategoryKey) || "business";
+  const categoryConfig =
+    categoryComponents[selectedCategory] || categoryComponents.business;
   const Component = categoryConfig[mode];
 
   return (

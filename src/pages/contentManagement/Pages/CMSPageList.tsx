@@ -29,41 +29,16 @@ import {
 } from "@/components/ui/input-group";
 import { constant } from "@/lib/constant";
 import { cn } from "@/lib/utils";
+import { CMS_CATEGORIES, getCategoryKey } from "./cmsCategories";
 
-const categoryConfig = [
+const categoryConfigWithAll = [
   { name: "All", label: "All", key: "total" },
-  { name: "Services", label: "Services", key: "service" },
-  {
-    name: "Destinations",
-    label: "Global Cities & Airports",
-    key: "destination",
-  },
-  { name: "Business", label: "Business & Diplomats", key: "business" },
-  { name: "Home", label: "Home", key: "home" },
-  { name: "Chauffeur", label: "Chauffeur", key: "chauffeur" },
-  {
-    name: "City-to-City Routes",
-    label: "City-to-City Routes",
-    key: "cityroutes",
-  },
-  { name: "Countries", label: "Countries", key: "countries" },
-  { name: "Cities", label: "Cities", key: "cities" },
-  {
-    name: "Business & Diplomats Hub",
-    label: "Business & Diplomats Hub Page",
-    key: "diplomats",
-  },
-  { name: "Country Detail", label: "Country Detail", key: "country" },
-  { name: "routedetails", label: "Route Details", key: "routedetails" },
+  ...CMS_CATEGORIES.map((cat) => ({
+    name: cat.name,
+    label: cat.label,
+    key: cat.countKey,
+  })),
 ];
-
-function getRouteCategoryKey(slug: string): string {
-  if (slug === "city-routes") return "cityroutes";
-  if (slug === "global-availability") return "countries";
-  if (slug === "cities") return "cities";
-  if (slug === "Route Details") return "routedetails";
-  return "cityroutes";
-}
 
 export default function CMSPageList() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -167,17 +142,16 @@ export default function CMSPageList() {
       ? serviceData.chauffeur.length
       : 0;
 
-    const cityRoutesCount = routePages.filter(
-      (p: any) => getRouteCategoryKey(p.slug) === "cityroutes",
-    ).length;
-    const citiesCount = routePages.filter(
-      (p: any) => getRouteCategoryKey(p.slug) === "cities",
-    ).length;
-    const countriesCountFromCountryApi = getTotalFromPagination(
+    // All items from the routes API are city-to-city routes
+    const cityRoutesCount = getTotalFromPagination(
+      routesResponse,
+      routePages.length,
+    );
+    const countriesCount = getTotalFromPagination(
       countryResponse,
       countryPages.length,
     );
-    const citiesCountFromCitiesHubApi = getTotalFromPagination(
+    const citiesCount = getTotalFromPagination(
       citiesHubResponse,
       citiesHubPages.length,
     );
@@ -189,11 +163,11 @@ export default function CMSPageList() {
       cityDiplomatsHubResponse,
       cityDiplomatsHubPages.length,
     );
-
     const routeDetailsCount = getTotalFromPagination(
       routeDetailsResponse,
       routeDetailsPages.length,
     );
+
     const totalCount =
       serviceCount +
       destinationCount +
@@ -201,8 +175,8 @@ export default function CMSPageList() {
       homeCount +
       chauffeurCount +
       cityRoutesCount +
-      countriesCountFromCountryApi +
-      (citiesCount + citiesCountFromCitiesHubApi) +
+      countriesCount +
+      citiesCount +
       countryDetailCount +
       diplomatsCount +
       routeDetailsCount;
@@ -215,19 +189,20 @@ export default function CMSPageList() {
       home: homeCount,
       chauffeur: chauffeurCount,
       cityroutes: cityRoutesCount,
-      countries: countriesCountFromCountryApi,
-      cities: citiesCount + citiesCountFromCitiesHubApi,
+      countries: countriesCount,
+      cities: citiesCount,
       diplomats: diplomatsCount,
       country: countryDetailCount,
       routedetails: routeDetailsCount,
     };
 
-    return categoryConfig.map((category) => ({
+    return categoryConfigWithAll.map((category) => ({
       ...category,
       count: computedCounts[category.key] ?? 0,
     }));
   }, [
     resolvedPageContent,
+    routesResponse,
     routePages,
     countryResponse,
     countryPages.length,
@@ -325,16 +300,14 @@ export default function CMSPageList() {
       category: "Cities",
     }));
 
-    // Add routePages
-    const cityRoutesPages = routePages
-      .filter((p: any) => getRouteCategoryKey(p.slug) === "cityroutes")
-      .map((page: any) => ({
-        id: page.id,
-        title: page.pageName || page.slug || "Route",
-        description: page.slug ? `/${page.slug}` : "",
-        lastUpdated: formatUpdatedAt(page.updatedAt),
-        category: "City-to-City Routes",
-      }));
+    // Add routePages — all items from routes API are city-to-city routes
+    const cityRoutesPages = routePages.map((page: any) => ({
+      id: page.id,
+      title: page.pageName || page.slug || "Route",
+      description: page.slug ? `/${page.slug}` : "",
+      lastUpdated: formatUpdatedAt(page.updatedAt),
+      category: "City-to-City Routes",
+    }));
 
     // Add countryPages
     const countriesPages = countryPages.map((page: any) => ({
@@ -416,24 +389,8 @@ export default function CMSPageList() {
                 icon: <Plus />,
                 link: constant.ROUTING_URLS.CREATE_CONTENT_MANAGEMENT.replace(
                   ":category",
-                  // selectedCategory.toLowerCase(),
-                  (() => {
-                    const m: Record<string, string> = {
-                      "City-to-City Routes": "cityroutes",
-
-                      Countries: "countries",
-
-                      Cities: "cities",
-
-                      Diplomats: "diplomats",
-
-                      "Country Detail": "country",
-                    };
-
-                    return (
-                      m[selectedCategory] ?? selectedCategory.toLowerCase()
-                    );
-                  })(),
+                  getCategoryKey(selectedCategory) ??
+                    selectedCategory.toLowerCase(),
                 ),
               }
         }
@@ -553,21 +510,8 @@ export default function CMSPageList() {
                           size="sm"
                           className="gap-2 text-primary hover:text-primary/90 hover:bg-primary/5"
                           onClick={() => {
-                            const categoryMapping: Record<string, string> = {
-                              Services: "services",
-                              Destinations: "destinations",
-                              Business: "business",
-                              Home: "home",
-                              Chauffeur: "chauffeur",
-                              "City-to-City Routes": "cityroutes",
-                              Countries: "countries",
-                              Cities: "cities",
-                              "Business & Diplomats Hub": "diplomats",
-                              "Country Detail": "country",
-                              "Route Details": "routedetails",
-                            };
                             const routeCategory =
-                              categoryMapping[page.category] ??
+                              getCategoryKey(page.category) ??
                               page.category.toLowerCase();
                             navigate(
                               constant.ROUTING_URLS.EDIT_CONTENT_MANAGEMENT.replace(
