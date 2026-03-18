@@ -12,6 +12,7 @@ import {
 import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
 import { FeaturesAddonInput } from "@/components/common/FeaturesAddonInput";
+import { RouteItemsInput } from "@/components/common/RouteItemsInput";
 import LanguageSelector from "@/components/language/LanguageSelector";
 import { Button } from "@/components/ui/button";
 import {
@@ -226,7 +227,14 @@ const topRouteSchema = z.discriminatedUnion("isRoutes", [
     label: z.array(
       z.object({
         name: z.string(),
-        values: z.array(z.string()),
+        url: z.string().optional(),
+        items: z.array(
+          z.object({
+            id: z.string().optional(),
+            name: z.string(),
+            url: z.string().optional(),
+          }),
+        ),
       }),
     ),
   }),
@@ -411,6 +419,25 @@ const normalizeServiceData = (data: any): ServiceFormData => {
         ) {
           content[lang].cityRoutes.cityRoutesEnabled = false;
         }
+        // Data migration for topRoutes: convert values to items
+        if (content[lang].topRoutes && content[lang].topRoutes.label) {
+          content[lang].topRoutes.label = content[lang].topRoutes.label.map(
+            (lbl: any) => {
+              if (lbl.values && !lbl.items) {
+                const { values, ...rest } = lbl;
+                return {
+                  ...rest,
+                  items: values.map((val: string) => ({
+                    id: uid(),
+                    name: val,
+                    url: "",
+                  })),
+                };
+              }
+              return lbl;
+            },
+          );
+        }
       } else {
         content[lang] = getEmptyLanguageContent();
       }
@@ -478,6 +505,7 @@ const normalizeServiceData = (data: any): ServiceFormData => {
     "LongDistanceCarService",
     "faq",
     "download",
+    "topRoutes",
   ] as const;
 
   languages.forEach((lang: string) => {
@@ -494,6 +522,26 @@ const normalizeServiceData = (data: any): ServiceFormData => {
         content[lang][section] = sectionData;
       }
     });
+
+    // Data migration for topRoutes: convert values to items
+    if (content[lang].topRoutes && content[lang].topRoutes.label) {
+      content[lang].topRoutes.label = content[lang].topRoutes.label.map(
+        (lbl: any) => {
+          if (lbl.values && !lbl.items) {
+            const { values, ...rest } = lbl;
+            return {
+              ...rest,
+              items: values.map((val: string) => ({
+                id: uid(),
+                name: val,
+                url: "",
+              })),
+            };
+          }
+          return lbl;
+        },
+      );
+    }
 
     // Ensure cityRoutesEnabled is always explicitly set for old format conversion
     if (
@@ -812,7 +860,8 @@ function LanguageFields({
                                   label: [
                                     {
                                       name: "",
-                                      values: [],
+                                      url: "",
+                                      items: [],
                                     },
                                   ],
                                 },
@@ -883,7 +932,8 @@ function LanguageFields({
                             routeDetailsLabelCards.append({
                               id: uid(),
                               name: "",
-                              values: [],
+                              url: "",
+                              items: [],
                             })
                           }
                         >
@@ -914,23 +964,53 @@ function LanguageFields({
                                 <Field>
                                   <FieldLabel>Route Name</FieldLabel>
                                   <InputGroup>
-                                    <InputGroupInput
-                                      {...register(
-                                        `content.${selectedLanguage}.topRoutes.label.${idx}.name` as any,
+                                    <Controller
+                                      name={
+                                        `content.${selectedLanguage}.topRoutes.label.${idx}.name` as any
+                                      }
+                                      control={control}
+                                      render={({ field }) => (
+                                        <InputGroupInput
+                                          {...field}
+                                          onChange={(e) => {
+                                            const value = e.target.value;
+                                            field.onChange(value);
+                                            const slug = generateSlug(value);
+                                            setValue(
+                                              `content.${selectedLanguage}.topRoutes.label.${idx}.url` as any,
+                                              slug ? `/${slug}` : "",
+                                              {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                              },
+                                            );
+                                          }}
+                                          placeholder="Dubai"
+                                        />
                                       )}
-                                      placeholder="Dubai"
                                     />
                                   </InputGroup>
                                 </Field>
                                 <Field>
-                                  <FieldLabel>Label Values</FieldLabel>
+                                  <FieldLabel>Route URL / Slug</FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      {...register(
+                                        `content.${selectedLanguage}.topRoutes.label.${idx}.url` as any,
+                                      )}
+                                      placeholder="/dubai-airport-transfer"
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>Route Items (Nested)</FieldLabel>
                                   <Controller
                                     name={
-                                      `content.${selectedLanguage}.topRoutes.label.${idx}.values` as any
+                                      `content.${selectedLanguage}.topRoutes.label.${idx}.items` as any
                                     }
                                     control={control}
                                     render={({ field }) => (
-                                      <FeaturesAddonInput
+                                      <RouteItemsInput
                                         value={field.value}
                                         onChange={field.onChange}
                                       />
