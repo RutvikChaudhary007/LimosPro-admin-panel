@@ -107,6 +107,7 @@ const cityRoutesSchema = z.discriminatedUnion("cityRoutesEnabled", [
           title: z.string().optional(),
           alt: z.string().optional(),
           description: z.string().optional(),
+          url: z.string().optional(),
         }),
       )
       .optional(),
@@ -1254,6 +1255,7 @@ function LanguageFields({
                               title: "",
                               alt: "",
                               description: "",
+                              url: "",
                             })
                           }
                         >
@@ -1306,11 +1308,41 @@ function LanguageFields({
                                 <Field>
                                   <FieldLabel>City Name</FieldLabel>
                                   <InputGroup>
+                                    <Controller
+                                      name={
+                                        `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.title` as any
+                                      }
+                                      control={control}
+                                      render={({ field }) => (
+                                        <InputGroupInput
+                                          {...field}
+                                          onChange={(e) => {
+                                            const value = e.target.value;
+                                            field.onChange(value);
+                                            const slug = generateSlug(value);
+                                            setValue(
+                                              `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.url` as any,
+                                              slug ? `/${slug}` : "",
+                                              {
+                                                shouldDirty: true,
+                                                shouldValidate: true,
+                                              },
+                                            );
+                                          }}
+                                          placeholder="Dubai"
+                                        />
+                                      )}
+                                    />
+                                  </InputGroup>
+                                </Field>
+                                <Field>
+                                  <FieldLabel>City URL / Slug</FieldLabel>
+                                  <InputGroup>
                                     <InputGroupInput
                                       {...register(
-                                        `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.title` as any,
+                                        `content.${selectedLanguage}.cityRoutes.cityCards.${idx}.url` as any,
                                       )}
-                                      placeholder="Dubai"
+                                      placeholder="/dubai"
                                     />
                                   </InputGroup>
                                 </Field>
