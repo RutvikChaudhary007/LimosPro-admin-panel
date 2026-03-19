@@ -1,6 +1,27 @@
 import { z } from "zod";
 
-export const imageSchema = z.union([z.string(), z.instanceof(File)]);
+export const imageSchema = z.union([
+  z.string(),
+  z.instanceof(File),
+  z
+    .object({
+      id: z.string().optional(),
+      url: z.string().optional(),
+      src: z.string().optional(),
+      alt: z.string().optional(),
+    })
+    .optional(),
+  z.array(
+    z
+      .object({
+        id: z.string().optional(),
+        url: z.string().optional(),
+        src: z.string().optional(),
+        alt: z.string().optional(),
+      })
+      .optional(),
+  ),
+]);
 
 export const openGraphSchema = z.object({
   title: z.string().optional(),
