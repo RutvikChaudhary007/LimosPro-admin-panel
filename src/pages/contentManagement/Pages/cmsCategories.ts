@@ -101,7 +101,7 @@ export const CMS_CATEGORIES: CMSCategoryConfig[] = [
   },
   {
     key: "cities",
-    label: "Cities Hub",
+    label: "Global Cities & Airports Hub",
     apiFilterKey: "cities",
     countKey: "cities",
     name: "Cities",
