@@ -54,6 +54,8 @@ const imageSchema = z.union([
   z.instanceof(File),
   z
     .object({
+      id: z.string().optional(),
+      url: z.string().optional(),
       src: z.string().optional(),
       alt: z.string().optional(),
     })
@@ -2013,7 +2015,7 @@ function LanguageFields({
               id: "LongDistanceCarService",
               label: "Long Distance Car Service",
             },
-            { id: "Airport", label: "Shuttle booking" },
+            { id: "serviceInGlobalCities", label: "Shuttle booking" },
           ].map((section) => (
             <Card key={section.id}>
               <CardBody>

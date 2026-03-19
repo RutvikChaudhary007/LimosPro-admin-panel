@@ -71,6 +71,27 @@ const FEATURE_ICONS = [
   { value: "users", label: "Users" },
 ] as const;
 
+const imageSchema = z.union([
+  z.string(),
+  z.instanceof(File),
+  z
+    .object({
+      id: z.string().optional(),
+      url: z.string().optional(),
+      alt: z.string().optional(),
+    })
+    .optional(),
+  z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        url: z.string().optional(),
+        alt: z.string().optional(),
+      }),
+    )
+    .optional(),
+]);
+
 // Schema for hero section
 const heroSchema = z.object({
   title: z.string().optional(),
@@ -108,7 +129,7 @@ const featureSchema = z.object({
 const sectionSchema = z.object({
   // type: z.string().optional(),
   isImageLeft: z.boolean().optional(),
-  image: z.string().optional(),
+  image: imageSchema.optional(),
   alt: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
@@ -123,19 +144,7 @@ const fleetCapacitySchema = z.object({
 // Schema for fleet item
 const fleetItemSchema = z.object({
   name: z.string().optional(),
-  images: z
-    .union([
-      z.array(z.string()),
-      z.string().transform((val) =>
-        val
-          ? val
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [],
-      ),
-    ])
-    .optional(),
+  images: imageSchema.optional(),
   alt: z.string().optional(),
   description: z.string().optional(),
   capacity: fleetCapacitySchema.optional(),
@@ -236,7 +245,7 @@ const getEmptyLanguageContent = () => ({
     fleets: [
       {
         name: "",
-        images: [],
+        // images: "",
         alt: "",
         description: "",
         capacity: { passengers: 3, luggage: "" },

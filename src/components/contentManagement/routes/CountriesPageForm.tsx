@@ -77,10 +77,17 @@ const introSchema = z.object({
   description: z.string().optional(),
 });
 
+// Schema for FAQ
+const faqItemSchema = z.object({
+  question: z.string().optional(),
+  answer: z.string().optional(),
+});
+
 const languageContentSchema = z.object({
   intro: introSchema.optional(),
   sections: z.array(sectionEntrySchema).optional(),
   countries: z.array(countryEntrySchema).optional(),
+  faq: z.array(faqItemSchema).optional(),
 });
 
 const countriesPageFormSchema = z.object({
@@ -626,35 +633,6 @@ export default function CountriesPageForm({
                                       )}
                                     />
                                   </InputGroup>
-                                </Field>
-                              </div>
-                              <div className="border-t pt-3 mt-3">
-                                <FieldLabel className="mb-2 block">
-                                  SEO ({selectedLanguage})
-                                </FieldLabel>
-                                <Field>
-                                  <FieldLabel className="text-xs">
-                                    SEO Title ({selectedLanguage})
-                                  </FieldLabel>
-                                  <InputGroup>
-                                    <InputGroupInput
-                                      {...form.register(
-                                        `content.${selectedLanguage}.countries.${index}.seo.title.${selectedLanguage}` as any,
-                                      )}
-                                      placeholder="Country page meta title"
-                                    />
-                                  </InputGroup>
-                                </Field>
-                                <Field>
-                                  <FieldLabel className="text-xs">
-                                    SEO Description ({selectedLanguage})
-                                  </FieldLabel>
-                                  <Textarea
-                                    {...form.register(
-                                      `content.${selectedLanguage}.countries.${index}.seo.description.${selectedLanguage}` as any,
-                                    )}
-                                    placeholder="Country page meta description"
-                                  />
                                 </Field>
                               </div>
                             </CardContent>
