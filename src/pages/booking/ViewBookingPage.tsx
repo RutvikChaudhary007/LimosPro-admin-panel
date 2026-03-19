@@ -171,14 +171,13 @@ const ViewBookingPage = () => {
       ""
     )
       .toString()
-      .toLowerCase();
+      .toLowerCase()
+      .trim();
     if (!bookingStatusHistory.length) return 0;
     const foundIndex = bookingStatusHistory.findIndex((item) => {
-      const status = item.status.toLowerCase();
-      return (
-        status === normalizedStatus ||
-        status.replace(/\s+/g, "") === normalizedStatus
-      );
+      const status = item.status.toLowerCase().replace(/\s+/g, "");
+      const normalized = normalizedStatus.replace(/\s+/g, "");
+      return status === normalized;
     });
     if (foundIndex >= 0) return foundIndex;
     const activeIndex = bookingStatusHistory.findIndex(
@@ -186,6 +185,24 @@ const ViewBookingPage = () => {
     );
     return activeIndex >= 0 ? activeIndex : bookingStatusHistory.length - 1;
   }, [bookingHistoryData?.currentStatus, bookingStatusHistory, data?.status]);
+
+  const isTerminalFailure = useMemo(() => {
+    const terminalStatuses = [
+      "nochauffeurfound",
+      "nopartnerfound",
+      "partnerchauffeurnotfound",
+      "cancelled",
+    ];
+    const currentStatus = (
+      bookingHistoryData?.currentStatus ||
+      data?.status ||
+      ""
+    )
+      .toString()
+      .toLowerCase()
+      .replace(/\s+/g, "");
+    return terminalStatuses.includes(currentStatus);
+  }, [bookingHistoryData?.currentStatus, data?.status]);
 
   useEffect(() => {
     const defaultVisibility = visibilityOptions[0]?.value as
@@ -647,10 +664,11 @@ const ViewBookingPage = () => {
                   ) : bookingStatusHistory.length ? (
                     bookingStatusHistory.map((item, index) => {
                       const isActive =
-                        item.state === "active" || index === currentStatusIndex;
+                        item.state === "active" ||
+                        (!isTerminalFailure && index === currentStatusIndex);
                       const isCompleted =
                         item.state === "completed" ||
-                        index < currentStatusIndex;
+                        (!isTerminalFailure && index < currentStatusIndex);
                       const dotClasses = isCompleted
                         ? "border-base-black bg-base-black"
                         : isActive

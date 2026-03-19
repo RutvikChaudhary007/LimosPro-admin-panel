@@ -20,7 +20,6 @@ import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { SelectDropDown } from "@/components/ui/select";
 import { useSocket } from "@/context/SocketContext";
-import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import { exportToCsv } from "@/utils/export";
 import { generatePageTitle } from "@/utils/seo";
@@ -35,14 +34,6 @@ const showStatus = [
   { label: "Completed", value: "completed" },
   { label: "Cancelled", value: "cancelled" },
 ];
-
-type RowData = {
-  partnerId: string;
-  id: string;
-  status: string;
-  createdAt: string | Date;
-  updatedAt: string | Date;
-};
 function BookingPage() {
   const navigate = useNavigate();
   const [perPage, setperPage] = useState<number>(10);
@@ -56,70 +47,27 @@ function BookingPage() {
     from: undefined,
     to: undefined,
   });
-  // const [data, setData] = useState<TBooking[]>(tableData);
-  const { data, isFetching, error, isError, refetch } = useFetchAllBookings({
-    DateRange: dateRange,
-    page: newPage,
-    limit: perPage,
-    status: selectedStatus,
-  });
 
-  const handleView = (id: string) => {
-    // console.log("view:", id);
-    navigate(constant.ROUTING_URLS.VIEW_BOOKING.replace(":id", id));
-  };
-  const columns = getBooking(handleView);
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {},
   );
 
-  // Filter data
-  const filterData = data?.bookings?.filter((row: RowData) => {
-    if (searchValue === "") return true;
-    if (
-      searchValue &&
-      !row.partnerId.toLowerCase().includes(searchValue.toLowerCase()) &&
-      !row.id.toLowerCase().includes(searchValue.toLowerCase())
-    ) {
-      return false;
-    }
-
-    if (
-      selectedStatus &&
-      row.status.toLowerCase() !== selectedStatus.value.toLowerCase()
-    ) {
-      return false;
-    }
-
-    // Date range filter
-    if (dateRange.from) {
-      const createdAt = new Date(row.createdAt);
-      // console.log(`verificationDate:${verificationDate}`)
-      // console.log(`dateRange.from:${dateRange.from}`)
-      if (createdAt < dateRange.from) return false;
-    }
-
-    if (dateRange.to) {
-      const updatedAt = new Date(row.updatedAt);
-      const endOfDay = new Date(dateRange.to);
-      // console.log(`verificationDate:${verificationDate}`)
-      // console.log(`dateRange.to:${dateRange.to}`)
-      endOfDay.setHours(23, 59, 59, 999);
-      // console.log(`endofDay:${endOfDay}`)
-      if (updatedAt > endOfDay) return false;
-    }
-
-    return true;
+  const { data, isFetching, error, isError, refetch } = useFetchAllBookings({
+    DateRange: dateRange,
+    page: newPage,
+    limit: perPage,
+    status: selectedStatus?.value || selectedStatus, // Handle both object and string
+    search: searchValue,
   });
 
-  const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TBooking>(filterData, newPage, perPage, data?.pagination);
-
-  // const statusCounts = useMemo(() => {
-  // return countByStatus(data?.statusCounts);
-  // }, []);
   const statusCounts = data?.statusCounts;
+  const calculatedTotalPages = data?.pagination?.totalPages || 0;
+
+  const handleView = (id: string) => {
+    navigate(constant.ROUTING_URLS.VIEW_BOOKING.replace(":id", id));
+  };
+  const columns = getBooking(handleView);
 
   // Handle CSV export
   const handleExportCsv = () => {
@@ -144,29 +92,23 @@ function BookingPage() {
     ]);
 
     exportToCsv("booking_history", headers, csvData);
-
-    // toast({
-    //   title: "Export successful",
-    //   description: "Verification history has been exported to CSV",
-    // });
   };
-
-  // Number of pages based on filtered data
-  const calculatedTotalPages = Math.max(1, totalPages);
 
   // Handle page change
   const handlePageChange = (value: number) => {
     setNewPage(value);
-    setPage(value);
-    window.scrollTo(0, 0);
   };
 
   // Handle per-page size change
   const handlePerPageChange = (value: number) => {
     setperPage(value);
     setNewPage(1);
-    setPage(1);
   };
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setNewPage(1);
+  }, [selectedStatus, dateRange, searchValue]);
 
   useEffect(() => {
     if (isError) {
@@ -270,21 +212,22 @@ function BookingPage() {
           <Spinner />
         ) : (
           <DataTable
-            // key={perPage}
-            key={`${perPage}-${newPage}`}
+            key={`${perPage}-${newPage}-${selectedStatus?.value || selectedStatus}-${searchValue}`}
             columns={columns}
-            data={currentItems}
+            data={data?.bookings || []}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue}
+            manualFiltering={true}
+            manualPagination={true}
           />
         )}
 
         {/* Pagination */}
-        {totalPages >= 0 && calculatedTotalPages >= 1 && (
+        {calculatedTotalPages >= 1 && (
           <PaginationControls
-            currentPage={currentPage}
+            currentPage={newPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
             onPerPageChange={handlePerPageChange}
