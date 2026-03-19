@@ -154,14 +154,18 @@ const ViewTripsPage = () => {
                   Car Name:
                 </Label>
                 <Label>
-                  {data?.vehicle?.make} {data?.vehicle?.model}
+                  {data?.vehicle
+                    ? `${data.vehicle.make} ${data.vehicle.model}`
+                    : "N/A"}
                 </Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   Chauffeur:
                 </Label>
                 <Label>
-                  {data?.chauffeur?.firstName} {data?.chauffeur?.lastName}
+                  {data?.chauffeur
+                    ? `${data.chauffeur.firstName} ${data.chauffeur.lastName}`
+                    : "N/A"}
                 </Label>
 
                 <div className="col-span-2">
@@ -190,12 +194,16 @@ const ViewTripsPage = () => {
                 <Label className="font-montserrat font-semibold capitalize">
                   From:
                 </Label>
-                <Label>{pickUpAddress}</Label>
+                <Label>
+                  {pickUpAddress || data?.pickupLocation?.address || "N/A"}
+                </Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   to:
                 </Label>
-                <Label>{dropOffAddress}</Label>
+                <Label>
+                  {dropOffAddress || data?.dropoffLocation?.address || "N/A"}
+                </Label>
               </div>
             </CardContent>
           </CardBody>

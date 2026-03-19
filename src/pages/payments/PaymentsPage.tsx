@@ -15,7 +15,6 @@ import { getPayments, type TPayments } from "@/components/table/column";
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { SelectDropDown } from "@/components/ui/select";
-import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 
@@ -34,15 +33,10 @@ const managePaymentsPage = () => {
   const { data, isFetching, isError, refetch } = useFetchAllPayments({
     page: newPage,
     limit: perPage,
-    status: selectedStatus.value,
+    status: selectedStatus,
   });
-  const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TPayments>(
-      data?.payments,
-      newPage,
-      perPage,
-      data?.pagination,
-    );
+  const totalPages = data?.pagination?.totalPages || 1;
+  const calculatedTotalPages = Math.max(1, totalPages);
 
   const handleView = useCallback(
     (id: string) => {
@@ -65,21 +59,14 @@ const managePaymentsPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
-  // Number of pages based on filtered data
-  const calculatedTotalPages = Math.max(1, totalPages);
-
-  // Handle page change
   const handlePageChange = (value: number) => {
     setNewPage(value);
-    setPage(value);
     window.scrollTo(0, 0);
   };
 
-  // Handle per-page size change
   const handlePerPageChange = (value: number) => {
     setperPage(value);
     setNewPage(1);
-    setPage(1);
     refetch();
   };
 
@@ -98,6 +85,7 @@ const managePaymentsPage = () => {
             onClick={() => {
               setSelectedStatus("");
               setperPage(10);
+              setNewPage(1);
             }}
             type="button"
             variant={"outlineSecondary"}
@@ -108,7 +96,10 @@ const managePaymentsPage = () => {
             placeholder="Select Status"
             items={showStatus}
             value={selectedStatus}
-            setSelectedItem={setSelectedStatus}
+            setSelectedItem={(val) => {
+              setSelectedStatus(val);
+              setNewPage(1);
+            }}
           />
           <PermissionGate permission="managePayments" action="export">
             <span
@@ -137,19 +128,22 @@ const managePaymentsPage = () => {
           <Spinner />
         ) : (
           <DataTable
+            key={`${selectedStatus}-${newPage}-${perPage}`}
             columns={columns}
-            data={currentItems}
+            data={data?.payments || []}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue}
+            manualFiltering={true}
+            manualPagination={true}
           />
         )}
 
         {/* Pagination */}
         {totalPages >= 0 && calculatedTotalPages >= 1 && (
           <PaginationControls
-            currentPage={currentPage}
+            currentPage={newPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
             onPerPageChange={handlePerPageChange}

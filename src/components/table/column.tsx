@@ -1739,7 +1739,6 @@ export type TPayoutWallet = {
 };
 
 export function getPayoutWalletColumns(
-  onView: (id: string) => void,
   onManualPayout: (payload: {
     partnerId: string;
     amount: string | number;
@@ -1819,15 +1818,6 @@ export function getPayoutWalletColumns(
 
         return (
           <div className="text-right flex gap-2 items-center justify-end">
-            <Button
-              onClick={() => onView(row.original.id)}
-              variant="outlineNavBtnBlack"
-              size="xl"
-              spacing="lg"
-              tooltip="View Details"
-            >
-              <Eye />
-            </Button>
             {showWithdraw && hasBalance && (
               <Dialog>
                 <DialogTrigger asChild>

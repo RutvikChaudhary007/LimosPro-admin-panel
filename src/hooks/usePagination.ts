@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type pagination = {
   currentPage: number;
@@ -15,6 +15,12 @@ export default function usePagination<T>(
   pagination?: pagination,
 ) {
   const [currentPage, setCurrentPage] = useState(initialPage);
+
+  // Sync internal state with prop changes
+  useEffect(() => {
+    setCurrentPage(initialPage);
+  }, [initialPage]);
+
   const totalPages =
     pagination?.totalPages ?? Math.ceil(items.length / perPage);
   const currentItems = items;

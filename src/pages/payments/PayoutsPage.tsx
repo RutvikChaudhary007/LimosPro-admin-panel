@@ -1,5 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
 import {
   useFetchPartnerTransactions,
   useManualPartnerPayoutMutation,
@@ -16,7 +15,6 @@ import { constant } from "@/lib/constant";
 import { generatePageTitle } from "@/utils/seo";
 
 const PayoutsPage = () => {
-  const navigate = useNavigate();
   const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -39,21 +37,13 @@ const PayoutsPage = () => {
   const totalPages = Math.max(1, apiData?.pagination?.totalPages || 1);
   const currentItems = useMemo(() => payoutsData, [payoutsData]);
 
-  const handleView = useCallback(
-    (id: string) => {
-      navigate(constant.ROUTING_URLS.VIEW_PAYMENTS.replace(":id", id));
-    },
-    [navigate],
-  );
-
   const columns = useMemo(
     () =>
       getPayoutWalletColumns(
-        handleView,
         (payload) => manualPayoutMutation.mutateAsync(payload),
         { showWithdraw: true },
       ),
-    [handleView, manualPayoutMutation],
+    [manualPayoutMutation],
   );
 
   const handlePageChange = (page: number) => {
