@@ -59,8 +59,8 @@ import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
 
-const CTA_DEFAULT_BUTTON_LABEL = "Download";
-const CTA_DEFAULT_DESCRIPTION = "Book, change, or cancel rides easily.";
+// const CTA_DEFAULT_BUTTON_LABEL = "Download";
+// const CTA_DEFAULT_DESCRIPTION = "Book, change, or cancel rides easily.";
 
 const sectionEntrySchema = z.object({
   title: z.string().optional(),
