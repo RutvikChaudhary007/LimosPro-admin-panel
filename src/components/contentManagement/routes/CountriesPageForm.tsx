@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link2, Plus, RefreshCw, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -17,6 +17,7 @@ import {
   CardAction,
   CardBody,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -29,7 +30,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Textarea } from "@/components/ui/textarea";
+import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -43,34 +44,33 @@ import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
 
 const countryEntrySchema = z.object({
-  id: z.string().optional(),
-  name: z.string().optional(),
-  slug: z.string().optional(),
-  code: z.string().optional(),
-  cityCount: z.string().optional(),
-  seo: z
-    .object({
-      title: z.record(z.string(), z.string()).optional(),
-      description: z.record(z.string(), z.string()).optional(),
-    })
-    .optional(),
+  title: z.string().optional(),
+  items: z.array(
+    z.object({
+      id: z.string().optional(),
+      name: z.string().optional(),
+      slug: z.string().optional(),
+      code: z.string().optional(),
+      cityCount: z.string().optional(),
+    }),
+  ),
 });
 
-const sectionEntrySchema = z.object({
-  type: z.enum(["text", "cta", "benefits"]),
-  title: z.string().optional(),
-  content: z.string().optional(),
-  description: z.string().optional(),
-  buttonLabel: z.string().optional(),
-  items: z
-    .array(
-      z.object({
-        title: z.string().optional(),
-        description: z.string().optional(),
-      }),
-    )
-    .optional(),
-});
+// const sectionEntrySchema = z.object({
+//   // type: z.enum(["text", "cta", "benefits"]),
+//   title: z.string().optional(),
+//   content: z.string().optional(),
+//   description: z.string().optional(),
+//   buttonLabel: z.string().optional(),
+//   items: z
+//     .array(
+//       z.object({
+//         title: z.string().optional(),
+//         description: z.string().optional(),
+//       }),
+//     )
+//     .optional(),
+// });
 
 const introSchema = z.object({
   title: z.string().optional(),
@@ -85,9 +85,8 @@ const faqItemSchema = z.object({
 
 const languageContentSchema = z.object({
   intro: introSchema.optional(),
-  sections: z.array(sectionEntrySchema).optional(),
-  countries: z.array(countryEntrySchema).optional(),
-  faq: z.array(faqItemSchema).optional(),
+  // sections: z.array(sectionEntrySchema).optional(),
+  countries: countryEntrySchema.optional(),
 });
 
 const countriesPageFormSchema = z.object({
@@ -96,8 +95,9 @@ const countriesPageFormSchema = z.object({
   isActive: z.boolean().optional().default(true),
   defaultLanguage: z.string().default(DEFAULT_LANGUAGE),
   availableLanguages: z.array(z.string()).default([DEFAULT_LANGUAGE]),
-  seo: seoSchema.optional(),
   content: z.record(z.string(), languageContentSchema),
+  faqs: z.array(faqItemSchema).optional(),
+  seo: seoSchema.optional(),
   jsonLd: jsonLdSchema.optional(),
 });
 
@@ -114,8 +114,9 @@ const getEmptySeo = () => ({
 const getEmptyIntro = () => ({ title: "", description: "" });
 const getEmptyLanguageContent = () => ({
   intro: getEmptyIntro(),
-  sections: [] as Array<z.infer<typeof sectionEntrySchema>>,
-  countries: [] as Array<z.infer<typeof countryEntrySchema>>,
+  // sections: [] as Array<z.infer<typeof sectionEntrySchema>>,
+  countries: {} as z.infer<typeof countryEntrySchema>,
+  faqs: [],
 });
 const normalizeSeo = (seo: any) => {
   if (!seo || typeof seo !== "object") return getEmptySeo();
@@ -203,7 +204,24 @@ export default function CountriesPageForm({
     defaultValues,
   });
 
-  const { watch, getValues, setValue } = form;
+  const {
+    watch,
+    getValues,
+    setValue,
+    control,
+    formState: { errors },
+  } = form;
+
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.error(
+        "CitiesHubForm validation errors:",
+        errors,
+        "\n values:",
+        console.log(getValues()),
+      );
+    }
+  }, [errors]);
   const availableLanguages = watch("availableLanguages") || [DEFAULT_LANGUAGE];
 
   const contentByLanguage =
@@ -211,39 +229,39 @@ export default function CountriesPageForm({
       control: form.control,
       name: "content",
     }) || {};
-  const sections = Array.isArray(
-    contentByLanguage?.[selectedLanguage]?.sections,
-  )
-    ? contentByLanguage[selectedLanguage].sections
-    : [];
+  // const sections = Array.isArray(
+  //   contentByLanguage?.[selectedLanguage]?.sections,
+  // )
+  //   ? contentByLanguage[selectedLanguage].sections
+  //   : [];
   const countries = Array.isArray(
-    contentByLanguage?.[selectedLanguage]?.countries,
+    contentByLanguage?.[selectedLanguage]?.countries?.items,
   )
-    ? contentByLanguage[selectedLanguage].countries
+    ? contentByLanguage[selectedLanguage].countries?.items
     : [];
 
-  const addSection = () => {
-    const path = `content.${selectedLanguage}.sections` as any;
-    const currentSections = getValues(path) || [];
-    setValue(
-      path,
-      [...currentSections, { type: "text", title: "", content: "" }],
-      { shouldDirty: true, shouldTouch: true },
-    );
-  };
+  // const addSection = () => {
+  //   const path = `content.${selectedLanguage}.sections` as any;
+  //   const currentSections = getValues(path) || [];
+  //   setValue(
+  //     path,
+  //     [...currentSections, { type: "text", title: "", content: "" }],
+  //     { shouldDirty: true, shouldTouch: true },
+  //   );
+  // };
 
-  const removeSection = (index: number) => {
-    const path = `content.${selectedLanguage}.sections` as any;
-    const currentSections = getValues(path) || [];
-    setValue(
-      path,
-      currentSections.filter((_: any, idx: number) => idx !== index),
-      { shouldDirty: true, shouldTouch: true },
-    );
-  };
+  // const removeSection = (index: number) => {
+  //   const path = `content.${selectedLanguage}.sections` as any;
+  //   const currentSections = getValues(path) || [];
+  //   setValue(
+  //     path,
+  //     currentSections.filter((_: any, idx: number) => idx !== index),
+  //     { shouldDirty: true, shouldTouch: true },
+  //   );
+  // };
 
   const addCountry = () => {
-    const path = `content.${selectedLanguage}.countries` as any;
+    const path = `content.${selectedLanguage}.countries.items` as any;
     const currentCountries = getValues(path) || [];
     setValue(
       path,
@@ -266,7 +284,7 @@ export default function CountriesPageForm({
   };
 
   const removeCountry = (index: number) => {
-    const path = `content.${selectedLanguage}.countries` as any;
+    const path = `content.${selectedLanguage}.countries.items` as any;
     const currentCountries = getValues(path) || [];
     setValue(
       path,
@@ -467,20 +485,27 @@ export default function CountriesPageForm({
                             />
                           </InputGroup>
                         </Field>
-                        <Field>
-                          <FieldLabel>Intro Description</FieldLabel>
-                          <Textarea
-                            {...form.register(
-                              `content.${selectedLanguage}.intro.description` as any,
-                            )}
-                            placeholder="Intro text"
-                          />
-                        </Field>
+                        <Controller
+                          control={control}
+                          name={
+                            `content.${selectedLanguage}.intro.description` as any
+                          }
+                          render={({ field }) => (
+                            <Field>
+                              <FieldLabel>Description</FieldLabel>
+                              <TinyEditorRHF
+                                value={field.value || ""}
+                                onChange={field.onChange}
+                              />
+                            </Field>
+                          )}
+                        />
                       </CardContent>
                     </CardBody>
                   </Card>
 
-                  <Card>
+                  {/* Section */}
+                  {/*<Card>
                     <CardBody>
                       <CardHeader>
                         <CardTitle>
@@ -553,91 +578,111 @@ export default function CountriesPageForm({
                         ))}
                       </CardContent>
                     </CardBody>
-                  </Card>
+                  </Card>*/}
 
+                  {/* Country Section */}
                   <Card>
                     <CardBody>
                       <CardHeader>
                         <CardTitle>
                           Countries List ({selectedLanguage.toUpperCase()})
                         </CardTitle>
-                        <CardAction>
-                          <Button
-                            type="button"
-                            variant="outlinePrimary"
-                            size="sm"
-                            onClick={addCountry}
-                          >
-                            <Plus className="w-4 h-4 mr-1" /> Add Country
-                          </Button>
-                        </CardAction>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        {countries.map((_: any, index: number) => (
-                          <Card
-                            key={`${selectedLanguage}-country-${index}`}
-                            className="border-dashed"
-                          >
-                            <CardContent className="p-4 space-y-3">
-                              <div className="flex justify-between">
-                                <span className="text-xs font-bold uppercase text-gray-400">
-                                  Country #{index + 1}
-                                </span>
+                        <Field>
+                          <FieldLabel>Title</FieldLabel>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...form.register(
+                                `content.${selectedLanguage}.countries.title` as any,
+                              )}
+                            />
+                          </InputGroup>
+                        </Field>
+                        <Card>
+                          <CardBody>
+                            <CardHeader>
+                              <CardTitle>Card List Items</CardTitle>
+                              <CardAction>
                                 <Button
                                   type="button"
-                                  variant="ghost"
+                                  variant="outlinePrimary"
                                   size="sm"
-                                  onClick={() => removeCountry(index)}
+                                  onClick={addCountry}
                                 >
-                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                  <Plus className="w-4 h-4 mr-1" /> Add Country
                                 </Button>
-                              </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <Field>
-                                  <FieldLabel>Country Name</FieldLabel>
-                                  <InputGroup>
-                                    <InputGroupInput
-                                      {...form.register(
-                                        `content.${selectedLanguage}.countries.${index}.name` as any,
-                                      )}
-                                    />
-                                  </InputGroup>
-                                </Field>
-                                <Field>
-                                  <FieldLabel>Slug</FieldLabel>
-                                  <InputGroup>
-                                    <InputGroupInput
-                                      {...form.register(
-                                        `content.${selectedLanguage}.countries.${index}.slug` as any,
-                                      )}
-                                    />
-                                  </InputGroup>
-                                </Field>
-                                <Field>
-                                  <FieldLabel>Code</FieldLabel>
-                                  <InputGroup>
-                                    <InputGroupInput
-                                      {...form.register(
-                                        `content.${selectedLanguage}.countries.${index}.code` as any,
-                                      )}
-                                      placeholder="e.g. us, uk"
-                                    />
-                                  </InputGroup>
-                                </Field>
-                                <Field>
-                                  <FieldLabel>City Count</FieldLabel>
-                                  <InputGroup>
-                                    <InputGroupInput
-                                      {...form.register(
-                                        `content.${selectedLanguage}.countries.${index}.cityCount` as any,
-                                      )}
-                                    />
-                                  </InputGroup>
-                                </Field>
-                              </div>
+                              </CardAction>
+                            </CardHeader>
+                            <CardContent>
+                              {countries.map((_: any, index: number) => (
+                                <Card
+                                  key={`${selectedLanguage}-countries-${index}`}
+                                  className="border-dashed"
+                                >
+                                  <CardContent className="p-4 space-y-3">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs font-bold uppercase text-gray-400">
+                                        Country #{index + 1}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => removeCountry(index)}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
+                                      <Field>
+                                        <FieldLabel>Country Name</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...form.register(
+                                              `content.${selectedLanguage}.countries.items.${index}.name` as any,
+                                            )}
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <Field>
+                                        <FieldLabel>Slug</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...form.register(
+                                              `content.${selectedLanguage}.countries.items.${index}.slug` as any,
+                                            )}
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <Field>
+                                        <FieldLabel>Code</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...form.register(
+                                              `content.${selectedLanguage}.countries.items.${index}.code` as any,
+                                            )}
+                                            placeholder="e.g. us, uk"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      {/*<Field>
+                                        <FieldLabel>City Count</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...form.register(
+                                              `content.${selectedLanguage}.countries.${index}.cityCount` as any,
+                                            )}
+                                          />
+                                        </InputGroup>
+                                      </Field>*/}
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
                             </CardContent>
-                          </Card>
-                        ))}
+                          </CardBody>
+                        </Card>
                       </CardContent>
                     </CardBody>
                   </Card>

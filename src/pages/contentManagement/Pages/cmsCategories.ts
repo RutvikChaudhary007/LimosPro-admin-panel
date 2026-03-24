@@ -94,7 +94,7 @@ export const CMS_CATEGORIES: CMSCategoryConfig[] = [
   },
   {
     key: "countries",
-    label: "Countries",
+    label: "Countries Hub",
     apiFilterKey: "countries",
     countKey: "countries",
     name: "Countries",

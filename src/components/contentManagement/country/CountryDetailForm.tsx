@@ -1,10 +1,19 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link2, Plus, RefreshCw, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  Banknote,
+  Clock,
+  Globe,
+  Link2,
+  Plus,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
   FormProvider,
   type SubmitHandler,
+  useFieldArray,
   useForm,
   useWatch,
 } from "react-hook-form";
@@ -29,7 +38,16 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { TinyEditorRHF } from "@/components/ui/tiny-text-editor";
+import UploadWithUrlV2 from "@/components/ui/upload-with-url-v2";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_CODES,
@@ -45,22 +63,99 @@ const CTA_DEFAULT_BUTTON_LABEL = "Download";
 const CTA_DEFAULT_DESCRIPTION = "Book, change, or cancel rides easily.";
 
 const sectionEntrySchema = z.object({
-  type: z.enum(["text", "cta"]),
   title: z.string().optional(),
-  content: z.string().optional(),
   description: z.string().optional(),
-  buttonLabel: z.string().optional(),
+});
+
+const citiesSectionSchema = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        label: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+const airportTransferSectionsSchema = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        label: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    )
+    .optional(),
+});
+const airportTransferByAirportSectionsSchema = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        label: z.string().optional(),
+        url: z.string().optional(),
+      }),
+    )
+    .optional(),
 });
 
 const introSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  subtitle: z.string().optional(),
+  // subtitle: z.string().optional(),
+});
+
+const cardSchema = z.object({
+  icon: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  // subtitle: z.string().optional(),
+});
+
+const breadcrumbItemSchema = z.object({
+  label: z.string().optional(),
+  url: z.string().optional(),
+});
+
+const downloadOptionsAppSchema = z.object({
+  image: z.any().optional(),
+  url: z.string().optional(),
+  alt: z.string().optional(),
+});
+
+const downloadOptionsListItemSchema = z.object({
+  value: z.string().optional(),
+});
+
+const downloadOptionsImageSchema = z.object({
+  src: z.any().optional(),
+  alt: z.string().optional(),
+});
+
+const downloadOptionsSchema = z.object({
+  Heading: z.string().optional(),
+  Description: z.string().optional(),
+  image: downloadOptionsImageSchema.optional(),
+  qrImage: downloadOptionsImageSchema.optional(),
+  apps: z.array(downloadOptionsAppSchema).optional(),
+  // QRAlt: z.string().optional(),
+  // AppStoreAlt: z.string().optional(),
+  // PlayStoreAlt: z.string().optional(),
+  list: z.array(downloadOptionsListItemSchema).optional(),
 });
 
 const languageContentSchema = z.object({
   intro: introSchema.optional(),
-  sections: z.array(sectionEntrySchema).optional(),
+  breadcrumb: z.array(breadcrumbItemSchema).optional(),
+  cardSections: z.array(cardSchema).optional(),
+  citiesSections: citiesSectionSchema.optional(),
+  airportTransferSections: airportTransferSectionsSchema.optional(),
+  airportTransferByAirportSections:
+    airportTransferByAirportSectionsSchema.optional(),
+  sections: sectionEntrySchema.optional(),
+  DownloadOptions: downloadOptionsSchema.optional(),
 });
 
 const countryDetailFormSchema = z.object({
@@ -79,12 +174,26 @@ export type CountryDetailFormData = z.infer<typeof countryDetailFormSchema>;
 const getEmptyIntro = () => ({
   title: "",
   description: "",
-  subtitle: "",
+  // subtitle: "",
 });
+
+const getEmptyBreadCrumb = () => [];
 
 const getEmptyLanguageContent = () => ({
   intro: getEmptyIntro(),
-  sections: [] as Array<z.infer<typeof sectionEntrySchema>>,
+  breadcrumb: getEmptyBreadCrumb(),
+  sections: {} as z.infer<typeof sectionEntrySchema>,
+  DownloadOptions: {
+    Heading: "",
+    Description: "",
+    image: { src: "", alt: "" },
+    qrImage: { src: "", alt: "" },
+    apps: [{ image: "", url: "", alt: "" }],
+    // QRAlt: "",
+    // AppStoreAlt: "",
+    // PlayStoreAlt: "",
+    list: [],
+  },
 });
 
 const getEmptySeo = () => ({
@@ -126,11 +235,35 @@ function normalizeInitialData(data: any): CountryDetailFormData {
       data.content?.[lang] ||
       (lang === defaultLanguage
         ? {
-            intro:
-              data.intro ?? defaultLanguageContent.intro ?? getEmptyIntro(),
-            sections: Array.isArray(data.sections)
-              ? data.sections
-              : (defaultLanguageContent.sections ?? []),
+            intro: defaultLanguageContent.intro ?? getEmptyIntro(),
+            breadcrumb: Array.isArray(defaultLanguageContent.breadcrumb)
+              ? defaultLanguageContent.breadcrumb
+              : [],
+            sections: defaultLanguageContent.sections
+              ? defaultLanguageContent.sections
+              : {},
+            cardSections: defaultLanguageContent?.cardSections
+              ? defaultLanguageContent.cardSections
+              : {},
+            citiesSections: defaultLanguageContent?.citiesSections
+              ? defaultLanguageContent?.citiesSections
+              : {},
+            airportTransferSections:
+              defaultLanguageContent?.airportTransferSections
+                ? defaultLanguageContent.airportTransferSections
+                : {},
+            airportTransferByAirportSections:
+              defaultLanguageContent?.airportTransferByAirportSections
+                ? defaultLanguageContent.airportTransferByAirportSections
+                : {},
+            DownloadOptions: defaultLanguageContent?.DownloadOptions ?? {
+              Heading: "",
+              Description: "",
+              image: { src: "", alt: "" },
+              qrImage: { src: "", alt: "" },
+              apps: [{ image: "", url: "", alt: "" }],
+              list: [],
+            },
           }
         : getEmptyLanguageContent());
 
@@ -138,11 +271,33 @@ function normalizeInitialData(data: any): CountryDetailFormData {
       intro: {
         title: contentForLang?.intro?.title ?? "",
         description: contentForLang?.intro?.description ?? "",
-        subtitle: contentForLang?.intro?.subtitle ?? "",
+        // subtitle: contentForLang?.intro?.subtitle ?? "",
       },
-      sections: Array.isArray(contentForLang?.sections)
-        ? contentForLang.sections.map((section: any) => ({ ...section }))
+      breadcrumb: Array.isArray(contentForLang?.breadcrumb)
+        ? contentForLang.breadcrumb.map((item: any) => ({ ...item }))
         : [],
+      sections: contentForLang?.sections ? contentForLang.sections : {},
+      cardSections: contentForLang?.cardSections
+        ? contentForLang.cardSections
+        : {},
+      citiesSections: contentForLang?.citiesSections
+        ? contentForLang?.citiesSections
+        : {},
+      airportTransferSections: contentForLang?.airportTransferSections
+        ? contentForLang.airportTransferSections
+        : {},
+      airportTransferByAirportSections:
+        contentForLang?.airportTransferByAirportSections
+          ? contentForLang.airportTransferByAirportSections
+          : {},
+      DownloadOptions: contentForLang?.DownloadOptions ?? {
+        Heading: "",
+        Description: "",
+        image: { src: "", alt: "" },
+        qrImage: { src: "", alt: "" },
+        apps: [{ image: "", url: "", alt: "" }],
+        list: [],
+      },
     };
   });
 
@@ -215,57 +370,197 @@ export default function CountryDetailForm({
     defaultValues,
   });
 
-  const { watch, getValues, setValue } = form;
+  const {
+    watch,
+    getValues,
+    setValue,
+    control,
+    formState: { errors },
+  } = form;
+
+  useEffect(() => {
+    if (errors) console.error("errors:=", errors, "\nvalues:", getValues());
+  }, [errors]);
   const availableLanguages = watch("availableLanguages") || [DEFAULT_LANGUAGE];
 
   const contentByLanguage =
     useWatch({
-      control: form.control,
+      control,
       name: "content",
     }) || {};
-  const getSectionsPath = (lang: LanguageCode = selectedLanguage) =>
-    `content.${lang}.sections` as any;
-  const sections: Array<z.infer<typeof sectionEntrySchema>> = Array.isArray(
-    contentByLanguage?.[selectedLanguage]?.sections,
+
+  const appList = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.DownloadOptions.apps` as any,
+  });
+  const downloadList = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.DownloadOptions.list` as any,
+  });
+  const getCardSectionsPath = (lang: LanguageCode = selectedLanguage) =>
+    `content.${lang}.cardSections` as any;
+
+  const cardSections = Array.isArray(
+    contentByLanguage?.[selectedLanguage]?.cardSections,
   )
-    ? contentByLanguage[selectedLanguage].sections
+    ? contentByLanguage[selectedLanguage].cardSections
     : [];
 
-  const addTextSection = () => {
-    const sectionsPath = getSectionsPath();
-    const currentSections = getValues(sectionsPath) || [];
+  const addCardSections = () => {
+    const sectionsPath = getCardSectionsPath();
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
     setValue(
       sectionsPath,
-      [...currentSections, { type: "text", title: "", content: "" }],
+      [...sectionsArray, { icon: "", title: "", description: "" }],
       { shouldDirty: true, shouldTouch: true },
     );
   };
 
-  const addCtaSection = () => {
-    const sectionsPath = getSectionsPath();
-    const currentSections = getValues(sectionsPath) || [];
+  const removeCardSectionsAt = (index: number) => {
+    const sectionsPath = getCardSectionsPath();
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
     setValue(
       sectionsPath,
+      sectionsArray.filter(
+        (_: z.infer<typeof cardSchema>, idx: number) => idx !== index,
+      ),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+  const citiesSections = Array.isArray(
+    contentByLanguage?.[selectedLanguage]?.citiesSections?.items,
+  )
+    ? contentByLanguage[selectedLanguage]?.citiesSections?.items
+    : [];
+
+  const airportTransferSections = Array.isArray(
+    contentByLanguage?.[selectedLanguage]?.airportTransferSections?.items,
+  )
+    ? contentByLanguage[selectedLanguage]?.airportTransferSections?.items
+    : [];
+
+  const airportTransferByAirportSections = Array.isArray(
+    contentByLanguage?.[selectedLanguage]?.airportTransferByAirportSections
+      ?.items,
+  )
+    ? contentByLanguage[selectedLanguage]?.airportTransferByAirportSections
+        ?.items
+    : [];
+
+  const addCitiesSection = () => {
+    const sectionsPath: any = `content.${selectedLanguage}.citiesSections.items`;
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    setValue(
+      sectionsPath,
+      [...sectionsArray, { type: "text", title: "", content: "" }],
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const removeCitiesSectionAt = (index: number) => {
+    const sectionsPath: any = `content.${selectedLanguage}.citiesSections.items`;
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    setValue(
+      sectionsPath,
+      sectionsArray.filter(
+        (_: z.infer<typeof sectionEntrySchema>, idx: number) => idx !== index,
+      ),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const addAirportTransferSections = () => {
+    const sectionsPath: any = `content.${selectedLanguage}.airportTransferSections.items`;
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    setValue(
+      sectionsPath,
+      [...sectionsArray, { type: "text", title: "", content: "" }],
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const removeAirportTransferSectionsAt = (index: number) => {
+    const sectionsPath: any = `content.${selectedLanguage}.airportTransferSections.items`;
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    setValue(
+      sectionsPath,
+      sectionsArray.filter(
+        (_: z.infer<typeof sectionEntrySchema>, idx: number) => idx !== index,
+      ),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const addAirportTransferByAirportSections = () => {
+    const sectionsPath: any = `content.${selectedLanguage}.airportTransferByAirportSections.items`;
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    setValue(
+      sectionsPath,
+      [...sectionsArray, { type: "text", title: "", content: "" }],
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const removeAirportTransferByAirportSectionsAt = (index: number) => {
+    const sectionsPath: any = `content.${selectedLanguage}.airportTransferByAirportSections.items`;
+    const currentSections = getValues(sectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    setValue(
+      sectionsPath,
+      sectionsArray.filter(
+        (_: z.infer<typeof sectionEntrySchema>, idx: number) => idx !== index,
+      ),
+      { shouldDirty: true, shouldTouch: true },
+    );
+  };
+
+  const getBreadcrumbSectionsPath = (lang: LanguageCode = selectedLanguage) =>
+    `content.${lang}.breadcrumb` as any;
+
+  const breadcrumbSections: Array<z.infer<typeof breadcrumbItemSchema>> =
+    Array.isArray(contentByLanguage?.[selectedLanguage]?.breadcrumb)
+      ? contentByLanguage[selectedLanguage].breadcrumb
+      : [];
+
+  const addBreadcrumbSection = () => {
+    const breadcrumbSectionsPath = getBreadcrumbSectionsPath();
+    const currentSections = getValues(breadcrumbSectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+    console.log(
+      "breadcrumbSectionsPath:",
+      breadcrumbSectionsPath,
+      "\ncurrentSections:",
+      { ...sectionsArray },
+    );
+    setValue(
+      breadcrumbSectionsPath,
       [
-        ...currentSections,
+        ...sectionsArray,
         {
-          type: "cta",
-          title: "",
-          description: CTA_DEFAULT_DESCRIPTION,
-          buttonLabel: CTA_DEFAULT_BUTTON_LABEL,
+          label: "",
+          url: "",
         },
       ],
       { shouldDirty: true, shouldTouch: true },
     );
   };
 
-  const removeSectionAt = (index: number) => {
-    const sectionsPath = getSectionsPath();
-    const currentSections = getValues(sectionsPath) || [];
+  const removeBreadcrumSectionAt = (index: number) => {
+    const breadcrumbSectionsPath = getBreadcrumbSectionsPath();
+    const currentSections = getValues(breadcrumbSectionsPath);
+    const sectionsArray = Array.isArray(currentSections) ? currentSections : [];
+
     setValue(
-      sectionsPath,
-      currentSections.filter(
-        (_: z.infer<typeof sectionEntrySchema>, idx: number) => idx !== index,
+      breadcrumbSectionsPath,
+      sectionsArray.filter(
+        (_: z.infer<typeof breadcrumbItemSchema>, idx: number) => idx !== index,
       ),
       { shouldDirty: true, shouldTouch: true },
     );
@@ -290,9 +585,23 @@ export default function CountryDetailForm({
             ...getEmptyIntro(),
             ...(languageContent.intro || {}),
           },
+          breadcrumb: Array.isArray(languageContent.breadcrumb)
+            ? languageContent.breadcrumb.map((bcb: any) => ({ ...bcb }))
+            : [],
           sections: Array.isArray(languageContent.sections)
             ? languageContent.sections.map((section: any) => ({ ...section }))
             : [],
+          DownloadOptions: languageContent.DownloadOptions ?? {
+            Heading: "",
+            Description: "",
+            image: { src: "", alt: "" },
+            qrImage: { src: "", alt: "" },
+            apps: [{ image: "", url: "", alt: "" }],
+            // QRAlt: "",
+            // AppStoreAlt: "",
+            // PlayStoreAlt: "",
+            list: [],
+          },
         },
         { shouldDirty: true },
       );
@@ -315,6 +624,7 @@ export default function CountryDetailForm({
   };
 
   const onFormSubmit: SubmitHandler<CountryDetailFormData> = (data) => {
+    console.log("data:", data);
     const submissionData = structuredClone(data) as CountryDetailFormData;
     submissionData.content = submissionData.content || {};
 
@@ -325,24 +635,24 @@ export default function CountryDetailForm({
 
       const languageContent = submissionData.content[lang];
       languageContent.intro = languageContent.intro || getEmptyIntro();
-      languageContent.sections = (languageContent.sections || []).map(
-        (section) => {
-          if (section.type === "cta") {
-            return {
-              ...section,
-              content: "",
-              description: section.description ?? "",
-              buttonLabel: section.buttonLabel ?? "",
-            };
-          }
-          return {
-            ...section,
-            description: "",
-            buttonLabel: "",
-            content: section.content ?? "",
-          };
-        },
-      );
+      // languageContent.sections = (languageContent.sections || []).map(
+      //   (section) => {
+      //     if (section.type === "cta") {
+      //       return {
+      //         ...section,
+      //         content: "",
+      //         description: section.description ?? "",
+      //         buttonLabel: section.buttonLabel ?? "",
+      //       };
+      //     }
+      //     return {
+      //       ...section,
+      //       description: "",
+      //       buttonLabel: "",
+      //       content: section.content ?? "",
+      //     };
+      //   },
+      // );
     });
 
     const formData = jsonToFormData(submissionData, { fileKeyMode: "path" });
@@ -487,6 +797,7 @@ export default function CountryDetailForm({
               <div key={selectedLanguage}>
                 {activeTab === "general" && (
                   <div className="space-y-6">
+                    {/* Hero Section */}
                     <Card>
                       <CardBody>
                         <CardHeader>
@@ -494,9 +805,7 @@ export default function CountryDetailForm({
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel>
-                              Intro Title (use {"{country}"} for country name)
-                            </FieldLabel>
+                            <FieldLabel>Intro Title</FieldLabel>
                             <InputGroup>
                               <InputGroupInput
                                 {...form.register(
@@ -507,66 +816,62 @@ export default function CountryDetailForm({
                             </InputGroup>
                           </Field>
                           <Field>
-                            <FieldLabel>Intro Description</FieldLabel>
-                            <Textarea
-                              {...form.register(
-                                `content.${selectedLanguage}.intro.description` as any,
-                              )}
-                              placeholder="Description text"
-                            />
-                          </Field>
-                          <Field>
                             <FieldLabel>Intro Subtitle</FieldLabel>
                             <InputGroup>
                               <InputGroupInput
                                 {...form.register(
                                   `content.${selectedLanguage}.intro.subtitle` as any,
                                 )}
-                                placeholder="Check out our range ... {country} ..."
+                                placeholder="Check out our services in {country}"
                               />
                             </InputGroup>
                           </Field>
+                          <Controller
+                            control={form.control}
+                            name={
+                              `content.${selectedLanguage}.intro.description` as any
+                            }
+                            render={({ field }) => (
+                              <Field>
+                                <FieldLabel>Intro Description</FieldLabel>
+                                <TinyEditorRHF
+                                  value={field.value || ""}
+                                  onChange={field.onChange}
+                                />
+                              </Field>
+                            )}
+                          />
                         </CardContent>
                       </CardBody>
                     </Card>
 
+                    {/* BreadCrumb Section */}
                     <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>Content Sections</CardTitle>
+                          <CardTitle>BreadCumb Section</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
                           <CardAction>
                             <div className="flex items-center gap-2">
                               <Button
                                 type="button"
                                 variant="outlinePrimary"
                                 size="sm"
-                                onClick={addTextSection}
+                                onClick={addBreadcrumbSection}
                               >
-                                <Plus className="w-4 h-4 mr-1" /> Add Text
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="outlinePrimary"
-                                size="sm"
-                                onClick={addCtaSection}
-                              >
-                                <Plus className="w-4 h-4 mr-1" /> Add CTA
+                                <Plus className="w-4 h-4 mr-1" /> Add BreadCrumb
                               </Button>
                             </div>
                           </CardAction>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          {sections.map(
+                          {breadcrumbSections.map(
                             (
-                              _: z.infer<typeof sectionEntrySchema>,
+                              _: z.infer<typeof breadcrumbItemSchema>,
                               index: number,
                             ) => {
-                              const sectionType = form.watch(
-                                `content.${selectedLanguage}.sections.${index}.type` as any,
-                              );
                               return (
                                 <Card
-                                  key={`${selectedLanguage}-section-${index}`}
+                                  key={`${selectedLanguage}breadcrumb-${index}`}
                                   className="border-dashed"
                                 >
                                   <CardContent className="p-4 space-y-3">
@@ -578,70 +883,630 @@ export default function CountryDetailForm({
                                         type="button"
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() => removeSectionAt(index)}
+                                        onClick={() =>
+                                          removeBreadcrumSectionAt(index)
+                                        }
                                       >
                                         <Trash2 className="w-4 h-4 text-red-500" />
                                       </Button>
                                     </div>
                                     <Field>
-                                      <FieldLabel>Type</FieldLabel>
-                                      <select
-                                        className="w-full border rounded px-3 py-2"
-                                        {...form.register(
-                                          `content.${selectedLanguage}.sections.${index}.type` as any,
-                                        )}
-                                      >
-                                        <option value="text">Text</option>
-                                        <option value="cta">CTA</option>
-                                      </select>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Title</FieldLabel>
+                                      <FieldLabel>Label</FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
                                           {...form.register(
-                                            `content.${selectedLanguage}.sections.${index}.title` as any,
+                                            `content.${selectedLanguage}.breadcrumb.${index}.label` as any,
                                           )}
                                         />
                                       </InputGroup>
                                     </Field>
-
-                                    {sectionType === "cta" ? (
-                                      <>
-                                        <Field>
-                                          <FieldLabel>Description</FieldLabel>
-                                          <Textarea
-                                            {...form.register(
-                                              `content.${selectedLanguage}.sections.${index}.description` as any,
-                                            )}
-                                          />
-                                        </Field>
-                                        <Field>
-                                          <FieldLabel>Button Label</FieldLabel>
-                                          <InputGroup>
-                                            <InputGroupInput
-                                              {...form.register(
-                                                `content.${selectedLanguage}.sections.${index}.buttonLabel` as any,
-                                              )}
-                                            />
-                                          </InputGroup>
-                                        </Field>
-                                      </>
-                                    ) : (
-                                      <Field>
-                                        <FieldLabel>Content</FieldLabel>
-                                        <Textarea
+                                    <Field>
+                                      <FieldLabel>URL</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
                                           {...form.register(
-                                            `content.${selectedLanguage}.sections.${index}.content` as any,
+                                            `content.${selectedLanguage}.breadcrumb.${index}.url` as any,
                                           )}
                                         />
-                                      </Field>
-                                    )}
+                                      </InputGroup>
+                                    </Field>
                                   </CardContent>
                                 </Card>
                               );
                             },
                           )}
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* Card Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>Card Section</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <CardAction>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                type="button"
+                                variant="outlinePrimary"
+                                size="sm"
+                                onClick={addCardSections}
+                              >
+                                <Plus className="w-4 h-4 mr-1" /> Add Card
+                              </Button>
+                            </div>
+                          </CardAction>
+                          {cardSections.map((_, index: number) => {
+                            return (
+                              <Card
+                                key={`${selectedLanguage}breadcrumb-${index}`}
+                                className="border-dashed"
+                              >
+                                <CardContent className="p-4 space-y-3">
+                                  <div className="flex justify-between">
+                                    <span className="text-xs font-bold uppercase text-gray-400">
+                                      Section #{index + 1}
+                                    </span>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        removeCardSectionsAt(index)
+                                      }
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                  </div>
+                                  <Field>
+                                    <FieldLabel>Icon</FieldLabel>
+                                    <Controller
+                                      control={control}
+                                      name={
+                                        `content.${selectedLanguage}.cardSections.${index}.icon` as any
+                                      }
+                                      render={({ field }) => (
+                                        <Select
+                                          onValueChange={field.onChange}
+                                          defaultValue={field.value}
+                                          value={field.value}
+                                        >
+                                          <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select Icon" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="Globe">
+                                              <div className="flex items-center gap-2">
+                                                <Globe className="w-4 h-4" />{" "}
+                                                <span>Globe</span>
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value="Clock">
+                                              <div className="flex items-center gap-2">
+                                                <Clock className="w-4 h-4" />
+                                                <span>Clock</span>
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value="Banknote">
+                                              <div className="flex items-center gap-2">
+                                                <Banknote className="w-4 h-4" />
+                                                <span>BankNote</span>
+                                              </div>
+                                            </SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      )}
+                                    />
+                                  </Field>
+                                  <Field>
+                                    <FieldLabel>Title</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.cardSections.${index}.title` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+
+                                  <Field>
+                                    <FieldLabel>Description</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.cardSections.${index}.description` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>Section</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <Field>
+                            <FieldLabel>Title</FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...form.register(
+                                  `content.${selectedLanguage}.sections.title` as any,
+                                )}
+                                placeholder="Your Private Driver in United States"
+                              />
+                            </InputGroup>
+                          </Field>
+                          <Field>
+                            <Controller
+                              control={form.control}
+                              name={
+                                `content.${selectedLanguage}.sections.description` as any
+                              }
+                              render={({ field }) => (
+                                <Field>
+                                  <FieldLabel>Description</FieldLabel>
+                                  <TinyEditorRHF
+                                    value={field.value || ""}
+                                    onChange={field.onChange}
+                                  />
+                                </Field>
+                              )}
+                            />
+                          </Field>
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* Cities Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>Cities Sections</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <Field>
+                            <FieldLabel>Title</FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...form.register(
+                                  `content.${selectedLanguage}.citiesSections.title` as any,
+                                )}
+                                placeholder="Your Private Driver in United States"
+                              />
+                            </InputGroup>
+                          </Field>
+                          <CardAction>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                type="button"
+                                variant="outlinePrimary"
+                                size="sm"
+                                onClick={addCitiesSection}
+                              >
+                                <Plus className="w-4 h-4 mr-1" /> Add
+                              </Button>
+                            </div>
+                          </CardAction>
+                          {citiesSections.map((_, index: number) => {
+                            return (
+                              <Card
+                                key={`${selectedLanguage}-citiesSections-${index}`}
+                                className="border-dashed"
+                              >
+                                <CardContent className="p-4 space-y-3">
+                                  <div className="flex justify-between">
+                                    <span className="text-xs font-bold uppercase text-gray-400">
+                                      Section #{index + 1}
+                                    </span>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        removeCitiesSectionAt(index)
+                                      }
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                  </div>
+                                  <Field>
+                                    <FieldLabel>Label</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.citiesSections.items.${index}.label` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                  <Field>
+                                    <FieldLabel>URL</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.citiesSections.items.${index}.url` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* Airport Transfer Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>Airport Transfer Sections</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <Field>
+                            <FieldLabel>Title</FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...form.register(
+                                  `content.${selectedLanguage}.airportTransferSections.title` as any,
+                                )}
+                                placeholder="Your Private Driver in United States"
+                              />
+                            </InputGroup>
+                          </Field>
+                          <CardAction>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                type="button"
+                                variant="outlinePrimary"
+                                size="sm"
+                                onClick={addAirportTransferSections}
+                              >
+                                <Plus className="w-4 h-4 mr-1" /> Add
+                              </Button>
+                            </div>
+                          </CardAction>
+                          {airportTransferSections.map((_, index: number) => {
+                            return (
+                              <Card
+                                key={`${selectedLanguage}-airportTransferSections-${index}`}
+                                className="border-dashed"
+                              >
+                                <CardContent className="p-4 space-y-3">
+                                  <div className="flex justify-between">
+                                    <span className="text-xs font-bold uppercase text-gray-400">
+                                      Section #{index + 1}
+                                    </span>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        removeAirportTransferSectionsAt(index)
+                                      }
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-500" />
+                                    </Button>
+                                  </div>
+                                  <Field>
+                                    <FieldLabel>Label</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.airportTransferSections.items.${index}.label` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                  <Field>
+                                    <FieldLabel>URL</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.airportTransferSections.items.${index}.url` as any,
+                                        )}
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* Airport transfer by airport Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>
+                            Airport transfer by airport Sections
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <Field>
+                            <FieldLabel>Title</FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...form.register(
+                                  `content.${selectedLanguage}.airportTransferByAirportSections.title` as any,
+                                )}
+                                placeholder="Your Private Driver in United States"
+                              />
+                            </InputGroup>
+                          </Field>
+                          <CardAction>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                type="button"
+                                variant="outlinePrimary"
+                                size="sm"
+                                onClick={addAirportTransferByAirportSections}
+                              >
+                                <Plus className="w-4 h-4 mr-1" /> Add
+                              </Button>
+                            </div>
+                          </CardAction>
+                          {airportTransferByAirportSections.map(
+                            (_, index: number) => {
+                              return (
+                                <Card
+                                  key={`${selectedLanguage}-airportTransferByAirportSections-${index}`}
+                                  className="border-dashed"
+                                >
+                                  <CardContent className="p-4 space-y-3">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs font-bold uppercase text-gray-400">
+                                        Section #{index + 1}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() =>
+                                          removeAirportTransferByAirportSectionsAt(
+                                            index,
+                                          )
+                                        }
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <Field>
+                                      <FieldLabel>Label</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...form.register(
+                                            `content.${selectedLanguage}.airportTransferByAirportSections.items.${index}.label` as any,
+                                          )}
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>URL</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...form.register(
+                                            `content.${selectedLanguage}.airportTransferByAirportSections.items.${index}.url` as any,
+                                          )}
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                  </CardContent>
+                                </Card>
+                              );
+                            },
+                          )}
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* DownloadOptions Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>Download Options</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <Field>
+                            <FieldLabel>Heading</FieldLabel>
+                            <InputGroup>
+                              <InputGroupInput
+                                {...form.register(
+                                  `content.${selectedLanguage}.DownloadOptions.Heading` as any,
+                                )}
+                                placeholder="Heading"
+                              />
+                            </InputGroup>
+                          </Field>
+                          <Field>
+                            <FieldLabel>Description</FieldLabel>
+                            <Controller
+                              name={
+                                `content.${selectedLanguage}.DownloadOptions.Description` as any
+                              }
+                              control={control}
+                              render={({ field }) => (
+                                <TinyEditorRHF
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
+                              )}
+                            />
+                          </Field>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.DownloadOptions.image.src` as any
+                                }
+                                control={control}
+                                render={({ field }) => (
+                                  <UploadWithUrlV2
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    title="Main Image"
+                                  />
+                                )}
+                              />
+                              <Field>
+                                <FieldLabel>Image Alt Text</FieldLabel>
+                                <InputGroup>
+                                  <InputGroupInput
+                                    {...form.register(
+                                      `content.${selectedLanguage}.DownloadOptions.image.alt` as any,
+                                    )}
+                                    placeholder="Main Image Alt"
+                                  />
+                                </InputGroup>
+                              </Field>
+                            </div>
+                            <div>
+                              <Controller
+                                name={
+                                  `content.${selectedLanguage}.DownloadOptions.qrImage.src` as any
+                                }
+                                control={control}
+                                render={({ field }) => (
+                                  <UploadWithUrlV2
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    title="QR Image"
+                                  />
+                                )}
+                              />
+                              <Field>
+                                <FieldLabel>QR Image Alt Text</FieldLabel>
+                                <InputGroup>
+                                  <InputGroupInput
+                                    {...form.register(
+                                      `content.${selectedLanguage}.DownloadOptions.qrImage.alt` as any,
+                                    )}
+                                    placeholder="QR Image Alt"
+                                  />
+                                </InputGroup>
+                              </Field>
+                            </div>
+                          </div>
+                          <Separator />
+                          <div className="flex justify-between">
+                            <h4 className="font-bold">App Buttons</h4>
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() =>
+                                appList.append({
+                                  image: "",
+                                  url: "",
+                                  alt: "",
+                                })
+                              }
+                            >
+                              Add App
+                            </Button>
+                          </div>
+                          <div className="space-y-2">
+                            {appList.fields.map((field, idx) => (
+                              <Card key={field.id}>
+                                <CardBody className="p-4 space-y-3">
+                                  <div className="flex-1 space-y-2">
+                                    <Controller
+                                      name={
+                                        `content.${selectedLanguage}.DownloadOptions.apps.${idx}.image` as any
+                                      }
+                                      control={control}
+                                      render={({ field }) => (
+                                        <UploadWithUrlV2
+                                          value={field.value}
+                                          onChange={field.onChange}
+                                          title="Store Icon"
+                                        />
+                                      )}
+                                    />
+                                    <Field>
+                                      <FieldLabel>URL</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...form.register(
+                                            `content.${selectedLanguage}.DownloadOptions.apps.${idx}.url` as any,
+                                          )}
+                                          placeholder="URL"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>Alt</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...form.register(
+                                            `content.${selectedLanguage}.DownloadOptions.apps.${idx}.alt` as any,
+                                          )}
+                                          placeholder="Alt"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => appList.remove(idx)}
+                                  >
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                </CardBody>
+                              </Card>
+                            ))}
+                          </div>
+                          <Separator />
+                          <div className="flex justify-between">
+                            <h4 className="font-bold">List Items</h4>
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => downloadList.append({ value: "" })}
+                            >
+                              Add Item
+                            </Button>
+                          </div>
+                          <div className="space-y-2">
+                            {downloadList.fields.map((field, idx) => (
+                              <Card key={field.id}>
+                                <CardBody className="p-4 space-y-3">
+                                  <Field>
+                                    <FieldLabel>Feature Item</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...form.register(
+                                          `content.${selectedLanguage}.DownloadOptions.list.${idx}.value` as any,
+                                        )}
+                                        placeholder="Feature Item"
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => downloadList.remove(idx)}
+                                  >
+                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                  </Button>
+                                </CardBody>
+                              </Card>
+                            ))}
+                          </div>
                         </CardContent>
                       </CardBody>
                     </Card>
