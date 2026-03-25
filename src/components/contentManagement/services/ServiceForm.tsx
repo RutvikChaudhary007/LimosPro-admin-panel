@@ -121,6 +121,7 @@ const cityRoutesSchema = z.discriminatedUnion("cityRoutesEnabled", [
           to: z.string().optional(),
           time: z.string().optional(),
           distance: z.string().optional(),
+          url: z.string().optional(),
         }),
       )
       .optional(),
@@ -331,6 +332,8 @@ const getEmptyLanguageContent = () => ({
   services: { service: "", subservice: "", infoCards: [] },
   cityRoutes: {
     cityRoutesEnabled: false,
+    cityCards: [],
+    routeCards: [],
   },
   topRoutes: {
     isRoutes: false as const,
@@ -615,7 +618,7 @@ function LanguageFields({
   form,
   metaKeywordsData,
 }: LanguageFieldsProps) {
-  const { control, register, watch, setValue } = form;
+  const { control, register, watch, setValue, getValues } = form;
 
   const routeDetailsLabelCards = useFieldArray({
     control,
@@ -1385,6 +1388,7 @@ function LanguageFields({
                               to: "",
                               time: "",
                               distance: "",
+                              url: "",
                             })
                           }
                         >
@@ -1414,22 +1418,64 @@ function LanguageFields({
                                   <Field>
                                     <FieldLabel>From</FieldLabel>
                                     <InputGroup>
-                                      <InputGroupInput
-                                        {...register(
-                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.from` as any,
+                                      <Controller
+                                        name={
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.from` as any
+                                        }
+                                        control={control}
+                                        render={({ field }) => (
+                                          <InputGroupInput
+                                            {...field}
+                                            onChange={(e) => {
+                                              const value = e.target.value;
+                                              field.onChange(value);
+                                              const toValue = getValues(
+                                                `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.to` as any,
+                                              );
+                                              const slug = generateSlug(
+                                                `${value}-to-${toValue}`,
+                                              );
+                                              setValue(
+                                                `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.url` as any,
+                                                slug ? `/${slug}` : "",
+                                                { shouldDirty: true },
+                                              );
+                                            }}
+                                            placeholder="New York"
+                                          />
                                         )}
-                                        placeholder="New York"
                                       />
                                     </InputGroup>
                                   </Field>
                                   <Field>
                                     <FieldLabel>To</FieldLabel>
                                     <InputGroup>
-                                      <InputGroupInput
-                                        {...register(
-                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.to` as any,
+                                      <Controller
+                                        name={
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.to` as any
+                                        }
+                                        control={control}
+                                        render={({ field }) => (
+                                          <InputGroupInput
+                                            {...field}
+                                            onChange={(e) => {
+                                              const value = e.target.value;
+                                              field.onChange(value);
+                                              const fromValue = getValues(
+                                                `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.from` as any,
+                                              );
+                                              const slug = generateSlug(
+                                                `${fromValue}-to-${value}`,
+                                              );
+                                              setValue(
+                                                `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.url` as any,
+                                                slug ? `/${slug}` : "",
+                                                { shouldDirty: true },
+                                              );
+                                            }}
+                                            placeholder="Philadelphia"
+                                          />
                                         )}
-                                        placeholder="Philadelphia"
                                       />
                                     </InputGroup>
                                   </Field>
@@ -1452,6 +1498,17 @@ function LanguageFields({
                                           `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.distance` as any,
                                         )}
                                         placeholder="59 mi"
+                                      />
+                                    </InputGroup>
+                                  </Field>
+                                  <Field className="col-span-2">
+                                    <FieldLabel>Route URL / Slug</FieldLabel>
+                                    <InputGroup>
+                                      <InputGroupInput
+                                        {...register(
+                                          `content.${selectedLanguage}.cityRoutes.routeCards.${idx}.url` as any,
+                                        )}
+                                        placeholder="/houston-to-dallas"
                                       />
                                     </InputGroup>
                                   </Field>

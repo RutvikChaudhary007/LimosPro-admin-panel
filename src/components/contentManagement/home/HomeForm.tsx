@@ -134,8 +134,8 @@ const getEmptyLanguageContent = () => ({
       topRoutes: "",
       topRoutesSeeAllLink: "",
       topRoutesSeeAll: "",
-      citycards: [{ src: "", title: "", alt: "", description: "" }],
-      routeCards: [{ from: "", to: "", time: "", distance: "" }],
+      citycards: [{ src: "", title: "", alt: "", description: "", url: "" }],
+      routeCards: [{ from: "", to: "", time: "", distance: "", url: "" }],
     },
     // SECTION 6 (New)
     CityToCityFleetCarousel: {
@@ -1264,6 +1264,7 @@ export default function HomeForm({
                                     title: "",
                                     alt: "",
                                     description: "",
+                                    url: "",
                                   })
                                 }
                               >
@@ -1318,7 +1319,34 @@ export default function HomeForm({
                                           {...register(
                                             `content.${selectedLanguage}.CityRoutes.citycards.${idx}.title` as any,
                                           )}
+                                          onChange={(e) => {
+                                            const value = e.target.value;
+                                            setValue(
+                                              `content.${selectedLanguage}.CityRoutes.citycards.${idx}.title` as any,
+                                              value,
+                                            );
+                                            const slug = value
+                                              .toLowerCase()
+                                              .replace(/ /g, "-")
+                                              .replace(/[^\w-]+/g, "");
+                                            setValue(
+                                              `content.${selectedLanguage}.CityRoutes.citycards.${idx}.url` as any,
+                                              slug ? `/${slug}` : "",
+                                              { shouldDirty: true },
+                                            );
+                                          }}
                                           placeholder="Title"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+                                    <Field>
+                                      <FieldLabel>City URL / Slug</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.citycards.${idx}.url` as any,
+                                          )}
+                                          placeholder="/austin"
                                         />
                                       </InputGroup>
                                     </Field>
@@ -1356,6 +1384,7 @@ export default function HomeForm({
                                     to: "",
                                     time: "",
                                     distance: "",
+                                    url: "",
                                   })
                                 }
                               >
@@ -1382,22 +1411,68 @@ export default function HomeForm({
                                     <Field>
                                       <FieldLabel>From</FieldLabel>
                                       <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.from` as any,
+                                        <Controller
+                                          name={
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.from` as any
+                                          }
+                                          control={control}
+                                          render={({ field }) => (
+                                            <InputGroupInput
+                                              {...field}
+                                              onChange={(e) => {
+                                                const value = e.target.value;
+                                                field.onChange(value);
+                                                const toValue = getValues(
+                                                  `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.to` as any,
+                                                );
+                                                const slug =
+                                                  `${value}-to-${toValue}`
+                                                    .toLowerCase()
+                                                    .replace(/ /g, "-")
+                                                    .replace(/[^\w-]+/g, "");
+                                                setValue(
+                                                  `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.url` as any,
+                                                  slug ? `/${slug}` : "",
+                                                  { shouldDirty: true },
+                                                );
+                                              }}
+                                              placeholder="From"
+                                            />
                                           )}
-                                          placeholder="From"
                                         />
                                       </InputGroup>
                                     </Field>
                                     <Field>
                                       <FieldLabel>To</FieldLabel>
                                       <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.to` as any,
+                                        <Controller
+                                          name={
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.to` as any
+                                          }
+                                          control={control}
+                                          render={({ field }) => (
+                                            <InputGroupInput
+                                              {...field}
+                                              onChange={(e) => {
+                                                const value = e.target.value;
+                                                field.onChange(value);
+                                                const fromValue = getValues(
+                                                  `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.from` as any,
+                                                );
+                                                const slug =
+                                                  `${fromValue}-to-${value}`
+                                                    .toLowerCase()
+                                                    .replace(/ /g, "-")
+                                                    .replace(/[^\w-]+/g, "");
+                                                setValue(
+                                                  `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.url` as any,
+                                                  slug ? `/${slug}` : "",
+                                                  { shouldDirty: true },
+                                                );
+                                              }}
+                                              placeholder="To"
+                                            />
                                           )}
-                                          placeholder="To"
                                         />
                                       </InputGroup>
                                     </Field>
@@ -1422,6 +1497,18 @@ export default function HomeForm({
                                             `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.distance` as any,
                                           )}
                                           placeholder="Distance"
+                                        />
+                                      </InputGroup>
+                                    </Field>
+
+                                    <Field>
+                                      <FieldLabel>Route URL / Slug</FieldLabel>
+                                      <InputGroup>
+                                        <InputGroupInput
+                                          {...register(
+                                            `content.${selectedLanguage}.CityRoutes.routeCards.${idx}.url` as any,
+                                          )}
+                                          placeholder="/houston-to-austin"
                                         />
                                       </InputGroup>
                                     </Field>
