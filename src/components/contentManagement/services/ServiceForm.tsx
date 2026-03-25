@@ -1044,7 +1044,7 @@ function LanguageFields({
           <Card>
             <CardBody>
               <CardHeader>
-                <CardTitle>City Routes</CardTitle>
+                <CardTitle>Routes Section</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Checkbox Toggle */}
@@ -1108,11 +1108,11 @@ function LanguageFields({
                       htmlFor={`cityRoutesToggle-${selectedLanguage}`}
                       className="gap-0 mb-0 cursor-pointer text-base-black"
                     >
-                      Enable City Routes Section
+                      Enable Routes Section
                     </FieldLabel>
                   </div>
                   <FieldDescription>
-                    Toggle to show/hide city routes content on this page
+                    Toggle to show/hide routes content on this page
                   </FieldDescription>
                 </Field>
 
@@ -1176,7 +1176,7 @@ function LanguageFields({
                         />
                       </Field>
                       <Field>
-                        <FieldLabel>Top Cities Text</FieldLabel>
+                        <FieldLabel>Primary Section Title</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
                             {...register(
@@ -1198,7 +1198,7 @@ function LanguageFields({
                         </InputGroup>
                       </Field>
                       <Field>
-                        <FieldLabel>Top Cities See All Link</FieldLabel>
+                        <FieldLabel>Primary Section See All Link</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
                             {...register(
@@ -1209,7 +1209,7 @@ function LanguageFields({
                         </InputGroup>
                       </Field>
                       <Field>
-                        <FieldLabel>Top Routes Text</FieldLabel>
+                        <FieldLabel>Secondary Section Title</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
                             {...register(
@@ -1220,7 +1220,7 @@ function LanguageFields({
                         </InputGroup>
                       </Field>
                       <Field>
-                        <FieldLabel>Top Routes See All Text</FieldLabel>
+                        <FieldLabel>Secondary Section See All Text</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
                             {...register(
@@ -1231,7 +1231,7 @@ function LanguageFields({
                         </InputGroup>
                       </Field>
                       <Field>
-                        <FieldLabel>Top Routes See All Link</FieldLabel>
+                        <FieldLabel>Secondary Section See All Link</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
                             {...register(
@@ -1248,7 +1248,7 @@ function LanguageFields({
                     {/* City Cards */}
                     <div className="space-y-4">
                       <div className="flex justify-between">
-                        <h4 className="font-bold">City Cards</h4>
+                        <h4 className="font-bold">Primary Cards</h4>
                         <Button
                           type="button"
                           size="sm"
@@ -1265,7 +1265,7 @@ function LanguageFields({
                           }
                         >
                           <Plus className="w-4 h-4 mr-1" />
-                          Add City
+                          Add Primary Card
                         </Button>
                       </div>
                       {cityCards.fields.length > 0 ? (
@@ -1295,7 +1295,7 @@ function LanguageFields({
                                     <UploadWithUrlV2
                                       value={field.value}
                                       onChange={field.onChange}
-                                      title="City Image"
+                                      title="Card Image"
                                     />
                                   )}
                                 />
@@ -1311,7 +1311,7 @@ function LanguageFields({
                                   </InputGroup>
                                 </Field>
                                 <Field>
-                                  <FieldLabel>City Name</FieldLabel>
+                                  <FieldLabel>Card Title</FieldLabel>
                                   <InputGroup>
                                     <Controller
                                       name={
@@ -1341,7 +1341,7 @@ function LanguageFields({
                                   </InputGroup>
                                 </Field>
                                 <Field>
-                                  <FieldLabel>City URL / Slug</FieldLabel>
+                                  <FieldLabel>Card URL / Slug</FieldLabel>
                                   <InputGroup>
                                     <InputGroupInput
                                       {...register(
@@ -1366,7 +1366,7 @@ function LanguageFields({
                         </div>
                       ) : (
                         <div className="py-8 text-center text-gray-500 border border-dashed rounded">
-                          No city cards added. Click "Add City" to create one.
+                          No cards added. Click "Add" to create one.
                         </div>
                       )}
                     </div>
@@ -1376,7 +1376,7 @@ function LanguageFields({
                     {/* Route Cards */}
                     <div className="space-y-4">
                       <div className="flex justify-between">
-                        <h4 className="font-bold">Route Cards</h4>
+                        <h4 className="font-bold">Secondary Cards</h4>
                         <Button
                           type="button"
                           size="sm"
@@ -1393,7 +1393,7 @@ function LanguageFields({
                           }
                         >
                           <Plus className="w-4 h-4 mr-1" />
-                          Add Route
+                          Add Secondary Card
                         </Button>
                       </div>
                       {routeCards.fields.length > 0 ? (
@@ -1403,7 +1403,7 @@ function LanguageFields({
                               <CardContent className="p-4 space-y-3">
                                 <div className="flex justify-between">
                                   <span className="text-xs font-bold text-gray-400 uppercase">
-                                    Route #{idx + 1}
+                                    Item #{idx + 1}
                                   </span>
                                   <Button
                                     type="button"
