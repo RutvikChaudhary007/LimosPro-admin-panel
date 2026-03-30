@@ -12,6 +12,7 @@ import {
 import { type FC, useCallback, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useFetchAllFleets } from "@/api/fleet.api";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
 import type { IEditPartnerRes } from "@/types/partner/partner.type";
 import isFieldDisabled from "@/utils/disableFormField";
@@ -40,131 +41,164 @@ const maxSize = 10;
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/*"];
 
 const getFormSchema = (isEdit: boolean) =>
-  z.object({
-    firstName: z
-      .string()
-      .min(1, { message: "First name is required" })
-      .refine((value) => value.trim().length >= 3, {
-        message: "First name must be at least 3 characters",
+  z
+    .object({
+      firstName: z
+        .string()
+        .min(1, { message: "First name is required" })
+        .refine((value) => value.trim().length >= 3, {
+          message: "First name must be at least 3 characters",
+        }),
+      lastName: z
+        .string()
+        .min(1, { message: "Last name is required" })
+        .refine((value) => value.trim().length >= 3, {
+          message: "Last name must be at least 3 characters",
+        }),
+      businessLocation: z.object({
+        latitude: z.number().nullable(),
+        longitude: z.number().nullable(),
       }),
-    lastName: z
-      .string()
-      .min(1, { message: "Last name is required" })
-      .refine((value) => value.trim().length >= 3, {
-        message: "Last name must be at least 3 characters",
-      }),
-    businessLocation: z.object({
-      latitude: z.number().nullable(),
-      longitude: z.number().nullable(),
-    }),
-    businessAddress: z
-      .string()
-      .min(1, { message: "Business address is required" })
-      .transform((v) => v.trim())
-      .refine((value) => value.length >= 3, {
-        message: "Business address must be at least 3 characters",
-      }),
-    companyName: z
-      .string()
-      .min(1, { message: "Company name is required" })
-      .refine((value) => value.trim().length >= 3, {
-        message: "Company name must be at least 3 characters",
-      }),
-    email: z
-      .string()
-      .min(1, { message: "Email is required" })
-      .email({ message: "Please enter a valid email address" }),
-    businessContactNumber: z
-      .string()
-      .min(1, { message: "Business contact number is required" })
-      .refine(
-        (phone) => {
-          const digitsOnly = phone.replaceAll(/\D/g, "");
-          return digitsOnly.length >= 10 && digitsOnly.length <= 15;
-        },
-        { message: "Phone number must be 10–15 digits" },
-      )
-      .refine(
-        (phone) =>
-          /^[+]?[(]?\d+[)]?[-\s.]?[(]?\d+[)]?[-\s.]?\d+[-\s.]?\d+$/.test(
-            phone.replace(/\s/g, ""),
-          ),
-        {
-          message: "Please enter a valid phone number (e.g. +1 234 567 8900)",
-        },
-      ),
-    entityType: z.string().min(1, { message: "Please select an entity type" }),
-    isChauffer: z.boolean(),
-    taxId: z
-      .string()
-      .min(1, { message: "Tax ID is required" })
-      .refine((value) => value.trim().length >= 2, {
-        message: "Tax ID must be at least 2 characters",
-      }),
-    businessEmail: z
-      .string()
-      .min(1, { message: "Business email is required" })
-      .email({ message: "Please enter a valid business email address" }),
-    commissionRate: z
-      .string()
-      .min(1, { message: "Commission rate is required" })
-      .refine((value) => !Number.isNaN(Number(value)), {
-        message: "Commission rate must be a number",
-      })
-      .refine((value) => Number(value) >= 0, {
-        message: "Commission rate must be 0 or greater",
-      }),
-    password: isEdit
-      ? z.union([z.string().length(0), passwordValidation]).optional()
-      : passwordValidation,
-    documents: isEdit
-      ? z.array(z.any())
-      : z
-          .array(z.any())
-          .refine(
-            (files) => {
-              // If we have existing documents (with url property), they're already validated
-              if (files.length > 0 && files.some((file) => file.url)) {
-                return true;
-              }
+      businessAddress: z
+        .string()
+        .min(1, { message: "Business address is required" })
+        .transform((v) => v.trim())
+        .refine((value) => value.length >= 3, {
+          message: "Business address must be at least 3 characters",
+        }),
+      companyName: z
+        .string()
+        .min(1, { message: "Company name is required" })
+        .refine((value) => value.trim().length >= 3, {
+          message: "Company name must be at least 3 characters",
+        }),
+      email: z
+        .string()
+        .min(1, { message: "Email is required" })
+        .email({ message: "Please enter a valid email address" }),
+      businessContactNumber: z
+        .string()
+        .min(1, { message: "Business contact number is required" })
+        .refine(
+          (phone) => {
+            const digitsOnly = phone.replaceAll(/\D/g, "");
+            return digitsOnly.length >= 10 && digitsOnly.length <= 15;
+          },
+          { message: "Phone number must be 10–15 digits" },
+        )
+        .refine(
+          (phone) =>
+            /^[+]?[(]?\d+[)]?[-\s.]?[(]?\d+[)]?[-\s.]?\d+[-\s.]?\d+$/.test(
+              phone.replace(/\s/g, ""),
+            ),
+          {
+            message: "Please enter a valid phone number (e.g. +1 234 567 8900)",
+          },
+        ),
+      entityType: z
+        .string()
+        .min(1, { message: "Please select an entity type" }),
+      isChauffer: z.boolean(),
+      // Chauffeur fields - required when isChauffer is true
+      licenseNumber: z.string().optional(),
+      vehicleId: z.string().uuid().optional(),
+      taxId: z
+        .string()
+        .min(1, { message: "Tax ID is required" })
+        .refine((value) => value.trim().length >= 2, {
+          message: "Tax ID must be at least 2 characters",
+        }),
+      businessEmail: z
+        .string()
+        .min(1, { message: "Business email is required" })
+        .email({ message: "Please enter a valid business email address" }),
+      commissionRate: z
+        .string()
+        .min(1, { message: "Commission rate is required" })
+        .refine((value) => !Number.isNaN(Number(value)), {
+          message: "Commission rate must be a number",
+        })
+        .refine((value) => Number(value) >= 0, {
+          message: "Commission rate must be 0 or greater",
+        }),
+      password: isEdit
+        ? z.union([z.string().length(0), passwordValidation]).optional()
+        : passwordValidation,
+      documents: isEdit
+        ? z.array(z.any())
+        : z
+            .array(z.any())
+            .refine(
+              (files) => {
+                // If we have existing documents (with url property), they're already validated
+                if (files.length > 0 && files.some((file) => file.url)) {
+                  return true;
+                }
 
-              // For new file uploads, validate length
-              return files.length >= 1;
-            },
-            { message: "Please upload at least one document" },
-          )
-          .refine((files) => files.length <= 4, {
-            message: "You can upload up to 4 files only",
-          })
-          .refine(
-            (files) => {
-              const fileObjects = files.filter((f) => f instanceof File);
-              return (
-                fileObjects.length === 0 ||
-                fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
-              );
-            },
-            { message: `Each file must be ${maxSize}MB or less` },
-          )
-          .refine(
-            (files) => {
-              const fileObjects = files.filter((f) => f instanceof File);
-              return (
-                fileObjects.length === 0 ||
-                fileObjects.every((f) =>
-                  ALLOWED_MIME_TYPES.some((allowed) => {
-                    if (allowed.endsWith("/*")) {
-                      return f.type.startsWith(allowed.replace("/*", ""));
-                    }
-                    return f.type === allowed;
-                  }),
-                )
-              );
-            },
-            { message: "Allowed file types: PDF and images only" },
-          ),
-    status: z.string().optional(),
-  });
+                // For new file uploads, validate length
+                return files.length >= 1;
+              },
+              { message: "Please upload at least one document" },
+            )
+            .refine((files) => files.length <= 4, {
+              message: "You can upload up to 4 files only",
+            })
+            .refine(
+              (files) => {
+                const fileObjects = files.filter((f) => f instanceof File);
+                return (
+                  fileObjects.length === 0 ||
+                  fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
+                );
+              },
+              { message: `Each file must be ${maxSize}MB or less` },
+            )
+            .refine(
+              (files) => {
+                const fileObjects = files.filter((f) => f instanceof File);
+                return (
+                  fileObjects.length === 0 ||
+                  fileObjects.every((f) =>
+                    ALLOWED_MIME_TYPES.some((allowed) => {
+                      if (allowed.endsWith("/*")) {
+                        return f.type.startsWith(allowed.replace("/*", ""));
+                      }
+                      return f.type === allowed;
+                    }),
+                  )
+                );
+              },
+              { message: "Allowed file types: PDF and images only" },
+            ),
+      status: z.string().optional(),
+    })
+    .refine(
+      (data) => {
+        // If isChauffer is true, licenseNumber is required and must be at least 2 characters
+        if (data.isChauffer) {
+          return data.licenseNumber && data.licenseNumber.trim().length >= 2;
+        }
+        return true;
+      },
+      {
+        message:
+          "License number is required and must be at least 2 characters when chauffeur is enabled",
+        path: ["licenseNumber"],
+      },
+    )
+    .refine(
+      (data) => {
+        // If isChauffer is true, vehicleId is required
+        if (data.isChauffer) {
+          return data.vehicleId && data.vehicleId.trim().length > 0;
+        }
+        return true;
+      },
+      {
+        message: "Vehicle is required when chauffeur is enabled",
+        path: ["vehicleId"],
+      },
+    );
 
 type TPartnerForm = z.infer<ReturnType<typeof getFormSchema>>;
 interface PartnerFormProps {
@@ -232,6 +266,8 @@ const transformInitialData = (
     email: data?.user?.email || "",
     password: "",
     isChauffer: data.isChauffer ?? false,
+    licenseNumber: data?.chauffeurs?.[0]?.licenseNumber || "",
+    vehicleId: data?.chauffeurs?.[0]?.vehicleId || "",
     companyName: data.companyName || "",
     businessContactNumber: data.businessContactNumber || "",
     businessAddress: data?.businessAddress || "",
@@ -356,6 +392,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
       email: "",
       password: "",
       isChauffer: false,
+      licenseNumber: "",
+      vehicleId: "",
       companyName: "",
       businessContactNumber: "",
       businessAddress: "",
@@ -374,7 +412,27 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
     // reValidateMode: ["onChange", "onSubmit", "onBlur"],
   });
 
-  const { isSubmitting } = form.formState;
+  const { data: fleetData, isFetching: isFleetFetching } = useFetchAllFleets({
+    DateRange: {},
+    page: 1,
+    limit: 100,
+  });
+
+  const fleetOptions = useMemo(() => {
+    return (
+      fleetData?.vehicles?.map(
+        (fleet: {
+          id: string;
+          brand: string;
+          model: string;
+          plateNumber: string;
+        }) => ({
+          label: `${fleet.brand} ${fleet.model} - ${fleet.plateNumber}`,
+          value: fleet.id,
+        }),
+      ) || []
+    );
+  }, [fleetData]);
 
   const handleAddressChange = useCallback(
     (value: string) => {
@@ -422,6 +480,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
       );
       formData.append("status", values.status || "");
       formData.append("isChauffer", values.isChauffer ? "true" : "false");
+      formData.append("licenseNumber", values.licenseNumber || "");
+      formData.append("vehicleId", values.vehicleId || "");
       formData.append("taxId", values.taxId);
       formData.append(
         "businessLocation",
@@ -967,6 +1027,90 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                 />
               </Field>
 
+              {/* License Number field - shown when isChauffer is true */}
+              {form.watch("isChauffer") && (
+                <Field>
+                  <FieldLabel
+                    htmlFor="licenseNumber"
+                    className="gap-0 text-base-black"
+                  >
+                    License Number *
+                  </FieldLabel>
+
+                  <Controller
+                    control={form.control}
+                    name="licenseNumber"
+                    render={({ field }) => (
+                      <InputGroup>
+                        <InputGroupInput
+                          id="licenseNumber"
+                          type="text"
+                          placeholder="e.g., DL123456"
+                          disabled={isFieldDisabled(
+                            disabledFields,
+                            "licenseNumber",
+                          )}
+                          {...field}
+                        />
+                        <InputGroupAddon>
+                          <IconId />
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
+                  />
+
+                  <FieldDescription>
+                    Enter the chauffeur's driving license number (required when
+                    chauffeur is enabled).
+                  </FieldDescription>
+
+                  {form.formState.errors.licenseNumber && (
+                    <FormMessage>
+                      {form.formState.errors.licenseNumber.message}
+                    </FormMessage>
+                  )}
+                </Field>
+              )}
+
+              {/* Vehicle ID field - shown when isChauffer is true - REQUIRED with dropdown */}
+              {form.watch("isChauffer") && (
+                <Field>
+                  <FieldLabel
+                    htmlFor="vehicleId"
+                    className="gap-0 text-base-black"
+                  >
+                    Vehicle *
+                  </FieldLabel>
+
+                  <Controller
+                    control={form.control}
+                    name="vehicleId"
+                    render={({ field }) => (
+                      <SelectDropDown
+                        placeholder={
+                          isFleetFetching
+                            ? "Loading vehicles..."
+                            : "Select Vehicle"
+                        }
+                        items={fleetOptions}
+                        value={field.value || ""}
+                        setSelectedItem={(v) => field.onChange(v)}
+                      />
+                    )}
+                  />
+
+                  <FieldDescription>
+                    Select the vehicle to assign to this chauffeur (required).
+                  </FieldDescription>
+
+                  {form.formState.errors.vehicleId && (
+                    <FormMessage>
+                      {form.formState.errors.vehicleId.message}
+                    </FormMessage>
+                  )}
+                </Field>
+              )}
+
               <Field className="col-span-2">
                 <Controller
                   control={form.control}
@@ -1001,6 +1145,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                     email: "",
                     password: "",
                     isChauffer: false,
+                    licenseNumber: "",
+                    vehicleId: "",
                     companyName: "",
                     businessContactNumber: "",
                     businessAddress: "",
@@ -1017,8 +1163,8 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
               >
                 Clear All
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save Details"}
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Saving..." : "Save Details"}
               </Button>
             </CardFooter>
           </CardBody>

@@ -51,22 +51,37 @@ const ViewPaymentPage = () => {
     let isMounted = true;
 
     const fetchAddress = async () => {
-      if (isLoaded && data && !loadError) {
+      if (!data) return;
+
+      // First check if address is already available from backend
+      const pickupAddr = data?.ride?.pickupLocation?.address;
+      const dropoffAddr = data?.ride?.dropoffLocation?.address;
+
+      if (pickupAddr && isMounted) {
+        setPickUpAddress(pickupAddr);
+      }
+      if (dropoffAddr && isMounted) {
+        setDropOffAddress(dropoffAddr);
+      }
+
+      // If no address from backend and Google Maps is loaded, try geocoding
+      if (isLoaded && !loadError && (!pickupAddr || !dropoffAddr)) {
         try {
-          const address = await geoDecoding({
-            lat: data?.ride?.pickupLocation?.latitude,
-            lng: data?.ride?.pickupLocation?.longitude,
-          });
-          const address2 = await geoDecoding({
-            lat: data?.ride?.dropoffLocation?.latitude,
-            lng: data?.ride?.dropoffLocation?.longitude,
-          });
-          if (isMounted) {
-            console.log("Decoded Address:", address);
-            if (address) {
+          if (!pickupAddr && data?.ride?.pickupLocation?.latitude) {
+            const address = await geoDecoding({
+              lat: String(data.ride.pickupLocation.latitude),
+              lng: String(data.ride.pickupLocation.longitude),
+            });
+            if (isMounted && address) {
               setPickUpAddress(address as string);
             }
-            if (address2) {
+          }
+          if (!dropoffAddr && data?.ride?.dropoffLocation?.latitude) {
+            const address2 = await geoDecoding({
+              lat: String(data.ride.dropoffLocation.latitude),
+              lng: String(data.ride.dropoffLocation.longitude),
+            });
+            if (isMounted && address2) {
               setDropOffAddress(address2 as string);
             }
           }

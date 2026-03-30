@@ -58,6 +58,12 @@ export interface IEditPartnerRes extends IPartner {
     updatedAt: string;
   };
   location: TBusinessLocation;
+  chauffeurs?: Array<{
+    id: string;
+    licenseNumber: string;
+    vehicleId: string | null;
+    status: string;
+  }>;
 }
 
 export type TPartnerRes = {

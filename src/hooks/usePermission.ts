@@ -31,6 +31,14 @@ export const usePermission = () => {
         (role: string) => role.toLowerCase() === "super admin",
       )
     ) {
+      // Explicitly block Super Admin from creating or updating chauffeurs
+      if (
+        (permissionName === "manageChauffeurs" ||
+          permissionName === "managePartnerChauffeurs") &&
+        (action === "create" || action === "update")
+      ) {
+        return false;
+      }
       return true;
     }
 

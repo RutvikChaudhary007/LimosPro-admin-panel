@@ -73,8 +73,7 @@ const ViewTripsPage = () => {
       }
     };
 
-    fetchAddress();
-
+    console.log("trips details => ", data);
     return () => {
       isMounted = false;
     };

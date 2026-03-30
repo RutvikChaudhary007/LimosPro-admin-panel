@@ -43,12 +43,20 @@ export function hasPermissionAccess(
   return false;
 }
 
-// Enhanced function that supports both role-based and permission-based access
 export function hasDynamicAccess(
   path: string,
   role?: string,
   userPermissions?: string[],
 ): boolean {
+  // Hard blocker for Super Admin Chauffeur Create/Edit routes
+  if (
+    role === "Super Admin" &&
+    (pathMatches("/chauffeur/create", path) ||
+      pathMatches("/chauffeur/:id/edit", path))
+  ) {
+    return false;
+  }
+
   // If permissions are provided, try permission-based access first
   if (userPermissions && userPermissions.length > 0) {
     if (hasPermissionAccess(path, userPermissions)) {
