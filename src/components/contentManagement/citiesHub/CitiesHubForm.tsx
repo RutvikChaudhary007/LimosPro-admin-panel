@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
+import { FormMessage } from "@/components/ui/form";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 // import { Separator } from "@/components/ui/separator";
 // import { Textarea } from "@/components/ui/textarea";
@@ -30,10 +31,15 @@ import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
 
-// Cities item schema
-const topCitiesItemSchema = z.object({
+// FAQ item schema
+const faqItemSchema = z.object({
+  question: z.string().trim().min(1, "*Question is required."),
+  answer: z.string().optional(),
+});
+
+const sectionSchema = z.object({
   title: z.string().optional(),
-  items: z.any().optional(),
+  description: z.string().optional(),
 });
 
 // const citiesWeServeItemSchema = z.object({
@@ -86,18 +92,18 @@ const breadCrumbSchema = z.object({
 
 // Intro schema
 const introSchema = z.object({
-  title: z.string().optional(),
+  title: z.string().trim().min(1, "Title is required"),
   description: z.string().optional(),
 });
 
 // Language section schema
 const languageSectionSchema = z.object({
-  intro: introSchema.optional(),
+  intro: introSchema,
   breadCrumb: breadCrumbSchema.optional(),
+  singleSection: sectionSchema.optional(),
   countriesWeServe: countriesWeServeSchema.optional(),
-  sections: z.any().optional(),
-  topCities: topCitiesItemSchema.optional(),
-  // citiesWeServe: citiesWeServeSchema.optional(),
+  sections: sectionSchema.optional(),
+  faqs: z.array(faqItemSchema).optional(),
 });
 
 // Main schema
@@ -123,10 +129,20 @@ const getEmptyLanguageContent = () => ({
     title: "",
     description: "",
   },
-  topCities: {
+  breadCrumb: {
     title: "",
-    items: [],
+    description: "",
+    link: "",
   },
+  singleSection: {
+    title: "",
+    description: "",
+  },
+  sections: {
+    title: "",
+    description: "",
+  },
+  faqs: [],
   countriesWeServe: {
     title: "",
     items: [
@@ -138,21 +154,6 @@ const getEmptyLanguageContent = () => ({
       },
     ],
   },
-  // citiesWeServe: {
-  //   title: "",
-  //   items: [
-  //     {
-  //       id: "",
-  //       name: "",
-  //       slug: "",
-  //       iata: "",
-  //       airportCode: "",
-  //       airportName: "",
-  //       countryCode: "",
-  //       countrySlug: "",
-  //     },
-  //   ],
-  // },
 });
 
 // Helper to get empty SEO/JSON-LD
@@ -225,7 +226,20 @@ const normalizeCitiesHubData = (data: any): CitiesHubFormData => {
 
   languages.forEach((lang: string) => {
     const contentData = data.content?.[lang] || getEmptyLanguageContent();
-    normalized.content[lang] = contentData;
+    normalized.content[lang] = {
+      ...getEmptyLanguageContent(),
+      ...contentData,
+      // sections: Array.isArray(contentData.sections)
+      //   ? contentData.sections
+      //   : contentData.sections
+      //     ? [contentData.sections]
+      //     : [],
+      faqs: Array.isArray(contentData.faqs)
+        ? contentData.faqs
+        : contentData.faqs
+          ? [contentData.faqs]
+          : [],
+    };
   });
 
   return normalized;
@@ -260,6 +274,7 @@ export default function CitiesHubForm({
     watch,
     setValue,
     getValues,
+    setFocus,
     formState: { errors },
   } = form;
 
@@ -286,40 +301,63 @@ export default function CitiesHubForm({
     ? contentByLanguage[selectedLanguage].countriesWeServe.items
     : [];
 
-  // const citiesWeServeItems = Array.isArray(
-  //   contentByLanguage?.[selectedLanguage]?.citiesWeServe?.items,
+  // const sections = Array.isArray(
+  //   contentByLanguage?.[selectedLanguage]?.sections,
   // )
-  //   ? contentByLanguage[selectedLanguage].citiesWeServe.items
+  //   ? contentByLanguage[selectedLanguage].sections
   //   : [];
 
-  const topCitiesItems = Array.isArray(
-    contentByLanguage?.[selectedLanguage]?.topCities?.items,
-  )
-    ? contentByLanguage[selectedLanguage].topCities.items
+  const faqs = Array.isArray(contentByLanguage?.[selectedLanguage]?.faqs)
+    ? contentByLanguage[selectedLanguage].faqs
     : [];
 
-  const addTopCityItem = () => {
-    const path = `content.${selectedLanguage}.topCities.items` as any;
-    const current = getValues(path) || [];
-    setValue(
-      path,
-      [
-        ...current,
-        {
-          cityName: "",
-          url: "",
-        },
-      ],
-      { shouldDirty: true, shouldTouch: true },
-    );
+  // const addSection = () => {
+  //   const path = `content.${selectedLanguage}.sections` as any;
+  //   const current = getValues(path);
+  //   const sectionsArray = Array.isArray(current) ? current : (current ? [current] : []);
+  //   setValue(
+  //     path,
+  //     [...sectionsArray, { title: "", description: "" }],
+  //     { shouldDirty: true, shouldTouch: true },
+  //   );
+  // };
+
+  // const removeSection = (index: number) => {
+  //   const path = `content.${selectedLanguage}.sections` as any;
+  //   const current = getValues(path);
+  //   const sectionsArray = Array.isArray(current) ? current : (current ? [current] : []);
+  //   setValue(
+  //     path,
+  //     sectionsArray.filter((_: any, idx: number) => idx !== index),
+  //     { shouldDirty: true, shouldTouch: true },
+  //   );
+  // };
+
+  const addFaq = () => {
+    const path = `content.${selectedLanguage}.faqs` as any;
+    const current = getValues(path);
+    const faqsArray = Array.isArray(current)
+      ? current
+      : current
+        ? [current]
+        : [];
+    setValue(path, [...faqsArray, { question: "", answer: "" }], {
+      shouldDirty: true,
+      shouldTouch: true,
+    });
   };
 
-  const removeTopCityItem = (index: number) => {
-    const path = `content.${selectedLanguage}.topCities.items` as any;
-    const current = getValues(path) || [];
+  const removeFaq = (index: number) => {
+    const path = `content.${selectedLanguage}.faqs` as any;
+    const current = getValues(path);
+    const faqsArray = Array.isArray(current)
+      ? current
+      : current
+        ? [current]
+        : [];
     setValue(
       path,
-      current.filter((_: any, idx: number) => idx !== index),
+      faqsArray.filter((_: any, idx: number) => idx !== index),
       { shouldDirty: true, shouldTouch: true },
     );
   };
@@ -418,6 +456,65 @@ export default function CitiesHubForm({
   //   );
   // };
 
+  // Error handler to navigate to the error field's language tab
+  const onHandleError = (errors: any) => {
+    console.error("Form validation errors:", errors);
+
+    // Find the first error in the content section
+    if (errors?.content) {
+      // Get the first language key that has errors
+      const languageKeys = Object.keys(errors.content);
+      if (languageKeys.length > 0) {
+        const errorLanguage = languageKeys[0];
+
+        // Switch to that language tab
+        if (errorLanguage !== selectedLanguage) {
+          setSelectedLanguage(errorLanguage as LanguageCode);
+        }
+
+        // Also switch to general tab if not already there
+        if (activeTab !== "general") {
+          setActiveTab("general");
+        }
+
+        // Find and focus on the first error field
+        const languageErrors = errors.content[errorLanguage];
+        if (languageErrors) {
+          // Helper function to find first error path
+          const findFirstErrorPath = (
+            obj: any,
+            path: string = "",
+          ): string | null => {
+            for (const key in obj) {
+              const currentPath = path ? `${path}.${key}` : key;
+              const value = obj[key];
+
+              // If this is a leaf error node (has message property)
+              if (value && typeof value === "object" && value.message) {
+                return currentPath;
+              }
+
+              // Recursively search nested objects
+              if (value && typeof value === "object") {
+                const nestedPath = findFirstErrorPath(value, currentPath);
+                if (nestedPath) return nestedPath;
+              }
+            }
+            return null;
+          };
+
+          const firstErrorPath = findFirstErrorPath(languageErrors);
+          if (firstErrorPath) {
+            // Use setTimeout to ensure the tab switch has completed
+            setTimeout(() => {
+              setFocus(`content.${errorLanguage}.${firstErrorPath}` as any);
+            }, 100);
+          }
+        }
+      }
+    }
+  };
+
   const onHandleSubmit = (data: CitiesHubFormData) => {
     console.log("onHandleSubmit called with data:", data);
 
@@ -467,7 +564,7 @@ export default function CitiesHubForm({
   return (
     <FormProvider {...form}>
       <form
-        onSubmit={handleSubmit(onHandleSubmit as any)}
+        onSubmit={handleSubmit(onHandleSubmit as any, onHandleError)}
         className="space-y-6"
       >
         <Card>
@@ -532,7 +629,7 @@ export default function CitiesHubForm({
 
               {/* Tab Content */}
               <div className="pt-4" key={selectedLanguage}>
-                {activeTab === "general" && (
+                {activeTab === "general" ? (
                   <div className="space-y-8">
                     {/* Intro Section */}
                     <Card>
@@ -551,6 +648,17 @@ export default function CitiesHubForm({
                                 placeholder="Cities Hub Title"
                               />
                             </InputGroup>
+                            {errors?.content?.[selectedLanguage]?.intro
+                              ?.title && (
+                              <FormMessage>
+                                {
+                                  (
+                                    errors?.content?.[selectedLanguage]?.intro
+                                      ?.title as any
+                                  )?.message
+                                }
+                              </FormMessage>
+                            )}
                           </Field>
                           <Controller
                             control={control}
@@ -617,158 +725,39 @@ export default function CitiesHubForm({
                       </CardBody>
                     </Card>
 
-                    {/* Top Cities Section */}
+                    {/* Single Section */}
                     <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>Top Cities</CardTitle>
+                          <CardTitle>Single Section</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel>Section Title</FieldLabel>
+                            <FieldLabel>Title</FieldLabel>
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `content.${selectedLanguage}.topCities.title` as any,
+                                  `content.${selectedLanguage}.singleSection.title` as any,
                                 )}
-                                placeholder="Top Cities"
+                                placeholder="Section Title"
                               />
                             </InputGroup>
                           </Field>
-                          <div className="flex justify-between">
-                            <h4 className="font-bold">City Items</h4>
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={addTopCityItem}
-                            >
-                              Add City Item
-                            </Button>
-                          </div>
-                          <div className="space-y-4">
-                            {topCitiesItems.map((_: any, index: number) => (
-                              <Card
-                                key={`${selectedLanguage}-top-city-${index}`}
-                                className="border border-muted"
-                              >
-                                <CardContent className="p-4 space-y-3">
-                                  <div className="flex justify-between items-center bg-gray-50 -mx-4 -mt-4 p-2 rounded-t">
-                                    <span className="text-xs font-bold text-gray-400 px-2">
-                                      TOP CITY #{index + 1}
-                                    </span>
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => removeTopCityItem(index)}
-                                    >
-                                      <Trash2 className="w-4 h-4 text-red-500" />
-                                    </Button>
-                                  </div>
-                                  <div className="grid grid-cols-2 gap-4">
-                                    <Field>
-                                      <FieldLabel>City Name</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.topCities.items.${index}.cityName` as any,
-                                          )}
-                                          placeholder="City Name"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>URL</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.topCities.items.${index}.url` as any,
-                                          )}
-                                          placeholder="/city-slug"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Country Code</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.topCities.items.${index}.countryCode` as any,
-                                          )}
-                                          placeholder="e.g, us"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>City Slug</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.topCities.items.${index}.slug` as any,
-                                          )}
-                                          placeholder="e.g, /city-slug"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            ))}
-                            {topCitiesItems.length === 0 && (
-                              <div className="py-8 text-center text-gray-500 border border-dashed rounded">
-                                No top cities added. Click "Add City Item" to
-                                create one.
-                              </div>
+                          <Controller
+                            control={control}
+                            name={
+                              `content.${selectedLanguage}.singleSection.description` as any
+                            }
+                            render={({ field }) => (
+                              <Field>
+                                <FieldLabel>Description</FieldLabel>
+                                <TinyEditorRHF
+                                  value={field.value || ""}
+                                  onChange={field.onChange}
+                                />
+                              </Field>
                             )}
-                          </div>
-                        </CardContent>
-                      </CardBody>
-                    </Card>
-
-                    {/*  Section */}
-                    <Card>
-                      <CardBody>
-                        <CardHeader>
-                          <CardTitle>Section</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="space-y-4">
-                            <Card
-                              key={`${selectedLanguage}-city`}
-                              className="border border-muted"
-                            >
-                              <CardContent className="p-4 space-y-3">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <Field className="col-span-full">
-                                    <FieldLabel>Title</FieldLabel>
-                                    <InputGroup>
-                                      <InputGroupInput
-                                        {...register(
-                                          `content.${selectedLanguage}.sections.title` as any,
-                                        )}
-                                        placeholder="e.g., City Name"
-                                      />
-                                    </InputGroup>
-                                  </Field>
-                                  <Controller
-                                    control={control}
-                                    name={
-                                      `content.${selectedLanguage}.sections.description` as any
-                                    }
-                                    render={({ field }) => (
-                                      <Field className="col-span-full">
-                                        <FieldLabel>Description</FieldLabel>
-                                        <TinyEditorRHF
-                                          value={field.value || ""}
-                                          onChange={field.onChange}
-                                        />
-                                      </Field>
-                                    )}
-                                  />
-                                </div>
-                              </CardContent>
-                            </Card>
-                          </div>
+                          />
                         </CardContent>
                       </CardBody>
                     </Card>
@@ -1051,142 +1040,98 @@ export default function CitiesHubForm({
                       </CardBody>
                     </Card>
 
-                    {/* Cities We Serve Section */}
-                    {/*  <Card>
+                    {/* Multiple Sections */}
+                    <Card>
                       <CardBody>
                         <CardHeader>
-                          <CardTitle>Cities We Serve List</CardTitle>
+                          <CardTitle>Sections </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <Field>
-                            <FieldLabel>City Title</FieldLabel>
+                            <FieldLabel>Title</FieldLabel>
                             <InputGroup>
                               <InputGroupInput
                                 {...register(
-                                  `content.${selectedLanguage}.citiesWeServe.title` as any,
+                                  `content.${selectedLanguage}.sections.title` as any,
                                 )}
-                                placeholder="e.g., United States"
+                                placeholder="Section Title"
                               />
                             </InputGroup>
                           </Field>
+                          <Controller
+                            control={control}
+                            name={
+                              `content.${selectedLanguage}.sections.description` as any
+                            }
+                            render={({ field }) => (
+                              <Field>
+                                <FieldLabel>Description</FieldLabel>
+                                <TinyEditorRHF
+                                  value={field.value || ""}
+                                  onChange={field.onChange}
+                                />
+                              </Field>
+                            )}
+                          />
+                        </CardContent>
+                      </CardBody>
+                    </Card>
+
+                    {/* FAQ Section */}
+                    <Card>
+                      <CardBody>
+                        <CardHeader>
+                          <CardTitle>
+                            Frequently Asked Questions (FAQs)
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
                           <div className="flex justify-between">
-                            <h4 className="font-bold">Cities Items</h4>
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={addCitiesWeServeItem}
-                            >
-                              Add City Item
+                            <h4 className="font-bold">FAQ Items</h4>
+                            <Button type="button" size="sm" onClick={addFaq}>
+                              Add FAQ
                             </Button>
                           </div>
-                          <div className="space-y-4">
-                            {citiesWeServeItems.map((_: any, index: number) => (
+                          <div className="space-y-6">
+                            {faqs.map((_: any, index: number) => (
                               <Card
-                                key={`${selectedLanguage}-city-item-${index}`}
-                                className="border border-muted"
+                                key={`${selectedLanguage}-faq-${index}`}
+                                className="border border-muted bg-gray-50"
                               >
                                 <CardContent className="p-4 space-y-3">
-                                  <div className="flex justify-between items-center bg-gray-50 -mx-4 -mt-4 p-2 rounded-t">
-                                    <span className="text-xs font-bold text-gray-400 px-2">
-                                      City #{index + 1}
+                                  <div className="flex justify-between items-center -mx-4 -mt-4 p-2 rounded-t bg-gray-100">
+                                    <span className="text-xs font-bold text-gray-500 px-2">
+                                      FAQ #{index + 1}
                                     </span>
                                     <Button
                                       type="button"
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() =>
-                                        removeCitiesWeServeItem(index)
-                                      }
+                                      onClick={() => removeFaq(index)}
                                     >
                                       <Trash2 className="w-4 h-4 text-red-500" />
                                     </Button>
                                   </div>
-                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                  <div className="space-y-4">
                                     <Field>
-                                      <FieldLabel>ID</FieldLabel>
+                                      <FieldLabel>Question</FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.id` as any,
+                                            `content.${selectedLanguage}.faqs.${index}.question` as any,
                                           )}
-                                          placeholder="City ID"
+                                          placeholder="Enter Question"
                                         />
                                       </InputGroup>
                                     </Field>
                                     <Field>
-                                      <FieldLabel>Name</FieldLabel>
+                                      <FieldLabel>Answer</FieldLabel>
                                       <InputGroup>
                                         <InputGroupInput
                                           {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.name` as any,
+                                            `content.${selectedLanguage}.faqs.${index}.answer` as any,
                                           )}
-                                          placeholder="e.g, Austin"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Slug</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.slug` as any,
-                                          )}
-                                          placeholder="e.g, austin"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>IATA</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.iata` as any,
-                                          )}
-                                          placeholder="e.g, JFK"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Airport Code</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.airportCode` as any,
-                                          )}
-                                          placeholder="e.g, JFK"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Airport Name</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.airportName` as any,
-                                          )}
-                                          placeholder="e.g, John F. Kennedy"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Country Code</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.countryCode` as any,
-                                          )}
-                                          placeholder="e.g, US"
-                                        />
-                                      </InputGroup>
-                                    </Field>
-                                    <Field>
-                                      <FieldLabel>Country Slug</FieldLabel>
-                                      <InputGroup>
-                                        <InputGroupInput
-                                          {...register(
-                                            `content.${selectedLanguage}.citiesWeServe.items.${index}.countrySlug` as any,
-                                          )}
-                                          placeholder="e.g, us"
+                                          placeholder="Enter Answer"
                                         />
                                       </InputGroup>
                                     </Field>
@@ -1194,24 +1139,21 @@ export default function CitiesHubForm({
                                 </CardContent>
                               </Card>
                             ))}
-                            {citiesWeServeItems.length === 0 && (
-                              <div className="py-8 text-center text-gray-500 border border-dashed rounded">
-                                No cities added. Click "Add City Item" to create
-                                one.
+                            {faqs.length === 0 && (
+                              <div className="py-8 text-center text-gray-500 border border-dashed rounded bg-white">
+                                No FAQs added. Click "Add FAQ" to create one.
                               </div>
                             )}
                           </div>
                         </CardContent>
                       </CardBody>
-                    </Card> */}
+                    </Card>
                   </div>
-                )}
-
-                {activeTab === "seo" && (
+                ) : activeTab === "seo" ? (
                   <SEOSection form={form} metaKeywordsData={metaKeywordsData} />
-                )}
-
-                {activeTab === "jsonld" && <JSONLDSection form={form} />}
+                ) : activeTab === "jsonld" ? (
+                  <JSONLDSection form={form} />
+                ) : null}
               </div>
             </CardContent>
           </CardBody>
