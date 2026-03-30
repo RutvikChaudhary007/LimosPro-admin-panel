@@ -46,6 +46,9 @@ const ViewPaymentPage = () => {
   const { data, isFetching, isError, refetch } = useFetchPaymentById({
     id: id!,
   });
+
+  // Debug: log the data to see what's coming from backend
+
   // Initialize Places Autocomplete
   useEffect(() => {
     let isMounted = true;
@@ -153,24 +156,62 @@ const ViewPaymentPage = () => {
                   Name:
                 </Label>
                 <Label>
-                  {data?.payment?.userDetails?.firstName}{" "}
-                  {data?.payment?.userDetails?.lastName}
+                  {/* Priority: userDetails -> thirdPartyUser -> guestUser */}
+                  {data?.payment?.userDetails?.firstName ||
+                  data?.payment?.userDetails?.lastName
+                    ? `${data?.payment?.userDetails?.firstName ?? ""} ${data?.payment?.userDetails?.lastName ?? ""}`.trim()
+                    : data?.payment?.thirdPartyUser?.name
+                      ? data?.payment?.thirdPartyUser?.name
+                      : data?.payment?.guestUser?.name
+                        ? data?.payment?.guestUser?.name
+                        : "N/A"}
                 </Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   Email:
                 </Label>
-                <Label>{data?.payment?.userDetails?.email}</Label>
+                <Label>
+                  {data?.payment?.userDetails?.email
+                    ? data?.payment?.userDetails?.email
+                    : data?.payment?.thirdPartyUser?.email
+                      ? data?.payment?.thirdPartyUser?.email
+                      : data?.payment?.guestUser?.email
+                        ? data?.payment?.guestUser?.email
+                        : "N/A"}
+                </Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   Phone:
                 </Label>
-                <Label>{data?.payment?.userDetails?.phoneNumber}</Label>
+                <Label>
+                  {data?.payment?.userDetails?.phoneNumber
+                    ? data?.payment?.userDetails?.phoneNumber
+                    : data?.payment?.thirdPartyUser?.phone
+                      ? data?.payment?.thirdPartyUser?.phone
+                      : data?.payment?.guestUser?.phone
+                        ? data?.payment?.guestUser?.phone
+                        : "N/A"}
+                </Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   Booking ID:
                 </Label>
                 <Label>{data?.payment?.bookingId}</Label>
+
+                {/* DEBUG: Temporary raw data display */}
+                <div className="col-span-2 mt-4 p-2 bg-gray-100 rounded text-xs font-mono">
+                  <div>DEBUG:</div>
+                  <div>
+                    userDetails: {JSON.stringify(data?.payment?.userDetails)}
+                  </div>
+                  <div>
+                    thirdPartyUser:{" "}
+                    {JSON.stringify(data?.payment?.thirdPartyUser)}
+                  </div>
+                  <div>
+                    guestUser: {JSON.stringify(data?.payment?.guestUser)}
+                  </div>
+                </div>
 
                 <div className="col-span-2">
                   <FieldSeparator />

@@ -1,7 +1,6 @@
-import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { formatDate } from "date-fns";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useFetchTripById } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -19,65 +18,15 @@ import {
 import { FieldSeparator } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { constant } from "@/lib/constant";
-import { env } from "@/utils/env";
-import { geoDecoding } from "@/utils/googleMaps";
-
-const libraries = ["places", "geocoding"];
 
 const ViewTripsPage = () => {
   const { id } = useParams();
-  const [googleMapsApiKey] = useState<string | null>(
-    env?.VITE_GOOGLE_MAP_KEY ?? "",
-  );
-  const [pickUpAddress, setPickUpAddress] = useState<string | undefined>(
-    undefined,
-  );
-  const [dropOffAddress, setDropOffAddress] = useState<string | undefined>(
-    undefined,
-  );
-
-  // Load Google Maps script
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: googleMapsApiKey || "",
-    libraries: libraries as Libraries,
-  });
 
   const { data, isFetching } = useFetchTripById({ id: id! });
-  // Initialize Places Autocomplete
+
   useEffect(() => {
-    let isMounted = true;
-
-    const fetchAddress = async () => {
-      if (isLoaded && data && !loadError) {
-        try {
-          const address = await geoDecoding({
-            lat: data?.pickupLocation?.lat,
-            lng: data?.pickupLocation?.lng,
-          });
-          const address2 = await geoDecoding({
-            lat: data?.dropoffLocation?.lat,
-            lng: data?.dropoffLocation?.lng,
-          });
-          if (isMounted) {
-            console.log("Decoded Address:", address);
-            if (address) {
-              setPickUpAddress(address as string);
-            }
-            if (address2) {
-              setDropOffAddress(address2 as string);
-            }
-          }
-        } catch (err) {
-          console.error("Geocoding failed:", err);
-        }
-      }
-    };
-
     console.log("trips details => ", data);
-    return () => {
-      isMounted = false;
-    };
-  }, [isLoaded, loadError, data]);
+  }, [data]);
 
   return (
     <div className="p-6 space-y-6 md:p-8 md:space-y-8">
@@ -193,16 +142,12 @@ const ViewTripsPage = () => {
                 <Label className="font-montserrat font-semibold capitalize">
                   From:
                 </Label>
-                <Label>
-                  {pickUpAddress || data?.pickupLocation?.address || "N/A"}
-                </Label>
+                <Label>{data?.pickupLocation?.address || "N/A"}</Label>
 
                 <Label className="font-montserrat font-semibold capitalize">
                   to:
                 </Label>
-                <Label>
-                  {dropOffAddress || data?.dropoffLocation?.address || "N/A"}
-                </Label>
+                <Label>{data?.dropoffLocation?.address || "N/A"}</Label>
               </div>
             </CardContent>
           </CardBody>
