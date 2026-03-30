@@ -6,7 +6,7 @@ import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "../ui/button";

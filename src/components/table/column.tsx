@@ -1184,6 +1184,12 @@ export type TBooking = {
     email: string;
     phone: string;
   };
+  isGuestUser?: boolean;
+  guestUser?: {
+    name: string;
+    email: string;
+    phone: string;
+  };
   scheduledTime: string;
   status: string;
   createdAt: string;
@@ -1312,7 +1318,7 @@ export function getBooking(
             <Button
               type="button"
               onClick={() => {
-                const phone = row?.original?.thirdPartyUser?.phone;
+                const phone = row?.original?.thirdPartyUser?.phone || row?.original?.guestUser?.phone;
                 if (phone) {
                   window.location.href = `tel:${phone}`;
                 }

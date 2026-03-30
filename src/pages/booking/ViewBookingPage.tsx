@@ -63,7 +63,7 @@ const ViewBookingPage = () => {
   const { data: passengerUser } = useQuery({
     queryKey: queryKeys.bookingPassengerUser.detail(data?.userId),
     queryFn: () => getUserById(data?.userId),
-    enabled: !!data?.userId && !data?.thirdPartyUser,
+    enabled: !!data?.userId && !data?.thirdPartyUser && !data?.guestUser,
     refetchOnWindowFocus: false,
     retry: false,
   });
@@ -432,6 +432,7 @@ const ViewBookingPage = () => {
                       <Label>
                         {formatFieldValue(
                           data?.thirdPartyUser?.name ||
+                            data?.guestUser?.name ||
                             `${passengerUser?.firstName || ""} ${passengerUser?.lastName || ""}`.trim() ||
                             null,
                         )}
@@ -442,6 +443,7 @@ const ViewBookingPage = () => {
                       <Label>
                         {formatFieldValue(
                           data?.thirdPartyUser?.email ||
+                            data?.guestUser?.email ||
                             passengerUser?.email ||
                             null,
                         )}
@@ -452,6 +454,7 @@ const ViewBookingPage = () => {
                       <Label>
                         {formatFieldValue(
                           data?.thirdPartyUser?.phone ||
+                            data?.guestUser?.phone ||
                             passengerUser?.phoneNumber ||
                             null,
                         )}

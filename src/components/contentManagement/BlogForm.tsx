@@ -31,7 +31,7 @@ import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost } from "@/types/content";
 import { generateSlug } from "@/utils/slug";
 import { styledLog } from "@/utils/styledLog";
-import "react-quill/dist/quill.snow.css";
+import "react-quill-new/dist/quill.snow.css";
 import { toast } from "sonner";
 import * as z from "zod";
 import { Form, FormMessage } from "../ui/form";
