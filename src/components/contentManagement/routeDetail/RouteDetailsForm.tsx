@@ -1,5 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link2, RefreshCw, Trash2 } from "lucide-react";
+import {
+  Clock,
+  Link2,
+  RefreshCw,
+  Route,
+  Shield,
+  Star,
+  Trash2,
+  Users,
+  Wifi,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
@@ -63,12 +73,12 @@ const LOCATION_TYPES = [
 
 // Feature icon options
 const FEATURE_ICONS = [
-  { value: "route", label: "Route" },
-  { value: "clock", label: "Clock" },
-  { value: "wifi", label: "WiFi" },
-  { value: "shield", label: "Shield" },
-  { value: "star", label: "Star" },
-  { value: "users", label: "Users" },
+  { value: "route", label: "Route", icon: <Route className="w-4 h-4" /> },
+  { value: "clock", label: "Clock", icon: <Clock className="w-4 h-4" /> },
+  { value: "wifi", label: "WiFi", icon: <Wifi className="w-4 h-4" /> },
+  { value: "shield", label: "Shield", icon: <Shield className="w-4 h-4" /> },
+  { value: "star", label: "Star", icon: <Star className="w-4 h-4" /> },
+  { value: "users", label: "Users", icon: <Users className="w-4 h-4" /> },
 ] as const;
 
 const imageSchema = z.union([
@@ -644,7 +654,10 @@ function LanguageContentFields({ language }: LanguageContentFieldsProps) {
                             <SelectContent>
                               {FEATURE_ICONS.map((icon) => (
                                 <SelectItem key={icon.value} value={icon.value}>
-                                  {icon.label}
+                                  <div className="flex items-center gap-2">
+                                    {icon.icon}
+                                    <span>{icon.label}</span>
+                                  </div>
                                 </SelectItem>
                               ))}
                             </SelectContent>
