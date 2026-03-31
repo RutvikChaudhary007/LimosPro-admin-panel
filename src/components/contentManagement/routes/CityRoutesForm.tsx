@@ -41,7 +41,7 @@ import { uid } from "@/utils/pagebuilder.utils";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
-import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
+import { imageSchema, jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
 
 const routeEntrySchema = z.object({
   id: z.string().optional(),
@@ -74,7 +74,7 @@ const sectionEntrySchema = z.object({
 const introSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  image: z.union([z.string(), z.instanceof(File)]).optional(),
+  image: imageSchema.optional(),
   imageAlt: z.string().optional(),
 });
 
@@ -478,12 +478,20 @@ export default function CityRoutesForm({
                             `content.${selectedLanguage}.intro.image` as any
                           }
                           control={form.control}
-                          render={({ field }) => (
-                            <UploadWithUrlV2
-                              value={field.value}
-                              onChange={field.onChange}
-                              title="Intro Image"
-                            />
+                          render={({ field, fieldState }) => (
+                            <div className="space-y-1">
+                              <UploadWithUrlV2
+                                value={field.value}
+                                onChange={field.onChange}
+                                title="Intro Image"
+                                disabled={form.formState.isSubmitting}
+                              />
+                              {fieldState.error && (
+                                <FormMessage>
+                                  {fieldState.error.message}
+                                </FormMessage>
+                              )}
+                            </div>
                           )}
                         />
                         <Field>
