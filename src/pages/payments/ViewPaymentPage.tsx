@@ -198,21 +198,6 @@ const ViewPaymentPage = () => {
                 </Label>
                 <Label>{data?.payment?.bookingId}</Label>
 
-                {/* DEBUG: Temporary raw data display */}
-                <div className="col-span-2 mt-4 p-2 bg-gray-100 rounded text-xs font-mono">
-                  <div>DEBUG:</div>
-                  <div>
-                    userDetails: {JSON.stringify(data?.payment?.userDetails)}
-                  </div>
-                  <div>
-                    thirdPartyUser:{" "}
-                    {JSON.stringify(data?.payment?.thirdPartyUser)}
-                  </div>
-                  <div>
-                    guestUser: {JSON.stringify(data?.payment?.guestUser)}
-                  </div>
-                </div>
-
                 <div className="col-span-2">
                   <FieldSeparator />
                 </div>

@@ -50,6 +50,7 @@ const defaultValues = {
   stripePublicKey: "pk_test_...",
   taxRate: "8.5",
   platformFee: "5",
+  gratuityRate: "10",
   openaiEnabled: true,
   openaiApiKey: "sk-...",
   modelName: "gpt-4o",
@@ -215,6 +216,7 @@ const SiteSettingsForm = () => {
       { key: "taxRate", label: "Tax Rate" },
       { key: "maxTokens", label: "Max Tokens" },
       { key: "temperature", label: "Temperature" },
+      { key: "gratuityRate", label: "Gratuity Rate" },
     ];
 
     for (const field of numericFields) {
@@ -584,6 +586,20 @@ const SiteSettingsForm = () => {
                     />
                     <FieldDescription>
                       Platform fee deducted per transaction.
+                    </FieldDescription>
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="gratuityRate">
+                      Gratuity Rate (%)
+                    </FieldLabel>
+                    <Input
+                      id="gratuityRate"
+                      type="number"
+                      value={values.gratuityRate}
+                      onChange={updateValue("gratuityRate")}
+                    />
+                    <FieldDescription>
+                      Default gratuity percentage for bookings.
                     </FieldDescription>
                   </Field>
                 </div>
