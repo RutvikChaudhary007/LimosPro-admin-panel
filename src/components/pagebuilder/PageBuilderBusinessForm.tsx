@@ -139,6 +139,7 @@ export const multiLangPageTemplateSchema = z.object({
     .default({ [DEFAULT_LANGUAGE]: [] }),
   seo: sharedSeoSchema,
   jsonLd: sharedJsonLdSchema,
+  sequence: z.coerce.number().optional().default(0),
 });
 
 export type MultiLangPageTemplateFormData = z.infer<
@@ -183,6 +184,7 @@ const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
       content: { [DEFAULT_LANGUAGE]: getEmptyLanguageContent().content },
       seo: getEmptySeo(),
       jsonLd: getEmptyJsonLd(),
+      sequence: 0,
     };
 
   const languages = data.availableLanguages || [DEFAULT_LANGUAGE];
@@ -235,6 +237,7 @@ const normalizeTemplateData = (data: any): MultiLangPageTemplateFormData => {
     content: {},
     seo: sharedSeo,
     jsonLd: sharedJsonLd,
+    sequence: typeof data.sequence === "number" ? data.sequence : 0,
   };
 
   languages.forEach((lang: string) => {
@@ -819,6 +822,36 @@ export default function PageTemplateEditor({
                                   {errors.slug && (
                                     <FormMessage>
                                       {errors.slug.message}
+                                    </FormMessage>
+                                  )}
+                                </Field>
+
+                                <Field>
+                                  <FieldLabel
+                                    htmlFor="sequence"
+                                    className="text-base-black gap-0"
+                                  >
+                                    Menu Sequence
+                                  </FieldLabel>
+                                  <InputGroup>
+                                    <InputGroupInput
+                                      id="sequence"
+                                      type="number"
+                                      placeholder="0"
+                                      {...register("sequence")}
+                                      className={
+                                        errors.sequence
+                                          ? "border-base-danger"
+                                          : ""
+                                      }
+                                    />
+                                  </InputGroup>
+                                  <FieldDescription>
+                                    Menu item display order (ascending).
+                                  </FieldDescription>
+                                  {errors.sequence && (
+                                    <FormMessage>
+                                      {errors.sequence.message}
                                     </FormMessage>
                                   )}
                                 </Field>

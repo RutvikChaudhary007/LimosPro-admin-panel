@@ -8,6 +8,7 @@ import {
   type SubmitHandler,
   useFieldArray,
   useForm,
+  useWatch,
 } from "react-hook-form";
 import { z } from "zod";
 import { useFetchAllMetaKeywords } from "@/api";
@@ -113,6 +114,26 @@ const cityRoutesSchema = z.discriminatedUnion("cityRoutesEnabled", [
         }),
       )
       .optional(),
+    airportRoutes: z.discriminatedUnion("airportRoutesEnabled", [
+      z.object({
+        airportRoutesEnabled: z.literal(true),
+        heading: z.string().optional(),
+        label: z.string().optional(),
+        link: z.string().optional(),
+        airportRoutesCards: z
+          .array(
+            z.object({
+              id: z.string().optional(),
+              title: z.string().optional(),
+              url: z.string().optional(),
+            }),
+          )
+          .optional(),
+      }),
+      z.object({
+        airportRoutesEnabled: z.literal(false),
+      }),
+    ]),
     routeCards: z
       .array(
         z.object({
@@ -333,6 +354,13 @@ const getEmptyLanguageContent = () => ({
   cityRoutes: {
     cityRoutesEnabled: false,
     cityCards: [],
+    airportRoutes: {
+      airportRoutesEnabled: false,
+      heading: "",
+      seeAllLabel: "",
+      seeAllLink: "",
+      airportRoutesCards: [],
+    },
     routeCards: [],
   },
   topRoutes: {
@@ -424,6 +452,15 @@ const normalizeServiceData = (data: any): ServiceFormData => {
           typeof content[lang].cityRoutes.cityRoutesEnabled !== "boolean"
         ) {
           content[lang].cityRoutes.cityRoutesEnabled = false;
+        }
+        // Ensure airportRoutesEnabled is always explicitly set
+        if (
+          content[lang].cityRoutes &&
+          content[lang].cityRoutes.airportRoutes &&
+          typeof content[lang].cityRoutes.airportRoutes.airportRoutesEnabled !==
+            "boolean"
+        ) {
+          content[lang].cityRoutes.airportRoutes.airportRoutesEnabled = false;
         }
         // Data migration for topRoutes: convert values to items
         if (content[lang].topRoutes && content[lang].topRoutes.label) {
@@ -556,6 +593,15 @@ const normalizeServiceData = (data: any): ServiceFormData => {
     ) {
       content[lang].cityRoutes.cityRoutesEnabled = false;
     }
+    // Ensure airportRoutesEnabled is always explicitly set for old format conversion
+    if (
+      content[lang].cityRoutes &&
+      content[lang].cityRoutes.airportRoutes &&
+      typeof content[lang].cityRoutes.airportRoutes.airportRoutesEnabled !==
+        "boolean"
+    ) {
+      content[lang].cityRoutes.airportRoutes.airportRoutesEnabled = false;
+    }
   });
 
   // Extract Shared SEO/JSON-LD
@@ -630,6 +676,22 @@ function LanguageFields({
     name: `content.${selectedLanguage}.cityRoutes.cityCards` as any,
   });
 
+  const airportRoutesCards = useFieldArray({
+    control,
+    name: `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesCards` as any,
+  });
+
+  // Use useWatch for dynamic path subscription that updates when selectedLanguage changes
+  const cityRoutesEnabled = useWatch({
+    control,
+    name: `content.${selectedLanguage}.cityRoutes.cityRoutesEnabled` as any,
+  });
+
+  const airportRoutesEnabled = useWatch({
+    control,
+    name: `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesEnabled` as any,
+  });
+
   const routeCards = useFieldArray({
     control,
     name: `content.${selectedLanguage}.cityRoutes.routeCards` as any,
@@ -670,6 +732,7 @@ function LanguageFields({
         if (
           isEnabled &&
           !cityCards.fields.length &&
+          !airportRoutesCards.fields.length &&
           !routeCards.fields.length
         ) {
           // Initialize arrays if they don't exist
@@ -683,6 +746,24 @@ function LanguageFields({
           );
         }
       }
+
+      if (
+        name ===
+        `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesEnabled`
+      ) {
+        const isEnabled =
+          value?.content?.[selectedLanguage]?.cityRoutes?.airportRoutes
+            ?.airportRoutesEnabled;
+
+        if (isEnabled && !airportRoutesCards.fields.length) {
+          // Initialize arrays if they don't exist
+          setValue(
+            `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesCards` as any,
+            [],
+          );
+        }
+      }
+
       if (name === `content.${selectedLanguage}.topRoutes.isRoutes`) {
         const isRouteEnabled =
           value?.content?.[selectedLanguage]?.topRoutes?.isRoutes;
@@ -1075,6 +1156,7 @@ function LanguageFields({
 
                               // Clear field arrays
                               cityCards.replace([]);
+                              airportRoutesCards.replace([]);
                               routeCards.replace([]);
                             } else {
                               // When enabled, initialize with full structure
@@ -1093,6 +1175,10 @@ function LanguageFields({
                                   topRoutesSeeAllLink: "",
                                   topRoutesSeeAll: "",
                                   cityCards: [],
+                                  airportRoutes: {
+                                    airportRoutesEnabled: false,
+                                    airportRoutesCards: [],
+                                  },
                                   routeCards: [],
                                 },
                                 { shouldValidate: true, shouldDirty: true },
@@ -1117,9 +1203,7 @@ function LanguageFields({
                 </Field>
 
                 {/* Show City Routes Content Only When Enabled */}
-                {watch(
-                  `content.${selectedLanguage}.cityRoutes.cityRoutesEnabled` as any,
-                ) === true && (
+                {cityRoutesEnabled === true && (
                   <>
                     <Separator />
                     <div className="grid grid-cols-2 gap-4">
@@ -1373,6 +1457,167 @@ function LanguageFields({
 
                     <Separator />
 
+                    {/* Airport Routes Cards */}
+                    <div className="space-y-4">
+                      <div className="flex justify-between">
+                        <h4 className="font-bold">Airport Routes Cards</h4>
+                        <Controller
+                          control={control}
+                          name={
+                            `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesEnabled` as any
+                          }
+                          render={({ field }) => (
+                            <Checkbox
+                              id={`airportRoutesToggle-${selectedLanguage}`}
+                              className="w-4 max-w-4"
+                              checked={field.value === true}
+                              onCheckedChange={(val) => {
+                                const isEnabled = val === true;
+
+                                if (!isEnabled) {
+                                  // When disabled, set to false and clear all data
+                                  setValue(
+                                    `content.${selectedLanguage}.cityRoutes.airportRoutes` as any,
+                                    {
+                                      airportRoutesEnabled: false,
+                                    },
+                                    { shouldValidate: true, shouldDirty: true },
+                                  );
+
+                                  // Clear field arrays
+                                  airportRoutesCards.replace([]);
+                                } else {
+                                  // When enabled, initialize with full structure
+                                  setValue(
+                                    `content.${selectedLanguage}.cityRoutes.airportRoutes` as any,
+                                    {
+                                      airportRoutesEnabled: true,
+                                      airportRoutesCards: [],
+                                    },
+                                    { shouldValidate: true, shouldDirty: true },
+                                  );
+                                }
+
+                                field.onChange(isEnabled);
+                              }}
+                            />
+                          )}
+                        />
+                      </div>
+                      {airportRoutesEnabled === true ? (
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Field>
+                              <FieldLabel>Section Heading</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.cityRoutes.airportRoutes.heading` as any,
+                                  )}
+                                  placeholder="e.g. Popular Airport Transfers"
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>See All Label</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.cityRoutes.airportRoutes.label` as any,
+                                  )}
+                                  placeholder="e.g. See All"
+                                />
+                              </InputGroup>
+                            </Field>
+                            <Field>
+                              <FieldLabel>See All Link</FieldLabel>
+                              <InputGroup>
+                                <InputGroupInput
+                                  {...register(
+                                    `content.${selectedLanguage}.cityRoutes.airportRoutes.link` as any,
+                                  )}
+                                  placeholder="e.g. /airport-transfers"
+                                />
+                              </InputGroup>
+                            </Field>
+                          </div>
+                          <div className="flex justify-end">
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outlinePrimary"
+                              onClick={() =>
+                                airportRoutesCards.append({
+                                  id: uid(),
+                                  title: "",
+                                  url: "",
+                                })
+                              }
+                            >
+                              <Plus className="w-4 h-4 mr-1" />
+                              Add Airport Route
+                            </Button>
+                          </div>
+                          {airportRoutesCards.fields.length > 0 && (
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              {airportRoutesCards.fields.map((field, idx) => (
+                                <Card key={field.id} className="border-dashed">
+                                  <CardContent className="p-4 space-y-3">
+                                    <div className="flex justify-between">
+                                      <span className="text-xs font-bold text-gray-400 uppercase">
+                                        Item #{idx + 1}
+                                      </span>
+                                      <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() =>
+                                          airportRoutesCards.remove(idx)
+                                        }
+                                      >
+                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                      </Button>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <Field>
+                                        <FieldLabel>Airport Name</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesCards.${idx}.title` as any,
+                                            )}
+                                            placeholder="e.g. Houston Airport Transfer – IAH"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                      <Field>
+                                        <FieldLabel>Url</FieldLabel>
+                                        <InputGroup>
+                                          <InputGroupInput
+                                            {...register(
+                                              `content.${selectedLanguage}.cityRoutes.airportRoutes.airportRoutesCards.${idx}.url` as any,
+                                            )}
+                                            placeholder="e.g, /en/us/airport-transfer/george-bush-intercontinental-iah, https://beta.limospro.com/en/us/airport-transfer/george-bush-intercontinental-iah"
+                                          />
+                                        </InputGroup>
+                                      </Field>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center text-gray-500 border border-dashed rounded">
+                          No airport route cards added. Enable and click on{" "}
+                          <span className="font-bold">"Add Airport Route"</span>{" "}
+                          button to create one.
+                        </div>
+                      )}
+                    </div>
+                    <Separator />
+
                     {/* Route Cards */}
                     <div className="space-y-4">
                       <div className="flex justify-between">
@@ -1519,7 +1764,8 @@ function LanguageFields({
                         </div>
                       ) : (
                         <div className="py-8 text-center text-gray-500 border border-dashed rounded">
-                          No route cards added. Click "Add Route" to create one.
+                          No route cards added. Click "Add Secondary Card" to
+                          create one.
                         </div>
                       )}
                     </div>
