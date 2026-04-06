@@ -1,5 +1,6 @@
 import PageTitle from "@/components/common/PageTitle";
 import { PageHeader } from "@/components/layouts/PageHeader";
+import GlobalLimitsForm from "@/components/settings/GlobalLimitsForm";
 import SiteSettingsForm from "@/components/settings/SiteSettingsForm";
 import { generatePageTitle } from "@/utils/seo";
 
@@ -13,6 +14,7 @@ const SiteSettingsPage = () => {
           breadcrumbs={[{ label: "Home", path: "/" }, { label: "Settings" }]}
         />
         <SiteSettingsForm />
+        <GlobalLimitsForm />
       </div>
     </>
   );

@@ -308,6 +308,7 @@ export const queryKeys = {
     partnerDetail: (id: string) =>
       ["siteSetting", "partner", "detail", id] as const,
     ui: () => ["siteSetting", "ui"] as const,
+    globalLimits: () => ["siteSetting", "globalLimits"] as const,
   },
 
   partnerTransaction: {

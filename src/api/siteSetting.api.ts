@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { API_ENDPOINTS } from "@/lib/api-endpoints";
+import { ADMIN_SERVICE_URL, API_ENDPOINTS } from "@/lib/api-endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import axiosInstance from "@/utils/axiosInstance";
 
@@ -262,6 +262,85 @@ export const useUpdateSiteSettingsUIMutation = () => {
     mutationFn: updateSiteSettingsUI,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.siteSetting.ui() });
+    },
+  });
+};
+
+// ============================================
+// GLOBAL LIMITS (City Distance Limits) OPERATIONS
+// ============================================
+
+export interface CityDistanceLimits {
+  default: number;
+  houston?: number;
+  dallas?: number;
+  austin?: number;
+  "san-antonio"?: number;
+  "las-vegas"?: number;
+  orlando?: number;
+  "los-angeles"?: number;
+  paris?: number;
+  london?: number;
+  frankfurt?: number;
+  dubai?: number;
+  riyadh?: number;
+  cairo?: number;
+  [key: string]: number | undefined;
+}
+
+export interface GlobalLimits {
+  maxBookingsPerDay: number;
+  maxDistanceMiles: number;
+  minBookingNoticeHours: number;
+  maxPassengersPerVehicle: number;
+  cityDistanceLimits: CityDistanceLimits;
+}
+
+/**
+ * Fetch global limits configuration
+ */
+export const getGlobalLimits = async (): Promise<GlobalLimits> => {
+  const url = `${ADMIN_SERVICE_URL}/admin/site-settings/global-limits`;
+  console.log("GET Global Limits URL:", url);
+  const response = await axiosInstance.get(url);
+  console.log("GET Global Limits Response:", response);
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * Hook to fetch global limits
+ */
+export const useFetchGlobalLimits = () =>
+  useQuery({
+    queryKey: queryKeys.siteSetting.globalLimits(),
+    queryFn: () => getGlobalLimits(),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+/**
+ * Update global limits configuration
+ */
+export const updateGlobalLimits = async (data: Partial<GlobalLimits>) => {
+  const url = `${ADMIN_SERVICE_URL}/admin/site-settings/global-limits`;
+  console.log("PUT Global Limits URL:", url);
+  console.log("PUT Global Limits Data:", data);
+  const response = await axiosInstance.put(url, data);
+  console.log("PUT Global Limits Response:", response);
+  return response?.data?.data ?? response?.data;
+};
+
+/**
+ * Hook to update global limits
+ */
+export const useUpdateGlobalLimitsMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateGlobalLimits,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.siteSetting.globalLimits(),
+      });
     },
   });
 };
