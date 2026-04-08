@@ -1741,21 +1741,17 @@ export default function CityDiplomatsHubForm({
                                     />
                                   </InputGroup>
                                 </Field>
-                                <Controller
-                                  control={control}
-                                  name={
-                                    `content.${selectedLanguage}.faqs.${index}.answer` as any
-                                  }
-                                  render={({ field }) => (
-                                    <Field>
-                                      <FieldLabel>Answer</FieldLabel>
-                                      <TinyEditorRHF
-                                        value={field.value || ""}
-                                        onChange={field.onChange}
-                                      />
-                                    </Field>
-                                  )}
-                                />
+                                <Field>
+                                  <FieldLabel>Answer</FieldLabel>
+                                  <InputGroup>
+                                    <Textarea
+                                      {...register(
+                                        `content.${selectedLanguage}.faqs.${index}.answer` as any,
+                                      )}
+                                      placeholder="FAQ Answer"
+                                    />
+                                  </InputGroup>
+                                </Field>
                               </CardContent>
                             </Card>
                           ))}
