@@ -404,14 +404,12 @@ const useBulkDeleteServicePricingMutation = () => {
  * */
 
 const useCreatePartnerMutation = () => {
-  const navigate = useNavigate();
   const { invalidate } = useInvalidateModule();
 
   return useMutation({
     mutationFn: createPartner,
     onSuccess: (response) => {
       invalidate.partner();
-      navigate(constant.ROUTING_URLS.PARTNER);
       return response;
     },
     onError: (err: unknown) => {
@@ -421,7 +419,6 @@ const useCreatePartnerMutation = () => {
 };
 
 const useEditPartnerMutation = () => {
-  const navigate = useNavigate();
   const { invalidate } = useInvalidateModule();
 
   return useMutation({
@@ -432,7 +429,6 @@ const useEditPartnerMutation = () => {
           ? (variables as { id: string }).id
           : undefined,
       );
-      navigate(constant.ROUTING_URLS.PARTNER);
     },
     onError: (err: unknown) => {
       console.error("Mutation error:", err);

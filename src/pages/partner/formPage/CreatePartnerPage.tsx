@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@/components/layouts/PageHeader";
 import PartnerForm from "@/components/partner/PartnerForm";
 import { toastPromise } from "@/hooks/use-toast";
@@ -7,22 +8,48 @@ import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 
 function CreatePartnerPage() {
+  const navigate = useNavigate();
   // const {toast} = useToast();
   const createPartnerMutation = queries.useCreatePartnerMutation();
   const handleCreatePartner = async (data: FormData) => {
     // console.log("called handleCreatePartner", data);
     try {
+      // Pre-open a tab synchronously to avoid popup blockers.
+      // We'll navigate it to Stripe onboarding after the API responds.
+      const onboardingPopup = window.open("about:blank", "_blank");
+
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
       // await createPartnerMutation.mutateAsync(data)
-      await toastPromise(createPartnerMutation.mutateAsync(data), {
-        loading: "Submitting...",
-        success: "Partner created successfully!",
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Failed to create Partner",
-      });
+      const res: any = await toastPromise(
+        createPartnerMutation.mutateAsync(data),
+        {
+          loading: "Submitting...",
+          success: "Partner created successfully!",
+          error: (e) =>
+            e instanceof AxiosError
+              ? e.response?.data?.data?.error || e.response?.data?.message
+              : "Failed to create Partner",
+        },
+      );
+
+      const onboardingLink =
+        res?.data?.onboardingLink ||
+        res?.data?.data?.onboardingLink ||
+        res?.onboardingLink;
+      if (typeof onboardingLink === "string" && onboardingLink.trim()) {
+        if (onboardingPopup) {
+          onboardingPopup.location.href = onboardingLink;
+          onboardingPopup.opener = null;
+        } else {
+          // Fallback if browser blocked the popup
+          window.location.href = onboardingLink;
+        }
+      } else if (onboardingPopup) {
+        onboardingPopup.close();
+      }
+
+      navigate(constant.ROUTING_URLS.PARTNER);
     } catch (error) {
       // Error handling is done in onError callback
       console.error("Login error:", error);

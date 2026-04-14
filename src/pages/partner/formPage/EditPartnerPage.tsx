@@ -2,7 +2,7 @@ import { type Libraries, useLoadScript } from "@react-google-maps/api";
 import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFetchPartnerById } from "@/api";
 import { ErrorCard } from "@/components/common/ErrorCard";
 import PageTitle from "@/components/common/PageTitle";
@@ -21,6 +21,7 @@ const libraries = ["places", "geocoding"];
 
 function EditPartnerPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   // console.log("id:",id)
   const [googleMapsApiKey] = useState<string | null>(
     env?.VITE_GOOGLE_MAP_KEY ?? "",
@@ -68,14 +69,37 @@ function EditPartnerPage() {
   const handleEditPartner = async (data: FormData) => {
     // console.log("called handleCreatePartner")
     try {
-      await toastPromise(editPartnerMutation.mutateAsync({ data, id }), {
-        loading: "Updating Partner...",
-        success: "Yeah! Partner updated successfully",
-        error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Opps! failed to update Partner.",
-      });
+      // Pre-open a tab synchronously to avoid popup blockers.
+      const onboardingPopup = window.open("about:blank", "_blank");
+
+      const res: any = await toastPromise(
+        editPartnerMutation.mutateAsync({ data, id }),
+        {
+          loading: "Updating Partner...",
+          success: "Yeah! Partner updated successfully",
+          error: (e) =>
+            e instanceof AxiosError
+              ? e.response?.data?.data?.error || e.response?.data?.message
+              : "Opps! failed to update Partner.",
+        },
+      );
+
+      const onboardingLink =
+        res?.data?.onboardingLink ||
+        res?.data?.data?.onboardingLink ||
+        res?.onboardingLink;
+      if (typeof onboardingLink === "string" && onboardingLink.trim()) {
+        if (onboardingPopup) {
+          onboardingPopup.location.href = onboardingLink;
+          onboardingPopup.opener = null;
+        } else {
+          window.location.href = onboardingLink;
+        }
+      } else if (onboardingPopup) {
+        onboardingPopup.close();
+      }
+
+      navigate(constant.ROUTING_URLS.PARTNER);
     } catch (error) {
       // toastPromise already handled the error message display
       console.error("Save error:", error);

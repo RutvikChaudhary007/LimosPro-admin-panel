@@ -10,7 +10,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { type FC, useCallback, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useFetchAllFleets } from "@/api/fleet.api";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
@@ -98,10 +98,16 @@ const getFormSchema = (isEdit: boolean) =>
       entityType: z
         .string()
         .min(1, { message: "Please select an entity type" }),
-      isChauffer: z.boolean(),
+      isChauffer: z.coerce.boolean(),
       // Chauffeur fields - required when isChauffer is true
-      licenseNumber: z.string().optional(),
-      vehicleId: z.string().uuid().optional(),
+      licenseNumber: z.preprocess(
+        (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+        z.string().optional(),
+      ),
+      vehicleId: z.preprocess(
+        (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+        z.string().uuid().optional(),
+      ),
       taxId: z
         .string()
         .min(1, { message: "Tax ID is required" })
@@ -265,7 +271,7 @@ const transformInitialData = (
     lastName: data?.user?.lastName || "",
     email: data?.user?.email || "",
     password: "",
-    isChauffer: data.isChauffer ?? false,
+    isChauffer: data.isChauffer === true || (data.isChauffer as any) === "true",
     licenseNumber: data?.chauffeurs?.[0]?.licenseNumber || "",
     vehicleId: data?.chauffeurs?.[0]?.vehicleId || "",
     companyName: data.companyName || "",
@@ -385,7 +391,9 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
 
   const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
   const form = useForm<TPartnerForm>({
-    resolver: zodResolver(schema),
+    // Workaround for duplicated react-hook-form types in dependency tree.
+    // Keeps the form strongly typed while allowing zodResolver integration.
+    resolver: zodResolver(schema) as any,
     defaultValues: transformInitialData(initialData) ?? {
       firstName: "",
       lastName: "",
@@ -448,7 +456,7 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
     [form],
   );
 
-  const handleFormSubmit = async (values: TPartnerForm) => {
+  const handleFormSubmit: SubmitHandler<TPartnerForm> = async (values) => {
     try {
       const formData = new FormData();
       if (addressObj) {
@@ -480,8 +488,10 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
       );
       formData.append("status", values.status || "");
       formData.append("isChauffer", values.isChauffer ? "true" : "false");
-      formData.append("licenseNumber", values.licenseNumber || "");
-      formData.append("vehicleId", values.vehicleId || "");
+      if (values.isChauffer) {
+        formData.append("licenseNumber", values.licenseNumber || "");
+        formData.append("vehicleId", values.vehicleId || "");
+      }
       formData.append("taxId", values.taxId);
       formData.append(
         "businessLocation",
@@ -1000,7 +1010,22 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                         <Switch
                           id="isChauffer"
                           checked={!!field.value}
-                          onCheckedChange={(checked) => field.onChange(checked)}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked);
+                            if (!checked) {
+                              form.setValue("licenseNumber", undefined, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true,
+                              });
+                              form.setValue("vehicleId", undefined, {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true,
+                              });
+                              form.clearErrors(["licenseNumber", "vehicleId"]);
+                            }
+                          }}
                           disabled={isFieldDisabled(
                             disabledFields,
                             "isChauffer",
