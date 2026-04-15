@@ -14,40 +14,17 @@ function CreatePartnerPage() {
   const handleCreatePartner = async (data: FormData) => {
     // console.log("called handleCreatePartner", data);
     try {
-      // Pre-open a tab synchronously to avoid popup blockers.
-      // We'll navigate it to Stripe onboarding after the API responds.
-      const onboardingPopup = window.open("about:blank", "_blank");
-
       // Remove remember field before sending to API
       // await loginMutation.mutateAsync(loginData);
       // await createPartnerMutation.mutateAsync(data)
-      const res: any = await toastPromise(
-        createPartnerMutation.mutateAsync(data),
-        {
-          loading: "Submitting...",
-          success: "Partner created successfully!",
-          error: (e) =>
-            e instanceof AxiosError
-              ? e.response?.data?.data?.error || e.response?.data?.message
-              : "Failed to create Partner",
-        },
-      );
-
-      const onboardingLink =
-        res?.data?.onboardingLink ||
-        res?.data?.data?.onboardingLink ||
-        res?.onboardingLink;
-      if (typeof onboardingLink === "string" && onboardingLink.trim()) {
-        if (onboardingPopup) {
-          onboardingPopup.location.href = onboardingLink;
-          onboardingPopup.opener = null;
-        } else {
-          // Fallback if browser blocked the popup
-          window.location.href = onboardingLink;
-        }
-      } else if (onboardingPopup) {
-        onboardingPopup.close();
-      }
+      await toastPromise(createPartnerMutation.mutateAsync(data), {
+        loading: "Submitting...",
+        success: "Partner created successfully!",
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Failed to create Partner",
+      });
 
       navigate(constant.ROUTING_URLS.PARTNER);
     } catch (error) {

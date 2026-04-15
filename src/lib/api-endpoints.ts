@@ -19,6 +19,8 @@ export const API_ENDPOINTS: Record<string, any> = {
   // Partner
   GET_ALL_PARTNER: `${ADMIN_SERVICE_URL}/partners`,
   GET_PARTNER_BY_ID: `${ADMIN_SERVICE_URL}/partner/:id`,
+  GET_MY_PARTNER: `${ADMIN_SERVICE_URL}/partner/me`,
+  CREATE_MY_STRIPE_ONBOARDING_LINK: `${ADMIN_SERVICE_URL}/partner/me/stripe-onboarding-link`,
   CREATE_PARTNER: `${ADMIN_SERVICE_URL}/partner`,
   UPDATE_PARTNER: `${ADMIN_SERVICE_URL}/partner/:id`,
   DELETE_PARTNER: `${ADMIN_SERVICE_URL}/partner/:id`,

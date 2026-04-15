@@ -1,7 +1,13 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Eye } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useFetchDashboard } from "@/api";
+import {
+  useCreateMyStripeOnboardingLinkMutation,
+  useFetchMyPartner,
+  useFetchPartnerById,
+} from "@/api/partner.api";
 import TableAndPieChart, {
   type FleetStat,
 } from "@/components/dashboard/TableAndPieChart";
@@ -20,8 +26,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
+import { queryKeys } from "@/lib/queryKeys";
 import { SectionCards } from "@/pages/dashboard/partials/section-cards";
+import { useUserStore } from "@/stores/useAuthStore";
 import UserProfile from "./partials/user-profile";
 // import { DataTable } from "@/components/data-table"
 // import data from "./partials/data.json"
@@ -31,6 +40,10 @@ export default function Dashboard() {
   const columns = getDashboardColumns();
   const [selectedTime, setSelectedTime] = useState<string | undefined>("");
   const [selectedYear, setSelectedYear] = useState<string | undefined>("");
+  const { user } = useUserStore();
+  const queryClient = useQueryClient();
+  const createOnboardingLinkMutation =
+    useCreateMyStripeOnboardingLinkMutation();
 
   const { startDate, endDate } = useMemo(() => {
     if (selectedYear) {
@@ -126,15 +139,43 @@ export default function Dashboard() {
     DateRange: { startDate, endDate },
   });
 
-  // console.log("Dashboard Render:", {
-  //   selectedTime,
-  //   selectedYear,
-  //   startDate,
-  //   endDate,
-  //   isFetching,
-  //   isPlaceholderData,
-  //   data,
-  // });
+  const isPartnerUser = (user?.roles || []).includes("Partner");
+  const partnerId =
+    (user as any)?.partnerId ||
+    (user as any)?.partner?.id ||
+    (user as any)?.partner?.partnerId ||
+    (user as any)?.partner?._id;
+
+  // Prefer self endpoint for partner users (doesn't require partnerId in login payload)
+  const { data: myPartnerFromMe } = useFetchMyPartner({
+    enabled: isPartnerUser,
+  });
+  const { data: myPartnerFromId } = useFetchPartnerById({
+    id: !myPartnerFromMe && isPartnerUser && partnerId ? partnerId : undefined,
+  });
+  const myPartner = myPartnerFromMe ?? myPartnerFromId;
+  const stripeAccountStatus = (myPartner as any)?.stripeAccountStatus;
+  const stripeAccountId = (myPartner as any)?.stripeAccountId;
+  const shouldShowOnboardingCta =
+    isPartnerUser && Boolean(myPartner) && stripeAccountStatus !== "completed";
+
+  if (import.meta.env.DEV) {
+    // Debug why the Stripe onboarding CTA shows/hides
+    console.log("[PartnerOnboardingCTA]", {
+      isPartnerUser,
+      partnerId,
+      hasMyPartner: Boolean(myPartner),
+      stripeAccountId,
+      stripeAccountStatus,
+      shouldShowOnboardingCta,
+      myPartnerPreview: myPartner
+        ? {
+            id: (myPartner as any)?.id,
+            userId: (myPartner as any)?.userId,
+          }
+        : null,
+    });
+  }
 
   const fleetDistributionData = useMemo(
     () => ({
@@ -163,6 +204,67 @@ export default function Dashboard() {
             selectedYear={selectedYear}
           />
         </ErrorBoundary>
+
+        {shouldShowOnboardingCta ? (
+          <div className="px-4 lg:px-8">
+            <Card className="shadow-none border border-base-gray">
+              <CardBody>
+                <CardHeader>
+                  <CardTitle>Stripe onboarding required</CardTitle>
+                  <CardAction>
+                    <Button
+                      variant="outlineBlack"
+                      size="xl"
+                      spacing="lg"
+                      className="hover:bg-base-black hover:text-base-white transition-all"
+                      disabled={createOnboardingLinkMutation.isPending}
+                      onClick={async () => {
+                        try {
+                          const data =
+                            await createOnboardingLinkMutation.mutateAsync();
+                          // Ensure `/partner/me` is refreshed when returning from Stripe.
+                          queryClient.invalidateQueries({
+                            queryKey: queryKeys.partner.detail("me"),
+                          });
+                          const nextUrl =
+                            typeof (data as any)?.onboardingLink === "string"
+                              ? ((data as any).onboardingLink as string)
+                              : "";
+                          if (nextUrl.trim()) {
+                            window.open(
+                              nextUrl.trim(),
+                              "_blank",
+                              "noopener,noreferrer",
+                            );
+                          } else {
+                            toast({
+                              variant: "destructive",
+                              title: "Unable to generate onboarding link",
+                            });
+                          }
+                        } catch {
+                          toast({
+                            variant: "destructive",
+                            title: "Unable to generate onboarding link",
+                          });
+                        }
+                      }}
+                    >
+                      {createOnboardingLinkMutation.isPending
+                        ? "Generating link..."
+                        : "Complete onboarding"}
+                    </Button>
+                  </CardAction>
+                </CardHeader>
+                <CardContent className="text-sm text-base-gray">
+                  To activate payouts, please complete your Stripe account
+                  setup.
+                </CardContent>
+              </CardBody>
+            </Card>
+          </div>
+        ) : null}
+
         {/* Cards */}
         <ErrorBoundary
           fallback={

@@ -109,19 +109,54 @@ export const getPartnerById = async (id: string) => {
 };
 
 /**
+ * Fetch current partner (self)
+ */
+export const getMyPartner = async () => {
+  const response = await axiosInstance.get(`${API_ENDPOINTS.GET_MY_PARTNER}`);
+  return response?.data?.data;
+};
+
+export const createMyStripeOnboardingLink = async () => {
+  const response = await axiosInstance.post(
+    `${API_ENDPOINTS.CREATE_MY_STRIPE_ONBOARDING_LINK}`,
+  );
+  return response?.data?.data;
+};
+
+/**
  * Hook to fetch partner by ID
  */
 export const useFetchPartnerById = ({ id }: { id: string | undefined }) =>
   useQuery({
     queryKey: queryKeys.partner.detail(id),
-    queryFn: () =>
-      id
-        ? getPartnerById(id)
-        : () => {
-            console.log("id missing");
-          },
+    enabled: Boolean(id),
+    queryFn: () => {
+      if (!id) {
+        // Should be unreachable because `enabled` guards it, but keep it safe.
+        return Promise.resolve(undefined);
+      }
+      return getPartnerById(id);
+    },
     refetchOnWindowFocus: false,
     retry: false,
+  });
+
+/**
+ * Hook to fetch current partner (self)
+ */
+export const useFetchMyPartner = ({ enabled }: { enabled: boolean }) =>
+  useQuery({
+    queryKey: queryKeys.partner.detail("me"),
+    enabled,
+    queryFn: () => getMyPartner(),
+    // Partners often bounce between Stripe and the dashboard; refetch on focus keeps CTA accurate.
+    refetchOnWindowFocus: true,
+    retry: false,
+  });
+
+export const useCreateMyStripeOnboardingLinkMutation = () =>
+  useMutation({
+    mutationFn: () => createMyStripeOnboardingLink(),
   });
 
 // ============================================

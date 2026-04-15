@@ -69,35 +69,14 @@ function EditPartnerPage() {
   const handleEditPartner = async (data: FormData) => {
     // console.log("called handleCreatePartner")
     try {
-      // Pre-open a tab synchronously to avoid popup blockers.
-      const onboardingPopup = window.open("about:blank", "_blank");
-
-      const res: any = await toastPromise(
-        editPartnerMutation.mutateAsync({ data, id }),
-        {
-          loading: "Updating Partner...",
-          success: "Yeah! Partner updated successfully",
-          error: (e) =>
-            e instanceof AxiosError
-              ? e.response?.data?.data?.error || e.response?.data?.message
-              : "Opps! failed to update Partner.",
-        },
-      );
-
-      const onboardingLink =
-        res?.data?.onboardingLink ||
-        res?.data?.data?.onboardingLink ||
-        res?.onboardingLink;
-      if (typeof onboardingLink === "string" && onboardingLink.trim()) {
-        if (onboardingPopup) {
-          onboardingPopup.location.href = onboardingLink;
-          onboardingPopup.opener = null;
-        } else {
-          window.location.href = onboardingLink;
-        }
-      } else if (onboardingPopup) {
-        onboardingPopup.close();
-      }
+      await toastPromise(editPartnerMutation.mutateAsync({ data, id }), {
+        loading: "Updating Partner...",
+        success: "Yeah! Partner updated successfully",
+        error: (e) =>
+          e instanceof AxiosError
+            ? e.response?.data?.data?.error || e.response?.data?.message
+            : "Opps! failed to update Partner.",
+      });
 
       navigate(constant.ROUTING_URLS.PARTNER);
     } catch (error) {
