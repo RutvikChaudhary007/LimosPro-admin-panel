@@ -1203,7 +1203,7 @@ function LanguageFields({
                 </Field>
 
                 {/* Show City Routes Content Only When Enabled */}
-                {cityRoutesEnabled === true && (
+                {cityRoutesEnabled && (
                   <>
                     <Separator />
                     <div className="grid grid-cols-2 gap-4">
@@ -1504,7 +1504,7 @@ function LanguageFields({
                           )}
                         />
                       </div>
-                      {airportRoutesEnabled === true ? (
+                      {airportRoutesEnabled ? (
                         <div className="space-y-4">
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Field>
