@@ -15,6 +15,7 @@ import { z } from "zod";
 import { useFetchAllFleets } from "@/api/fleet.api";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
 import type { IEditPartnerRes } from "@/types/partner/partner.type";
+import { PartnerType } from "@/types/partner/partner.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { passwordValidation } from "@/utils/password-validation";
 import AddressInput from "../AddressInput";
@@ -876,48 +877,50 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
                 )}
               </Field>
 
-              <Field>
-                <FieldLabel
-                  htmlFor="commissionRate"
-                  className="gap-0 text-base-black"
-                >
-                  Commission Rate
-                </FieldLabel>
+              {initialData?.partnerType !== PartnerType.CORPORATE && (
+                <Field>
+                  <FieldLabel
+                    htmlFor="commissionRate"
+                    className="gap-0 text-base-black"
+                  >
+                    Commission Rate
+                  </FieldLabel>
 
-                <Controller
-                  control={form.control}
-                  name="commissionRate"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="commissionRate"
-                        type="number"
-                        placeholder="12"
-                        min="0"
-                        step="0.01"
-                        disabled={isFieldDisabled(
-                          disabledFields,
-                          "commissionRate",
-                        )}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <span className="text-base font-semibold">%</span>
-                      </InputGroupAddon>
-                    </InputGroup>
+                  <Controller
+                    control={form.control}
+                    name="commissionRate"
+                    render={({ field }) => (
+                      <InputGroup>
+                        <InputGroupInput
+                          id="commissionRate"
+                          type="number"
+                          placeholder="12"
+                          min="0"
+                          step="0.01"
+                          disabled={isFieldDisabled(
+                            disabledFields,
+                            "commissionRate",
+                          )}
+                          {...field}
+                        />
+                        <InputGroupAddon>
+                          <span className="text-base font-semibold">%</span>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    )}
+                  />
+
+                  <FieldDescription>
+                    Enter the commission percentage applicable for this seller.
+                  </FieldDescription>
+
+                  {form.formState.errors.commissionRate && (
+                    <FormMessage>
+                      {form.formState.errors.commissionRate.message}
+                    </FormMessage>
                   )}
-                />
-
-                <FieldDescription>
-                  Enter the commission percentage applicable for this seller.
-                </FieldDescription>
-
-                {form.formState.errors.commissionRate && (
-                  <FormMessage>
-                    {form.formState.errors.commissionRate.message}
-                  </FormMessage>
-                )}
-              </Field>
+                </Field>
+              )}
 
               <Field>
                 <FieldLabel htmlFor="status" className="gap-0 text-base-black">

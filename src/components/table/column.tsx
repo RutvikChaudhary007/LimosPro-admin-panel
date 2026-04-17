@@ -681,6 +681,12 @@ export function getPartner(
       cell: ({ row }) => {
         const partner = row.original;
         const isIndividual = partner.partnerType === PartnerType.INDIVIDUAL;
+        const isCorporate = partner.partnerType === PartnerType.CORPORATE;
+
+        // Hide commission for corporate partners
+        if (isCorporate) {
+          return <div className="w-30 text-center text-gray-400">—</div>;
+        }
 
         if (isIndividual) {
           return (
@@ -1318,7 +1324,9 @@ export function getBooking(
             <Button
               type="button"
               onClick={() => {
-                const phone = row?.original?.thirdPartyUser?.phone || row?.original?.guestUser?.phone;
+                const phone =
+                  row?.original?.thirdPartyUser?.phone ||
+                  row?.original?.guestUser?.phone;
                 if (phone) {
                   window.location.href = `tel:${phone}`;
                 }
