@@ -89,6 +89,9 @@ const ViewBookingPage = () => {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isReturnAssignModalOpen, setIsReturnAssignModalOpen] = useState(false);
   const [isManualAssignModalOpen, setIsManualAssignModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"onward" | "return" | "notes">(
+    "onward",
+  );
   const updateStatusMutation = useUpdateBookingStatus();
   // const retryDispatchMutation = useRetryPartnerDispatch();
   const {
@@ -503,9 +506,23 @@ const ViewBookingPage = () => {
                       <Button
                         variant="black"
                         className="capitalize"
-                        onClick={() => setIsAssignModalOpen(true)}
+                        onClick={() => {
+                          // On Return tab, open return booking assignment; otherwise onward.
+                          if (activeTab === "return" && returnBooking) {
+                            setIsReturnAssignModalOpen(true);
+                          } else {
+                            setIsAssignModalOpen(true);
+                          }
+                        }}
+                        disabled={
+                          activeTab === "return"
+                            ? Boolean(returnBooking?.partnerId)
+                            : Boolean(data?.partnerId)
+                        }
                       >
-                        Assign Partner
+                        {activeTab === "return"
+                          ? "Assign Return Partner"
+                          : "Assign Partner"}
                       </Button>
                     )}
 
@@ -560,14 +577,33 @@ const ViewBookingPage = () => {
             </CardHeader>
             <FieldSeparator />
             <div
-              className={`grid gap-6 lg:items-start ${returnBooking ? "lg:grid-cols-[1fr_780px]" : "lg:grid-cols-[1fr_380px]"}`}
+              className={`grid gap-6 lg:items-start ${
+                returnBooking && activeTab !== "notes"
+                  ? "lg:grid-cols-[minmax(0,1fr)_380px]"
+                  : "lg:grid-cols-[1fr_380px]"
+              }`}
             >
-              <Tabs defaultValue="details" className="space-y-6 max-w-[720px]">
-                <TabsList className="grid w-full grid-cols-2 max-w-[320px]">
-                  <TabsTrigger value="details">Details</TabsTrigger>
+              <Tabs
+                value={activeTab}
+                onValueChange={(val) =>
+                  setActiveTab(val as "onward" | "return" | "notes")
+                }
+                className="space-y-6 w-full min-w-0"
+              >
+                <TabsList
+                  className={`grid w-full ${
+                    returnBooking
+                      ? "grid-cols-3 max-w-[480px]"
+                      : "grid-cols-2 max-w-[320px]"
+                  }`}
+                >
+                  <TabsTrigger value="onward">Onward</TabsTrigger>
+                  {returnBooking ? (
+                    <TabsTrigger value="return">Return</TabsTrigger>
+                  ) : null}
                   <TabsTrigger value="notes">Notes</TabsTrigger>
                 </TabsList>
-                <TabsContent value="details">
+                <TabsContent value="onward">
                   <CardContent>
                     <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4">
                       Passenger
@@ -681,82 +717,66 @@ const ViewBookingPage = () => {
                       <Label>
                         {formatFieldValue(Locations?.dropOffAddress)}
                       </Label>
-
-                      {returnBooking && (
-                        <>
-                          <div className="col-span-2">
-                            <FieldSeparator />
-                          </div>
-
-                          <h6 className="texfont-montserrat font-bold text-base-black text-sm col-span-2 flex items-center justify-between">
-                            Return Trip
-                            {user?.roles?.includes("Super Admin") ||
-                            user?.roles?.includes("Regional Admin") ? (
-                              <Button
-                                variant="black"
-                                size="sm"
-                                onClick={() => setIsReturnAssignModalOpen(true)}
-                                disabled={returnBooking?.partnerId !== null}
-                              >
-                                {returnBooking?.partnerId
-                                  ? "Partner Assigned"
-                                  : "Assign Partner"}
-                              </Button>
-                            ) : null}
-                          </h6>
-
-                          <Label className="font-montserrat font-semibold capitalize">
-                            Return Booking ID:
-                          </Label>
-                          <Label>{returnBooking?.id}</Label>
-
-                          <Label className="font-montserrat font-semibold capitalize">
-                            Return Status:
-                          </Label>
-                          <Badge variant="outline">
-                            {returnBooking?.status}
-                          </Badge>
-
-                          <Label className="font-montserrat font-semibold capitalize">
-                            Scheduled Time:
-                          </Label>
-                          <Label>
-                            {returnBooking?.scheduledTime
-                              ? formatDate(
-                                  new Date(returnBooking.scheduledTime),
-                                  "dd-MM-yyyy hh:mm a",
-                                )
-                              : "N/A"}
-                          </Label>
-
-                          <Label className="font-montserrat font-semibold capitalize">
-                            From:
-                          </Label>
-                          <Label>
-                            {formatFieldValue(returnLocations?.pickUpAddress)}
-                          </Label>
-
-                          <Label className="font-montserrat font-semibold capitalize">
-                            To:
-                          </Label>
-                          <Label>
-                            {formatFieldValue(returnLocations?.dropOffAddress)}
-                          </Label>
-
-                          <Label className="font-montserrat font-semibold capitalize">
-                            Partner ID:
-                          </Label>
-                          <Label>
-                            {formatFieldValue(
-                              returnBooking?.partnerId,
-                              "Not Assigned",
-                            )}
-                          </Label>
-                        </>
-                      )}
                     </div>
                   </CardContent>
                 </TabsContent>
+                {returnBooking ? (
+                  <TabsContent value="return">
+                    <CardContent>
+                      <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4 flex items-center justify-between">
+                        Return Trip
+                      </h6>
+
+                      <div className="grid grid-cols-[max-content_1fr] gap-4 items-start">
+                        <Label className="font-montserrat font-semibold capitalize">
+                          Return Booking ID:
+                        </Label>
+                        <Label>{returnBooking?.id}</Label>
+
+                        <Label className="font-montserrat font-semibold capitalize">
+                          Return Status:
+                        </Label>
+                        <Badge variant="outline">{returnBooking?.status}</Badge>
+
+                        <Label className="font-montserrat font-semibold capitalize">
+                          Scheduled Time:
+                        </Label>
+                        <Label>
+                          {returnBooking?.scheduledTime
+                            ? formatDate(
+                                new Date(returnBooking.scheduledTime),
+                                "dd-MM-yyyy hh:mm a",
+                              )
+                            : "N/A"}
+                        </Label>
+
+                        <Label className="font-montserrat font-semibold capitalize">
+                          From:
+                        </Label>
+                        <Label>
+                          {formatFieldValue(returnLocations?.pickUpAddress)}
+                        </Label>
+
+                        <Label className="font-montserrat font-semibold capitalize">
+                          To:
+                        </Label>
+                        <Label>
+                          {formatFieldValue(returnLocations?.dropOffAddress)}
+                        </Label>
+
+                        <Label className="font-montserrat font-semibold capitalize">
+                          Partner ID:
+                        </Label>
+                        <Label>
+                          {formatFieldValue(
+                            returnBooking?.partnerId,
+                            "Not Assigned",
+                          )}
+                        </Label>
+                      </div>
+                    </CardContent>
+                  </TabsContent>
+                ) : null}
                 <TabsContent value="notes">
                   <CardContent className="space-y-6">
                     <div className="space-y-3 rounded border border-base-light-gray/60 p-4">
@@ -852,238 +872,245 @@ const ViewBookingPage = () => {
                   </CardContent>
                 </TabsContent>
               </Tabs>
-              {/* Lifecycle Cards - Side by side for round trips */}
-              <div
-                className={`flex flex-col gap-4 ${returnBooking ? "xl:flex-row xl:flex-wrap" : ""}`}
-              >
-                {/* Onward Trip Lifecycle */}
-                <CardContent
-                  className={`space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 ${returnBooking ? "xl:w-[360px] xl:flex-none" : "w-[360px]"}`}
+              {/* Lifecycle Cards - Tab controlled */}
+              {activeTab === "notes" ? null : (
+                <div
+                  className={`flex flex-col gap-4 ${returnBooking ? "xl:flex-row xl:flex-wrap" : ""}`}
                 >
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <h6 className="font-montserrat text-sm font-semibold text-base-black">
-                        {returnBooking
-                          ? "Onward Trip Lifecycle"
-                          : "Booking Lifecycle"}
-                      </h6>
-                      <Badge
-                        variant="secondary"
-                        className="text-[10px] uppercase"
-                      >
-                        {returnBooking ? "Onward Trip" : "Active Trip"}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-base-gray">
-                      Live status timeline with estimated progress.
-                    </p>
-                  </div>
-                  <div className="space-y-6">
-                    {isHistoryFetching ? (
-                      <Spinner />
-                    ) : isHistoryError ? (
-                      <div className="space-y-3 text-sm text-base-gray">
-                        <p>Unable to load booking lifecycle history.</p>
-                        <Button
-                          type="button"
-                          variant="outlinePrimary"
-                          className="w-full"
-                          onClick={() => refetchHistory()}
-                        >
-                          Retry
-                        </Button>
-                      </div>
-                    ) : bookingStatusHistory.length ? (
-                      bookingStatusHistory.map((item, index) => {
-                        const isActive =
-                          item.state === "active" ||
-                          (!isTerminalFailure && index === currentStatusIndex);
-                        const isCompleted =
-                          item.state === "completed" ||
-                          (!isTerminalFailure && index < currentStatusIndex);
-                        const dotClasses = isCompleted
-                          ? "border-base-black bg-base-black"
-                          : isActive
-                            ? "border-base-black bg-base-white"
-                            : "border-base-light-gray bg-base-white";
-                        const lineClasses = isCompleted
-                          ? "bg-base-black"
-                          : "bg-base-light-gray/80";
-                        const titleClasses = isActive
-                          ? "text-base-black"
-                          : isCompleted
-                            ? "text-base-black"
-                            : "text-base-gray";
-                        const timestampClasses =
-                          isCompleted || isActive
-                            ? "text-base-gray"
-                            : "text-base-gray/70";
-
-                        return (
-                          <div
-                            key={`${item.status}-${item.timestamp}-${index}`}
-                            className="relative pl-7"
+                  {/* Onward Trip Lifecycle */}
+                  {activeTab === "onward" ? (
+                    <CardContent
+                      className={`space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 ${returnBooking ? "xl:w-[360px] xl:flex-none" : "w-[360px]"}`}
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <h6 className="font-montserrat text-sm font-semibold text-base-black">
+                            {returnBooking
+                              ? "Onward Trip Lifecycle"
+                              : "Booking Lifecycle"}
+                          </h6>
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] uppercase"
                           >
-                            {index < bookingStatusHistory.length - 1 ? (
-                              <span
-                                className={`absolute left-[37px] top-6 h-full w-0.5 ${lineClasses}`}
-                              />
-                            ) : null}
-                            <div className="flex items-start gap-3">
-                              <div
-                                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${dotClasses}`}
-                              >
-                                {isCompleted ? (
-                                  <span className="text-[10px] font-semibold text-white">
-                                    ✓
-                                  </span>
-                                ) : isActive ? (
-                                  <span className="h-2 w-2 rounded-full bg-base-black" />
-                                ) : null}
-                              </div>
-                              <div className="flex-1 space-y-1">
-                                <div className="flex flex-wrap items-center justify-between gap-2">
-                                  <span
-                                    className={`text-sm font-semibold ${titleClasses}`}
-                                  >
-                                    {item.status}
-                                  </span>
-                                  <span
-                                    className={`text-[11px] font-medium ${timestampClasses}`}
-                                  >
-                                    {item.timestamp}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-base-gray leading-relaxed">
-                                  {item.note}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <p className="text-sm text-base-gray">
-                        No booking lifecycle data available yet.
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-
-                {/* Return Trip Lifecycle */}
-                {returnBooking && (
-                  <CardContent className="space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 xl:w-[360px] xl:flex-none">
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <h6 className="font-montserrat text-sm font-semibold text-base-black">
-                          Return Trip Lifecycle
-                        </h6>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] uppercase"
-                        >
-                          Return Trip
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-base-gray">
-                        Return trip status timeline.
-                      </p>
-                    </div>
-                    <div className="space-y-6">
-                      {isReturnHistoryFetching ? (
-                        <Spinner />
-                      ) : isReturnHistoryError ? (
-                        <div className="space-y-3 text-sm text-base-gray">
-                          <p>Unable to load return trip lifecycle history.</p>
-                          <Button
-                            type="button"
-                            variant="outlinePrimary"
-                            className="w-full"
-                            onClick={() => refetchReturnHistory()}
-                          >
-                            Retry
-                          </Button>
+                            {returnBooking ? "Onward Trip" : "Active Trip"}
+                          </Badge>
                         </div>
-                      ) : returnBookingStatusHistory.length ? (
-                        returnBookingStatusHistory.map((item, index) => {
-                          const isActive =
-                            item.state === "active" ||
-                            (!isReturnTerminalFailure &&
-                              index === returnCurrentStatusIndex);
-                          const isCompleted =
-                            item.state === "completed" ||
-                            (!isReturnTerminalFailure &&
-                              index < returnCurrentStatusIndex);
-                          const dotClasses = isCompleted
-                            ? "border-base-black bg-base-black"
-                            : isActive
-                              ? "border-base-black bg-base-white"
-                              : "border-base-light-gray bg-base-white";
-                          const lineClasses = isCompleted
-                            ? "bg-base-black"
-                            : "bg-base-light-gray/80";
-                          const titleClasses = isActive
-                            ? "text-base-black"
-                            : isCompleted
-                              ? "text-base-black"
-                              : "text-base-gray";
-                          const timestampClasses =
-                            isCompleted || isActive
-                              ? "text-base-gray"
-                              : "text-base-gray/70";
-
-                          return (
-                            <div
-                              key={`return-${item.status}-${item.timestamp}-${index}`}
-                              className="relative pl-7"
+                        <p className="text-xs text-base-gray">
+                          Live status timeline with estimated progress.
+                        </p>
+                      </div>
+                      <div className="space-y-6">
+                        {isHistoryFetching ? (
+                          <Spinner />
+                        ) : isHistoryError ? (
+                          <div className="space-y-3 text-sm text-base-gray">
+                            <p>Unable to load booking lifecycle history.</p>
+                            <Button
+                              type="button"
+                              variant="outlinePrimary"
+                              className="w-full"
+                              onClick={() => refetchHistory()}
                             >
-                              {index < returnBookingStatusHistory.length - 1 ? (
-                                <span
-                                  className={`absolute left-[37px] top-6 h-full w-0.5 ${lineClasses}`}
-                                />
-                              ) : null}
-                              <div className="flex items-start gap-3">
-                                <div
-                                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${dotClasses}`}
-                                >
-                                  {isCompleted ? (
-                                    <span className="text-[10px] font-semibold text-white">
-                                      ✓
-                                    </span>
-                                  ) : isActive ? (
-                                    <span className="h-2 w-2 rounded-full bg-base-black" />
-                                  ) : null}
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                  <div className="flex flex-wrap items-center justify-between gap-2">
-                                    <span
-                                      className={`text-sm font-semibold ${titleClasses}`}
-                                    >
-                                      {item.status}
-                                    </span>
-                                    <span
-                                      className={`text-[11px] font-medium ${timestampClasses}`}
-                                    >
-                                      {item.timestamp}
-                                    </span>
+                              Retry
+                            </Button>
+                          </div>
+                        ) : bookingStatusHistory.length ? (
+                          bookingStatusHistory.map((item, index) => {
+                            const isActive =
+                              item.state === "active" ||
+                              (!isTerminalFailure &&
+                                index === currentStatusIndex);
+                            const isCompleted =
+                              item.state === "completed" ||
+                              (!isTerminalFailure &&
+                                index < currentStatusIndex);
+                            const dotClasses = isCompleted
+                              ? "border-base-black bg-base-black"
+                              : isActive
+                                ? "border-base-black bg-base-white"
+                                : "border-base-light-gray bg-base-white";
+                            const lineClasses = isCompleted
+                              ? "bg-base-black"
+                              : "bg-base-light-gray/80";
+                            const titleClasses = isActive
+                              ? "text-base-black"
+                              : isCompleted
+                                ? "text-base-black"
+                                : "text-base-gray";
+                            const timestampClasses =
+                              isCompleted || isActive
+                                ? "text-base-gray"
+                                : "text-base-gray/70";
+
+                            return (
+                              <div
+                                key={`${item.status}-${item.timestamp}-${index}`}
+                                className="relative pl-7"
+                              >
+                                {index < bookingStatusHistory.length - 1 ? (
+                                  <span
+                                    className={`absolute left-[37px] top-6 h-full w-0.5 ${lineClasses}`}
+                                  />
+                                ) : null}
+                                <div className="flex items-start gap-3">
+                                  <div
+                                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${dotClasses}`}
+                                  >
+                                    {isCompleted ? (
+                                      <span className="text-[10px] font-semibold text-white">
+                                        ✓
+                                      </span>
+                                    ) : isActive ? (
+                                      <span className="h-2 w-2 rounded-full bg-base-black" />
+                                    ) : null}
                                   </div>
-                                  <p className="text-xs text-base-gray leading-relaxed">
-                                    {item.note}
-                                  </p>
+                                  <div className="flex-1 space-y-1">
+                                    <div className="flex flex-wrap items-center justify-between gap-2">
+                                      <span
+                                        className={`text-sm font-semibold ${titleClasses}`}
+                                      >
+                                        {item.status}
+                                      </span>
+                                      <span
+                                        className={`text-[11px] font-medium ${timestampClasses}`}
+                                      >
+                                        {item.timestamp}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-base-gray leading-relaxed">
+                                      {item.note}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <p className="text-sm text-base-gray">
-                          No return trip lifecycle data available yet.
+                            );
+                          })
+                        ) : (
+                          <p className="text-sm text-base-gray">
+                            No booking lifecycle data available yet.
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  ) : null}
+
+                  {/* Return Trip Lifecycle */}
+                  {returnBooking && activeTab === "return" ? (
+                    <CardContent className="space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 xl:w-[360px] xl:flex-none">
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <h6 className="font-montserrat text-sm font-semibold text-base-black">
+                            Return Trip Lifecycle
+                          </h6>
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] uppercase"
+                          >
+                            Return Trip
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-base-gray">
+                          Return trip status timeline.
                         </p>
-                      )}
-                    </div>
-                  </CardContent>
-                )}
-              </div>
+                      </div>
+                      <div className="space-y-6">
+                        {isReturnHistoryFetching ? (
+                          <Spinner />
+                        ) : isReturnHistoryError ? (
+                          <div className="space-y-3 text-sm text-base-gray">
+                            <p>Unable to load return trip lifecycle history.</p>
+                            <Button
+                              type="button"
+                              variant="outlinePrimary"
+                              className="w-full"
+                              onClick={() => refetchReturnHistory()}
+                            >
+                              Retry
+                            </Button>
+                          </div>
+                        ) : returnBookingStatusHistory.length ? (
+                          returnBookingStatusHistory.map((item, index) => {
+                            const isActive =
+                              item.state === "active" ||
+                              (!isReturnTerminalFailure &&
+                                index === returnCurrentStatusIndex);
+                            const isCompleted =
+                              item.state === "completed" ||
+                              (!isReturnTerminalFailure &&
+                                index < returnCurrentStatusIndex);
+                            const dotClasses = isCompleted
+                              ? "border-base-black bg-base-black"
+                              : isActive
+                                ? "border-base-black bg-base-white"
+                                : "border-base-light-gray bg-base-white";
+                            const lineClasses = isCompleted
+                              ? "bg-base-black"
+                              : "bg-base-light-gray/80";
+                            const titleClasses = isActive
+                              ? "text-base-black"
+                              : isCompleted
+                                ? "text-base-black"
+                                : "text-base-gray";
+                            const timestampClasses =
+                              isCompleted || isActive
+                                ? "text-base-gray"
+                                : "text-base-gray/70";
+
+                            return (
+                              <div
+                                key={`return-${item.status}-${item.timestamp}-${index}`}
+                                className="relative pl-7"
+                              >
+                                {index <
+                                returnBookingStatusHistory.length - 1 ? (
+                                  <span
+                                    className={`absolute left-[37px] top-6 h-full w-0.5 ${lineClasses}`}
+                                  />
+                                ) : null}
+                                <div className="flex items-start gap-3">
+                                  <div
+                                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${dotClasses}`}
+                                  >
+                                    {isCompleted ? (
+                                      <span className="text-[10px] font-semibold text-white">
+                                        ✓
+                                      </span>
+                                    ) : isActive ? (
+                                      <span className="h-2 w-2 rounded-full bg-base-black" />
+                                    ) : null}
+                                  </div>
+                                  <div className="flex-1 space-y-1">
+                                    <div className="flex flex-wrap items-center justify-between gap-2">
+                                      <span
+                                        className={`text-sm font-semibold ${titleClasses}`}
+                                      >
+                                        {item.status}
+                                      </span>
+                                      <span
+                                        className={`text-[11px] font-medium ${timestampClasses}`}
+                                      >
+                                        {item.timestamp}
+                                      </span>
+                                    </div>
+                                    <p className="text-xs text-base-gray leading-relaxed">
+                                      {item.note}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <p className="text-sm text-base-gray">
+                            No return trip lifecycle data available yet.
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  ) : null}
+                </div>
+              )}
             </div>
           </CardBody>
         </Card>

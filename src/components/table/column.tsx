@@ -1236,17 +1236,6 @@ export function getBooking(
       enableHiding: false,
     },
     {
-      id: "partnerId",
-      accessorFn: (row) => row.booking?.partnerId,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Partner Id" />
-      ),
-      cell: ({ row }) => (
-        <span>{row.original.booking?.partnerId || "N/A"}</span>
-      ),
-      enableSorting: false,
-    },
-    {
       id: "bookingType",
       accessorFn: (row) => row.booking?.bookingType,
       header: ({ column }) => (

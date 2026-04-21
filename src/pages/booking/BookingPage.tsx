@@ -73,7 +73,6 @@ function BookingPage() {
   const handleExportCsv = () => {
     const headers = [
       "ID",
-      "Partner Id",
       "Trip Type",
       "scheduledTime",
       "Fare",
@@ -83,7 +82,6 @@ function BookingPage() {
 
     const csvData = data?.bookings?.map((v) => [
       v?.booking?.id || "",
-      v?.booking?.partnerId || "",
       v?.booking?.trip?.tripType || v?.booking?.bookingType || "",
       v?.booking?.scheduledTime || "",
       v?.booking?.trip?.fare?.toString() || "",
