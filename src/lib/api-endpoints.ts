@@ -55,6 +55,10 @@ export const API_ENDPOINTS: Record<string, any> = {
     `${BOOKING_SERVICE_URL}/booking/updateBookingStatus/${id}/${status}`,
   RETRY_PARTNER_DISPATCH: (id: string) =>
     `${BOOKING_SERVICE_URL}/booking/${id}/retry-partner-dispatch`,
+  GET_AVAILABLE_PARTNERS: (bookingId: string) =>
+    `${BOOKING_SERVICE_URL}/booking/${bookingId}/available-partners`,
+  DISPATCH_PARTNER: (bookingId: string) =>
+    `${BOOKING_SERVICE_URL}/booking/${bookingId}/dispatch-partner`,
 
   // Chauffeur
   GET_ALL_CHAUFFEUR: `${ADMIN_SERVICE_URL}/chauffeurs`,

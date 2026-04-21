@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useDispatchPartner, useFetchAvailablePartners } from "@/api";
 import { Spinner } from "@/components/Spinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useSocket } from "@/context/SocketContext"; // Assuming there's a socket context
 
 interface Partner {
   partnerId: string;
@@ -29,60 +29,45 @@ export const PartnerAssignModal = ({
   onOpenChange,
   bookingId,
 }: PartnerAssignModalProps) => {
-  const { socket } = useSocket();
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isAssigning, setIsAssigning] = useState<string | null>(null);
+  const dispatchPartnerMutation = useDispatchPartner();
+  const { data, isFetching, isError, error, refetch } =
+    useFetchAvailablePartners({
+      bookingId,
+      enabled: isOpen,
+    });
+
+  const partners: Partner[] = Array.isArray(data) ? (data as Partner[]) : [];
 
   useEffect(() => {
-    if (isOpen && socket && bookingId) {
-      setIsLoading(true);
-      socket.emit("getAvailablePartners", { bookingId });
+    if (isOpen && bookingId) refetch();
+  }, [isOpen, bookingId, refetch]);
 
-      const handlePartners = (data: { partners: Partner[] }) => {
-        // console.log("partners:",data)
-        setPartners(data.partners || []);
-        setIsLoading(false);
-      };
+  useEffect(() => {
+    if (!isError) return;
+    const message =
+      (error as any)?.response?.data?.message ||
+      (error as any)?.message ||
+      "Failed to load partners";
+    toast.error(message);
+  }, [isError, error]);
 
-      const handleRequested = (data: { success: boolean; message: string }) => {
-        if (data.success) {
-          toast.success("Assignment requested successfully");
-          onOpenChange(false);
-          setIsAssigning(null);
-        } else {
-          toast.error(data.message || "Failed to request assignment");
-          setIsAssigning(null);
-        }
-        setIsAssigning(null);
-      };
-
-      const handleError = (err: { message: string }) => {
-        toast.error(err.message || "Something went wrong");
-        setIsLoading(false);
-        setIsAssigning(null);
-      };
-
-      socket.on("availablePartners", handlePartners);
-      socket.on("partnerAssignmentRequested", handleRequested);
-      socket.on("bookingError", handleError);
-
-      return () => {
-        socket.off("availablePartners", handlePartners);
-        socket.off("partnerAssignmentRequested", handleRequested);
-        socket.off("bookingError", handleError);
-      };
+  const handleAssign = async (partnerId: string) => {
+    if (!bookingId) return;
+    try {
+      setIsAssigning(partnerId);
+      await dispatchPartnerMutation.mutateAsync({ bookingId, partnerId });
+      toast.success("Partner dispatched successfully");
+      onOpenChange(false);
+    } catch (err) {
+      const message =
+        (err as any)?.response?.data?.message ||
+        (err as any)?.message ||
+        "Failed to dispatch partner";
+      toast.error(message);
+    } finally {
+      setIsAssigning(null);
     }
-  }, [isOpen, socket, bookingId, onOpenChange]);
-
-  const handleAssign = (partnerId: string) => {
-    if (!socket) return;
-    setIsAssigning(partnerId);
-    socket.emit("requestPartnerAssignment", {
-      bookingId,
-      partnerId,
-      tripType: "manual", // or derive from booking
-    });
   };
 
   return (
@@ -92,7 +77,7 @@ export const PartnerAssignModal = ({
           <DialogTitle>Assign Partner</DialogTitle>
         </DialogHeader>
         <div className="py-4 space-y-4">
-          {isLoading ? (
+          {isFetching ? (
             <div className="flex justify-center p-8">
               <Spinner />
             </div>

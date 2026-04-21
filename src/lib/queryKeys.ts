@@ -20,6 +20,8 @@ export const queryKeys = {
       ["booking", "history", bookingId] as const,
     notes: (bookingId: string | undefined) =>
       ["booking", "notes", bookingId] as const,
+    availablePartners: (bookingId: string | undefined) =>
+      ["booking", "availablePartners", bookingId] as const,
   },
 
   region: {

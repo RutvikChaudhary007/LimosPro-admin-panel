@@ -1171,6 +1171,13 @@ export function getUsers(
   ];
 }
 
+// New API returns grouped bookings: { groupId, isRoundTrip, booking }
+export type TBookingGroup = {
+  groupId: string;
+  isRoundTrip: boolean;
+  booking: TBooking;
+};
+
 export type TBooking = {
   id: string;
   userId: string;
@@ -1200,6 +1207,10 @@ export type TBooking = {
   status: string;
   createdAt: string;
   updatedAt: string;
+  trip?: {
+    tripType?: string;
+    fare?: number;
+  };
 };
 
 export const formatDate = (dateString: string | null) => {
@@ -1209,7 +1220,7 @@ export const formatDate = (dateString: string | null) => {
 
 export function getBooking(
   onView: (id: string) => void,
-): ColumnDef<TBooking>[] {
+): ColumnDef<TBookingGroup>[] {
   return [
     {
       id: "select",
@@ -1226,15 +1237,18 @@ export function getBooking(
     },
     {
       id: "partnerId",
-      accessorKey: "partnerId",
+      accessorFn: (row) => row.booking?.partnerId,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Partner Id" />
+      ),
+      cell: ({ row }) => (
+        <span>{row.original.booking?.partnerId || "N/A"}</span>
       ),
       enableSorting: false,
     },
     {
       id: "bookingType",
-      accessorKey: "bookingType",
+      accessorFn: (row) => row.booking?.bookingType,
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
@@ -1246,7 +1260,7 @@ export function getBooking(
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-1">
           <TooltipProvider delayDuration={0}>
-            {row.original.bookingType === "oneWay" && (
+            {row.original.booking?.bookingType === "oneWay" && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span>
@@ -1258,7 +1272,7 @@ export function getBooking(
                 </TooltipContent>
               </Tooltip>
             )}
-            {row.original.bookingType === "twoWay" && (
+            {row.original.booking?.bookingType === "twoWay" && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span>
@@ -1277,25 +1291,27 @@ export function getBooking(
     },
     {
       id: "scheduledTime",
-      accessorKey: "scheduledTime",
+      accessorFn: (row) => row.booking?.scheduledTime,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Scheduled Time" />
       ),
-      cell: ({ row }) => <span>{formatDate(row.original.createdAt)}</span>,
+      cell: ({ row }) => (
+        <span>{formatDate(row.original.booking?.createdAt)}</span>
+      ),
       enableSorting: false,
     },
     {
       id: "status",
-      accessorKey: "status",
+      accessorFn: (row) => row.booking?.status,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
         <Badge
-          variant={getStatusVariant(row?.original?.status ?? "")}
+          variant={getStatusVariant(row?.original?.booking?.status ?? "")}
           className="capitalize"
         >
-          <span>{row.original.status}</span>
+          <span>{row.original.booking?.status}</span>
         </Badge>
       ),
       enableSorting: false,
@@ -1325,8 +1341,8 @@ export function getBooking(
               type="button"
               onClick={() => {
                 const phone =
-                  row?.original?.thirdPartyUser?.phone ||
-                  row?.original?.guestUser?.phone;
+                  row?.original?.booking?.thirdPartyUser?.phone ||
+                  row?.original?.booking?.guestUser?.phone;
                 if (phone) {
                   window.location.href = `tel:${phone}`;
                 }
@@ -1341,7 +1357,7 @@ export function getBooking(
           </PermissionGate>
           <PermissionGate permission="manageBookings" action="view">
             <Button
-              onClick={() => onView(row.original.id)}
+              onClick={() => onView(row.original.booking?.id)}
               variant="outlineNavBtnBlack"
               size="xl"
               spacing="lg"

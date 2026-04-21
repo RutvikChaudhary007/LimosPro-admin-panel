@@ -18,6 +18,25 @@ export type BookingNoteVisibility =
   | "partner_visible"
   | "customer_visible";
 
+export type BookingDetail = {
+  id?: string;
+  userId?: string;
+  createdAt?: string | Date;
+  status?: string;
+  bookingType?: string;
+  vehicleType?: string;
+  partnerId?: string | null;
+  scheduledTime?: string | Date;
+  pickupLocation?: { latitude?: number; longitude?: number };
+  dropoffLocation?: { latitude?: number; longitude?: number };
+  trip?: { tripType?: string; fare?: number | string };
+  vehicle?: { make?: string; model?: string };
+  chauffeur?: { firstName?: string; lastName?: string };
+  thirdPartyUser?: { name?: string; email?: string; phone?: string };
+  guestUser?: { name?: string; email?: string; phone?: string };
+  [key: string]: unknown;
+};
+
 export type BookingNote = {
   id: string;
   bookingId: string;
@@ -38,6 +57,19 @@ export type BookingHistoryEntry = {
   timestamp?: string;
   note?: string;
   state?: "active" | "pending" | "completed";
+};
+
+export type AvailablePartner = {
+  partnerId: string;
+  companyName?: string;
+  businessEmail?: string;
+  slaScore?: number;
+  totalAssignments?: number;
+  accepted?: number;
+  rejected?: number;
+  timeout?: number;
+  averageResponseTime?: number;
+  [key: string]: unknown;
 };
 
 type BookingHistoryResponse = {
@@ -157,6 +189,63 @@ export const useFetchBookingById = ({ id }: { id?: string }) =>
     refetchOnWindowFocus: false,
     retry: false,
   });
+
+export const getAvailablePartners = async (
+  bookingId?: string,
+): Promise<AvailablePartner[]> => {
+  if (!bookingId) return [];
+  const response = await axiosInstance.get(
+    API_ENDPOINTS.GET_AVAILABLE_PARTNERS(bookingId),
+  );
+  return response?.data?.data ?? [];
+};
+
+export const useFetchAvailablePartners = ({
+  bookingId,
+  enabled,
+}: {
+  bookingId?: string;
+  enabled?: boolean;
+}) =>
+  useQuery({
+    queryKey: queryKeys.booking.availablePartners(bookingId),
+    queryFn: () => getAvailablePartners(bookingId),
+    enabled: Boolean(bookingId) && (enabled ?? true),
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+export const dispatchPartner = async ({
+  bookingId,
+  partnerId,
+}: {
+  bookingId: string;
+  partnerId: string;
+}) => {
+  const response = await axiosInstance.post(
+    API_ENDPOINTS.DISPATCH_PARTNER(bookingId),
+    { partnerId },
+  );
+  return response?.data?.data ?? response?.data;
+};
+
+export const useDispatchPartner = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: dispatchPartner,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.booking.availablePartners(variables.bookingId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.booking.detail(variables.bookingId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.booking.history(variables.bookingId),
+      });
+    },
+  });
+};
 
 /**
  * Fetch booking history (lifecycle)

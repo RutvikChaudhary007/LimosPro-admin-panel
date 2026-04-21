@@ -82,13 +82,13 @@ function BookingPage() {
     ];
 
     const csvData = data?.bookings?.map((v) => [
-      v?.id || "",
-      v?.partnerId || "",
-      v?.trip?.tripType || v?.bookingType || "",
-      v?.scheduledTime || "",
-      v?.fare?.toString() || "",
-      v?.status || "",
-      formatDate(v?.createdAt || ""),
+      v?.booking?.id || "",
+      v?.booking?.partnerId || "",
+      v?.booking?.trip?.tripType || v?.booking?.bookingType || "",
+      v?.booking?.scheduledTime || "",
+      v?.booking?.trip?.fare?.toString() || "",
+      v?.booking?.status || "",
+      formatDate(v?.booking?.createdAt || ""),
     ]);
 
     exportToCsv("booking_history", headers, csvData);
