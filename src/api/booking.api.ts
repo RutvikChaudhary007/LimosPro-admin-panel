@@ -91,6 +91,7 @@ export const getAllBookings = async (
   limit?: number,
   status?: string,
   search?: string,
+  partnerId?: string,
 ) => {
   const params: Record<string, unknown> = {};
 
@@ -119,6 +120,7 @@ export const getAllBookings = async (
   if (limit) params.limit = limit;
   if (status) params.status = status;
   if (search) params.search = search;
+  if (partnerId) params.partnerId = partnerId;
 
   try {
     const response = await axiosInstance.get(API_ENDPOINTS.GET_ALL_BOOKINGS, {
@@ -143,6 +145,7 @@ export const useFetchAllBookings = ({
   limit,
   status,
   search,
+  partnerId,
   queryOptions,
 }: {
   DateRange: DateRange;
@@ -150,6 +153,7 @@ export const useFetchAllBookings = ({
   limit?: number;
   status?: string;
   search?: string;
+  partnerId?: string;
   queryOptions?: Record<string, any>;
 }) =>
   useQuery({
@@ -159,8 +163,10 @@ export const useFetchAllBookings = ({
       limit,
       status,
       search,
+      partnerId,
     ),
-    queryFn: () => getAllBookings(DateRange, page, limit, status, search),
+    queryFn: () =>
+      getAllBookings(DateRange, page, limit, status, search, partnerId),
     refetchOnWindowFocus: false,
     retry: false,
     ...queryOptions,

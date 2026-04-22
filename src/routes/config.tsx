@@ -358,6 +358,8 @@ export const routesConfig = [
 
     action: "view",
 
+    restrictedRoles: ["Partner"],
+
     routes: [
       {
         path: constant.ROUTING_URLS.SUPPORT_TICKETS,
@@ -575,6 +577,8 @@ export const routesConfig = [
 
     action: "view",
 
+    restrictedRoles: ["Partner"],
+
     routes: [
       { path: constant.ROUTING_URLS.USERS, element: UsersPage },
 
@@ -647,6 +651,8 @@ export const routesConfig = [
 
     action: "view",
 
+    restrictedRoles: ["Partner"],
+
     routes: [
       { path: constant.ROUTING_URLS.PAYMENTS, element: PaymentsPage },
 
@@ -714,6 +720,8 @@ export const routesConfig = [
     permission: "manageContactRequests",
 
     action: "view",
+
+    restrictedRoles: ["Partner"],
 
     routes: [
       {
@@ -882,6 +890,8 @@ export const routesConfig = [
     permission: "manageReports",
 
     action: "view",
+
+    restrictedRoles: ["Partner"],
 
     routes: [
       { path: constant.ROUTING_URLS.AUDIT_LOGS, element: AuditLogsPage },

@@ -19,6 +19,7 @@ import {
 import { DataTable } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { SelectDropDown } from "@/components/ui/select";
+import { useAuthContext } from "@/context/AuthContext";
 import { useSocket } from "@/context/SocketContext";
 import { constant } from "@/lib/constant";
 import { exportToCsv } from "@/utils/export";
@@ -36,6 +37,7 @@ const showStatus = [
 ];
 function BookingPage() {
   const navigate = useNavigate();
+  const { user } = useAuthContext();
   const [perPage, setperPage] = useState<number>(10);
   const [newPage, setNewPage] = useState<number>(1);
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -53,12 +55,16 @@ function BookingPage() {
     {},
   );
 
+  // Get partnerId from user if they have a partner role
+  const partnerId = user?.partnerId;
+
   const { data, isFetching, error, isError, refetch } = useFetchAllBookings({
     DateRange: dateRange,
     page: newPage,
     limit: perPage,
     status: selectedStatus?.value || selectedStatus, // Handle both object and string
     search: searchValue,
+    partnerId,
   });
 
   const statusCounts = data?.statusCounts;

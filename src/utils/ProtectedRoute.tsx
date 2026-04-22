@@ -7,11 +7,13 @@ import { hasDynamicAccess } from "./Helper";
 interface ProtectedRouteProps {
   permission?: string | string[];
   action?: string;
+  restrictedRoles?: string[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   permission,
   action = "view",
+  restrictedRoles,
 }) => {
   const location = useLocation();
   const { user, isAuthLoading } = useAuthContext();
@@ -31,6 +33,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Always allow access to unauthorized page if logged in
   if (location.pathname === "/unauthorized") {
     return <Outlet />;
+  }
+
+  // Check if user's role is restricted from accessing this route
+  if (restrictedRoles && restrictedRoles.includes(userRole)) {
+    console.log(`Access denied for role ${userRole} on ${location.pathname}`);
+    return <Navigate to="/unauthorized" replace />;
   }
 
   // If explicit permission is provided, use it

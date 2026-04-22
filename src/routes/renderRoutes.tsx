@@ -28,6 +28,7 @@ export const renderRoutes = () => {
                 <ProtectedRoute
                   permission={(module as any).permission}
                   action={(module as any).action}
+                  restrictedRoles={(module as any).restrictedRoles}
                 />
               }
               key={module.layout + module.module}

@@ -294,6 +294,15 @@ const data: {
   ],
 };
 
+// Tabs that should be hidden for Partner role
+const PARTNER_RESTRICTED_TABS = [
+  "Users",
+  "Contact Requests",
+  "Audit Logs",
+  "Payments",
+  "Support Tickets",
+];
+
 export function AppSidebar({
   showDocuments = false,
   showSecondary = false,
@@ -302,11 +311,17 @@ export function AppSidebar({
   showDocuments?: boolean;
   showSecondary?: boolean;
 }) {
-  const { hasPermission } = usePermission();
+  const { hasPermission, hasRole } = usePermission();
+  const isPartner = hasRole("Partner");
 
   const filteredNavigation = useMemo(() => {
     return data.navMain
       .map((item) => {
+        // Hide restricted tabs for Partner users
+        if (isPartner && PARTNER_RESTRICTED_TABS.includes(item.title)) {
+          return null;
+        }
+
         // if item has children → filter children
         if (item.items) {
           const allowedChildren = item.items.filter(
@@ -328,7 +343,7 @@ export function AppSidebar({
           : null;
       })
       .filter(Boolean) as NavItem[];
-  }, [hasPermission]);
+  }, [hasPermission, isPartner]);
   return (
     <Sidebar collapsible="icon" {...props}>
       {/* Header */}

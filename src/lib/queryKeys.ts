@@ -14,7 +14,18 @@ export const queryKeys = {
       limit?: number,
       status?: string,
       search?: string,
-    ) => ["booking", "list", dateRange, page, limit, status, search] as const,
+      partnerId?: string,
+    ) =>
+      [
+        "booking",
+        "list",
+        dateRange,
+        page,
+        limit,
+        status,
+        search,
+        partnerId,
+      ] as const,
     detail: (id: string | undefined) => ["booking", "detail", id] as const,
     history: (bookingId: string | undefined) =>
       ["booking", "history", bookingId] as const,
