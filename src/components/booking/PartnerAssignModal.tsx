@@ -22,12 +22,14 @@ interface PartnerAssignModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   bookingId: string;
+  onAssigned?: () => void;
 }
 
 export const PartnerAssignModal = ({
   isOpen,
   onOpenChange,
   bookingId,
+  onAssigned,
 }: PartnerAssignModalProps) => {
   const [isAssigning, setIsAssigning] = useState<string | null>(null);
   const dispatchPartnerMutation = useDispatchPartner();
@@ -58,6 +60,7 @@ export const PartnerAssignModal = ({
       setIsAssigning(partnerId);
       await dispatchPartnerMutation.mutateAsync({ bookingId, partnerId });
       toast.success("Partner dispatched successfully");
+      onAssigned?.();
       onOpenChange(false);
     } catch (err) {
       const message =

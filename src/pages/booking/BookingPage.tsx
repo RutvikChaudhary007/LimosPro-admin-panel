@@ -5,7 +5,7 @@ import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useFetchAllBookings } from "@/api";
+import { useFetchAllBookings, useFetchPartnerSingleBookings } from "@/api";
 import PageTitle from "@/components/common/PageTitle";
 import { Calendar28 } from "@/components/date/DateRange";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -58,14 +58,56 @@ function BookingPage() {
   // Get partnerId from user if they have a partner role
   const partnerId = user?.partnerId;
 
-  const { data, isFetching, error, isError, refetch } = useFetchAllBookings({
+  const isPartnerUser = Boolean(
+    user?.role?.toLowerCase?.() === "partner" ||
+      user?.roles?.some?.((r: string) => r?.toLowerCase?.() === "partner"),
+  );
+
+  const {
+    data: groupedData,
+    isFetching: isGroupedFetching,
+    error: groupedError,
+    isError: isGroupedError,
+    refetch: refetchGrouped,
+  } = useFetchAllBookings({
     DateRange: dateRange,
     page: newPage,
     limit: perPage,
     status: selectedStatus?.value || selectedStatus, // Handle both object and string
     search: searchValue,
     partnerId,
+    queryOptions: { enabled: !isPartnerUser },
   });
+
+  const {
+    data: singleData,
+    isFetching: isSingleFetching,
+    error: singleError,
+    isError: isSingleError,
+    refetch: refetchSingle,
+  } = useFetchPartnerSingleBookings({
+    DateRange: dateRange,
+    page: newPage,
+    limit: perPage,
+    status: selectedStatus?.value || selectedStatus,
+    search: searchValue,
+    partnerId,
+    queryOptions: { enabled: isPartnerUser },
+  });
+
+  const data = isPartnerUser ? singleData : groupedData;
+  const isFetching = isPartnerUser ? isSingleFetching : isGroupedFetching;
+  const isError = isPartnerUser ? isSingleError : isGroupedError;
+  const error = (isPartnerUser ? singleError : groupedError) as any;
+  const refetch = isPartnerUser ? refetchSingle : refetchGrouped;
+
+  const bookingRows = isPartnerUser
+    ? (data?.bookings || []).map((booking: any) => ({
+        groupId: booking?.id,
+        isRoundTrip: false,
+        booking,
+      }))
+    : data?.bookings || [];
 
   const statusCounts = data?.statusCounts;
   const calculatedTotalPages = data?.pagination?.totalPages || 0;
@@ -86,7 +128,7 @@ function BookingPage() {
       "Created At",
     ];
 
-    const csvData = data?.bookings?.map((v) => [
+    const csvData = bookingRows?.map((v: any) => [
       v?.booking?.id || "",
       v?.booking?.trip?.tripType || v?.booking?.bookingType || "",
       v?.booking?.scheduledTime || "",
@@ -218,7 +260,7 @@ function BookingPage() {
           <DataTable
             key={`${perPage}-${newPage}-${selectedStatus?.value || selectedStatus}-${searchValue}`}
             columns={columns}
-            data={data?.bookings || []}
+            data={bookingRows}
             rowSelection={rowSelection}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}

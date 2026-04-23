@@ -173,6 +173,104 @@ export const useFetchAllBookings = ({
   });
 
 /**
+ * Fetch partner bookings in single-booking view (non-grouped)
+ */
+export const getPartnerSingleBookings = async (
+  DateRange: DateRange,
+  page?: number,
+  limit?: number,
+  status?: string,
+  search?: string,
+  partnerId?: string,
+) => {
+  const params: Record<string, unknown> = {};
+
+  if (DateRange?.from || DateRange?.to) {
+    params.DateRange = {
+      startDate: DateRange.from
+        ? new Date(DateRange.from).toISOString()
+        : undefined,
+      endDate: DateRange.to
+        ? new Date(
+            Date.UTC(
+              DateRange.to.getUTCFullYear(),
+              DateRange.to.getUTCMonth(),
+              DateRange.to.getUTCDate(),
+              23,
+              59,
+              59,
+              999,
+            ),
+          ).toISOString()
+        : undefined,
+    };
+  }
+
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+  if (status) params.status = status;
+  if (search) params.search = search;
+  if (partnerId) params.partnerId = partnerId;
+
+  try {
+    const response = await axiosInstance.get(
+      API_ENDPOINTS.GET_PARTNER_SINGLE_BOOKINGS,
+      { params },
+    );
+    return response?.data?.data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response?.status === 400) {
+      return { bookings: [], pagination: {} };
+    }
+    if (isAxiosError(error)) throw error;
+    throw new Error("An unexpected error occurred");
+  }
+};
+
+export const useFetchPartnerSingleBookings = ({
+  DateRange,
+  page,
+  limit,
+  status,
+  search,
+  partnerId,
+  queryOptions,
+}: {
+  DateRange: DateRange;
+  page?: number;
+  limit?: number;
+  status?: string;
+  search?: string;
+  partnerId?: string;
+  queryOptions?: Record<string, any>;
+}) =>
+  useQuery({
+    queryKey: [
+      ...queryKeys.booking.listParams(
+        DateRange,
+        page,
+        limit,
+        status,
+        search,
+        partnerId,
+      ),
+      "single",
+    ],
+    queryFn: () =>
+      getPartnerSingleBookings(
+        DateRange,
+        page,
+        limit,
+        status,
+        search,
+        partnerId,
+      ),
+    refetchOnWindowFocus: false,
+    retry: false,
+    ...queryOptions,
+  });
+
+/**
  * Fetch booking by ID
  */
 export const getBookingById = async (id?: string) => {

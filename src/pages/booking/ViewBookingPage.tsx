@@ -77,6 +77,17 @@ const ViewBookingPage = () => {
   const data: BookingDetail | undefined = apiResponse?.onward?.booking;
   const returnBooking = apiResponse?.return?.booking;
   const isRoundTrip = apiResponse?.isRoundTrip;
+  const currentLeg: "onward" | "return" =
+    apiResponse?.currentLeg === "return" ? "return" : "onward";
+  const isPartnerUser = Boolean(
+    user?.role?.toLowerCase?.() === "partner" ||
+      user?.roles?.some?.((r: string) => r?.toLowerCase?.() === "partner"),
+  );
+  const partnerScopedReturnBooking = isPartnerUser ? null : returnBooking;
+  const showRoundTripBadge = !isPartnerUser && isRoundTrip;
+  const primaryTripLabel = currentLeg === "return" ? "Return Trip" : "Onward";
+  const lifecycleHeaderLabel =
+    currentLeg === "return" ? "Return Trip Lifecycle" : "Onward Trip Lifecycle";
 
   const { data: passengerUser } = useQuery({
     queryKey: queryKeys.bookingPassengerUser.detail(data?.userId),
@@ -92,6 +103,10 @@ const ViewBookingPage = () => {
   const [activeTab, setActiveTab] = useState<"onward" | "return" | "notes">(
     "onward",
   );
+  const selectedBookingForAssignment =
+    activeTab === "return" && partnerScopedReturnBooking
+      ? partnerScopedReturnBooking
+      : data;
   const updateStatusMutation = useUpdateBookingStatus();
   // const retryDispatchMutation = useRetryPartnerDispatch();
   const {
@@ -480,7 +495,7 @@ const ViewBookingPage = () => {
             <CardHeader>
               <CardTitle>
                 Booking ID: {data?.id}
-                {isRoundTrip && (
+                {showRoundTripBadge && (
                   <Badge variant="secondary" className="ml-2">
                     Round Trip
                   </Badge>
@@ -498,17 +513,21 @@ const ViewBookingPage = () => {
                   {user?.roles?.some((r: string) =>
                     ["Super Admin", "Regional Admin", "Dispatcher"].includes(r),
                   ) &&
-                    data?.trip?.tripType === "scheduled" &&
-                    typeof data?.status === "string" &&
+                    selectedBookingForAssignment?.trip?.tripType ===
+                      "scheduled" &&
+                    typeof selectedBookingForAssignment?.status === "string" &&
                     ["created", "booked"].includes(
-                      data?.status?.toLowerCase(),
+                      selectedBookingForAssignment?.status?.toLowerCase(),
                     ) && (
                       <Button
                         variant="black"
                         className="capitalize"
                         onClick={() => {
                           // On Return tab, open return booking assignment; otherwise onward.
-                          if (activeTab === "return" && returnBooking) {
+                          if (
+                            activeTab === "return" &&
+                            partnerScopedReturnBooking
+                          ) {
                             setIsReturnAssignModalOpen(true);
                           } else {
                             setIsAssignModalOpen(true);
@@ -516,7 +535,7 @@ const ViewBookingPage = () => {
                         }}
                         disabled={
                           activeTab === "return"
-                            ? Boolean(returnBooking?.partnerId)
+                            ? Boolean(partnerScopedReturnBooking?.partnerId)
                             : Boolean(data?.partnerId)
                         }
                       >
@@ -578,7 +597,7 @@ const ViewBookingPage = () => {
             <FieldSeparator />
             <div
               className={`grid gap-6 lg:items-start ${
-                returnBooking && activeTab !== "notes"
+                partnerScopedReturnBooking && activeTab !== "notes"
                   ? "lg:grid-cols-[minmax(0,1fr)_380px]"
                   : "lg:grid-cols-[1fr_380px]"
               }`}
@@ -592,13 +611,13 @@ const ViewBookingPage = () => {
               >
                 <TabsList
                   className={`grid w-full ${
-                    returnBooking
+                    partnerScopedReturnBooking
                       ? "grid-cols-3 max-w-[480px]"
                       : "grid-cols-2 max-w-[320px]"
                   }`}
                 >
-                  <TabsTrigger value="onward">Onward</TabsTrigger>
-                  {returnBooking ? (
+                  <TabsTrigger value="onward">{primaryTripLabel}</TabsTrigger>
+                  {partnerScopedReturnBooking ? (
                     <TabsTrigger value="return">Return</TabsTrigger>
                   ) : null}
                   <TabsTrigger value="notes">Notes</TabsTrigger>
@@ -720,7 +739,7 @@ const ViewBookingPage = () => {
                     </div>
                   </CardContent>
                 </TabsContent>
-                {returnBooking ? (
+                {partnerScopedReturnBooking ? (
                   <TabsContent value="return">
                     <CardContent>
                       <h6 className="texfont-montserrat font-bold text-base-black text-sm mb-4 flex items-center justify-between">
@@ -731,20 +750,24 @@ const ViewBookingPage = () => {
                         <Label className="font-montserrat font-semibold capitalize">
                           Return Booking ID:
                         </Label>
-                        <Label>{returnBooking?.id}</Label>
+                        <Label>{partnerScopedReturnBooking?.id}</Label>
 
                         <Label className="font-montserrat font-semibold capitalize">
                           Return Status:
                         </Label>
-                        <Badge variant="outline">{returnBooking?.status}</Badge>
+                        <Badge variant="outline">
+                          {partnerScopedReturnBooking?.status}
+                        </Badge>
 
                         <Label className="font-montserrat font-semibold capitalize">
                           Scheduled Time:
                         </Label>
                         <Label>
-                          {returnBooking?.scheduledTime
+                          {partnerScopedReturnBooking?.scheduledTime
                             ? formatDate(
-                                new Date(returnBooking.scheduledTime),
+                                new Date(
+                                  partnerScopedReturnBooking.scheduledTime,
+                                ),
                                 "dd-MM-yyyy hh:mm a",
                               )
                             : "N/A"}
@@ -769,7 +792,7 @@ const ViewBookingPage = () => {
                         </Label>
                         <Label>
                           {formatFieldValue(
-                            returnBooking?.partnerId,
+                            partnerScopedReturnBooking?.partnerId,
                             "Not Assigned",
                           )}
                         </Label>
@@ -875,25 +898,27 @@ const ViewBookingPage = () => {
               {/* Lifecycle Cards - Tab controlled */}
               {activeTab === "notes" ? null : (
                 <div
-                  className={`flex flex-col gap-4 ${returnBooking ? "xl:flex-row xl:flex-wrap" : ""}`}
+                  className={`flex flex-col gap-4 ${partnerScopedReturnBooking ? "xl:flex-row xl:flex-wrap" : ""}`}
                 >
-                  {/* Onward Trip Lifecycle */}
+                  {/* Primary Trip Lifecycle */}
                   {activeTab === "onward" ? (
                     <CardContent
-                      className={`space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 ${returnBooking ? "xl:w-[360px] xl:flex-none" : "w-[360px]"}`}
+                      className={`space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 ${partnerScopedReturnBooking ? "xl:w-[360px] xl:flex-none" : "w-[360px]"}`}
                     >
                       <div className="space-y-1">
                         <div className="flex items-center justify-between">
                           <h6 className="font-montserrat text-sm font-semibold text-base-black">
-                            {returnBooking
-                              ? "Onward Trip Lifecycle"
+                            {partnerScopedReturnBooking
+                              ? lifecycleHeaderLabel
                               : "Booking Lifecycle"}
                           </h6>
                           <Badge
                             variant="secondary"
                             className="text-[10px] uppercase"
                           >
-                            {returnBooking ? "Onward Trip" : "Active Trip"}
+                            {partnerScopedReturnBooking
+                              ? primaryTripLabel
+                              : "Active Trip"}
                           </Badge>
                         </div>
                         <p className="text-xs text-base-gray">
@@ -996,7 +1021,7 @@ const ViewBookingPage = () => {
                   ) : null}
 
                   {/* Return Trip Lifecycle */}
-                  {returnBooking && activeTab === "return" ? (
+                  {partnerScopedReturnBooking && activeTab === "return" ? (
                     <CardContent className="space-y-6 rounded-2xl border border-base-light-gray/60 bg-base-white p-5 shadow-sm min-h-[520px] flex-1 xl:w-[360px] xl:flex-none">
                       <div className="space-y-1">
                         <div className="flex items-center justify-between">
@@ -1122,12 +1147,22 @@ const ViewBookingPage = () => {
             isOpen={isAssignModalOpen}
             onOpenChange={setIsAssignModalOpen}
             bookingId={id || ""}
+            onAssigned={() => {
+              refetch();
+              refetchHistory();
+              refetchReturnHistory();
+            }}
           />
-          {returnBooking && (
+          {partnerScopedReturnBooking && (
             <PartnerAssignModal
               isOpen={isReturnAssignModalOpen}
               onOpenChange={setIsReturnAssignModalOpen}
-              bookingId={returnBooking?.id || ""}
+              bookingId={partnerScopedReturnBooking?.id || ""}
+              onAssigned={() => {
+                refetch();
+                refetchHistory();
+                refetchReturnHistory();
+              }}
             />
           )}
           <ManualChauffeurAssignModal

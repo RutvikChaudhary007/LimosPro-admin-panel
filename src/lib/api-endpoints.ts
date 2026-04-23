@@ -46,6 +46,7 @@ export const API_ENDPOINTS: Record<string, any> = {
 
   // Booking
   GET_ALL_BOOKINGS: `${BOOKING_SERVICE_URL}/bookings`,
+  GET_PARTNER_SINGLE_BOOKINGS: `${BOOKING_SERVICE_URL}/bookings/partner/single`,
   GET_BOOKING_BY_ID: `${BOOKING_SERVICE_URL}/booking/:id`,
   BOOKING_HISTORY: `${BOOKING_SERVICE_URL}/booking/history/:bookingId`,
   BOOKING_NOTES: `${ADMIN_SERVICE_URL}/bookings/:bookingId/notes`,
