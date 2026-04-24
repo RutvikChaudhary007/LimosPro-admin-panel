@@ -83,6 +83,13 @@ const ViewBookingPage = () => {
     user?.role?.toLowerCase?.() === "partner" ||
       user?.roles?.some?.((r: string) => r?.toLowerCase?.() === "partner"),
   );
+  const reassignEligibleStatuses = [
+    "created",
+    "booked",
+    "nopartnerfound",
+    "nochauffeurfound",
+    "partnerchauffeurnotfound",
+  ];
   const partnerScopedReturnBooking = isPartnerUser ? null : returnBooking;
   const showRoundTripBadge = !isPartnerUser && isRoundTrip;
   const primaryTripLabel = currentLeg === "return" ? "Return Trip" : "Onward";
@@ -432,7 +439,7 @@ const ViewBookingPage = () => {
   }, [isLoaded, loadError, returnBooking]);
 
   // Real-time updates via socket
-  const { socket } = useSocket();
+  const { socket, isConnected } = useSocket();
   useEffect(() => {
     if (!socket || !id) return;
 
@@ -454,10 +461,18 @@ const ViewBookingPage = () => {
 
     socket.on("adminAssignmentUpdate", handleAssignmentUpdate);
     socket.on("bookingStatusUpdate", handleStatusUpdate);
+    socket.on("newPartnerBookingRequest", handleAssignmentUpdate);
+    socket.on("scheduledBookingAccepted", handleStatusUpdate);
+    socket.on("chauffeurAcceptedTrip", handleStatusUpdate);
+    socket.on("partnerChauffeurNotFound", handleStatusUpdate);
 
     return () => {
       socket.off("adminAssignmentUpdate", handleAssignmentUpdate);
       socket.off("bookingStatusUpdate", handleStatusUpdate);
+      socket.off("newPartnerBookingRequest", handleAssignmentUpdate);
+      socket.off("scheduledBookingAccepted", handleStatusUpdate);
+      socket.off("chauffeurAcceptedTrip", handleStatusUpdate);
+      socket.off("partnerChauffeurNotFound", handleStatusUpdate);
     };
   }, [socket, id, refetch, refetchHistory]);
 
@@ -509,14 +524,25 @@ const ViewBookingPage = () => {
               </CardDescription>
               <CardAction>
                 <div className="flex gap-2">
-                  {/* Admin: Assign Partner (Scheduled & Created/Booked) */}
+                  {user?.roles?.includes("Partner") && (
+                    <span
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                        isConnected
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {isConnected ? "Live" : "Reconnecting"}
+                    </span>
+                  )}
+                  {/* Admin: Assign/Reassign Partner (Scheduled & eligible statuses) */}
                   {user?.roles?.some((r: string) =>
                     ["Super Admin", "Regional Admin", "Dispatcher"].includes(r),
                   ) &&
                     selectedBookingForAssignment?.trip?.tripType ===
                       "scheduled" &&
                     typeof selectedBookingForAssignment?.status === "string" &&
-                    ["created", "booked"].includes(
+                    reassignEligibleStatuses.includes(
                       selectedBookingForAssignment?.status?.toLowerCase(),
                     ) && (
                       <Button
@@ -540,8 +566,26 @@ const ViewBookingPage = () => {
                         }
                       >
                         {activeTab === "return"
-                          ? "Assign Return Partner"
-                          : "Assign Partner"}
+                          ? reassignEligibleStatuses
+                              .filter((s) => !["created", "booked"].includes(s))
+                              .includes(
+                                (selectedBookingForAssignment?.status || "")
+                                  .toLowerCase()
+                                  .trim(),
+                              )
+                            ? "Reassign Return Partner"
+                            : "Assign Return Partner"
+                          : reassignEligibleStatuses
+                                .filter(
+                                  (s) => !["created", "booked"].includes(s),
+                                )
+                                .includes(
+                                  (selectedBookingForAssignment?.status || "")
+                                    .toLowerCase()
+                                    .trim(),
+                                )
+                            ? "Reassign Partner"
+                            : "Assign Partner"}
                       </Button>
                     )}
 

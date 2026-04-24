@@ -163,7 +163,7 @@ function BookingPage() {
   }, [isError, error]);
 
   // Real-time updates via socket
-  const { socket } = useSocket();
+  const { socket, isConnected } = useSocket();
   useEffect(() => {
     if (!socket) return;
 
@@ -180,13 +180,30 @@ function BookingPage() {
     socket.on("adminNewBooking", handleBookingUpdate);
     socket.on("adminAssignmentUpdate", handleBookingUpdate);
     socket.on("bookingStatusUpdate", handleBookingUpdate);
+    socket.on("newPartnerBookingRequest", handleBookingUpdate);
+    socket.on("scheduledBookingAccepted", handleBookingUpdate);
+    socket.on("chauffeurAcceptedTrip", handleBookingUpdate);
+    socket.on("partnerChauffeurNotFound", handleBookingUpdate);
 
     return () => {
       socket.off("adminNewBooking", handleBookingUpdate);
       socket.off("adminAssignmentUpdate", handleBookingUpdate);
       socket.off("bookingStatusUpdate", handleBookingUpdate);
+      socket.off("newPartnerBookingRequest", handleBookingUpdate);
+      socket.off("scheduledBookingAccepted", handleBookingUpdate);
+      socket.off("chauffeurAcceptedTrip", handleBookingUpdate);
+      socket.off("partnerChauffeurNotFound", handleBookingUpdate);
     };
   }, [socket, refetch]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      if (document.visibilityState !== "visible") return;
+      refetch();
+    }, 20000);
+
+    return () => window.clearInterval(interval);
+  }, [refetch]);
 
   return (
     <>
@@ -228,6 +245,17 @@ function BookingPage() {
         <div className="flex items-end justify-between gap-4">
           <div className="flex items-center gap-4 ">
             <Calendar28 dateRange={dateRange} setDateRange={setDateRange} />
+            {isPartnerUser && (
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                  isConnected
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-amber-100 text-amber-700"
+                }`}
+              >
+                {isConnected ? "Live" : "Reconnecting"}
+              </span>
+            )}
           </div>
           <div className="w-full max-w-fit flex items-center justify-between gap-4">
             <Button
