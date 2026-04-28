@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrand4chan,
   IconCalendar,
@@ -16,6 +15,7 @@ import { Form, FormMessage } from "@/components/ui/form";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { IFleetFormProps } from "@/types/fleet.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { styledLog } from "@/utils/styledLog";
 import { Spinner } from "../Spinner";
 import { Button } from "../ui/button";
@@ -197,7 +197,7 @@ const FleetForm = ({
   const years = Array.from({ length: 200 }, (_, i) => 1900 + i);
 
   const form = useForm<TFleetForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || defaultFleetFormValues,
   });
 

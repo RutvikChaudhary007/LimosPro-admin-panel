@@ -28,9 +28,10 @@ export const initializeGooglePlacesAutocomplete = (
     const autocomplete = new window.google.maps.places.Autocomplete(
       inputRef.current,
       {
-        componentRestrictions: { country: ["us"] },
         fields: ["address_components", "geometry", "formatted_address"],
-        types: ["address"],
+        // Allow both full addresses and broader "geocode" results (cities/regions),
+        // so users can pick a valid location even when they don't enter a street address.
+        types: ["geocode"],
       },
     );
     autocomplete.addListener("place_changed", () => {

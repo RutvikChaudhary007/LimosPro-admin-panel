@@ -54,6 +54,10 @@ const AddressInput = <T extends FieldValues>({
   ...props
 }: AddressInputProps<T>) => {
   const addressInputRef = useRef<HTMLInputElement>(null);
+  const fieldsRef = useRef<AddressFields | null>(null);
+  const onChangeRef = useRef(onChange);
+  const onUpdateRef = useRef(onUpdate);
+  const onValidityChangeRef = useRef(onValidityChange);
   const [googleMapsApiKey] = useState<string | null>(env.VITE_GOOGLE_MAP_KEY);
   const [addressAPIError] = useState<string | null>(null);
   const [fields, setFields] = useState<AddressFields>({
@@ -67,6 +71,20 @@ const AddressInput = <T extends FieldValues>({
       longitude: null,
     },
   });
+
+  // Keep refs fresh without re-initializing Autocomplete (which is expensive and can freeze typing).
+  useEffect(() => {
+    fieldsRef.current = fields;
+  }, [fields]);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
+  useEffect(() => {
+    onValidityChangeRef.current = onValidityChange;
+  }, [onValidityChange]);
 
   // // Update parent when fields change
   // useEffect(() => {
@@ -106,31 +124,30 @@ const AddressInput = <T extends FieldValues>({
       autocomplete = initializeGooglePlacesAutocomplete(
         addressInputRef,
         (address: string, updateAddress: object) => {
-          onChange(address);
-          onUpdate(updateAddress);
+          onChangeRef.current(address);
+          onUpdateRef.current(updateAddress as any);
         },
         (update: Partial<AddressFields>, formatted: string) => {
-          const merged = { ...fields, ...update };
+          const base = fieldsRef.current ?? fields;
+          const merged = { ...base, ...update };
 
-          const isValid =
+          // We primarily need a *selectable location* (formatted string + geometry).
+          // Some valid selections (e.g. city/region) won't include street/zip, so we should not block updates.
+          const isFullAddress =
             !!merged.address?.trim() &&
             !!merged.city?.trim() &&
             !!merged.state?.trim() &&
             !!merged.zip?.trim() &&
             !!merged.country?.trim();
 
-          if (!isValid) {
-            toast.error(
-              "Please provide a full address with street number, route name, city, state, zip, and country.",
+          if (!isFullAddress) {
+            toast.message(
+              "Tip: for best results, select a full street address from suggestions.",
             );
-            // onValidityChange(false);
-            return;
           }
 
           setFields(merged);
-
-          onChange(formatted);
-          // onValidityChange(true);
+          onValidityChangeRef.current?.(isFullAddress);
         },
       );
     }
@@ -140,7 +157,8 @@ const AddressInput = <T extends FieldValues>({
         google.maps.event.clearInstanceListeners(autocomplete);
       }
     };
-  }, [isLoaded, loadError, fields, onUpdate, onChange]);
+    // Intentionally exclude `fields` and callbacks to avoid re-initializing Autocomplete on every keystroke.
+  }, [isLoaded, loadError]);
 
   useEffect(() => {
     let isMounted = true;
@@ -236,9 +254,17 @@ const AddressInput = <T extends FieldValues>({
       <InputGroupInput
         {...props}
         value={value}
+        onKeyDown={(e) => {
+          // Prevent Google Places selection (Enter) from submitting the parent <form>.
+          if (e.key === "Enter") {
+            e.preventDefault();
+          }
+          props.onKeyDown?.(e);
+        }}
         onChange={(e) => {
-          field.onChange(e.target.value); // Update RHF
-          onChange(e.target.value); // Update your parent
+          // Single authoritative change path:
+          // parent `onChange` must update RHF (typically via `setValue(..., { shouldValidate: true })`)
+          onChange(e.target.value);
         }}
         ref={(el) => {
           field.ref(el); // Keep RHF ref

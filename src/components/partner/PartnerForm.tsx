@@ -10,7 +10,13 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { type FC, useCallback, useMemo, useState } from "react";
-import { Controller, type SubmitHandler, useForm } from "react-hook-form";
+import {
+  Controller,
+  type FieldErrors,
+  type Resolver,
+  type SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import { z } from "zod";
 import { useFetchAllFleets } from "@/api/fleet.api";
 import { Form, FormControl, FormItem, FormMessage } from "@/components/ui/form";
@@ -391,10 +397,59 @@ const PartnerForm: FC<PartnerFormProps & { businessAddress?: string }> = ({
   }, [isEdit]);
 
   const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
+
+  const resolver = useMemo(() => {
+    const base = zodResolver(schema) as unknown as Resolver<TPartnerForm>;
+
+    const setNestedError = (
+      target: Record<string, any>,
+      path: readonly PropertyKey[],
+      error: { type: string; message: string },
+    ) => {
+      let cur: Record<string, any> = target;
+      for (let i = 0; i < path.length; i++) {
+        const key = String(path[i]);
+        const isLeaf = i === path.length - 1;
+        if (isLeaf) {
+          cur[key] = error;
+        } else {
+          cur[key] ??= {};
+          cur = cur[key];
+        }
+      }
+    };
+
+    const safeResolver: Resolver<TPartnerForm> = async (
+      values,
+      context,
+      options,
+    ) => {
+      try {
+        return await base(values, context, options);
+      } catch (err) {
+        // Never allow validation to become an unhandled promise rejection.
+        if (err instanceof z.ZodError) {
+          const errors: FieldErrors<TPartnerForm> = {};
+          for (const issue of err.issues) {
+            if (!issue.path?.length) continue;
+            setNestedError(errors as any, issue.path, {
+              type: issue.code,
+              message: issue.message,
+            });
+          }
+          return { values: {}, errors };
+        }
+        throw err;
+      }
+    };
+
+    return safeResolver;
+  }, [schema]);
+
   const form = useForm<TPartnerForm>({
     // Workaround for duplicated react-hook-form types in dependency tree.
     // Keeps the form strongly typed while allowing zodResolver integration.
-    resolver: zodResolver(schema) as any,
+    resolver,
     defaultValues: transformInitialData(initialData) ?? {
       firstName: "",
       lastName: "",

@@ -1,6 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconEye, IconEyeOff, IconLock } from "@tabler/icons-react";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
@@ -41,6 +40,7 @@ import { toastPromise } from "@/hooks/use-toast";
 import { constant } from "@/lib/constant";
 import { tokenManager } from "@/services/tokenManager";
 import { useUserStore } from "@/stores/useAuthStore";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generatePageTitle } from "@/utils/seo";
 
 const accountFormSchema = z
@@ -89,7 +89,7 @@ export default function AccountSettings() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const form = useForm<AccountFormValues>({
-    resolver: zodResolver(accountFormSchema),
+    resolver: safeZodResolver(accountFormSchema),
     defaultValues: {
       firstName: "",
       lastName: "",

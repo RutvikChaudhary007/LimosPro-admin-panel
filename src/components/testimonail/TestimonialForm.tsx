@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconMessageCircle, IconStar, IconUser } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
@@ -10,6 +9,7 @@ import type {
   TTestimonialFormData,
 } from "@/types/testimonial.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -96,7 +96,7 @@ const TestimonialForm = ({
   };
 
   const form = useForm<TTestimonialForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       name: "",
       message: "",

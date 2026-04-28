@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
@@ -27,6 +26,7 @@ import {
   type LanguageCode,
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
@@ -262,7 +262,7 @@ export default function CitiesHubForm({
   );
 
   const form = useForm<CitiesHubFormData>({
-    resolver: zodResolver(citiesHubSchema) as any,
+    resolver: safeZodResolver(citiesHubSchema) as any,
     defaultValues: normalizedData,
     mode: "onSubmit",
   });

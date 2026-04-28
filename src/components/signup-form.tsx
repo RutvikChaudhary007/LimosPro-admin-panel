@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrandFacebookFilled,
   IconBrandGoogleFilled,
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { passwordValidation } from "@/utils/password-validation";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { FormMessage } from "./ui/form";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./ui/input-group";
 
@@ -48,7 +48,7 @@ export function SignupForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+    resolver: safeZodResolver(signupSchema),
     defaultValues: {
       name: "",
       email: "",

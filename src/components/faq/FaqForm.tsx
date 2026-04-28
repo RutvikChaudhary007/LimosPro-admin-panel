@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconEdit, IconHelpCircle } from "@tabler/icons-react";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import type { IFaqFormProps } from "@/types/faq.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import type { TFaqs } from "../table/column";
 import { Button } from "../ui/button";
 import {
@@ -54,7 +54,7 @@ const FaqForm = ({
     };
   };
   const form = useForm<TFaqForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       question: "",
       answer: "",

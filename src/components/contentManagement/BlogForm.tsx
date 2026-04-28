@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
 import { Link2, Plus, RefreshCw, Save, Trash2, X } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import type { BlogPost } from "@/types/content";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { styledLog } from "@/utils/styledLog";
 import "react-quill-new/dist/quill.snow.css";
@@ -220,7 +220,7 @@ const BlogForm = forwardRef<{ archivePost: () => void }, IBlogFormProps>(
     }
 
     const form = useForm<BlogPostForm>({
-      resolver: zodResolver(blogPostSchema),
+      resolver: safeZodResolver(blogPostSchema),
       defaultValues: transformInitialData(initialData) || {
         status: "draft",
         tags: [],

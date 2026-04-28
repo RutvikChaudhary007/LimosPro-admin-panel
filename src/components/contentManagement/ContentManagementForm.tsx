@@ -1,11 +1,11 @@
 //@ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText, IconGridPattern, IconSort09 } from "@tabler/icons-react";
 import { Controller, useForm } from "react-hook-form";
 import ReactQuill from "react-quill-new";
 import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import "react-quill-new/dist/quill.snow.css";
 import { toast } from "sonner";
 import z from "zod";
@@ -105,7 +105,7 @@ const ContentManagementForm = ({
     };
   };
   const form = useForm<TContentForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       metaDescription: "",
       metaTitle: "",

@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { MapPinned } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -11,6 +10,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import type { TRegionRes } from "@/types/regionManagement/region/region.type";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 
 const formSchema = z.object({
   regionName: z.string().min(2, {
@@ -36,7 +36,7 @@ const transformInitialData = (data?: TRegionRes): TRegion | undefined => {
 
 function RegionForm({ initialData, title, onSubmit }: TRegionFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       regionName: "",
     },

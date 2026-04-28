@@ -1,6 +1,5 @@
 //@ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconAlignLeft,
   IconLock,
@@ -11,6 +10,7 @@ import IntlTelInput from "intl-tel-input/react";
 import { useFetchAllPartner } from "@/api";
 import { Form, FormMessage } from "@/components/ui/form";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import "intl-tel-input/styles";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
@@ -99,7 +99,7 @@ const CrewMemberForm = ({
     };
   };
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       firstName: "",
       lastName: "",

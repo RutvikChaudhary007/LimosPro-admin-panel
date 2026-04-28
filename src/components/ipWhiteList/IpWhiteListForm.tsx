@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconServer, IconUser } from "@tabler/icons-react";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import type { IIpWhiteListFormProps } from "@/types/ipWhiteList.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import type { TIpWhiteList } from "../table/column";
 import { Button } from "../ui/button";
 import {
@@ -55,7 +55,7 @@ const IpWhiteListForm = ({
     };
   };
   const form = useForm<TIpWhiteListForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       name: "",
       ip: "",

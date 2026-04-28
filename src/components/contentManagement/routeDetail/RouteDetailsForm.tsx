@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Clock,
   Link2,
@@ -54,6 +53,7 @@ import {
   type LanguageCode,
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
@@ -1080,7 +1080,7 @@ export default function RouteDetailsForm({
   );
 
   const form = useForm<RouteDetailsFormData>({
-    resolver: zodResolver(routeDetailsSchema) as any,
+    resolver: safeZodResolver(routeDetailsSchema) as any,
     defaultValues: normalizedData,
     mode: "onSubmit",
   });

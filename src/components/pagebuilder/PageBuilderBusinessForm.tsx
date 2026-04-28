@@ -17,7 +17,6 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Copy, RefreshCw, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -67,6 +66,7 @@ import {
 } from "@/types/pagebuilder.types";
 import { jsonToFormData } from "@/utils/formData.utils";
 import { formatDateTime, uid } from "@/utils/pagebuilder.utils.tsx";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../contentManagement/shared/JSONLDSection";
 import { SEOSection } from "../contentManagement/shared/SEOSection";
@@ -309,7 +309,7 @@ export default function PageTemplateEditor({
   );
 
   const form = useForm<MultiLangPageTemplateFormData>({
-    resolver: zodResolver(multiLangPageTemplateSchema) as any,
+    resolver: safeZodResolver(multiLangPageTemplateSchema) as any,
     defaultValues: normalizedData,
     shouldUnregister: false,
   });

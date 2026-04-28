@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Banknote,
   Clock,
@@ -54,6 +53,7 @@ import {
   type LanguageCode,
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
@@ -366,7 +366,7 @@ export default function CountryDetailForm({
   );
 
   const form = useForm<CountryDetailFormData>({
-    resolver: zodResolver(countryDetailFormSchema) as any,
+    resolver: safeZodResolver(countryDetailFormSchema) as any,
     defaultValues,
   });
 

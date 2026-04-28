@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconEye,
   IconEyeOff,
@@ -16,6 +15,7 @@ import { Form, FormMessage } from "@/components/ui/form";
 import type { TStaffMemberForm } from "@/types/staffMember.type";
 import isFieldDisabled from "@/utils/disableFormField";
 import { passwordValidation } from "@/utils/password-validation";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -111,7 +111,7 @@ const StaffMemberForm = ({
 
   const schema = useMemo(() => getFormSchema(isEdit), [isEdit]);
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    resolver: safeZodResolver(schema),
     defaultValues: defaultValues,
     values: defaultValues,
   });

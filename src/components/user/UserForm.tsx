@@ -1,9 +1,9 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import type { IUserFormData, TUserFormProps } from "@/types/user.type";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -86,7 +86,7 @@ const UserForm = ({
     };
   };
   const form = useForm<IUserFormData>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       // firstName: "",
       // lastName: "",

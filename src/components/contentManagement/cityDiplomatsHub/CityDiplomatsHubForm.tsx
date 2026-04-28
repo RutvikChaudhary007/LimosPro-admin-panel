@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Banknote,
   Building2,
@@ -41,6 +40,7 @@ import {
   type LanguageCode,
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
@@ -300,7 +300,7 @@ export default function CityDiplomatsHubForm({
   );
 
   const form = useForm<CityDiplomatsHubFormData>({
-    resolver: zodResolver(cityDiplomatsHubSchema) as any,
+    resolver: safeZodResolver(cityDiplomatsHubSchema) as any,
     defaultValues: normalizedData,
     mode: "onSubmit",
   });

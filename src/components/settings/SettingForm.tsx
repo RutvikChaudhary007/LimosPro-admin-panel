@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBrandSkype,
   IconBrandWhatsapp,
@@ -14,6 +13,7 @@ import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import type { ISettingFormProps } from "@/types/settings.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import type { TSetting } from "../table/column";
 import { Button } from "../ui/button";
 import { Card, CardBody, CardContent, CardFooter } from "../ui/card";
@@ -90,7 +90,7 @@ const SettingForm = ({
     };
   };
   const form = useForm<TSettingForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       paymentId: "",
       location: "",

@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Link2, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -38,6 +37,7 @@ import {
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
 import { uid } from "@/utils/pagebuilder.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
@@ -200,7 +200,7 @@ export default function CountriesPageForm({
   );
 
   const form = useForm<CountriesPageFormData>({
-    resolver: zodResolver(countriesPageFormSchema) as any,
+    resolver: safeZodResolver(countriesPageFormSchema) as any,
     defaultValues,
   });
 

@@ -1,6 +1,5 @@
 // @ts-nocheck
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IconBuilding,
   IconCalendar,
@@ -38,6 +37,7 @@ import { SelectDropDown } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { IServicePricingFormProps } from "@/types/servicePricing/servicePricing.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { Checkbox } from "../ui/checkbox";
 
 const zonePricingSchema = z.discriminatedUnion("zonePricingEnabled", [
@@ -274,7 +274,7 @@ function ServicePricingForm({
 }: IServicePricingFormProps) {
   const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
   const form = useForm<TServicePricingForm>({
-    resolver: zodResolver(servicePricingSchema),
+    resolver: safeZodResolver(servicePricingSchema),
     defaultValues: transformInitialData(initialData) || defaultFormValues,
     mode: "all",
   });

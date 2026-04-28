@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconFileText } from "@tabler/icons-react";
 import { Link2, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -38,6 +37,7 @@ import {
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
 import { uid } from "@/utils/pagebuilder.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
@@ -830,7 +830,7 @@ export default function AboutForm({
   );
 
   const form = useForm<AboutFormData>({
-    resolver: zodResolver(aboutSchema) as any,
+    resolver: safeZodResolver(aboutSchema) as any,
     defaultValues: normalizedData,
   });
 

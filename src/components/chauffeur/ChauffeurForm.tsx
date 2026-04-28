@@ -13,7 +13,12 @@ import {
 } from "@tabler/icons-react";
 import { DollarSign } from "lucide-react";
 import { type FC, useCallback, useEffect, useMemo, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import {
+  Controller,
+  type FieldErrors,
+  type Resolver,
+  useForm,
+} from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { useFetchAllFleets } from "@/api";
@@ -53,102 +58,122 @@ const maxSize = 10;
 const ALLOWED_MIME_TYPES = ["application/pdf", "image/*"];
 
 const getFormSchema = (isEdit: boolean, isPartner: boolean) =>
-  z.object({
-    firstName: z
-      .string()
-      .refine((value) => value.trim() !== "", {
-        message: "First name cannot be empty or just whitespace.",
-      })
-      .min(3, { message: "First name must be at least 3 characters" }),
-    lastName: z
-      .string()
-      .refine((value) => value.trim() !== "", {
-        message: "Last name cannot be empty or just whitespace.",
-      })
-      .min(3, { message: "Last name must be at least 3 characters" }),
-    businessAddress: z.union([
-      z
+  z
+    .object({
+      firstName: z
+        .string()
+        .refine((value) => value.trim() !== "", {
+          message: "First name cannot be empty or just whitespace.",
+        })
+        .min(3, { message: "First name must be at least 3 characters" }),
+      lastName: z
+        .string()
+        .refine((value) => value.trim() !== "", {
+          message: "Last name cannot be empty or just whitespace.",
+        })
+        .min(3, { message: "Last name must be at least 3 characters" }),
+      businessAddress: z
         .string()
         .trim()
         .min(3, { message: "Business Address must be at least 3 characters" }),
-      z.object({
-        latitude: z.number(),
-        longitude: z.number(),
+      location: z.object({
+        latitude: z.number().nullable(),
+        longitude: z.number().nullable(),
       }),
-    ]),
-    email: z.email(),
-    partnerId: isPartner
-      ? z.string().optional()
-      : z.string().refine((value) => value.trim() !== "", {
-          message: "Partner Id cannot be empty or just whitespace.",
-        }),
-    taxIdNumber: z.string().refine((value) => value.trim() !== "", {
-      message: "Tax Id Number cannot be empty or just whitespace.",
-    }),
-    licenseNumber: z.string().refine((value) => value.trim() !== "", {
-      message: "License Number cannot be empty or just whitespace.",
-    }),
-    vehicleId: z.string().refine((value) => value.trim() !== "", {
-      message: "Vehicle Id cannot be empty or just whitespace.",
-    }),
-    password: isEdit
-      ? z.union([z.string().length(0), passwordValidation]).optional()
-      : passwordValidation,
-    gratuity: z.string().refine((value) => value.trim() !== "", {
-      message: "Gratuity cannot be empty or just whitespace.",
-    }),
-    documents: z
-      .array(z.any())
-      .refine(
-        (files) => {
-          if (files.length > 0 && files.some((file) => file.url)) {
-            return true;
-          }
-          return files.length >= 1;
-        },
-        {
-          message: "Select at least 1 file",
-        },
-      )
-      .refine((files) => files.length <= 4, {
-        message: "You can upload up to 4 files",
-      })
-      .refine(
-        (files) => {
-          const fileObjects = files.filter((f) => f instanceof File);
-          return (
-            fileObjects.length === 0 ||
-            fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
-          );
-        },
-        {
-          message: `Max size ${maxSize / (1024 * 1024)}MB`,
-        },
-      )
-      .refine(
-        (files) => {
-          const fileObjects = files.filter((f) => f instanceof File);
-          return (
-            fileObjects.length === 0 ||
-            fileObjects.every((f) =>
-              ALLOWED_MIME_TYPES.some((allowed) => {
-                if (allowed.endsWith("/*")) {
-                  return f.type.startsWith(allowed.replace("/*", ""));
-                }
-                return f.type === allowed;
-              }),
-            )
-          );
-        },
-        {
-          message: "Invalid file types detected",
-        },
-      ),
-    status: z.string().optional(),
-    drivingLicenseExpiry: z.string().optional(),
-    insuranceExpiry: z.string().optional(),
-    vehiclePermitExpiry: z.string().optional(),
-  });
+      email: z.email(),
+      partnerId: isPartner
+        ? z.string().optional()
+        : z.string().refine((value) => value.trim() !== "", {
+            message: "Partner Id cannot be empty or just whitespace.",
+          }),
+      taxIdNumber: z.string().refine((value) => value.trim() !== "", {
+        message: "Tax Id Number cannot be empty or just whitespace.",
+      }),
+      licenseNumber: z.string().refine((value) => value.trim() !== "", {
+        message: "License Number cannot be empty or just whitespace.",
+      }),
+      vehicleId: z.string().refine((value) => value.trim() !== "", {
+        message: "Vehicle Id cannot be empty or just whitespace.",
+      }),
+      password: isEdit
+        ? z.union([z.string().length(0), passwordValidation]).optional()
+        : passwordValidation,
+      gratuity: z.string().refine((value) => value.trim() !== "", {
+        message: "Gratuity cannot be empty or just whitespace.",
+      }),
+      documents: z
+        .array(z.any())
+        .refine(
+          (files) => {
+            if (files.length > 0 && files.some((file) => file.url)) {
+              return true;
+            }
+            return files.length >= 1;
+          },
+          {
+            message: "Select at least 1 file",
+          },
+        )
+        .refine((files) => files.length <= 4, {
+          message: "You can upload up to 4 files",
+        })
+        .refine(
+          (files) => {
+            const fileObjects = files.filter((f) => f instanceof File);
+            return (
+              fileObjects.length === 0 ||
+              fileObjects.every((f) => f.size <= maxSize * 1024 * 1024)
+            );
+          },
+          {
+            message: `Max size ${maxSize / (1024 * 1024)}MB`,
+          },
+        )
+        .refine(
+          (files) => {
+            const fileObjects = files.filter((f) => f instanceof File);
+            return (
+              fileObjects.length === 0 ||
+              fileObjects.every((f) =>
+                ALLOWED_MIME_TYPES.some((allowed) => {
+                  if (allowed.endsWith("/*")) {
+                    return f.type.startsWith(allowed.replace("/*", ""));
+                  }
+                  return f.type === allowed;
+                }),
+              )
+            );
+          },
+          {
+            message: "Invalid file types detected",
+          },
+        ),
+      status: z.string().optional(),
+      drivingLicenseExpiry: z.string().optional(),
+      insuranceExpiry: z.string().optional(),
+      vehiclePermitExpiry: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      const lat = data.location?.latitude;
+      const lng = data.location?.longitude;
+      const isValid =
+        typeof lat === "number" &&
+        typeof lng === "number" &&
+        Number.isFinite(lat) &&
+        Number.isFinite(lng) &&
+        lat !== 0 &&
+        lng !== 0;
+
+      if (!isValid) {
+        // Attach error to businessAddress so the UI shows it under Location field.
+        ctx.addIssue({
+          code: "custom",
+          path: ["businessAddress"],
+          message:
+            "Please select a valid location from the address suggestions",
+        });
+      }
+    });
 
 interface IAddressObj {
   zip: string;
@@ -245,55 +270,114 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
   }, [isEdit]);
 
   //   const fileRef = useRef<HTMLInputElement | null>(null);
-  const defaultValues = transformInitialData(initialData) || {
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    businessAddress: "",
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
-    documents: [],
-    status: "",
-    partnerId: "",
-    taxIdNumber: "",
-    licenseNumber: "",
-    vehicleId: "",
-    gratuity: "0",
-    drivingLicenseExpiry: "",
-    insuranceExpiry: "",
-    vehiclePermitExpiry: "",
-  };
+  const defaultValues = useMemo(() => {
+    return (
+      transformInitialData(initialData) || {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        businessAddress: "",
+        location: {
+          latitude: null,
+          longitude: null,
+        },
+        documents: [],
+        status: "",
+        partnerId: "",
+        taxIdNumber: "",
+        licenseNumber: "",
+        vehicleId: "",
+        gratuity: "0",
+        drivingLicenseExpiry: "",
+        insuranceExpiry: "",
+        vehiclePermitExpiry: "",
+      }
+    );
+  }, [initialData]);
 
   const schema = useMemo(
     () => getFormSchema(isEdit, isPartner),
     [isEdit, isPartner],
   );
+
+  const resolver = useMemo(() => {
+    const base = zodResolver(schema) as unknown as Resolver<TChauffeurForm>;
+
+    const setNestedError = (
+      target: Record<string, any>,
+      path: readonly PropertyKey[],
+      error: { type: string; message: string },
+    ) => {
+      let cur: Record<string, any> = target;
+      for (let i = 0; i < path.length; i++) {
+        const key = String(path[i]);
+        const isLeaf = i === path.length - 1;
+        if (isLeaf) {
+          cur[key] = error;
+        } else {
+          cur[key] ??= {};
+          cur = cur[key];
+        }
+      }
+    };
+
+    const safeResolver: Resolver<TChauffeurForm> = async (
+      values,
+      context,
+      options,
+    ) => {
+      try {
+        return await base(values, context, options);
+      } catch (err) {
+        if (err instanceof z.ZodError) {
+          const errors: FieldErrors<TChauffeurForm> = {};
+          for (const issue of err.issues) {
+            if (!issue.path?.length) continue;
+            setNestedError(errors as any, issue.path, {
+              type: issue.code,
+              message: issue.message,
+            });
+          }
+          return { values: {}, errors };
+        }
+        throw err;
+      }
+    };
+
+    return safeResolver;
+  }, [schema]);
+
   const form = useForm<TChauffeurForm>({
-    resolver: zodResolver(schema),
+    resolver,
     defaultValues: defaultValues,
-    values: defaultValues,
     mode: "onBlur",
   });
 
-  // Log validation errors for debugging
   useEffect(() => {
-    if (Object.keys(form.formState.errors).length > 0) {
-      console.log("ChauffeurForm Validation Errors:", form.formState.errors);
-    }
-  }, [form.formState.errors]);
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
+
+  // Intentionally no console logging for validation errors.
 
   const handleAddressChange = useCallback(
     (value: string) => {
-      // console.log("lllvalue:", value);
-      if (form.formState.errors.businessAddress) {
-        form.clearErrors("businessAddress");
+      // IMPORTANT: do NOT trigger validation here.
+      // Google Autocomplete fires `onChange(formatted)` AND then `onUpdate(addressObject)`
+      // back-to-back. Because the resolver is async, validating here with location=null
+      // can resolve AFTER `onUpdate` sets the real lat/lng — the stale error then "wins"
+      // and gets stuck on the UI. We let `onUpdate` be the single source of truth.
+      const previous = form.getValues("businessAddress");
+      if (previous !== value) {
+        // Reset stale coords (without firing validation) so they don't survive a manual edit.
+        setAddressObj(undefined);
+        form.setValue(
+          "location",
+          { latitude: null, longitude: null },
+          { shouldDirty: true, shouldTouch: true },
+        );
       }
-
       form.setValue("businessAddress", value, {
-        shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
       });
@@ -354,15 +438,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
         );
       }
 
-      if (addressObj) {
-        formData.append(
-          "location",
-          JSON.stringify({
-            latitude: addressObj.location.latitude,
-            longitude: addressObj.location.longitude,
-          }),
-        );
-      }
+      formData.append("location", JSON.stringify(values.location));
       await onSubmit(formData);
     } catch (error) {
       console.error("Error:", error);
@@ -647,13 +723,29 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                   control={form.control}
                   name="businessAddress"
                   render={({ field }) => {
-                    console.log("businessAddress", field.value);
                     return (
                       <AddressInput
                         value={field.value || ""}
                         field={field}
                         onChange={handleAddressChange}
-                        onUpdate={setAddressObj}
+                        onUpdate={(update) => {
+                          setAddressObj(update);
+                          // Single source of truth when a Places suggestion is selected:
+                          // set location WITHOUT shouldValidate, clear any stale error,
+                          // then trigger ONE validation pass so the resolver runs
+                          // against the final state (avoids async race conditions
+                          // where stale "null" validations overwrite the valid one).
+                          form.setValue(
+                            "location",
+                            {
+                              latitude: update?.location?.latitude ?? null,
+                              longitude: update?.location?.longitude ?? null,
+                            },
+                            { shouldDirty: true, shouldTouch: true },
+                          );
+                          form.clearErrors("businessAddress");
+                          void form.trigger(["businessAddress", "location"]);
+                        }}
                         disabled={isFieldDisabled(
                           disabledFields,
                           "businessAddress",
@@ -968,7 +1060,7 @@ const ChauffeurForm: FC<IChauffeurFormProps> = ({
                     email: "",
                     password: "",
                     businessAddress: "",
-                    location: { latitude: 0, longitude: 0 },
+                    location: { latitude: null, longitude: null },
                     partnerId: "",
                     taxIdNumber: "",
                     licenseNumber: "",

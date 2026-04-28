@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Building2, Globe, Plane, Route, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -40,6 +39,7 @@ import {
   type LanguageCode,
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 // import { uid } from "@/utils/pagebuilder.utils";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
@@ -421,7 +421,7 @@ export default function HomeForm({
   );
 
   const form = useForm<HomeFormData>({
-    resolver: zodResolver(multiLangHomeSchema) as any,
+    resolver: safeZodResolver(multiLangHomeSchema) as any,
     defaultValues: normalizedData,
     mode: "onSubmit",
   });

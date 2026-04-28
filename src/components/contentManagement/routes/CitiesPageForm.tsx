@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Link2, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import {
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
 import { jsonToFormData } from "@/utils/formData.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { generateSlug } from "@/utils/slug";
 import { JSONLDSection } from "../shared/JSONLDSection";
 
@@ -129,7 +129,7 @@ export default function CitiesPageForm({
   );
 
   const form = useForm<CitiesPageFormData>({
-    resolver: zodResolver(citiesPageFormSchema) as any,
+    resolver: safeZodResolver(citiesPageFormSchema) as any,
     defaultValues,
   });
 

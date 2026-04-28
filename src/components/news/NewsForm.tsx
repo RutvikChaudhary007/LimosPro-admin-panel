@@ -1,9 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconNews } from "@tabler/icons-react";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import type { INewsFormProps } from "@/types/news.type";
 import isFieldDisabled from "@/utils/disableFormField";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import type { TNews } from "../table/column";
 import { Button } from "../ui/button";
 import {
@@ -46,7 +46,7 @@ const NewsForm = ({
     };
   };
   const form = useForm<TNewsForm>({
-    resolver: zodResolver(formSchema),
+    resolver: safeZodResolver(formSchema),
     defaultValues: transformInitialData(initialData) || {
       news: "",
     },

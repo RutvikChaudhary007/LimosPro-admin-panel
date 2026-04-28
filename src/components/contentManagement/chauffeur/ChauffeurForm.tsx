@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
@@ -33,6 +32,7 @@ import {
 } from "@/lib/language";
 import { jsonToFormData } from "@/utils/formData.utils";
 import { uid } from "@/utils/pagebuilder.utils";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 import { JSONLDSection } from "../shared/JSONLDSection";
 import { SEOSection } from "../shared/SEOSection";
 import { jsonLdSchema, seoSchema } from "../shared/sharedSchemas";
@@ -238,7 +238,7 @@ export default function ChauffeurForm({
   );
 
   const form = useForm<ChauffeurFormData>({
-    resolver: zodResolver(multiLangChauffeurSchema) as any,
+    resolver: safeZodResolver(multiLangChauffeurSchema) as any,
     defaultValues: normalizedData,
   });
 

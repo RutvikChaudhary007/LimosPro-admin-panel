@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { IconEye, IconEyeOff, IconLock } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -25,6 +24,7 @@ import {
 import { SelectDropDown } from "@/components/ui/select";
 import type { TRegionAdminRes } from "@/types/regionManagement/reginAdmin/regionAdmin.type";
 import { passwordValidation } from "@/utils/password-validation";
+import { safeZodResolver } from "@/utils/safeZodResolver";
 
 export type TRegionAdmin = {
   firstName: string;
@@ -89,7 +89,7 @@ function RegionAdminForm({
     useState<TRegionAdmin | null>(null);
 
   const resolver = useMemo(() => {
-    return zodResolver(getFormSchema(isEditMode));
+    return safeZodResolver(getFormSchema(isEditMode));
   }, [isEditMode]);
 
   const form = useForm<TRegionAdmin>({
