@@ -211,6 +211,10 @@ const transformInitialData = (
     email: data?.userEmail || "",
     password: "",
     businessAddress: data?.businessAddress,
+    location: {
+      latitude: data?.location?.latitude ?? null,
+      longitude: data?.location?.longitude ?? null,
+    },
     documents: data?.documents || [],
     status: data?.status || "",
     partnerId: data?.partnerId || "",
