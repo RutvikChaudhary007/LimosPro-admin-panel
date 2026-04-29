@@ -14,6 +14,7 @@ import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toastPromise } from "@/hooks/use-toast";
 import { useInvalidateModule } from "@/hooks/useInvalidateModule";
 import { generatePageTitle } from "@/utils/seo";
@@ -21,7 +22,7 @@ import { generatePageTitle } from "@/utils/seo";
 const initialForm = {
   name: "",
   description: "",
-  sortOrder: 0,
+  sortOrder: 1,
   isActive: true,
 };
 
@@ -110,44 +111,67 @@ function VehicleTypesPage() {
 
         <Card>
           <CardContent className="p-4 md:p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input
-              placeholder="Vehicle type name"
-              value={form.name}
-              onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
-            />
-            <Input
-              placeholder="Description (optional)"
-              value={form.description}
-              onChange={(e) =>
-                setForm((s) => ({ ...s, description: e.target.value }))
-              }
-            />
-            <Input
-              type="number"
-              placeholder="Sort order"
-              value={form.sortOrder}
-              onChange={(e) =>
-                setForm((s) => ({
-                  ...s,
-                  sortOrder: Number(e.target.value || 0),
-                }))
-              }
-            />
-            <div className="flex items-center gap-2">
-              <Button onClick={handleSubmit} disabled={!form.name.trim()}>
-                {editingId ? "Update" : "Create"}
-              </Button>
-              {editingId ? (
-                <Button
-                  variant="outlineSecondary"
-                  onClick={() => {
-                    setEditingId(null);
-                    setForm(initialForm);
-                  }}
-                >
-                  Cancel
+            <div className="space-y-1.5">
+              <Label htmlFor="vehicleTypeName">
+                Vehicle type name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="vehicleTypeName"
+                placeholder="e.g., Executive Sedan Fit for 3 Passengers"
+                value={form.name}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, name: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="vehicleTypeDescription">Description</Label>
+              <Input
+                id="vehicleTypeDescription"
+                placeholder="Optional"
+                value={form.description}
+                onChange={(e) =>
+                  setForm((s) => ({ ...s, description: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="vehicleTypeSortOrder">Sort order</Label>
+              <Input
+                id="vehicleTypeSortOrder"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                placeholder="1"
+                value={form.sortOrder}
+                onChange={(e) =>
+                  setForm((s) => ({
+                    ...s,
+                    sortOrder: Number(e.target.value || 0),
+                  }))
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="invisible">Actions</Label>
+              <div className="flex items-center gap-2">
+                <Button onClick={handleSubmit} disabled={!form.name.trim()}>
+                  {editingId ? "Update" : "Create"}
                 </Button>
-              ) : null}
+                {editingId ? (
+                  <Button
+                    variant="outlineSecondary"
+                    onClick={() => {
+                      setEditingId(null);
+                      setForm(initialForm);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -166,8 +190,15 @@ function VehicleTypesPage() {
                     <div className="pr-4">
                       <div className="font-semibold">{item.name}</div>
                       <div className="text-sm text-muted-foreground mt-1">
-                        {item.description || "-"} | Sort: {item.sortOrder} |{" "}
-                        {item.isActive ? "Active" : "Inactive"}
+                        {[
+                          item.description?.trim()
+                            ? item.description.trim()
+                            : null,
+                          `Sort: ${item.sortOrder ?? 0}`,
+                          item.isActive ? "Active" : "Inactive",
+                        ]
+                          .filter(Boolean)
+                          .join(" | ")}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
