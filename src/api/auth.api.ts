@@ -3,6 +3,7 @@ import axios, { AxiosError } from "axios";
 import { API_ENDPOINTS } from "@/lib/api-endpoints";
 import { queryKeys } from "@/lib/queryKeys";
 import { tokenManager } from "@/services/tokenManager";
+import type { ApiErrorResponse } from "@/types/global/ErrorResponse";
 import axiosInstance from "@/utils/axiosInstance";
 
 /**
@@ -23,36 +24,65 @@ type TPara = { limit: number };
  * Login user
  */
 export const login = async (data: { email: string; password: string }) => {
-  const response = await axios.post(API_ENDPOINTS.LOG_IN, data, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (response?.data?.data) {
-    const access = response.data.data.accessToken;
-    const refresh = response.data.data.refreshToken;
-    if (access && refresh) tokenManager.setTokens(access, refresh);
-    const roles = response.data.data.roles;
-    const primaryRole = Array.isArray(roles) ? roles[0] : roles;
-    if (primaryRole) {
-      localStorage.setItem("role", primaryRole);
+  try {
+    const response = await axios.post(API_ENDPOINTS.LOG_IN, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response?.data?.data) {
+      const access = response.data.data.accessToken;
+      const refresh = response.data.data.refreshToken;
+      if (access && refresh) tokenManager.setTokens(access, refresh);
+      const roles = response.data.data.roles;
+      const primaryRole = Array.isArray(roles) ? roles[0] : roles;
+      if (primaryRole) {
+        localStorage.setItem("role", primaryRole);
+      }
+
+      const userData = { ...response.data.data };
+      if (!userData.role && roles) {
+        userData.role = Array.isArray(roles) ? roles[0] : roles;
+      }
+      localStorage.setItem("user", JSON.stringify(userData));
+
+      // Store permissions from login response
+      if (response?.data?.data?.permissions) {
+        localStorage.setItem(
+          "permissions",
+          JSON.stringify(response.data.data.permissions),
+        );
+      }
     }
 
-    const userData = { ...response.data.data };
-    if (!userData.role && roles) {
-      userData.role = Array.isArray(roles) ? roles[0] : roles;
-    }
-    localStorage.setItem("user", JSON.stringify(userData));
+    return response.data;
+  } catch (error) {
+    if ((error as any)?.isAxiosError) {
+      const axiosError = error as AxiosError<ApiErrorResponse>;
+      const statusCode = axiosError.response?.status;
+      const apiMessage =
+        axiosError.response?.data?.message ||
+        axiosError.response?.data?.error ||
+        "";
 
-    // Store permissions from login response
-    if (response?.data?.data?.permissions) {
-      localStorage.setItem(
-        "permissions",
-        JSON.stringify(response.data.data.permissions),
-      );
+      if (
+        statusCode === 401 &&
+        apiMessage
+          .toLowerCase()
+          .includes("partner login is allowed only after approval")
+      ) {
+        throw new Error(
+          "Your partner account is still pending approval. You can log in after an admin approves your account.",
+        );
+      }
+
+      throw new Error(apiMessage || "An unexpected error occurred");
     }
+
+    throw error instanceof Error
+      ? error
+      : new Error("An unexpected error occurred");
   }
-  return response.data;
 };
 
 // ============================================

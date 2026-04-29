@@ -751,15 +751,6 @@ export function getPartner(
       cell: ({ row }) => {
         const partner = row.original;
         const status = partner.status ?? "pending";
-        const isIndividual = partner.partnerType === PartnerType.INDIVIDUAL;
-
-        if (isIndividual) {
-          return (
-            <Badge variant={getStatusVariant(status)} className="capitalize">
-              {status}
-            </Badge>
-          );
-        }
 
         return (
           <Select

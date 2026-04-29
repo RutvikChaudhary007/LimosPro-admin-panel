@@ -98,6 +98,30 @@ type TRefetch = (
 ) => Promise<QueryObserverResult<unknown, Error>>;
 
 const allowedRoles = new Set(constant.ADMIN_ELIGIBLE_ROLES);
+
+const getFriendlyLoginErrorMessage = (err: unknown) => {
+  if (err && typeof err === "object" && "isAxiosError" in err) {
+    const axiosError = err as AxiosError<ApiErrorResponse>;
+    const statusCode = axiosError.response?.status;
+    const apiMessage =
+      axiosError.response?.data?.message ||
+      axiosError.response?.data?.error ||
+      "";
+
+    if (
+      statusCode === 401 &&
+      apiMessage
+        .toLowerCase()
+        .includes("partner login is allowed only after approval")
+    ) {
+      return "Your partner account is still pending approval. You can log in after an admin approves your account.";
+    }
+
+    return apiMessage || "An unexpected error occurred";
+  }
+
+  return err instanceof Error ? err.message : "An unexpected error occurred";
+};
 // Auth
 const useLoginMutation = () => {
   const { setUser } = useUserStore();
@@ -143,17 +167,7 @@ const useLoginMutation = () => {
     },
 
     onError: (err: unknown) => {
-      if ((err as any)?.isAxiosError) {
-        const e = err as AxiosError<ApiErrorResponse>;
-        throw new Error(
-          e.response?.data?.message ||
-            e.response?.data?.error ||
-            "An unexpected error occurred",
-        );
-      }
-      throw err instanceof Error
-        ? err
-        : new Error("An unexpected error occurred");
+      throw new Error(getFriendlyLoginErrorMessage(err));
     },
   });
 };
