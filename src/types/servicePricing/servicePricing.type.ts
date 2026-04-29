@@ -26,10 +26,8 @@ export type TServicePricingData = {
   vehicleId: string;
   ratePerHour: number;
   minHours: number;
-  extraTime: number;
   basePrice: number;
   minimumFare: number;
-  cityToCityHourlyRate: number;
   pricePerMile: number;
   pricePerMinute: number;
   zonePricingEnabled: boolean;

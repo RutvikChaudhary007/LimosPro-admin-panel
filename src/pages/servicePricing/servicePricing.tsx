@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/input-group";
 import { SelectDropDown } from "@/components/ui/select";
 import { toastPromise } from "@/hooks/use-toast";
-import usePagination from "@/hooks/usePagination";
 import { constant } from "@/lib/constant";
 import queries from "@/lib/queries";
 import { generatePageTitle } from "@/utils/seo";
@@ -98,13 +97,20 @@ function ServicePricingPage() {
     page: newPage,
     limit: perPage,
   });
-  const { currentPage, setPage, totalPages, currentItems } =
-    usePagination<TServicePricing>(
-      data?.pricings,
-      newPage,
-      perPage,
-      data?.pagination,
-    );
+  const servicePricingRows: TServicePricing[] = Array.isArray(data?.pricings)
+    ? data.pricings
+    : [];
+
+  const totalItems =
+    data?.pagination?.totalItems ??
+    data?.pagination?.total ??
+    data?.pagination?.count ??
+    servicePricingRows.length;
+
+  const calculatedTotalPages =
+    data?.pagination?.pages ??
+    data?.pagination?.totalPages ??
+    Math.max(1, Math.ceil((Number(totalItems) || 0) / perPage));
 
   const handleEdit = (id: string) => {
     navigate(constant.ROUTING_URLS.EDIT_SERVICE_PRICING.replace(":id", id));
@@ -127,13 +133,10 @@ function ServicePricingPage() {
   const [rowSelection, setRowSelection] = useState<{ [key: string]: boolean }>(
     {},
   );
-  // Number of pages based on filtered data
-  const calculatedTotalPages = Math.max(1, totalPages);
 
   // Handle page change
   const handlePageChange = (value: number) => {
     setNewPage(value);
-    setPage(value);
     window.scrollTo(0, 0);
   };
 
@@ -220,23 +223,25 @@ function ServicePricingPage() {
         ) : (
           <DataTable
             columns={columns}
-            data={currentItems}
+            data={servicePricingRows}
             rowSelection={rowSelection}
             onTableReady={setTableRef}
             onRowSelectionChange={setRowSelection}
             globalFilter={searchValue}
             onGlobalFilterChange={setSearchValue}
+            manualPagination={true}
+            manualFiltering={true}
           />
         )}
 
         {/* Pagination */}
-        {totalPages >= 0 && calculatedTotalPages >= 1 && (
+        {calculatedTotalPages >= 1 && (
           <PaginationControls
-            currentPage={currentPage}
+            currentPage={newPage}
             totalPages={calculatedTotalPages}
             onPageChange={handlePageChange}
             onPerPageChange={handlePerPageChange}
-            totalItems={data?.pagination?.totalItems}
+            totalItems={totalItems}
             perPage={perPage}
           />
         )}

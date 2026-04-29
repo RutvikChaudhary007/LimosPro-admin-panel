@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useFetchAllFleets, useFetchAllRegions } from "@/api";
@@ -33,9 +33,14 @@ const EditServicePricingPage = () => {
         loading: "Updating service pricing...",
         success: "Service pricing updated successfully!",
         error: (e) =>
-          e instanceof AxiosError
-            ? e.response?.data?.data?.error || e.response?.data?.message
-            : "Failed to update service pricing.",
+          isAxiosError(e)
+            ? e.response?.data?.message ||
+              e.response?.data?.data?.error ||
+              e.message ||
+              "Failed to update service pricing."
+            : e instanceof Error
+              ? e.message
+              : "Failed to update service pricing.",
       },
     );
   };

@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useFetchAllFleets, useFetchAllRegions } from "@/api";
 import { PageHeader } from "@/components/layouts/PageHeader";
@@ -21,9 +21,14 @@ const CreateServicePricingPage = () => {
       loading: "Creating service pricing...",
       success: "Service pricing created successfully!",
       error: (e) =>
-        e instanceof AxiosError
-          ? e.response?.data?.data?.error || e.response?.data?.message
-          : "Failed to create service pricing.",
+        isAxiosError(e)
+          ? e.response?.data?.message ||
+            e.response?.data?.data?.error ||
+            e.message ||
+            "Failed to create service pricing."
+          : e instanceof Error
+            ? e.message
+            : "Failed to create service pricing.",
     });
   };
 

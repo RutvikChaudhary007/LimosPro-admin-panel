@@ -14,7 +14,7 @@ import {
   IconTruck,
 } from "@tabler/icons-react";
 import { useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import z from "zod";
 import { Spinner } from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,31 @@ const zonePricingSchema = z.discriminatedUnion("zonePricingEnabled", [
   z.object({ zonePricingEnabled: z.literal(false) }),
 ]);
 
+const pricingServiceTypeEnum = z.enum([
+  "CityToCity",
+  "AirportTransfer",
+  "Hourly",
+]);
+
+const serviceTypePricingFieldMap: Record<
+  z.infer<typeof pricingServiceTypeEnum>,
+  Array<"basePrice" | "pricePerMile" | "pricePerMinute" | "ratePerHour">
+> = {
+  CityToCity: ["basePrice", "pricePerMile", "pricePerMinute", "ratePerHour"],
+  AirportTransfer: ["basePrice", "pricePerMile", "pricePerMinute"],
+  Hourly: ["basePrice", "ratePerHour"],
+};
+
+const optionalNonNegativeNumber = (fieldLabel: string) =>
+  z
+    .preprocess(
+      (v) => (v === "" || v === null || v === undefined ? undefined : v),
+      z.coerce
+        .number({ invalid_type_error: `${fieldLabel} must be a number` })
+        .min(0, { message: `${fieldLabel} must be non-negative` }),
+    )
+    .optional();
+
 // Zod schema for service pricing form
 const servicePricingSchema = z
   .object({
@@ -82,56 +107,24 @@ const servicePricingSchema = z
       .string()
       .min(2, { message: "Country must be at least 2 characters" }),
     city: z.string().min(2, { message: "City must be at least 2 characters" }),
-    serviceType: z.string().min(1, { message: "Service type is required" }),
+    serviceType: pricingServiceTypeEnum,
     vehicleId: z.string().min(1, { message: "Vehicle is required" }),
-    ratePerHour: z
-      .string()
-      .min(1, { message: "Rate per hour is required" })
-      .regex(/^\d+(\.\d{1,2})?$/, { message: "Must be a valid number" })
-      .transform((v) => Number(v))
-      .refine((n) => n >= 0, { message: "Must be non-negative" }),
+    ratePerHour: optionalNonNegativeNumber("Rate per hour"),
     minHours: z
       .string()
       .min(1, { message: "Minimum hours is required" })
       .regex(/^\d+$/, { message: "Must be a whole number" })
       .transform((v) => Number(v))
       .refine((n) => n >= 0, { message: "Must be non-negative" }),
-    extraTime: z
-      .string()
-      .min(1, { message: "Extra time is required" })
-      .regex(/^\d+$/, { message: "Must be a whole number" })
-      .transform((v) => Number(v))
-      .refine((n) => n >= 0, { message: "Must be non-negative" }),
-    basePrice: z
-      .string()
-      .min(1, { message: "Base price is required" })
-      .regex(/^\d+(\.\d{1,2})?$/, { message: "Must be a valid number" })
-      .transform((v) => Number(v))
-      .refine((n) => n >= 0, { message: "Must be non-negative" }),
+    basePrice: optionalNonNegativeNumber("Base fare"),
     minimumFare: z
       .string()
       .min(1, { message: "Minimum fare is required" })
       .regex(/^\d+(\.\d{1,2})?$/, { message: "Must be a valid number" })
       .transform((v) => Number(v))
       .refine((n) => n >= 0, { message: "Must be non-negative" }),
-    cityToCityHourlyRate: z
-      .string()
-      .min(1, { message: "City to city hourly rate is required" })
-      .regex(/^\d+(\.\d{1,2})?$/, { message: "Must be a valid number" })
-      .transform((v) => Number(v))
-      .refine((n) => n >= 0, { message: "Must be non-negative" }),
-    pricePerMile: z
-      .string()
-      .min(1, { message: "Price per mile is required" })
-      .regex(/^\d+(\.\d{1,2})?$/, { message: "Must be a valid number" })
-      .transform((v) => Number(v))
-      .refine((n) => n >= 0, { message: "Must be non-negative" }),
-    pricePerMinute: z
-      .string()
-      .min(1, { message: "Price per minute is required" })
-      .regex(/^\d+(\.\d{1,2})?$/, { message: "Must be a valid number" })
-      .transform((v) => Number(v))
-      .refine((n) => n >= 0, { message: "Must be non-negative" }),
+    pricePerMile: optionalNonNegativeNumber("Price per mile"),
+    pricePerMinute: optionalNonNegativeNumber("Price per minute"),
     //   zonePricingEnabled: z.boolean().default(false),
     rateValidFrom: z
       .string()
@@ -153,6 +146,37 @@ const servicePricingSchema = z
       .optional()
       .transform((v) => (v ? Number(v) : undefined)),
   })
+  .superRefine((data, ctx) => {
+    const serviceType = (data as any).serviceType as string;
+    const selected = serviceType ? [serviceType] : [];
+
+    const requiredFieldLabels: Record<string, string> = {
+      basePrice: "Base fare",
+      pricePerMile: "Price per mile",
+      pricePerMinute: "Price per minute",
+      ratePerHour: "Rate per hour",
+    };
+
+    const requiredFields = new Set<string>();
+    for (const t of selected) {
+      const fields = (serviceTypePricingFieldMap as any)[t] as
+        | string[]
+        | undefined;
+      if (!fields) continue;
+      for (const f of fields) requiredFields.add(f);
+    }
+
+    for (const fieldName of requiredFields) {
+      const v = (data as any)[fieldName];
+      if (v === undefined || v === null || v === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [fieldName],
+          message: `${requiredFieldLabels[fieldName] || fieldName} is required`,
+        });
+      }
+    }
+  })
   .and(zonePricingSchema);
 
 export type TServicePricingForm = z.infer<typeof servicePricingSchema>;
@@ -163,6 +187,31 @@ const serviceTypeOptions = [
   { label: "Airport Transfer", value: "AirportTransfer" },
   //   { label: "Point to Point", value: "PointToPoint" },
 ];
+
+const serviceTypePricingConfig: Record<
+  string,
+  {
+    heading: string;
+    fields: Array<
+      "basePrice" | "pricePerMile" | "pricePerMinute" | "ratePerHour"
+    >;
+  }
+> = {
+  CityToCity: {
+    heading: "City to City Pricing",
+    fields: serviceTypePricingFieldMap.CityToCity,
+  },
+  AirportTransfer: {
+    heading: "Airport Pricing",
+    fields: serviceTypePricingFieldMap.AirportTransfer,
+  },
+  Hourly: {
+    heading: "Hourly Pricing",
+    fields: serviceTypePricingFieldMap.Hourly,
+  },
+};
+
+const serviceTypeDisplayOrder = ["CityToCity", "AirportTransfer", "Hourly"];
 
 const statusOptions = [
   { label: "Active", value: "Active" },
@@ -218,10 +267,8 @@ const transformInitialData = (
     vehicleId: data?.vehicle?.id || data?.vehicleId || "",
     ratePerHour: data?.ratePerHour?.toString() || "0",
     minHours: data?.minHours?.toString() || "0",
-    extraTime: data?.extraTime?.toString() || "0",
     basePrice: data?.basePrice?.toString() || "0",
     minimumFare: data?.minimumFare?.toString() || "0",
-    cityToCityHourlyRate: data?.cityToCityHourlyRate?.toString() || "0",
     pricePerMile: data?.pricePerMile?.toString() || "0",
     pricePerMinute: data?.pricePerMinute?.toString() || "0",
     // zonePricingEnabled: data?.zonePricingEnabled || false,
@@ -241,14 +288,13 @@ const defaultFormValues: TServicePricingForm = {
   regionId: "",
   country: "",
   city: "",
+  // @ts-expect-error default placeholder; user must select
   serviceType: "",
   vehicleId: "",
   ratePerHour: "0",
   minHours: "0",
-  extraTime: "0",
   basePrice: "0",
   minimumFare: "0",
-  cityToCityHourlyRate: "0",
   pricePerMile: "0",
   pricePerMinute: "0",
   zonePricingEnabled: false,
@@ -273,11 +319,24 @@ function ServicePricingForm({
   type,
 }: IServicePricingFormProps) {
   const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
+  const isCreateMode =
+    typeof type === "string" && type.toLowerCase().includes("create");
+
   const form = useForm<TServicePricingForm>({
     resolver: safeZodResolver(servicePricingSchema),
     defaultValues: transformInitialData(initialData) || defaultFormValues,
     mode: "all",
   });
+
+  const watchedServiceType = useWatch({
+    control: form.control,
+    name: "serviceType",
+  }) as string | undefined;
+
+  const watchedZonePricingEnabled = useWatch({
+    control: form.control,
+    name: "zonePricingEnabled",
+  }) as boolean | undefined;
 
   const {
     fields: zonePricingsFields,
@@ -328,6 +387,63 @@ function ServicePricingForm({
 
   const { isSubmitting } = form.formState;
 
+  const selectedServiceTypes = [watchedServiceType]
+    .filter((t) => typeof t === "string" && t.trim() !== "")
+    .sort(
+      (a, b) =>
+        serviceTypeDisplayOrder.indexOf(a) - serviceTypeDisplayOrder.indexOf(b),
+    ) as string[];
+
+  const visiblePricingFields = (() => {
+    const set = new Set<string>();
+    for (const t of selectedServiceTypes) {
+      const cfg = serviceTypePricingConfig[t];
+      if (!cfg) continue;
+      for (const f of cfg.fields) set.add(f);
+    }
+    return set;
+  })();
+
+  const renderPricingField = (opts: {
+    key: string;
+    name: any;
+    label: string;
+    placeholder: string;
+    disabledKey: string;
+  }) => {
+    return (
+      <Field key={opts.key}>
+        <FieldLabel htmlFor={opts.key} className="text-base-black gap-0">
+          {opts.label} *
+        </FieldLabel>
+        <Controller
+          control={form.control}
+          name={opts.name}
+          render={({ field, fieldState }) => (
+            <>
+              <InputGroup>
+                <InputGroupInput
+                  id={opts.key}
+                  type="number"
+                  step="0.01"
+                  placeholder={opts.placeholder}
+                  disabled={isFieldDisabled(disabledFields, opts.disabledKey)}
+                  {...field}
+                />
+                <InputGroupAddon>
+                  <IconCurrencyDollar />
+                </InputGroupAddon>
+              </InputGroup>
+              {fieldState.error?.message && (
+                <FormMessage>{fieldState.error.message}</FormMessage>
+              )}
+            </>
+          )}
+        />
+      </Field>
+    );
+  };
+
   const handleFormSubmit = async (data: TServicePricingForm) => {
     const {
       peakHours,
@@ -364,6 +480,14 @@ function ServicePricingForm({
               <CardTitle>{type}</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-3 gap-4">
+              <Field className="col-span-full">
+                <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                  Location
+                </FieldLabel>
+                <FieldDescription>
+                  Set where this pricing rule applies.
+                </FieldDescription>
+              </Field>
               {/* Region Selection */}
               <Field>
                 <FieldLabel
@@ -466,14 +590,24 @@ function ServicePricingForm({
                 )}
               </Field>
 
-              {/* Service Type */}
-              <Field>
+              <Field className="col-span-full">
+                <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                  Service setup
+                </FieldLabel>
+                <FieldDescription>
+                  Choose vehicle and the service types you want to configure.
+                </FieldDescription>
+              </Field>
+
+              {/* Service Type (Create: checkboxes, Edit: dropdown) */}
+              <Field className={isCreateMode ? "col-span-full" : ""}>
                 <FieldLabel
                   htmlFor="serviceType"
                   className="text-base-black gap-0"
                 >
                   Service Type *
                 </FieldLabel>
+
                 <Controller
                   control={form.control}
                   name="serviceType"
@@ -487,89 +621,89 @@ function ServicePricingForm({
                     />
                   )}
                 />
+
                 <FieldDescription>Select the service type</FieldDescription>
+
                 {form.formState.errors.serviceType && (
                   <FormMessage>
-                    {form.formState.errors.serviceType.message}
+                    {(form.formState.errors.serviceType as any)?.message ||
+                      "Service type is required"}
                   </FormMessage>
                 )}
               </Field>
 
-              {/* Vehicle Selection */}
-              <Field>
-                <FieldLabel
-                  htmlFor="vehicleId"
-                  className="text-base-black gap-0"
-                >
-                  Vehicle *
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="vehicleId"
-                  render={({ field }) =>
-                    isVehicleFetching ? (
-                      <Spinner />
-                    ) : (
-                      <SelectDropDown
-                        placeholder="Select Vehicle"
-                        items={
-                          vehicleData?.vehicles?.map((v) => ({
-                            label:
-                              `${v.brand || ""} ${v.model || ""} - ${v.vehicleType}`.trim(),
-                            value: v.id,
-                          })) || []
-                        }
-                        value={field.value}
-                        setSelectedItem={(v) => field.onChange(v)}
-                        disabled={isFieldDisabled(disabledFields, "vehicleId")}
-                      />
-                    )
-                  }
-                />
-                <FieldDescription>Select the vehicle</FieldDescription>
-                {form.formState.errors.vehicleId && (
-                  <FormMessage>
-                    {form.formState.errors.vehicleId.message}
-                  </FormMessage>
-                )}
-              </Field>
+              {/* Pricing (by selected service type) */}
+              {selectedServiceTypes.length > 0 && (
+                <>
+                  <Field className="col-span-full">
+                    <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                      Pricing
+                    </FieldLabel>
+                    <FieldDescription>
+                      Select a service type above to see the pricing fields.
+                    </FieldDescription>
+                  </Field>
 
-              {/* Rate Per Hour */}
-              <Field>
-                <FieldLabel
-                  htmlFor="ratePerHour"
-                  className="text-base-black gap-0"
-                >
-                  Rate Per Hour *
+                  {(() => {
+                    const serviceType = selectedServiceTypes[0];
+                    const cfg = serviceTypePricingConfig[serviceType];
+                    if (!cfg) return null;
+
+                    return (
+                      <Field className="col-span-full p-4 border border-base-gray rounded bg-base-light-gray">
+                        <FieldLabel className="text-base-black gap-0 text-base font-semibold">
+                          {cfg.heading}
+                        </FieldLabel>
+                        <div className="grid grid-cols-3 gap-4 mt-3">
+                          {cfg.fields.map((f) => {
+                            if (f === "basePrice")
+                              return renderPricingField({
+                                key: `basePrice`,
+                                name: "basePrice",
+                                label: "Base Fare",
+                                placeholder: "50.00",
+                                disabledKey: "basePrice",
+                              });
+                            if (f === "pricePerMile")
+                              return renderPricingField({
+                                key: `pricePerMile`,
+                                name: "pricePerMile",
+                                label: "Price Per Mile",
+                                placeholder: "2.50",
+                                disabledKey: "pricePerMile",
+                              });
+                            if (f === "pricePerMinute")
+                              return renderPricingField({
+                                key: `pricePerMinute`,
+                                name: "pricePerMinute",
+                                label: "Price Per Minute",
+                                placeholder: "0.50",
+                                disabledKey: "pricePerMinute",
+                              });
+                            if (f === "ratePerHour")
+                              return renderPricingField({
+                                key: `ratePerHour`,
+                                name: "ratePerHour",
+                                label: "Rate Per Hour",
+                                placeholder: "75.50",
+                                disabledKey: "ratePerHour",
+                              });
+                            return null;
+                          })}
+                        </div>
+                      </Field>
+                    );
+                  })()}
+                </>
+              )}
+
+              <Field className="col-span-full">
+                <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                  Rule details
                 </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="ratePerHour"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="ratePerHour"
-                        type="number"
-                        step="0.01"
-                        placeholder="75.50"
-                        disabled={isFieldDisabled(
-                          disabledFields,
-                          "ratePerHour",
-                        )}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconCurrencyDollar />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-                />
-                <FieldDescription>Enter the rate per hour</FieldDescription>
-                {form.formState.errors.ratePerHour && (
-                  <FormMessage>
-                    {form.formState.errors.ratePerHour.message}
-                  </FormMessage>
-                )}
+                <FieldDescription>
+                  Configure minimums, validity dates, status, and level.
+                </FieldDescription>
               </Field>
 
               {/* Minimum Hours */}
@@ -604,75 +738,6 @@ function ServicePricingForm({
                 {form.formState.errors.minHours && (
                   <FormMessage>
                     {form.formState.errors.minHours.message}
-                  </FormMessage>
-                )}
-              </Field>
-
-              {/* Extra Time */}
-              <Field>
-                <FieldLabel
-                  htmlFor="extraTime"
-                  className="text-base-black gap-0"
-                >
-                  Extra Time (minutes) *
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="extraTime"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="extraTime"
-                        type="number"
-                        placeholder="15"
-                        disabled={isFieldDisabled(disabledFields, "extraTime")}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconClock />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-                />
-                <FieldDescription>Enter extra time in minutes</FieldDescription>
-                {form.formState.errors.extraTime && (
-                  <FormMessage>
-                    {form.formState.errors.extraTime.message}
-                  </FormMessage>
-                )}
-              </Field>
-
-              {/* Base Price */}
-              <Field>
-                <FieldLabel
-                  htmlFor="basePrice"
-                  className="text-base-black gap-0"
-                >
-                  Base Price *
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="basePrice"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="basePrice"
-                        type="number"
-                        step="0.01"
-                        placeholder="50.00"
-                        disabled={isFieldDisabled(disabledFields, "basePrice")}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconCurrencyDollar />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-                />
-                <FieldDescription>Enter the base price</FieldDescription>
-                {form.formState.errors.basePrice && (
-                  <FormMessage>
-                    {form.formState.errors.basePrice.message}
                   </FormMessage>
                 )}
               </Field>
@@ -715,120 +780,53 @@ function ServicePricingForm({
                 )}
               </Field>
 
-              {/* City to City Hourly Rate */}
-              <Field>
+              {/* Vehicle Selection (full-width) */}
+              <Field className="col-span-full">
                 <FieldLabel
-                  htmlFor="cityToCityHourlyRate"
+                  htmlFor="vehicleId"
                   className="text-base-black gap-0"
                 >
-                  City to City Hourly Rate *
+                  Vehicle *
                 </FieldLabel>
                 <Controller
                   control={form.control}
-                  name="cityToCityHourlyRate"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="cityToCityHourlyRate"
-                        type="number"
-                        step="0.01"
-                        placeholder="85.00"
-                        disabled={isFieldDisabled(
-                          disabledFields,
-                          "cityToCityHourlyRate",
-                        )}
-                        {...field}
+                  name="vehicleId"
+                  render={({ field }) =>
+                    isVehicleFetching ? (
+                      <Spinner />
+                    ) : (
+                      <SelectDropDown
+                        placeholder="Select Vehicle"
+                        items={
+                          vehicleData?.vehicles?.map((v) => ({
+                            label:
+                              `${v.brand || ""} ${v.model || ""} - ${v.vehicleType}`.trim(),
+                            value: v.id,
+                          })) || []
+                        }
+                        value={field.value}
+                        setSelectedItem={(v) => field.onChange(v)}
+                        disabled={isFieldDisabled(disabledFields, "vehicleId")}
                       />
-                      <InputGroupAddon>
-                        <IconCurrencyDollar />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
+                    )
+                  }
                 />
+                <FieldDescription>Select the vehicle</FieldDescription>
+                {form.formState.errors.vehicleId && (
+                  <FormMessage>
+                    {form.formState.errors.vehicleId.message}
+                  </FormMessage>
+                )}
+              </Field>
+
+              <Field className="col-span-full">
+                <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                  Validity & status
+                </FieldLabel>
                 <FieldDescription>
-                  Enter city to city hourly rate
+                  These fields control when the rule applies and its priority
+                  level.
                 </FieldDescription>
-                {form.formState.errors.cityToCityHourlyRate && (
-                  <FormMessage>
-                    {form.formState.errors.cityToCityHourlyRate.message}
-                  </FormMessage>
-                )}
-              </Field>
-
-              {/* Price Per Mile */}
-              <Field>
-                <FieldLabel
-                  htmlFor="pricePerMile"
-                  className="text-base-black gap-0"
-                >
-                  Price Per Mile *
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="pricePerMile"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="pricePerMile"
-                        type="number"
-                        step="0.01"
-                        placeholder="2.50"
-                        disabled={isFieldDisabled(
-                          disabledFields,
-                          "pricePerMile",
-                        )}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconCurrencyDollar />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-                />
-                <FieldDescription>Enter price per mile</FieldDescription>
-                {form.formState.errors.pricePerMile && (
-                  <FormMessage>
-                    {form.formState.errors.pricePerMile.message}
-                  </FormMessage>
-                )}
-              </Field>
-
-              {/* Price Per Minute */}
-              <Field>
-                <FieldLabel
-                  htmlFor="pricePerMinute"
-                  className="text-base-black gap-0"
-                >
-                  Price Per Minute *
-                </FieldLabel>
-                <Controller
-                  control={form.control}
-                  name="pricePerMinute"
-                  render={({ field }) => (
-                    <InputGroup>
-                      <InputGroupInput
-                        id="pricePerMinute"
-                        type="number"
-                        step="0.01"
-                        placeholder="0.50"
-                        disabled={isFieldDisabled(
-                          disabledFields,
-                          "pricePerMinute",
-                        )}
-                        {...field}
-                      />
-                      <InputGroupAddon>
-                        <IconCurrencyDollar />
-                      </InputGroupAddon>
-                    </InputGroup>
-                  )}
-                />
-                <FieldDescription>Enter price per minute</FieldDescription>
-                {form.formState.errors.pricePerMinute && (
-                  <FormMessage>
-                    {form.formState.errors.pricePerMinute.message}
-                  </FormMessage>
-                )}
               </Field>
 
               {/* Rate Valid From */}
@@ -958,6 +956,15 @@ function ServicePricingForm({
                 )}
               </Field>
 
+              <Field className="col-span-full">
+                <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                  Description
+                </FieldLabel>
+                <FieldDescription>
+                  Add a short explanation for admins (shown in lists/details).
+                </FieldDescription>
+              </Field>
+
               {/* Description */}
               <Field className="col-span-full">
                 <FieldLabel
@@ -986,6 +993,15 @@ function ServicePricingForm({
                     {form.formState.errors.description.message}
                   </FormMessage>
                 )}
+              </Field>
+
+              <Field className="col-span-full">
+                <FieldLabel className="text-base-black gap-0 text-lg font-semibold">
+                  Zone pricing (optional)
+                </FieldLabel>
+                <FieldDescription>
+                  Turn on zone pricing if rates depend on mileage ranges.
+                </FieldDescription>
               </Field>
 
               <Field className="col-span-full">
@@ -1033,7 +1049,7 @@ function ServicePricingForm({
               </Field>
 
               {/* SHOW/HIDE DIV */}
-              {form.watch("zonePricingEnabled") && (
+              {watchedZonePricingEnabled && (
                 <Field className="col-span-full">
                   <FieldLabel
                     htmlFor="zonePricings"
