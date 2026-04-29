@@ -145,6 +145,20 @@ const data: {
       icon: IconTruck,
       permission: "manageFleets",
       action: "view",
+      items: [
+        {
+          title: "Fleet List",
+          url: constant.ROUTING_URLS.FLEETS,
+          permission: "manageFleets",
+          action: "view",
+        },
+        {
+          title: "Vehicle Types",
+          url: constant.ROUTING_URLS.VEHICLE_TYPES,
+          permission: "manageFleets",
+          action: "view",
+        },
+      ],
     },
     {
       title: "Service Pricing",
@@ -326,8 +340,9 @@ export function AppSidebar({
         if (item.items) {
           const allowedChildren = item.items.filter(
             (child) =>
-              !child.permission ||
-              hasPermission(child.permission, child.action || "view"),
+              !(isPartner && child.title === "Vehicle Types") &&
+              (!child.permission ||
+                hasPermission(child.permission, child.action || "view")),
           );
 
           if (allowedChildren.length > 0) {

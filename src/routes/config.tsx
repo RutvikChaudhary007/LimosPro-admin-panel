@@ -125,6 +125,7 @@ const EditFleetPage = lazy(
 );
 
 const ViewFleetPage = lazy(() => import("../pages/fleet/ViewFleetPage"));
+const VehicleTypesPage = lazy(() => import("../pages/fleet/VehicleTypesPage"));
 
 // Trips
 
@@ -621,6 +622,16 @@ export const routesConfig = [
       { path: constant.ROUTING_URLS.EDIT_FLEET, element: EditFleetPage },
 
       { path: constant.ROUTING_URLS.VIEW_FLEET, element: ViewFleetPage },
+    ],
+  },
+  {
+    layout: "protected",
+    module: "vehicleTypes",
+    permission: "manageFleets",
+    action: "view",
+    restrictedRoles: ["Partner"],
+    routes: [
+      { path: constant.ROUTING_URLS.VEHICLE_TYPES, element: VehicleTypesPage },
     ],
   },
 

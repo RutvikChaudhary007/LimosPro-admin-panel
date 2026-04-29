@@ -2,15 +2,16 @@
 
 import {
   IconBrand4chan,
-  IconCalendar,
+  IconCar,
   IconCreditCard,
   IconPackage,
   IconPalette,
   IconUsers,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, type FieldErrors, useForm } from "react-hook-form";
 import z from "zod";
+import { useFetchVehicleTypes } from "@/api/vehicleType.api";
 import { Form, FormMessage } from "@/components/ui/form";
 import { useUserStore } from "@/stores/useAuthStore";
 import type { IFleetFormProps } from "@/types/fleet.type";
@@ -129,16 +130,6 @@ const formSchema = z.object({
 
 export type TFleetForm = z.infer<typeof formSchema>;
 
-const FleetOptions = [
-  "Executive Sedan Fit for 3 Passengers",
-  "Executive SUV Fit for 6 Passengers",
-  "Business SUV Fit for 6 Passengers",
-  "Executive VAN Fit for 10 Passengers",
-  "Executive VAN Fit for 14 Passengers",
-  "Executive Mini Bus 16 Passengers",
-  "Executive Coach 40 Passenger",
-];
-
 const transformInitialData = (data?: TFleetForm): TFleetForm | undefined => {
   if (!data) return undefined;
   styledLog(data, "transform data:", "alert");
@@ -190,10 +181,9 @@ const FleetForm = ({
   disabledFields,
   type,
 }: IFleetFormProps) => {
-  const [globalAirportLimit, _setGlobalAirportLimit] = useState("65");
-
   const [previews, setPreviews] = useState<string[]>([]);
-  const [_date, setDate] = useState(new Date());
+  const { data: vehicleTypeData } = useFetchVehicleTypes(true);
+  const vehicleTypeOptions = vehicleTypeData?.items || [];
   const years = Array.from({ length: 200 }, (_, i) => 1900 + i);
 
   const form = useForm<TFleetForm>({
@@ -298,7 +288,10 @@ const FleetForm = ({
     const formData = new FormData();
 
     formData.append("partnerId", data?.partnerId);
-    formData.append("regionId", data?.regionId);
+    // regionId is needed in create flow; update API currently rejects it
+    if (!initialData && data?.regionId) {
+      formData.append("regionId", data.regionId);
+    }
     formData.append("bagsCapacity", data?.bagsCapacity);
     formData.append("brand", data?.brand);
     formData.append("model", data?.model);
@@ -323,9 +316,26 @@ const FleetForm = ({
     console.log("formData:", formData);
     await onSubmit(formData);
   };
+
+  const handleInvalidSubmit = (errors: FieldErrors<TFleetForm>) => {
+    const firstErrorField = Object.keys(errors)[0] as
+      | keyof TFleetForm
+      | undefined;
+    if (!firstErrorField) return;
+
+    const selector = `#${String(firstErrorField)}, [name="${String(firstErrorField)}"]`;
+    const fieldElement = document.querySelector(selector);
+
+    if (fieldElement && "scrollIntoView" in fieldElement) {
+      fieldElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleFormSubmit)}>
+      <form onSubmit={form.handleSubmit(handleFormSubmit, handleInvalidSubmit)}>
         {/* fleet Details */}
         <Card>
           <CardBody>
@@ -619,7 +629,7 @@ const FleetForm = ({
                         {...field}
                       />
                       <InputGroupAddon>
-                        <IconCalendar />
+                        <IconCar />
                       </InputGroupAddon>
                     </InputGroup>
                   )}
@@ -712,9 +722,9 @@ const FleetForm = ({
                     <SelectDropDown
                       placeholder="Select vehicle type"
                       items={
-                        FleetOptions?.map((option) => ({
-                          label: option,
-                          value: option,
+                        vehicleTypeOptions?.map((option) => ({
+                          label: option.name,
+                          value: option.name,
                         })) || []
                       }
                       value={field.value || ""}

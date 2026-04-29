@@ -61,3 +61,4 @@ export * from "./trip.api";
 export * from "./user.api";
 // Permission Module
 export * from "./userPermission.api";
+export * from "./vehicleType.api";

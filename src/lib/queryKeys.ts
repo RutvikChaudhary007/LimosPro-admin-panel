@@ -84,6 +84,14 @@ export const queryKeys = {
     detail: (id: string) => ["vehicle", "detail", id] as const,
   },
 
+  vehicleType: {
+    all: ["vehicleType"] as const,
+    lists: () => ["vehicleType", "list"] as const,
+    listParams: (onlyActive?: boolean) =>
+      ["vehicleType", "list", onlyActive] as const,
+    detail: (id: string) => ["vehicleType", "detail", id] as const,
+  },
+
   blog: {
     all: ["blog"] as const,
     lists: () => ["blog", "list"] as const,

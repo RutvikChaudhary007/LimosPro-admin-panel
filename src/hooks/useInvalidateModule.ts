@@ -67,6 +67,17 @@ export function useInvalidateModule() {
       queryClient.invalidateQueries({ queryKey: queryKeys.vehicle.lists() });
     },
 
+    vehicleType: (id?: string) => {
+      if (id) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.vehicleType.detail(id),
+        });
+      }
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.vehicleType.lists(),
+      });
+    },
+
     blog: (id?: string) => {
       if (id) {
         queryClient.invalidateQueries({ queryKey: queryKeys.blog.detail(id) });

@@ -78,6 +78,8 @@ export const constant = {
 
     VIEW_FLEET: "/fleets/:id",
 
+    VEHICLE_TYPES: "/vehicle-types",
+
     // Trips URLS
 
     TRIPS: "/trips",
